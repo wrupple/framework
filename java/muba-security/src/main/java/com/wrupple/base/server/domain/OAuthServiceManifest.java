@@ -1,0 +1,72 @@
+package com.wrupple.base.server.domain;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
+
+import com.wrupple.vegetate.domain.CatalogDescriptor;
+import com.wrupple.vegetate.domain.VegetateAuthenticationToken;
+import com.wrupple.vegetate.domain.VegetateServiceManifest;
+import com.wrupple.vegetate.server.domain.VegetateAuthenticationTokenDescriptor;
+import com.wrupple.vegetate.server.services.AbstractVegetateServiceManifest;
+import com.wrupple.vegetate.server.services.ObjectMapper;
+
+@Singleton
+public class OAuthServiceManifest  extends AbstractVegetateServiceManifest  implements VegetateServiceManifest {
+	public static final String OAUTH_REQUEST_TOKEN = "session.desktopcallback";
+	private VegetateAuthenticationTokenDescriptor catalog;
+	private final String[] path;
+
+	@Inject
+	public OAuthServiceManifest(VegetateAuthenticationTokenDescriptor catalog,ObjectMapper mapper, Provider<UserAuthenticationContext> provider) {
+		super(mapper, VegetateAuthenticationTokenImpl.class, provider);
+		this.catalog=catalog;
+		path =new String[]{CatalogDescriptor.DOMAIN_TOKEN,VegetateAuthenticationToken.REALM_PARAMETER,VegetateAuthenticationToken.ACTION_PARAMETER};
+	}
+
+	@Override
+	public String getServiceName() {
+		return VegetateAuthenticationToken.OAUTH_SERVICE;
+	}
+
+	@Override
+	public String getServiceVersion() {
+		return "1.0";
+	}
+
+	@Override
+	public String[] getUrlPathParameters() {
+		return path;
+	}
+
+	@Override
+	public String[] getChildServicePaths() {
+		return null;
+	}
+
+	@Override
+	public List<? extends VegetateServiceManifest> getChildServiceManifests() {
+		return null;
+	}
+
+	@Override
+	public CatalogDescriptor getContractDescriptor() {
+		return catalog;
+	}
+
+	public String getCallbackUrl(HttpServletRequest request,String realm) {
+		// TODO support https?
+		int port = request.getServerPort();
+		return "http://" + request.getServerName() + (port == 80 ? "/" : ":" + port + "/") + VegetateAuthenticationToken.OAUTH_SERVICE
+				+ "/" + realm + "/callback";
+	}
+
+	public String getDefaultSuccessUrl(HttpServletRequest request) {
+		//TODO does shiro support getting it?
+		return request.getContextPath() + "/";
+	}
+
+}
