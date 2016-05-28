@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.wrupple.muba</groupId>
+	<artifactId>muba-catalogs</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0</version>
+	<name>Muba Catalog Management</name>
+	<description>Binds server-side persistence, validation, and indexing handlers (like Jdbc, Hibernate, JDO, JPA) with CRUD service providers 
+	    called CatalogDataAccessObjects, to client-side user format management via CatalogDescriptor and 
+	    CatalogFieldDescriptors. Also Defines a user communication base with the server via simple 
+	    CRUD conversations with the server that allow real time collaboration and multitenancy among 
+	    groups of users in multiple Languages while attempting to provide the user with a easily Normalized database
+
+PHP version-&gt;http://blog.dreamfactory.com/add-a-rest-api-to-any-sql-db-in-minutes
+http://laravel.com/docs/5.0/eloquent</description>
+	<properties>
+		<muba.version>1.0</muba.version>
+		<vegetate.version>1.0</vegetate.version>
+		<servlet.api>3.1.0</servlet.api>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet.api}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- TODO use guava (by google) -->
+
+		<dependency>
+			<groupId>com.wrupple.vegetate</groupId>
+			<artifactId>vegetate</artifactId>
+			<version>${vegetate.version}</version>
+		</dependency>
+
+		<!-- VALIDATION & INTROSPECTION -->
+
+		<dependency>
+			<groupId>org.apache.bval</groupId>
+			<artifactId>org.apache.bval.bundle</artifactId>
+			<version>0.5</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.bval</groupId>
+			<artifactId>bval-extras</artifactId>
+			<version>0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<!-- ... any other configurations -->
+		</plugins>
+	</build>
+</project>
