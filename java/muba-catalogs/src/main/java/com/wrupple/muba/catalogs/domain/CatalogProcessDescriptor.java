@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.vegetate.domain.FilterData;
+import com.wrupple.muba.bootstrap.domain.FilterData;
 
 public class CatalogProcessDescriptor {
 

@@ -1,64 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wrupple.muba</groupId>
 	<artifactId>muba-catalogs</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
 	<name>Muba Catalog Management</name>
-	<description>Binds server-side persistence, validation, and indexing handlers (like Jdbc, Hibernate, JDO, JPA) with CRUD service providers 
-	    called CatalogDataAccessObjects, to client-side user format management via CatalogDescriptor and 
-	    CatalogFieldDescriptors. Also Defines a user communication base with the server via simple 
-	    CRUD conversations with the server that allow real time collaboration and multitenancy among 
-	    groups of users in multiple Languages while attempting to provide the user with a easily Normalized database
-
-PHP version-&gt;http://blog.dreamfactory.com/add-a-rest-api-to-any-sql-db-in-minutes
-http://laravel.com/docs/5.0/eloquent</description>
+	<description>Enforces programs written to always have an efect on the state of the user data. Allows such data to be validated, localized, seft deleted, friendly named, cached, and be worgroup or user owned</description>
 	<properties>
 		<muba.version>1.0</muba.version>
-		<vegetate.version>1.0</vegetate.version>
-		<servlet.api>3.1.0</servlet.api>
+		<guice.version>3.0</guice.version>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${servlet.api}</version>
+			<groupId>com.wrupple.muba</groupId>
+			<artifactId>muba-io-relational</artifactId>
+			<version>${muba.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>${guice.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- TODO use guava (by google) -->
-
-		<dependency>
-			<groupId>com.wrupple.vegetate</groupId>
-			<artifactId>vegetate</artifactId>
-			<version>${vegetate.version}</version>
-		</dependency>
-
-		<!-- VALIDATION & INTROSPECTION -->
+	
+	<!-- UNIT TEST DEPENDENCIES -->
 
 		<dependency>
-			<groupId>org.apache.bval</groupId>
-			<artifactId>org.apache.bval.bundle</artifactId>
-			<version>0.5</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-beanutils</groupId>
-					<artifactId>commons-beanutils-core</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.21</version>
+			<scope>test</scope>
 		</dependency>
+
+
 		<dependency>
-			<groupId>org.apache.bval</groupId>
-			<artifactId>bval-extras</artifactId>
-			<version>0.5</version>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.4</version>
+			<scope>test</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.1.0.Final</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.3.4</version>
+			<scope>test</scope>
+		</dependency>
+
+
+
 
 	</dependencies>
 	<build>
@@ -77,11 +76,12 @@ http://laravel.com/docs/5.0/eloquent</description>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<!-- ... any other configurations -->
 		</plugins>
 	</build>
+	<url>https://github.com/wrupple/framework</url>
 </project>

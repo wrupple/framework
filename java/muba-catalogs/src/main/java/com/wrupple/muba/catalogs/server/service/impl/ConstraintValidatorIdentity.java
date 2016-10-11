@@ -19,8 +19,9 @@
 
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import java.nio.file.Path;
+
 import javax.validation.ConstraintValidator;
-import javax.validation.Path;
 
 /**
  * Class that stores the needed properties to ensure that a validation is not

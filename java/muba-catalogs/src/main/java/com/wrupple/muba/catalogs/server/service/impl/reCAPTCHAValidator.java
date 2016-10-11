@@ -13,8 +13,8 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import com.wrupple.muba.bootstrap.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
-import com.wrupple.vegetate.server.services.ObjectMapper;
 
 @Singleton
 public class reCAPTCHAValidator implements ConstraintValidator<CAPTCHA, String> {

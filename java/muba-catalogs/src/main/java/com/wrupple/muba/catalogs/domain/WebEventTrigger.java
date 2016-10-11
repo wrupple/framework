@@ -1,13 +1,8 @@
 package com.wrupple.muba.catalogs.domain;
 
-import java.util.List;
+import com.wrupple.muba.bootstrap.domain.HasProperties;
 
-import com.wrupple.vegetate.domain.CatalogEntry;
-import com.wrupple.vegetate.domain.CatalogTrigger;
-import com.wrupple.vegetate.domain.HasEntryId;
-import com.wrupple.vegetate.domain.HasStakeHolder;
-
-public interface WebEventTrigger extends CatalogEntry, CatalogTrigger,HasEntryId,HasStakeHolder,HasVanityId
+public interface WebEventTrigger extends CatalogTrigger,HasVanityId,HasProperties
 {
 
 	String CATALOG = "WebEventTrigger";
@@ -19,6 +14,5 @@ public interface WebEventTrigger extends CatalogEntry, CatalogTrigger,HasEntryId
 	int getAuthorizationMethod();
 	
 
-	List<String> getProperties();
 
 }

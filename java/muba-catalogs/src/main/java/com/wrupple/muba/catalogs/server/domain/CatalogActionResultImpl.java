@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionResult;
-import com.wrupple.muba.catalogs.domain.VegetateColumnResultSet;
+import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 
 public class CatalogActionResultImpl implements CatalogActionResult {
 
-	private List<VegetateColumnResultSet> response;
+	private List<CatalogColumnResultSet> response;
 	private List<String> warnings;
 	private long responseTimestamp;
 
-	public CatalogActionResultImpl(long rResponseTimeStamp, List<VegetateColumnResultSet> response,List<String> warnings) {
+	public CatalogActionResultImpl(long rResponseTimeStamp, List<CatalogColumnResultSet> response,List<String> warnings) {
 		super();
 		this.response = response;
 		if(warnings==null){
@@ -28,7 +28,7 @@ public class CatalogActionResultImpl implements CatalogActionResult {
 
 
 	@Override
-	public List<VegetateColumnResultSet> getResponse() {
+	public List<CatalogColumnResultSet> getResponse() {
 		return response;
 	}
 
@@ -42,7 +42,7 @@ public class CatalogActionResultImpl implements CatalogActionResult {
 		return responseTimestamp;
 	}
 
-	public void setResponse(List<VegetateColumnResultSet> response) {
+	public void setResponse(List<CatalogColumnResultSet> response) {
 		this.response = response;
 	}
 

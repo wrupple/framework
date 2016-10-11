@@ -3,10 +3,9 @@ package com.wrupple.muba.catalogs.server.service;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import com.wrupple.vegetate.domain.FieldConstraint;
-import com.wrupple.vegetate.domain.FieldDescriptor;
-import com.wrupple.vegetate.server.domain.annotations.CatalogFieldValues;
-import com.wrupple.vegetate.server.domain.annotations.CatalogKey;
+import com.wrupple.muba.catalogs.domain.FieldConstraint;
+import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 
 public interface JSRAnnotationsDictionary {
 	
@@ -14,10 +13,11 @@ public interface JSRAnnotationsDictionary {
 
 	List<String> getAvailableAnnotationNames();
 	
-	void initialize();
 
-	CatalogKey buildCatalogKeyValidation(FieldDescriptor field);
+	com.wrupple.muba.catalogs.domain.annotations.CatalogKey buildCatalogKeyValidation(FieldDescriptor field);
 
 	CatalogFieldValues buildNormalizationValidation(FieldDescriptor field);
+
+	void initialize();
 
 }

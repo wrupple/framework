@@ -1,49 +1,27 @@
 package com.wrupple.muba.catalogs.server.domain;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.chain.Context;
-
+import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
+import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.vegetate.domain.CatalogActionRequest;
-import com.wrupple.vegetate.domain.CatalogDescriptor;
-import com.wrupple.vegetate.domain.HasStakeHolder;
-import com.wrupple.vegetate.domain.VegetateServiceManifest;
-import com.wrupple.vegetate.server.services.AbstractVegetateServiceManifest;
-import com.wrupple.vegetate.server.services.ObjectMapper;
-import com.wrupple.vegetate.server.services.RequestScopedContext;
+import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 
 @Singleton
-public class CatalogServiceManifestImpl extends AbstractVegetateServiceManifest implements CatalogServiceManifest {
+public class CatalogServiceManifestImpl extends ServiceManifestImpl implements CatalogServiceManifest {
+
 
 	@Inject
-	public CatalogServiceManifestImpl(ObjectMapper mapper,CatalogActionRequestDescriptor descriptor) {
-		super(mapper, CatalogActionRequestImpl.class);
-		this.descriptor = descriptor;
-		this.path=new String[] { CatalogDescriptor.DOMAIN_TOKEN,HasStakeHolder.STAKE_HOLDER_FIELD,CatalogActionRequest.LOCALE_FIELD, CatalogActionRequest.CATALOG_ID_PARAMETER, CatalogActionRequest.CATALOG_ACTION_PARAMETER,
-				CatalogActionRequest.CATALOG_ENTRY_PARAMETER, CatalogActionRequest.FORMAT_PARAMETER };
-	}
-
-	private final CatalogActionRequestDescriptor descriptor;
-	private final String[] path;
-
-
-	@Override
-	public String getServiceName() {
-		return SERVICE_NAME;
-	}
-
-	@Override
-	public String getServiceVersion() {
-		return "1.0";
-	}
-
-	@Override
-	public String[] getUrlPathParameters() {
-		return path;
+	public CatalogServiceManifestImpl(
+			@Named(CatalogActionRequest.CATALOG) CatalogDescriptor descriptor, CatalogRequestInterpret requestInterpret, CatalogEngine catalogEngine) {
+		super(SERVICE_NAME, "1.0", descriptor, null,
+				new String[] { CatalogDescriptor.DOMAIN_TOKEN, CatalogActionRequest.LOCALE_FIELD,
+						CatalogActionRequest.CATALOG_FIELD, CatalogActionRequest.CATALOG_ACTION_PARAMETER,
+						CatalogActionRequest.ENTRY_ID_FIELD, CatalogActionRequest.FORMAT_PARAMETER }, requestInterpret, catalogEngine);
 	}
 
 	@Override
@@ -51,13 +29,13 @@ public class CatalogServiceManifestImpl extends AbstractVegetateServiceManifest 
 		// FIXME expose as a REST service? or share logic with client side?
 		int bufferSize = getServiceName().length();
 
-		bufferSize += lengthOfProperty((String)request.getDomain());
-		bufferSize += lengthOfProperty(request.getCatalog());
+		bufferSize += lengthOfProperty((String) request.getDomain());
+		bufferSize += lengthOfProperty(request.getCatalogType());
 		bufferSize += lengthOfProperty(request.getAction());
-		bufferSize += lengthOfProperty(request.getEntry()==null?null:request.getEntry().toString());
+		bufferSize += lengthOfProperty(request.getEntry() == null ? null : request.getEntry().toString());
 		bufferSize += lengthOfProperty(request.getFormat());
 
-		bufferSize = bufferSize + getUrlPathParameters().length;
+		bufferSize = bufferSize + getGrammar().length;
 		StringBuffer buffer = new StringBuffer(bufferSize);
 		buffer.append(getServiceName());
 
@@ -67,34 +45,40 @@ public class CatalogServiceManifestImpl extends AbstractVegetateServiceManifest 
 			buffer.append(tokenSeparator);
 			buffer.append(request.getDomain());
 
-			if (request.getCatalog() == null) {
+			if (request.getLocale() == null) {
 
 			} else {
 				buffer.append(tokenSeparator);
-				buffer.append(request.getCatalog());
-
-				if (request.getAction() == null) {
+				buffer.append(request.getLocale());
+				if (request.getCatalogType() == null) {
 
 				} else {
 					buffer.append(tokenSeparator);
-					buffer.append(request.getAction());
+					buffer.append(request.getCatalogType());
 
-					if (request.getEntry() == null) {
+					if (request.getAction() == null) {
 
 					} else {
 						buffer.append(tokenSeparator);
-						buffer.append(request.getEntry());
+						buffer.append(request.getAction());
 
-						if (request.getFormat() == null) {
+						if (request.getEntry() == null) {
 
 						} else {
 							buffer.append(tokenSeparator);
-							buffer.append(request.getFormat());
+							buffer.append(request.getEntry());
+
+							if (request.getFormat() == null) {
+
+							} else {
+								buffer.append(tokenSeparator);
+								buffer.append(request.getFormat());
+							}
 						}
+
 					}
 
 				}
-
 			}
 		}
 
@@ -111,26 +95,6 @@ public class CatalogServiceManifestImpl extends AbstractVegetateServiceManifest 
 		}
 	}
 
-	@Override
-	public String[] getChildServicePaths() {
-		return null;
-	}
-
-	@Override
-	public CatalogDescriptor getContractDescriptor() {
-		return descriptor;
-	}
-
-	@Override
-	public List<VegetateServiceManifest> getChildServiceManifests() {
-		return null;
-	}
-
-	@Override
-	protected Context createBlankContext(RequestScopedContext requestContext) {
-		return requestContext.getStorageManager().spawn(null);
-	}
-
-
+	
 
 }

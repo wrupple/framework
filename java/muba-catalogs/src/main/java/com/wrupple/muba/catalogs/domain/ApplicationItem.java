@@ -2,8 +2,8 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.vegetate.domain.CatalogEntry;
-import com.wrupple.vegetate.domain.structure.HasChildrenValues;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.reserved.HasChildrenValues;
 
 public interface ApplicationItem extends ActivityDescriptor,CatalogEntry,HasChildrenValues<Long,ApplicationItem>{
 	

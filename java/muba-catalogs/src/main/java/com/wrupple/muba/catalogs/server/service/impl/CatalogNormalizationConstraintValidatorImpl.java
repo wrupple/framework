@@ -2,8 +2,8 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import javax.validation.ConstraintValidatorContext;
 
-import com.wrupple.vegetate.server.domain.annotations.CatalogFieldValues;
-import com.wrupple.vegetate.server.services.CatalogNormalizationConstraintValidator;
+import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.catalogs.server.service.CatalogNormalizationConstraintValidator;
 
 public class CatalogNormalizationConstraintValidatorImpl implements CatalogNormalizationConstraintValidator {
 

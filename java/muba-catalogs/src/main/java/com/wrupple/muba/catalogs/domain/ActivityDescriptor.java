@@ -1,14 +1,13 @@
 package com.wrupple.muba.catalogs.domain;
 
-import java.util.List;
+import com.wrupple.muba.bootstrap.domain.HasProperties;
 
-public interface ActivityDescriptor  {
+public interface ActivityDescriptor  extends HasProperties {
 	
 	public String getActivity();
 	
 	public String getActivityPresenter();
 
-	public List<String> getProperties();
 	
 	public String getOutputHandler();
 	

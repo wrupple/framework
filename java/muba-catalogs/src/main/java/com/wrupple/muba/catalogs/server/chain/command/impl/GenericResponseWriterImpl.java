@@ -2,40 +2,29 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import java.io.PrintWriter;
 
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.vegetate.server.services.ObjectMapper;
+import com.wrupple.muba.bootstrap.server.service.ObjectMapper;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 
 public class GenericResponseWriterImpl implements Command {
-	ObjectMapper om ;
+	ObjectMapper om;
 	private String contextParameter;
-	private Provider<HttpServletResponse> respp;
-	
-	public GenericResponseWriterImpl(ObjectMapper om,String contextParameter,Provider<HttpServletResponse>  resp) {
+
+	public GenericResponseWriterImpl(ObjectMapper om, String contextParameter) {
 		super();
 		this.om = om;
-		this.contextParameter=contextParameter;
-		this.respp=resp;
-		
-	}
+		this.contextParameter = contextParameter;
 
+	}
 
 	@Override
 	public boolean execute(Context context) throws Exception {
 		Object parameter = context.get(contextParameter);
-		HttpServletResponse resp = respp.get();
-		resp.setContentType(om.getMimeType());
-		resp.setCharacterEncoding(om.getCharacterEncoding());
-		PrintWriter out = resp.getWriter();
+		PrintWriter out = ((CatalogActionContext) context).getExcecutionContext().getScopedWriter(context);
 		om.writeValue(out, parameter);
-		
 		return CONTINUE_PROCESSING;
 	}
 
-	
-	
 }

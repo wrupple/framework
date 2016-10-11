@@ -1,10 +1,8 @@
 package com.wrupple.muba.catalogs.server.chain;
 
-import com.wrupple.vegetate.server.services.VegetateProcess;
+import org.apache.commons.chain.Chain;
 
-public interface CatalogEngine extends VegetateProcess {
-	String JOINED_DATA = "joins";
-	String WORKING_RESULT_SET = "workingResultSet";
+public interface CatalogEngine extends Chain {
 	
 
 }

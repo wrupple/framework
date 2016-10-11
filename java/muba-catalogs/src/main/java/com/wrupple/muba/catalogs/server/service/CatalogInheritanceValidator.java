@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.server.service;
 
 import javax.validation.ConstraintValidator;
 
-import com.wrupple.vegetate.server.domain.annotations.InheritanceTree;
+import com.wrupple.muba.catalogs.domain.annotations.InheritanceTree;
 
 /**
  * checks parent hierarchu for duplicates

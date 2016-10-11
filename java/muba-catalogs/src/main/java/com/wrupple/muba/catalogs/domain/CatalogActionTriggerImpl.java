@@ -1,11 +1,12 @@
 package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
+import java.util.Map;
 
-import com.wrupple.vegetate.domain.CatalogActionTrigger;
-import com.wrupple.vegetate.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
 
-public class CatalogActionTriggerImpl implements CatalogActionTrigger, CatalogEntry {
+public class CatalogActionTriggerImpl extends CatalogEntryImpl implements CatalogActionTrigger, CatalogEntry {
 
 	private static final long serialVersionUID = 1609115127939733426L;
 
@@ -18,14 +19,15 @@ public class CatalogActionTriggerImpl implements CatalogActionTrigger, CatalogEn
 		this.seed=seed;
 		this.handler = handler;
 		this.before = before;
-		this.catalogId = targetCatalogId;
+		this.catalog = targetCatalogId;
 		this.properties = properties;
 	}
-	private Long id,domain,stakeHolder;
-	private String name,description,catalogId,catalogEntryId,seed,expression,systemEvent;
+	private Long stakeHolder;
+	private String description,catalog,entry,seed,expression,systemEvent;
 	private String handler;
 	private int action;
-	private boolean before,runAsStakeHolder,rollbackOnFail,stopOnFail;
+	private boolean before,runAsStakeHolder,failSilence,stopOnFail;
+	
 	
 	private List<String> properties;
 	
@@ -61,11 +63,11 @@ public class CatalogActionTriggerImpl implements CatalogActionTrigger, CatalogEn
 	public void setBefore(boolean before) {
 		this.before = before;
 	}
-	public String getCatalogId() {
-		return catalogId;
+	public String getCatalog() {
+		return catalog;
 	}
-	public void setCatalogId(String targetCatalogId) {
-		this.catalogId = targetCatalogId;
+	public void setCatalog(String targetCatalogId) {
+		this.catalog = targetCatalogId;
 	}
 	public List<String> getProperties() {
 		return properties;
@@ -73,54 +75,11 @@ public class CatalogActionTriggerImpl implements CatalogActionTrigger, CatalogEn
 	public void setProperties(List<String> properties) {
 		this.properties = properties;
 	}
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Long getDomain() {
-		return domain;
-	}
-	public void setDomain(Long domain) {
-		this.domain = domain;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	@Override
-	public String getCatalog() {
-		return CatalogActionTrigger.CATALOG;
-	}
-	@Override
-	public String getImage() {
-		return null;
-	}
-	@Override
-	public boolean isAnonymouslyVisible() {
-		return false;
-	}
-	@Override
-	public void setAnonymouslyVisible(boolean p) {
-		
-	}
-	@Override
-	public void setIdAsString(String id) {
-		setId(Long.parseLong(id));
-	}
-
-	@Override
-	public String getIdAsString() {
-		return String.valueOf(getId());
 	}
 
 	public boolean isRunAsStakeHolder() {
@@ -143,15 +102,15 @@ public class CatalogActionTriggerImpl implements CatalogActionTrigger, CatalogEn
 	}
 
 
-	public boolean isRollbackOnFail() {
-		return rollbackOnFail;
+	public boolean isFailSilence() {
+		return failSilence;
 	}
 
-	public void setRollbackOnFail(Boolean rollbackOnFail) {
+	public void setFailSilence(Boolean rollbackOnFail) {
 		if(rollbackOnFail==null){
-			this.rollbackOnFail = false;
+			this.failSilence = false;
 		}else{
-			this.rollbackOnFail = rollbackOnFail;
+			this.failSilence = rollbackOnFail;
 		}
 	
 	}
@@ -174,15 +133,36 @@ public class CatalogActionTriggerImpl implements CatalogActionTrigger, CatalogEn
 		this.systemEvent = systemEvent;
 	}
 
-	@Override
-	public String getCatalogEntryId() {
-		return catalogEntryId;
+
+	
+	public String getEntry() {
+		return entry;
+	}
+
+	public void setEntry(String entry) {
+		this.entry = entry;
 	}
 
 	@Override
-	public void setCatalogEntryId(String catalogEntryId) {
-		this.catalogEntryId=catalogEntryId;
+	public Map<String, String> getParsedProperties(List<String> rawProperties, Map context) {
+		return (Map<String, String>) context.get(getId());
 	}
+
+	@Override
+	public void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context) {
+		context.put(getId(), parsed);		
+	}
+
+	@Override
+	public void setEntry(Object id) {
+		setEntry((String)id);
+	}
+
+	@Override
+	public String toString() {
+		return getName()==null?getHandler():getName();
+	}
+
 	
 	
 	

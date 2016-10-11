@@ -1,15 +1,16 @@
 package com.wrupple.muba.catalogs.server.domain;
 
-import com.wrupple.vegetate.domain.CatalogActionRequest;
-import com.wrupple.vegetate.domain.CatalogEntry;
-import com.wrupple.vegetate.server.domain.FilterDataImpl;
+import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
+import com.wrupple.muba.bootstrap.domain.FilterData;
 
-public class CatalogActionRequestImpl implements CatalogActionRequest {
+public class CatalogActionRequestImpl extends CatalogEntryImpl implements CatalogActionRequest {
 
 	private static final long serialVersionUID = 1743825364474840159L;
 	private CatalogEntry entryValue;
 	private FilterDataImpl filter;
-	private  String action,format,entry,catalog,domain,locale;
+	private  String action,format,entry,catalog,locale;
 	
 	public CatalogActionRequestImpl() {
 		super();
@@ -17,15 +18,15 @@ public class CatalogActionRequestImpl implements CatalogActionRequest {
 	
 	
 	
-	public CatalogActionRequestImpl(String domain,String catalog,String action,String entry,String format,CatalogEntry catalogEntry,FilterDataImpl filter) {
+	public CatalogActionRequestImpl(String domain,String catalog,String action,String entry,String format,CatalogEntry catalogEntry,FilterData filterData) {
 		super();
 		this.entryValue = catalogEntry;
-		this.filter = filter;
+		this.filter = (FilterDataImpl) filterData;
 		this.action = action;
 		this.format = format;
 		this.entry = entry;
 		this.catalog = catalog;
-		this.domain = domain;
+		setDomain(Long.parseLong(domain));
 		this.locale=LOCALE_FIELD;
 	}
 
@@ -37,7 +38,7 @@ public class CatalogActionRequestImpl implements CatalogActionRequest {
 		this.format = format;
 		this.entry = entry;
 		this.catalog = catalog;
-		this.domain = domain;
+		setDomain(Long.parseLong(domain));
 		this.locale=locale;
 	}
 
@@ -85,20 +86,21 @@ public class CatalogActionRequestImpl implements CatalogActionRequest {
 	public void setCatalog(String catalog) {
 		this.catalog = catalog;
 	}
-	public String getDomain() {
-		return domain;
-	}
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
 
 
 	@Override
 	public String toString() {
 		return "CatalogActionRequestImpl [catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + action + ", format=" + format + ", entry="
-				+ entry + ", catalog=" + catalog + ", domain=" + domain + "]";
+				+ entry + ", catalog=" + catalog + ", domain=" + getDomain() + "]";
 	}
+
+
+
+	@Override
+	public void setEntry(Object id) {
+		setEntry((String)id);
+	}
+
 
 
 }

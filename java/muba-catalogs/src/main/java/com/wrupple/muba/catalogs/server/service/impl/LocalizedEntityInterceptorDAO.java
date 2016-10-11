@@ -1,24 +1,21 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import javax.inject.Singleton;
 
+import org.apache.commons.chain.Context;
+
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
+import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.server.service.CatalogDataAccessObject;
-import com.wrupple.muba.catalogs.server.service.CatalogPropertyAccesor;
-import com.wrupple.muba.catalogs.server.service.CatalogPropertyAccesor.Session;
-import com.wrupple.muba.catalogs.server.service.PersistentCatalogEntityDAO;
-import com.wrupple.vegetate.domain.CatalogDescriptor;
-import com.wrupple.vegetate.domain.CatalogEntry;
-import com.wrupple.vegetate.domain.CatalogExcecutionContext;
-import com.wrupple.vegetate.domain.FieldDescriptor;
-import com.wrupple.vegetate.domain.FilterData;
-import com.wrupple.vegetate.server.chain.command.I18nProcessing.DistributiedLocalizedEntry;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
+import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
+import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 
 /**
  * 
@@ -31,23 +28,26 @@ import com.wrupple.vegetate.server.chain.command.I18nProcessing.DistributiedLoca
  * @author japi
  *
  */
-public class LocalizedEntityInterceptorDAO implements CatalogDataAccessObject<DistributiedLocalizedEntry> {
+@Singleton
+public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 
-	private final CatalogDataAccessObject<DistributiedLocalizedEntry> cloudDistributedDao;
-	private final CatalogPropertyAccesor accessor;
+	private final CatalogCreateTransaction create;
+	private final CatalogEvaluationDelegate accessor;
 
-	public LocalizedEntityInterceptorDAO(CatalogDataAccessObject<DistributiedLocalizedEntry> delegate, CatalogPropertyAccesor accessor) {
+	public LocalizedEntityInterceptorDAO(CatalogCreateTransaction create, CatalogEvaluationDelegate accessor) {
 		super();
-		this.cloudDistributedDao = delegate;
+		this.create = create;
 		this.accessor = accessor;
 	}
 
 	@Override
-	public DistributiedLocalizedEntry create(DistributiedLocalizedEntry o) throws Exception {
+	public boolean execute(Context c) throws Exception {
+		CatalogActionContext context = (CatalogActionContext) c;
+		DistributiedLocalizedEntry o = (DistributiedLocalizedEntry) context.getEntryValue();
 
 		// check all required data is present
-		Long numericCatalogId = o.getCatalogId();
-		Long entryId = o.getCatalogEntryId();
+		Long numericCatalogId = o.getCatalog();
+		Long entryId = o.getEntry();
 		String locale = o.getLocale();
 		if (numericCatalogId == null || entryId == null || locale == null) {
 			throw new IllegalArgumentException("Attempt to create a localized entity pointing to no existing catalog entry");
@@ -55,13 +55,13 @@ public class LocalizedEntityInterceptorDAO implements CatalogDataAccessObject<Di
 		// format locale to be prepended to a field (looks like field_locale)
 		locale = "_" + locale;
 
-		CatalogExcecutionContext localize = getContext().getRequest().getStorageManager().spawn(getContext());
+		CatalogActionContext localize = context.getCatalogManager().spawn(context);
 
 		localize.setEntry(numericCatalogId);
 		localize.setFilter(null);
 		localize.setCatalog(CatalogDescriptor.CATALOG_ID);
 		// what catalog is this localized entity pointing to?
-		getContext().getRequest().getStorageManager().getRead().execute(localize);
+		context.getCatalogManager().getRead().execute(localize);
 		CatalogDescriptor pointsTo = localize.getResult();
 		Session session = accessor.newSession(pointsTo);
 
@@ -70,7 +70,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogDataAccessObject<Di
 		int strategy = pointsTo.getLocalization();
 		if (0 == strategy /* CONSOLIDATED */) {
 			// this is the special case we need to intercept
-			String catalogId = pointsTo.getCatalogId();
+			String catalogId = pointsTo.getCatalog();
 			session.resample(o);
 
 			// read localized field values
@@ -81,7 +81,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogDataAccessObject<Di
 			localize.setFilter(null);
 			localize.setCatalog(catalogId);
 			CatalogDescriptor localizedCatalog=localize.getCatalogDescriptor();
-			getContext().getRequest().getStorageManager().getRead().execute(localize);
+			context.getCatalogManager().getRead().execute(localize);
 			PersistentCatalogEntity targetEntity= localize.getResult();
 
 			// write localized values
@@ -100,62 +100,19 @@ public class LocalizedEntityInterceptorDAO implements CatalogDataAccessObject<Di
 
 			}
 			localize.setEntryValue(targetEntity);
-			localize.put(PersistentCatalogEntityDAO.FORCE_WRITE, true);
 			// persist without performing any validations
-			getContext().getRequest().getStorageManager().getWrite().execute(localize);
+			context.getCatalogManager().getWrite().execute(localize);
 			 targetEntity= localize.getResult();
 
 			o.setIdAsString(targetEntity.getIdAsString());
-			return o;
+			context.setResults(Collections.singletonList(o));
 		} else {
-			return cloudDistributedDao.create(o);
+			/*DISTRIBUTED*/
+			return create.execute(context);
 		}
+		
+		return CONTINUE_PROCESSING;
 	}
 
-	@Override
-	public void beginTransaction() throws NotSupportedException, SystemException {
-		cloudDistributedDao.beginTransaction();
-	}
-
-	@Override
-	public void commitTransaction()
-			throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
-		cloudDistributedDao.commitTransaction();
-	}
-
-	@Override
-	public void rollbackTransaction() throws IllegalStateException, SecurityException, SystemException {
-		cloudDistributedDao.rollbackTransaction();
-	}
-
-	@Override
-	public List<DistributiedLocalizedEntry> read(FilterData filterData) throws Exception {
-		return cloudDistributedDao.read(filterData);
-	}
-
-	@Override
-	public DistributiedLocalizedEntry update(DistributiedLocalizedEntry originalEntry, DistributiedLocalizedEntry updatedEntry) throws Exception {
-		return cloudDistributedDao.update(originalEntry, updatedEntry);
-	}
-
-	@Override
-	public DistributiedLocalizedEntry delete(DistributiedLocalizedEntry o) throws Exception {
-		return cloudDistributedDao.delete(o);
-	}
-
-	@Override
-	public void setContext(CatalogExcecutionContext context) {
-		cloudDistributedDao.setContext(context);
-	}
-
-	@Override
-	public CatalogExcecutionContext getContext() {
-		return cloudDistributedDao.getContext();
-	}
-
-	@Override
-	public DistributiedLocalizedEntry read(Object targetEntryId) throws Exception {
-		return cloudDistributedDao.read(targetEntryId);
-	}
 
 }

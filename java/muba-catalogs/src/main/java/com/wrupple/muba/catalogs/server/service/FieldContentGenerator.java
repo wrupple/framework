@@ -2,11 +2,11 @@ package com.wrupple.muba.catalogs.server.service;
 
 import java.util.List;
 
-import com.wrupple.muba.catalogs.server.service.CatalogPropertyAccesor.Session;
-import com.wrupple.vegetate.domain.CatalogDescriptor;
-import com.wrupple.vegetate.domain.CatalogEntry;
-import com.wrupple.vegetate.domain.FieldDescriptor;
-import com.wrupple.vegetate.server.chain.command.CatalogTransaction;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.server.chain.command.UserCommand;
+import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 
 /**
  * 
@@ -29,6 +29,6 @@ public interface FieldContentGenerator {
 	 * @return
 	 */
 	public List<? extends CatalogEntry> fetchFieldContents(Session accesor, CatalogDescriptor descriptor,FieldDescriptor localField,
-			CatalogDescriptor foreignCatalogDescriptor,CatalogTransaction dao) throws Exception;
+			CatalogDescriptor foreignCatalogDescriptor,UserCommand dao) throws Exception;
 
 }
