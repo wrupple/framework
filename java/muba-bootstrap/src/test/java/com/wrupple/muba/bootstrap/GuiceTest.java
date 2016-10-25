@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
+import com.wrupple.muba.BootstrapTest;
 import com.wrupple.muba.bootstrap.domain.Bootstrap;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContextImpl;
