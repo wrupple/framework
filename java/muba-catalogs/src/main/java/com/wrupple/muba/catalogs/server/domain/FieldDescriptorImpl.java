@@ -10,6 +10,7 @@ import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldWidget;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
+import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
 
 /**
  * 
@@ -33,7 +34,7 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 	@CatalogFieldWidget(widget="Widget")
 	private String widget;
 	@CatalogFieldWidget(widget="catalogPicker")
-	private String catalogId;
+	private String catalog;
 	private String fieldId,description,help, name, defaultValue, command, formula;
 
 	@CatalogField(ignore=true)
@@ -43,6 +44,7 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 	private List<Long> constraints;
 	private List<String> defaultValueOptions, properties;
 
+	@CatalogValue(foreignCatalog=FieldConstraint.CATALOG_ID)
 	private List<FieldConstraint> constraintsValues;
 	
 	
@@ -232,21 +234,24 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 	public void setFieldId(String id) {
 		this.fieldId = id;
 	}
+	
 
 	public void setDataType(int dataType) {
 		this.dataType = dataType;
 	}
+	
+	
 
 	public void setDefaultValueOptions(List<String> defaultValueOptions) {
 		this.defaultValueOptions = defaultValueOptions;
 	}
 
 	public void setCatalog(String foreignCatalog) {
-		this.catalogId = foreignCatalog;
+		this.catalog = foreignCatalog;
 	}
 	@Override
 	public String getCatalog() {
-		return catalogId;
+		return catalog;
 	}
 	public void setName(String name) {
 		this.name = name;

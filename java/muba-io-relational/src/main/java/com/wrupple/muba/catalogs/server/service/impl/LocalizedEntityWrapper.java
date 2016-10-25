@@ -98,8 +98,8 @@ public class LocalizedEntityWrapper implements DistributiedLocalizedEntry {
 	}
 
 	@Override
-	public String getImage() {
-		return entity.getImage();
+	public Long getImage() {
+		return (Long) entity.getImage();
 	}
 
 	@Override

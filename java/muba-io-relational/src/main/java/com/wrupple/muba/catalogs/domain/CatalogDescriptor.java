@@ -8,8 +8,9 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
 import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
+import com.wrupple.muba.bootstrap.domain.reserved.HasParent;
 
-public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor  {
+public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,HasParent<Long> {
 	public static final String CATALOG_ID = "CatalogDescriptor";
 	String MAIN_STORAGE_UNIT = "main";
 	String QUICK_STORAGE_UNIT = "quick";
@@ -20,8 +21,6 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor  {
 	String MAIN_CACHE = "index";
 	String SECURE = "secure";
 	
-	
-	public String getParent();
 	
 	public String getGreatAncestor();
 
@@ -94,5 +93,7 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor  {
 	public Class<? extends CatalogEntry> getJavaClass();
 	public void setAppliedSorts(List<? extends FilterDataOrdering> sorts);
 
-	
+	public void addTrigger(CatalogActionTrigger beforeIndexedTreeCreate);
+
+	public void setGreatAncestor(String greatAncestor);
 }

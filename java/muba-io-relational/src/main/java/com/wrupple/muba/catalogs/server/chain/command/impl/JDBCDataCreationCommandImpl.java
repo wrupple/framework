@@ -3,7 +3,6 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -94,7 +93,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		for (FieldDescriptor field : fields) {
 			column = tableNames.getColumnForField(context, catalogDescriptor, field);
 
-			if (column != null && !field.isEphemeral()) {
+			if (column != null && !field.isEphemeral() && (catalogDescriptor.isConsolidated()||!field.isInherited()||catalogDescriptor.getKeyField().equals(field.getFieldId()))) {
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {
@@ -164,13 +163,12 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 			}
 		}
+		log.trace("[CREATE DONE] {}/{} ",catalogDescriptor.getCatalog(),id);
+		
+		context.setCatalogDescriptor(catalogDescriptor);
 		context.setFilter(null);
 		context.setEntry(id);
 		read.execute(context);
-
-		CatalogEntry niu = context.getResult();
-
-		context.setResults(Collections.singletonList(niu));
 		return CONTINUE_PROCESSING;
 	}
 

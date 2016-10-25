@@ -60,11 +60,11 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 		FieldDescriptor trashableField = catalog.getFieldDescriptor(Trash.TRASH_FIELD);
 		read.execute(context);
 		List<CatalogEntry> originalEntries = context.getResults();
-		context.setResults(originalEntries);
+		Session session = accesor.newSession(originalEntries.get(0));
+
 		if (trashableField != null && trashableField.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE
 				&& context.getNamespaceContext().isRecycleBinEnabled()) {
 			log.trace("Trashing results");
-			Session session = accesor.newSession(originalEntries.get(0));
 
 			
 			for (CatalogEntry originalEntry : originalEntries) {
@@ -84,6 +84,28 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 			trigerer.execute(context);
 
 			// single or multiple delete
+			
+			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
+				context.getCatalogManager().getRead().execute(context);
+				Object parentEntityId = accesor.getAllegedParentId(context.getResult(), session);
+				// we are certain this catalog has a parent, otherwise this DAO would
+				// not be called
+				Long parentCatalogId = catalog.getParent();
+				CatalogActionContext childContext = context.getCatalogManager().spawn(context);
+				// if parent not found, asume it has been deleted previously
+				if (parentEntityId != null) {
+					// delegate deeper inheritance to another instance of an
+					// AncestorAware DAO
+					childContext.setCatalogDescriptor(childContext.getCatalogManager().getDescriptorForKey(parentCatalogId, childContext));
+					childContext.setEntry(parentEntityId);
+
+					context.getCatalogManager().getDelete().execute(childContext);
+
+				}
+
+			}
+			
+			
 			dao.execute(context);
 			CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 			for (CatalogEntry originalEntry : originalEntries) {
@@ -104,4 +126,5 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 		return CONTINUE_PROCESSING;
 	}
 
+	
 }

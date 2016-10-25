@@ -35,7 +35,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 	public boolean execute(Context ctx) throws Exception {
 		log.trace("start");
 		CatalogActionContext context = (CatalogActionContext) ctx;
-		if (!(context.getResults() == null||context.getResults().isEmpty())) {
+		if (!(context.getResults() == null || context.getResults().isEmpty())) {
 			CatalogDescriptor descriptor = context.getCatalogDescriptor();
 			String[][] joins = ImplicitJoinUtils.getJoins(context.getCatalogManager(), null, descriptor, null, context,
 					null);
@@ -87,7 +87,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 					} else {
 						reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
 						if (axs.isWriteableProperty(reservedField, sample, session)) {
-							log.trace("Working field {}", field.getFieldId());
+							log.trace("Working on to many relationship {}", field.getFieldId());
 							if (key == null) {
 								key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
 							}
@@ -101,8 +101,8 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 					}
 
 				} else if (field.isEphemeral()) {
-					if (axs.isWriteableProperty(field.getFieldId(), sample, session)) {
-						log.trace("Working field {}", field.getFieldId());
+					if (field.getFormula() == null) {
+						log.trace("Working many to one relationship {}", field.getFieldId());
 
 						reservedField = ImplicitJoinUtils.getIncomingForeignJoinableFieldId(joinCatalog,
 								mainCatalog.getCatalog());
@@ -123,8 +123,12 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 
 							axs.setPropertyValue(mainCatalog, reservedField, e, matches, session);
 						}
+					} else {
 
+						// FIXME evaluation? or is evaluation at result set
+						// construction a better deal?
 					}
+
 				}
 			}
 		}

@@ -152,7 +152,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 			if (values == null) {
 				results = runner.query(query, listrsh);
 			} else {
-				results = runner.query(query, listrsh, values);
+				results = runner.query(query, listrsh, values);//SQL DOES NOT SUPPORT OR QUERIES?
 			}
 		} catch (SQLException e) {
 			if (e.getErrorCode() == missingTableErrorCode) {
@@ -198,9 +198,10 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 							session = accessor.newSession(o);
 						}
 						log.trace("[DB secondary query for] {} ", o.getId());
-						// FIXME this is horrible, at lest use prepared
+						// FIXME this is terrible, at lest use prepared
 						// statements??
 						fieldValues = runner.query(queryL, handler, o.getId());
+						log.trace("[DB results for {}] {}",o.getId(),fieldValues==null?0:fieldValues.size());
 						accessor.setPropertyValue(catalogDescriptor, field, o, fieldValues, session);
 					}
 				}
@@ -276,7 +277,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 		if (criteriaSize > 0 || (this.multitenant && this.domainField != null)) {
 			filterStringBuffer.append(" WHERE ");
-			if (domain != null) {
+			if ( this.multitenant && this.domainField != null) {
 				filterStringBuffer.append(DELIMITER);
 				filterStringBuffer.append(this.domainField);
 				filterStringBuffer.append(DELIMITER);
@@ -312,9 +313,9 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 			if (i < valuesSize - 1) {
 				if (equals || FilterData.DIFFERENT.equals(operator)) {
-					buffer.append(" || ");
+					buffer.append(" OR ");
 				} else {
-					buffer.append(" && ");
+					buffer.append(" AND ");
 				}
 			}
 

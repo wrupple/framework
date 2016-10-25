@@ -43,16 +43,15 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	}
 
 	@Override
-	public void invokeTrigger(CatalogDescriptor catalog, CatalogKey entry, CatalogKey old, Map<String, String> properties, CatalogActionContext original,
+	public void invokeTrigger(CatalogDescriptor catalog, CatalogKey entry, CatalogKey old, Map<String, String> properties, CatalogActionContext context,
 			CatalogTrigger trigger) throws Exception {
 		log.trace("[INVOKE] {}",trigger);
 		String targetAction = trigger.getHandler();
 
-		Command command = original.getCatalogManager().getCommand(targetAction);
+		Command command = context.getCatalogManager().getCommand(targetAction);
 
 		log.trace("[TRIGGER COMMAND] {}",command);
 		String entryIdPointer = trigger.getEntry();
-		CatalogActionContext context = original.getCatalogManager().spawn(original);
 		Long stakeHolder = null;
 		if (trigger.isRunAsStakeHolder()) {
 			stakeHolder = (Long) trigger.getStakeHolder();
@@ -87,9 +86,6 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 				} else {
 				}
 			}
-			context.set(context.getDomain(), targetCatalogId, targetAction, entryIdPointer, synthesizedEntry, null);
-			context.setOldValues(original.getOldValues());
-			context.setResults(original.getResults());
 			if (command != null) {
 
 				if (rollback) {
@@ -114,7 +110,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 						}
 					}
 				} else {
-
+					log.debug("[EXCECUTING TRIGGER {}] CONTEXT= {} ",command,context);
+					command.execute(context);
 				}
 
 			}
@@ -124,7 +121,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			}
 		} finally {
 			if (stakeHolder != null) {
-				original.getExcecutionContext().getSession().releaseAuthority();
+				context.getExcecutionContext().getSession().releaseAuthority();
 			}
 
 		}

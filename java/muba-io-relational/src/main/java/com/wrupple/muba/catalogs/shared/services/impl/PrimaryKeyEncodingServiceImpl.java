@@ -19,7 +19,7 @@ public class PrimaryKeyEncodingServiceImpl implements PrimaryKeyEncodingService 
 		if(rawValue==null){
 			return null;
 		}
-		if (field.isMultiple()) {
+		if (field!=null && field.isMultiple()) {
 			List<Object> rawCollection = (List<Object>) rawValue;
 			List<String> encodedValues = new ArrayList<String>(
 					rawCollection.size());
@@ -38,7 +38,7 @@ public class PrimaryKeyEncodingServiceImpl implements PrimaryKeyEncodingService 
 			}
 			return encodedValues;
 		} else {
-			if(field.isKey()||field.getDataType()==CatalogEntry.INTEGER_DATA_TYPE){
+			if(field==null||field.isKey()||field.getDataType()==CatalogEntry.INTEGER_DATA_TYPE){
 				try{
 					return encodeLongKey((Long) rawValue);
 				}catch(Exception e){

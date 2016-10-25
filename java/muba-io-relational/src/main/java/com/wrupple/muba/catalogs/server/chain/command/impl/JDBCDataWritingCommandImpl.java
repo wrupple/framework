@@ -36,10 +36,12 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 	private final CatalogEvaluationDelegate accessor;
 	private final JDBCDataReadCommand read;
 	private final char DELIMITER;
+	private String parentKey;
 
 	@Inject
-	public JDBCDataWritingCommandImpl( JDBCDataReadCommand read,Provider<CatalogUpdateTransaction> write, QueryRunner runner, JDBCMappingDelegate tableNames, CatalogEvaluationDelegate accessor,@Named("catalog.sql.delimiter") Character delimiter) {
+	public JDBCDataWritingCommandImpl( JDBCDataReadCommand read,Provider<CatalogUpdateTransaction> write, QueryRunner runner, JDBCMappingDelegate tableNames, CatalogEvaluationDelegate accessor,@Named("catalog.ancestorKeyField") String parentKey,@Named("catalog.sql.delimiter") Character delimiter) {
 		super(write);
+		this.parentKey=parentKey;
 		this.DELIMITER=delimiter;
 		this.runner = runner;
 		this.accessor = accessor;
@@ -89,7 +91,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 					delete.append(DELIMITER);
 					delete.append(" WHERE ");
 					delete.append(DELIMITER);
-					delete.append( CatalogEntry.ANCESTOR_ID_FIELD);
+					delete.append(parentKey);
 					delete.append(DELIMITER);
 					delete.append("=");
 					delete.append(id);

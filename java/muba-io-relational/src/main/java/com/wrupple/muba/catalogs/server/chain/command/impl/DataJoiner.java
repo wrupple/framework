@@ -184,11 +184,11 @@ public abstract class DataJoiner implements Command {
 				log.trace("[CURRENT PATH TOKEN] {}", pathTOken);
 				if (i == 0) {
 					foreignCatalog = catalog.getFieldDescriptor(pathTOken).getCatalog();
-					log.trace("[CHANGE FOREIGN CATALOG]  {}", foreignCatalog);
+					log.trace("[CHANGE FOREIGN NUMERIC_ID]  {}", foreignCatalog);
 				} else {
 					CatalogDescriptor summaryDescriptor;
 					FieldDescriptor columnDescriptor;
-					log.trace("[find result set FOR FOREIGN CATALOG] ");
+					log.trace("[find result set FOR FOREIGN NUMERIC_ID] ");
 					for (CatalogColumnResultSet summary : joinsThusFar) {
 						summaryDescriptor = summary.getCatalogDescriptor();
 						if (foreignCatalog.equals(summaryDescriptor.getCatalog())) {
@@ -223,7 +223,7 @@ public abstract class DataJoiner implements Command {
 								}
 							}
 							foreignCatalog = columnDescriptor.getCatalog();
-							log.trace("[CHANGE FOREIGN CATALOG]  {}", foreignCatalog);
+							log.trace("[CHANGE FOREIGN NUMERIC_ID]  {}", foreignCatalog);
 						}
 					}
 				}

@@ -110,6 +110,9 @@ public class CatalogPeerImpl extends CatalogEntryImpl implements CatalogPeer {
 		return this.remoteStakeholder;
 	}
 	
-	
+	@Override
+	public String getCatalogType() {
+		return CATALOG;
+	}
 
 }

@@ -3,8 +3,8 @@ package com.wrupple.muba.catalogs.server.chain;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,6 +22,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.bootstrap.BootstrapModule;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.ParentServiceManifest;
@@ -37,6 +38,8 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
+import com.wrupple.muba.catalogs.domain.ContentNode;
+import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 import com.wrupple.muba.catalogs.domain.MathProblem;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
@@ -59,6 +62,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.UserCatalogPluginImpl;
 import com.wrupple.muba.catalogs.shared.services.CatalogEvaluationService;
 
@@ -177,8 +181,17 @@ public class CatalogEngineTest extends MubaTest {
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}
 
+	/**
+	 * <ol>
+	 * <li>create math problem catalog (with inheritance)</li>
+	 * <li></li>
+	 * <li></li>
+	 * </ol>
+	 * 
+	 * @throws Exception
+	 */
 	@Test
-	public void catalogCreate() throws Exception {
+	public void engineTest() throws Exception {
 
 		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 		log.trace("[-create catalog-]");
@@ -189,7 +202,8 @@ public class CatalogEngineTest extends MubaTest {
 
 		// is own parent or duplicated fields
 		CatalogDescriptor problemContract = builder.fromClass(MathProblem.class, MathProblem.class.getSimpleName(),
-				"Math Problem", 0);
+				"Math Problem", 0, builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG,
+						ContentNode.class.getSimpleName(), -1l, null));
 
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
 		action.setEntryValue(problemContract);
@@ -233,25 +247,59 @@ public class CatalogEngineTest extends MubaTest {
 		raw = catalogContext.get(CatalogResultSet.MULTIPLE_FOREIGN_KEY);
 		assertTrue(raw != null);
 		assertTrue(raw instanceof CatalogDescriptor);
-	}
-	
-	@Test
-	public void transactiondemarcation() {
-		//read value
-		//store old value
-		//change value
-		//start transaction
-		//update value
-		//delete another value
-		//create another value
-		//rollback transaction
-		//read value state all should be as before
-		fail("Not yet implemented");
+		
+
+		log.debug("-create math problem entry-");
+		excecutionContext.reset();
+		MathProblem problem = new MathProblem();
+		problem.setName(MathProblem.class.getSimpleName());
+		problem.setStatement(Arrays.asList("do","this"));
+		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
+				problemContract.getCatalog(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
+		excecutionContext.setServiceContract(contract);
+		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(),
+				CatalogActionRequest.CREATE_ACTION);
+
+		muba.getContextProcessingCommand().execute(excecutionContext);
+
+		problem = ((CatalogActionContext) excecutionContext.getServiceContext()).getResult();
+		assertTrue(problem.getId()!=null);
+		assertTrue(problem.getTimestamp()!=null);
+		
+		log.debug("-check if child was created-");
+		excecutionContext.reset();
+		
+		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,  ContentNode.CATALOG,
+				CatalogActionRequest.READ_ACTION, null, null, null, FilterDataUtils.newFilterData());
+		excecutionContext.setServiceContract(contract);
+		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+				CatalogActionRequest.LOCALE_FIELD, ContentNode.CATALOG, CatalogActionRequest.READ_ACTION);
+		
+		muba.getContextProcessingCommand().execute(excecutionContext);
+		
+		catalogContext = excecutionContext.getServiceContext();
+		
+		assertTrue(catalogContext.getResults()!=null);
+		assertTrue(catalogContext.getResults().size()==1);
+		assertTrue(catalogContext.getResults().get(0).getName().equals(problem.getName()));
+		
 	}
 
 
-	@Test
-	public void invalidEntry() {
+	/*@Test
+	public void multitenanttransactiondemarcation() {
+		// read value
+		// store old value
+		// change value
+		// start transaction
+		// update value
+		// delete another value
+		// create another value
+		// MULTITENANCY FAIL (you have permission to read an entry, you can
+		// delete entries you created but you can't create entries) rollback
+		// transaction
+		// read value state all should be as before
 		fail("Not yet implemented");
 	}
 
@@ -278,6 +326,6 @@ public class CatalogEngineTest extends MubaTest {
 	@Test
 	public void hardKeys() {
 		fail("Not yet implemented");
-	}
+	}*/
 
 }

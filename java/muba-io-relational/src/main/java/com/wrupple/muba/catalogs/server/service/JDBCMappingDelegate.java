@@ -27,6 +27,6 @@ public interface JDBCMappingDelegate {
 	
 	public void createForeignValueList(String foreignTableName, Long id, List<Object> fieldValue, QueryRunner runner, Logger log) throws SQLException ;
 
-	Object handleColumnField(ResultSet rs, int dataType, int columnIndex, DateFormat dateFormat) throws SQLException;
+	Object handleColumnField(ResultSet rs, FieldDescriptor field, int dataType, int columnIndex, DateFormat dateFormat) throws SQLException;
 
 }

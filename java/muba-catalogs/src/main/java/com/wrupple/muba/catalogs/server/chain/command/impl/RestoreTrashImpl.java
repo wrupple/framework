@@ -55,7 +55,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			all.setConstrained(false);
 			all.addOrdering(new FilterDataOrderingImpl(HasCatalogId.CATALOG_FIELD, false));
 
-			// READ ALL TRASH ITEMS ORDERED BY CATALOG TYPE
+			// READ ALL TRASH ITEMS ORDERED BY NUMERIC_ID TYPE
 			context.setFilter(all);
 			read.execute(context);
 			List<Trash> trash = context.getResults();

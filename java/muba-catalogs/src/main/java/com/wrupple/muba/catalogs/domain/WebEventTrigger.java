@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.bootstrap.domain.HasProperties;
 
-public interface WebEventTrigger extends CatalogTrigger,HasVanityId,HasProperties
+public interface WebEventTrigger extends CatalogTrigger,HasDistinguishedName,HasProperties
 {
 
 	String CATALOG = "WebEventTrigger";

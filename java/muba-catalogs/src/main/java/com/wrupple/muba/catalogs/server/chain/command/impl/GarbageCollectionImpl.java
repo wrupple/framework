@@ -105,7 +105,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 
 					if (temp.getFieldDescriptor(HasCatalogId.CATALOG_FIELD) != null
 							&& temp.getFieldDescriptor(HasEntryId.ENTRY_ID_FIELD) != null) {
-						// THIS CATALOG HAS A COMPOUND KEY GOING ON
+						// THIS NUMERIC_ID HAS A COMPOUND KEY GOING ON
 						if (garbageFilter == null) {
 							garbageFilter = FilterDataUtils.newFilterData();
 							garbageFilter.setConstrained(false);

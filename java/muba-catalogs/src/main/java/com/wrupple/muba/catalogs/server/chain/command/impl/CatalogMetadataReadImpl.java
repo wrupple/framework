@@ -29,12 +29,12 @@ public class CatalogMetadataReadImpl implements Command {
 		String action = (String) context.get(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
 		Object payload;
 		if (action == null) {
-			log.trace("[OUTPUT CATALOG NAMES]");
+			log.trace("[OUTPUT NUMERIC_ID NAMES]");
 			// list all domain catalogs
 
 			payload = context.getCatalogManager().getAvailableCatalogs(context);
 		} else {
-			log.trace("[OUTPUT CATALOG METADATA]");
+			log.trace("[OUTPUT NUMERIC_ID METADATA]");
 			// get full catalog descriptor
 			CatalogDescriptor descriptor = context.getCatalogManager().getDescriptorForName(action, context);
 			payload = descriptor;

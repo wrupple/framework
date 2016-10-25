@@ -60,11 +60,11 @@ public interface CatalogActionContext extends UserContext , HasParent<CatalogAct
 	
 	public <T  extends CatalogEntry> List<T> getResults();
 
-	public void setFilter(FilterData fd);
-
+	public  <T  extends CatalogEntry>  T getResult();
+	
 	public  <T  extends CatalogEntry>  void setResults(List<T> discriminated);
 
-	public  <T  extends CatalogEntry>  T getResult();
+	public void setFilter(FilterData fd);
 
 	public Exception getError();
 	

@@ -29,7 +29,7 @@ public class TrashDescriptor extends BaseCatalogEntryDescriptor {
 		putField(new FieldDescriptorImpl().makeKey(HasCatalogId.CATALOG_FIELD, "Catalog", CatalogDescriptor.CATALOG_ID,false));
 		putField(new FieldDescriptorImpl().makeKey(HasEntryId.ENTRY_ID_FIELD, "Entry", null,false));
 		putField(new FieldDescriptorImpl().makeDefault("restored", "Restore?", "checkBox", CatalogEntry.BOOLEAN_DATA_TYPE));
-		setParent(ContentNode.CATALOG);
+		setParent(ContentNode.NUMERIC_ID);
 	}
 
 }

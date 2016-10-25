@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.wrupple.muba.bootstrap.domain.AbstractContractDescriptor;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
@@ -22,79 +21,82 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
+import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
 import com.wrupple.muba.catalogs.domain.annotations.ConsistentFields;
 import com.wrupple.muba.catalogs.domain.annotations.InheritanceTree;
 import com.wrupple.muba.catalogs.server.chain.command.I18nProcessing;
 
 public class CatalogDescriptorImpl extends AbstractContractDescriptor implements CatalogDescriptor {
-	
+
 	private static final long serialVersionUID = 7222404658673284250L;
-	
-	
-	@CatalogKey(foreignCatalog=CatalogPeer.CATALOG)
+
+	@CatalogKey(foreignCatalog = CatalogPeer.CATALOG)
 	private Long peer;
-	
-	@CatalogKey(foreignCatalog=CatalogDescriptor.CATALOG_ID)
+
+	@CatalogKey(foreignCatalog = CatalogDescriptor.CATALOG_ID)
 	@InheritanceTree
-	private Long ancestor;
-	
-	@CatalogFieldValues(defaultValueOptions={"Map"})
+	private Long parent;
+
+	@CatalogFieldValues(defaultValueOptions = { "Map" })
 	private String clazz;
-	
-	@CatalogFieldValues(defaultValueOptions={MAIN_STORAGE_UNIT,QUICK_STORAGE_UNIT,LOCAL,LOCAL_KEY_VALUE_PAIR,LOCAL_CACHE,MAIN_CACHE,SECURE})
+
+	@CatalogFieldValues(defaultValueOptions = { MAIN_STORAGE_UNIT, QUICK_STORAGE_UNIT, LOCAL, LOCAL_KEY_VALUE_PAIR,
+			LOCAL_CACHE, MAIN_CACHE, SECURE })
 	private int storage;
-	
-	@CatalogFieldValues(defaultValueOptions={I18nProcessing.CONSOLIDATED,I18nProcessing.DISTRIBUTED})
+
+	@CatalogFieldValues(defaultValueOptions = { I18nProcessing.CONSOLIDATED, I18nProcessing.DISTRIBUTED })
 	private int localization;
-	
-	@CatalogFieldValues(defaultValueOptions={CatalogActionRequest.FULL_CACHE, CatalogActionRequest.QUERY_CACHE, CatalogActionRequest.NO_CACHE})
-	private int optimization  /* cachePolicy */;
-	
-	private boolean consolidated, revised, versioned/*
-								 * persisted with jdo strategy, no namespace,
-								 * saving domain data as a field
-								 */;
-	
+
+	@CatalogFieldValues(defaultValueOptions = { CatalogActionRequest.FULL_CACHE, CatalogActionRequest.QUERY_CACHE,
+			CatalogActionRequest.NO_CACHE })
+	private int optimization /* cachePolicy */;
+
+	private boolean consolidated, revised,
+			versioned/*
+						 * persisted with jdo strategy, no namespace, saving
+						 * domain data as a field
+						 */;
+
 	@ConsistentFields
-	@CatalogKey(foreignCatalog=FieldDescriptor.CATALOG_ID)
-	private List<Long> formFields;
-	
-	@CatalogKey(foreignCatalog=CatalogActionTrigger.CATALOG)
+	@CatalogKey(foreignCatalog = FieldDescriptor.CATALOG_ID)
+	private List<Long> fields;
+
+	@CatalogKey(foreignCatalog = CatalogActionTrigger.CATALOG)
 	private List<Long> triggers;
-	
-	private List<String>  sorts, criteria;
+
+	private List<String> sorts, criteria;
 
 	@CatalogField(ephemeral = true)
 	private List<CatalogActionTrigger> triggersValues;
-	
+
 	@CatalogField(ignore = true)
 	private int foreignKeyCount = -1;
-	
+
 	@CatalogField(ignore = true)
-	private String parentCatalogId, greatAncestor, greatDescendant, host;
-	
-	
+	private String  greatAncestor, greatDescendant, host;
+
 	@CatalogField(ignore = true)
 	private Class<? extends CatalogEntry> javaClass;
 
-	
 	@CatalogField(ignore = true)
-	
+
 	private List<FilterDataOrdering> appliedSorts;
-	
+
 	@CatalogField(ignore = true)
 	private List<? extends FilterCriteria> appliedCriteria;
-	
+
 	@CatalogField(ignore = true)
+	@CatalogValue(foreignCatalog=FieldDescriptor.CATALOG_ID)
 	protected Map<String, FieldDescriptor> fieldsValues;
-	
-	@CatalogField(filterable=true)
+
+	@CatalogField(filterable = true)
 	private String catalog;
 
 	public CatalogDescriptorImpl() {
 	}
 
-	public CatalogDescriptorImpl(String catalogId, Class<?> clazz, long numericId, String catalogName, FieldDescriptor... descriptors) {
+	public CatalogDescriptorImpl(String catalogId, Class<?> clazz, long numericId, String catalogName, Long parentId,
+			FieldDescriptor... descriptors) {
 		this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>();
 		if (descriptors != null) {
 			for (FieldDescriptor field : descriptors) {
@@ -103,7 +105,8 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 				}
 			}
 		}
-
+		setParent(parentId);
+		setConsolidated(parentId==null);
 		setDescriptiveField(CatalogEntry.NAME_FIELD);
 		setCatalog(catalogId);
 		setId(numericId);
@@ -121,6 +124,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	public final void setCatalog(String catalogId) {
 		this.catalog = catalogId;
 	}
+
 	/**
 	 * @return the clazz
 	 */
@@ -144,7 +148,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.revised = revised;
 		setVersioned(revised);
 	}
-
 
 	@Override
 	public int getForeignKeyCount() {
@@ -172,9 +175,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	@Override
 	public List<CatalogActionTrigger> getTriggersValues() {
-		if (triggersValues == null) {
-			triggersValues = new ArrayList<CatalogActionTrigger>(3);
-		}
 		return triggersValues;
 	}
 
@@ -190,8 +190,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	public void setTriggersValues(List<CatalogActionTrigger> triggersValues) {
 		this.triggersValues = triggersValues;
 	}
-
-
 
 	public void setConsolidated(boolean mergeAncestors) {
 		this.consolidated = mergeAncestors;
@@ -209,14 +207,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.peer = peer;
 	}
 
-	public Long getAncestor() {
-		return ancestor;
-	}
-
-	public void setAncestor(Long ancestor) {
-		parentCatalogId = null;
-		this.ancestor = ancestor;
-	}
 
 	public List<Long> getTriggers() {
 		return triggers;
@@ -246,21 +236,12 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.optimization = cachePolicy;
 	}
 
-	
-	public List<Long> getFormFields() {
-		return formFields;
+	public List<Long> getFields() {
+		return fields;
 	}
 
-	public void setFormFields(List<Long> formFields) {
-		this.formFields = formFields;
-	}
-
-	@Override
-	public Set<String> getFields() {
-		if (fieldsValues == null) {
-			return null;
-		}
-		return fieldsValues.keySet();
+	public void setFields(List<Long> formFields) {
+		this.fields = formFields;
 	}
 
 	@Override
@@ -270,7 +251,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		}
 		return fieldsValues.values();
 	}
-
 
 	public void setFieldsValues(Collection<FieldDescriptor> fieldsValues) {
 		if (fieldsValues == null) {
@@ -336,8 +316,8 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	@Override
 	public void putField(FieldDescriptor field) {
-		if(this.fieldsValues==null){
-			this.fieldsValues= new LinkedHashMap<String, FieldDescriptor>();
+		if (this.fieldsValues == null) {
+			this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>();
 		}
 		this.fieldsValues.put(field.getFieldId(), field);
 	}
@@ -351,12 +331,12 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	 * THIS NEEDS SOME CONTEXT
 	 */
 
-	public String getParent() {
-		return parentCatalogId;
+	public Long getParent() {
+		return parent;
 	}
 
-	public void setParent(String parent) {
-		this.parentCatalogId = parent;
+	public void setParent(Long parent) {
+		this.parent = parent;
 	}
 
 	public String getGreatAncestor() {
@@ -383,7 +363,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.host = host;
 	}
 
-
 	public void setFieldsValues(Map<String, FieldDescriptor> fieldsValues) {
 		this.fieldsValues = fieldsValues;
 	}
@@ -404,27 +383,39 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.appliedCriteria = appliedCriteria;
 	}
 
-
-
-
 	@Override
 	public Class<? extends CatalogEntry> getJavaClass() {
-		if(javaClass==null){
+		if (javaClass == null) {
 			try {
 				javaClass = (Class<? extends CatalogEntry>) Class.forName(getClazz());
 			} catch (ClassNotFoundException e) {
-				throw new KnownExceptionImpl(e.getMessage(),KnownException.UNAVAILABLE_METADATA,e);
+				throw new KnownExceptionImpl(e.getMessage(), KnownException.UNAVAILABLE_METADATA, e);
 			}
 		}
 		return javaClass;
 	}
 
+
 	@Override
 	public String toString() {
-		return "CatalogDescriptorImpl [fieldsValues=" + fieldsValues + ", getCatalog()=" + getCatalog() + "]";
+		return "CatalogDescriptorImpl [catalog=" + catalog +", fields=" + fields + ", fieldsValues=" + fieldsValues + "]";
 	}
 
-	
+	@Override
+	public Collection<String> getFieldsIds() {
+		return fieldsValues==null?null :fieldsValues.keySet();
+	}
+	@Override
+	public String getCatalogType() {
+		return CatalogDescriptor.CATALOG_ID;
+	}
 
-	
+	@Override
+	public void addTrigger(CatalogActionTrigger t) {
+		if (triggersValues == null) {
+			triggersValues = new ArrayList<CatalogActionTrigger>(3);
+		}
+		triggersValues.add(t);
+	}
+
 }

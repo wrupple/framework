@@ -18,7 +18,7 @@ public class CatalogActionRequestImpl extends CatalogEntryImpl implements Catalo
 	
 	
 	
-	public CatalogActionRequestImpl(String domain,String catalog,String action,String entry,String format,CatalogEntry catalogEntry,FilterData filterData) {
+	public CatalogActionRequestImpl(Long domain,String catalog,String action,String entry,String format,CatalogEntry catalogEntry,FilterData filterData) {
 		super();
 		this.entryValue = catalogEntry;
 		this.filter = (FilterDataImpl) filterData;
@@ -26,11 +26,11 @@ public class CatalogActionRequestImpl extends CatalogEntryImpl implements Catalo
 		this.format = format;
 		this.entry = entry;
 		this.catalog = catalog;
-		setDomain(Long.parseLong(domain));
+		setDomain(domain);
 		this.locale=LOCALE_FIELD;
 	}
 
-	public CatalogActionRequestImpl(String domain,String locale,String catalog,String action,String entry,String format,CatalogEntry catalogEntry,FilterDataImpl filter) {
+	public CatalogActionRequestImpl(Long domain,String locale,String catalog,String action,String entry,String format,CatalogEntry catalogEntry,FilterDataImpl filter) {
 		super();
 		this.entryValue = catalogEntry;
 		this.filter = filter;
@@ -38,7 +38,7 @@ public class CatalogActionRequestImpl extends CatalogEntryImpl implements Catalo
 		this.format = format;
 		this.entry = entry;
 		this.catalog = catalog;
-		setDomain(Long.parseLong(domain));
+		setDomain(domain);
 		this.locale=locale;
 	}
 
@@ -99,6 +99,10 @@ public class CatalogActionRequestImpl extends CatalogEntryImpl implements Catalo
 	@Override
 	public void setEntry(Object id) {
 		setEntry((String)id);
+	}
+	@Override
+	public String getCatalogType() {
+		return CATALOG;
 	}
 
 

@@ -52,24 +52,6 @@ public class SingleUserModule extends AbstractModule {
 		// used when building urls for outsiders
 		
 		bind(Boolean.class).annotatedWith(Names.named("system.multitenant")).toInstance(false);
-		bind(Class.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
-				.toInstance(HasAccesablePropertyValues.class);
-		bind(Class.class).annotatedWith(Names.named(FieldConstraint.CATALOG_ID))
-				.toInstance(HasAccesablePropertyValues.class);
-		bind(Class.class).annotatedWith(Names.named(LocalizedString.CATALOG))
-				.toInstance(HasAccesablePropertyValues.class);
-		bind(Class.class).annotatedWith(Names.named(Trash.CATALOG)).toInstance(HasAccesablePropertyValues.class);
-		bind(Class.class).annotatedWith(Names.named(CatalogActionTrigger.CATALOG))
-				.toInstance(CatalogActionTriggerImpl.class);
-		bind(Class.class).annotatedWith(Names.named(FieldDescriptor.CATALOG_ID))
-				.toInstance(FieldDescriptorImpl.class);
-		bind(Class.class).annotatedWith(Names.named(CatalogDescriptor.CATALOG_ID))
-				.toInstance(CatalogDescriptorImpl.class);
-		bind(Class.class).annotatedWith(Names.named(CatalogActionRequest.CATALOG))
-				.toInstance(CatalogActionRequestImpl.class);
-		bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);
-		
-		
 
 		/*
 		 * SERVICES

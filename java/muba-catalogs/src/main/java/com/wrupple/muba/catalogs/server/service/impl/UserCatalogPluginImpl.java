@@ -30,7 +30,7 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 			log.warn("System appears to be unconfigured");
 		}else{
 			for(CatalogDescriptor desc :  descs){
-				names.add(new CatalogIdentificationImpl(desc.getCatalog(), desc.getName(), desc.getImage()));
+				names.add(new CatalogIdentificationImpl(desc.getCatalog(), desc.getName(),(String) cctxontext.getCatalogManager().getKeyEncodingService().encodeClientPrimaryKeyFieldValue(desc.getImage(), null, null) ));
 			}
 		}
 	}
@@ -47,6 +47,18 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 		context.getCatalogManager().getRead().execute(context);
 		return  context.getResults();
 	}
+	
+	private CatalogDescriptor readCatalog(CatalogActionContext cctxontext, Long key,boolean assemble) throws Exception {
+
+		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
+		context.setCatalog(CatalogDescriptor.CATALOG_ID);
+		context.setEntry(key);
+		if(assemble){
+			context.put(CatalogReadTransaction.READ_GRAPH, assemble);
+		}
+		context.getCatalogManager().getRead().execute(context);
+		return  context.getResult();
+	}
 
 
 	@Override
@@ -60,7 +72,12 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 		}
 		CatalogDescriptor raw = descs.get(0);
 		
-		// FIXME DatabaseDomainDrivenServerModule BUILD CATALOG?
+		return raw;
+	}
+	
+	@Override
+	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws Exception {
+		CatalogDescriptor raw = (CatalogDescriptor) readCatalog(context, key, true);
 		
 		return raw;
 	}
@@ -74,5 +91,8 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 	public void postProcessCatalogDescriptor(CatalogDescriptor c) {
 
 	}
+
+
+	
 
 }

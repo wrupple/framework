@@ -144,7 +144,7 @@ public class HSQLTest extends MubaTest {
 		ExcecutionContext excecution = injector.getInstance(ExcecutionContext.class);
 		CatalogManager manager = injector.getInstance(CatalogManager.class);
 		context = (CatalogActionContext) manager.spawn(excecution);
-		catalog = builder.fromClass(Argument.class, "Argument", "Argument", 49723l);
+		catalog = builder.fromClass(Argument.class, "Argument", "Argument", 49723l,null);
 		context.setCatalogDescriptor(catalog);
 		context.setDomain(CatalogEntry.PUBLIC_ID);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");

@@ -47,7 +47,9 @@ public class CatalogActionTriggerHandlerImpl implements CatalogActionTriggerHand
 		} else {
 			int action;
 			boolean r;
-			for (CatalogActionTrigger trigger : triggers) {
+			CatalogActionTrigger trigger;
+			for (int i = 0 ;  i < triggers.size() ; i++) {
+				trigger = triggers.get(i);
 				action = trigger.getAction();
 				r = CONTINUE_PROCESSING;
 				switch (action) {

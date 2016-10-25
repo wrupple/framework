@@ -163,6 +163,11 @@ public class CatalogActionTriggerImpl extends CatalogEntryImpl implements Catalo
 		return getName()==null?getHandler():getName();
 	}
 
+	@Override
+	public String getCatalogType() {
+		return CatalogActionTrigger.CATALOG;
+	}
+
 	
 	
 	

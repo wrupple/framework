@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,6 +31,12 @@ import com.google.inject.Inject;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
+import com.wrupple.muba.bootstrap.domain.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasChildren;
+import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
+import com.wrupple.muba.bootstrap.domain.reserved.Versioned;
 import com.wrupple.muba.catalogs.domain.CacheInvalidationEvent;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
@@ -38,6 +45,9 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
+import com.wrupple.muba.catalogs.domain.ContentNode;
+import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
+import com.wrupple.muba.catalogs.domain.ContentRevision;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.catalogs.domain.FieldConstraint;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
@@ -57,10 +67,18 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
 import com.wrupple.muba.catalogs.server.chain.command.FieldDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
+import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
+import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
 import com.wrupple.muba.catalogs.server.chain.command.TrashDeleteTrigger;
+import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
 import com.wrupple.muba.catalogs.server.chain.command.ValidateUserData;
+import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionContextImpl;
+import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
+import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
@@ -69,15 +87,13 @@ import com.wrupple.muba.catalogs.server.service.RestoreTrash;
 import com.wrupple.muba.catalogs.shared.services.PrimaryKeyEncodingService;
 
 @Singleton
-public class CatalogManagerImpl extends CatalogBase implements CatalogManager, CatalogPlugin,JSRAnnotationsDictionary {
+public class CatalogManagerImpl extends CatalogBase implements CatalogManager, CatalogPlugin, JSRAnnotationsDictionary {
 
 	protected static final Logger log = LoggerFactory.getLogger(CatalogManagerImpl.class);
 
-	
-
 	private Provider<NamespaceContext> domainContextProvider;
 
-	private final  CatalogResultCache cache;
+	private final CatalogResultCache cache;
 
 	private final Command create;
 
@@ -99,7 +115,17 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	private final Provider<CatalogDescriptor> localizedStringProvider;
 	private final Provider<CatalogDescriptor> constraintProvider;
 	private final Provider<CatalogDescriptor> trashP;
-
+	private final Provider<CatalogDescriptor> revisionP;
+	private final CatalogDescriptorBuilder builder;
+	/*
+	 * Indexing
+	 */
+	private final CatalogActionTriggerImpl treeIndex;
+	private final CatalogActionTrigger timelineDiscriminator;
+	/*
+	 * versioning
+	 */
+	private final CatalogActionTriggerImpl versionTrigger;
 	/*
 	 * validation
 	 */
@@ -108,26 +134,60 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 
 	private ArrayList<String> asStringList;
 
+	private ArrayList<String> defaultVersioningTriggerproperties;
 
+	private CatalogActionTriggerImpl timestamp;
 
-	
-
+	private WritePublicTimelineEventDiscriminator inheritanceHandler;
 
 	@Inject
-	public CatalogManagerImpl(CatalogFactory factory,@Named("host") String host, Provider<NamespaceContext> domainContextProvider,
-			PrimaryKeyEncodingService keyEncodingService, CatalogResultCache cache,
-			CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write,
-			CatalogDeleteTransaction delete, GarbageCollection collect, ValidateUserData validate, RestoreTrash restore,
-			TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url,
+	public CatalogManagerImpl(CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host,
+			Provider<NamespaceContext> domainContextProvider, PrimaryKeyEncodingService keyEncodingService,
+			CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read,
+			CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect,
+			ValidateUserData validate, RestoreTrash restore, TrashDeleteTrigger dump,
+			CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url,
 			FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate,
-			EntryDeleteTrigger trash, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider,
-			@Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider,@Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider,
+			EntryDeleteTrigger trash,  UpdateTreeLevelIndex treeIndexHandler,Timestamper timestamper,
+			WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber,@Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider,
+			@Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider,
+			@Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider,
 			@Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider,
 			@Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider,
 			@Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider,
 			@Named(FieldConstraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider,
-			@Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP,@Named("catalog.plugins")Provider<Object> pluginProvider) {
+			@Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP,
+			@Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP,
+			@Named("catalog.plugins") Provider<Object> pluginProvider) {
 		super();
+		this.builder = builder;
+		versionTrigger = new CatalogActionTriggerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
+				null);
+		versionTrigger.setFailSilence(true);
+		versionTrigger.setStopOnFail(true);
+
+		treeIndex = new CatalogActionTriggerImpl(0, UpdateTreeLevelIndex.class.getSimpleName(), true, null, null, null);
+		treeIndex.setFailSilence(true);
+		treeIndex.setStopOnFail(true);
+		timelineDiscriminator = new CatalogActionTriggerImpl(0, WritePublicTimelineEventDiscriminator.class.getSimpleName(), false,
+				null, null, null);
+		timelineDiscriminator.setFailSilence(true);
+		timelineDiscriminator.setStopOnFail(true);
+		
+		timestamp = new CatalogActionTriggerImpl(0, Timestamper.class.getSimpleName(), true,
+				null, null, null);
+		timestamp.setFailSilence(false);
+		timestamp.setStopOnFail(true);
+		
+		
+		this.defaultVersioningTriggerproperties = new ArrayList<String>(5);
+		String putCatalogId = HasCatalogId.CATALOG_FIELD + "=" + CatalogActionRequest.CATALOG_FIELD;
+		String putEntryId = HasEntryId.ENTRY_ID_FIELD + "=" + CatalogEvaluationDelegate.SOURCE_OLD + ".id";
+		defaultVersioningTriggerproperties.add(Versioned.FIELD + "=" + CatalogEvaluationDelegate.SOURCE_OLD + "." + Versioned.FIELD);
+		defaultVersioningTriggerproperties.add(putEntryId);
+		defaultVersioningTriggerproperties.add(putCatalogId);
+		defaultVersioningTriggerproperties.add("value=" + CatalogEvaluationDelegate.SOURCE_OLD + "." + CatalogActionTrigger.SERIALIZED);
+
 		factory.addCatalog(CatalogActionRequest.CATALOG_ACTION_PARAMETER, this);
 		addCommand(CatalogDescriptorUpdateTrigger.class.getSimpleName(), invalidate);
 		addCommand(FieldDescriptorUpdateTrigger.class.getSimpleName(), invalidateAll);
@@ -136,16 +196,22 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		addCommand(RestoreTrash.class.getSimpleName(), restore);
 		addCommand(GarbageCollection.class.getSimpleName(), collect);
 		addCommand(CatalogActionRequest.CREATE_ACTION, create);
-		addCommand(CatalogActionRequest.READ_ACTION, create);
-		addCommand(CatalogActionRequest.WRITE_ACTION, create);
-		addCommand(CatalogActionRequest.DELETE_ACTION, create);
+		addCommand(CatalogActionRequest.READ_ACTION, read);
+		addCommand(CatalogActionRequest.WRITE_ACTION, write);
+		addCommand(CatalogActionRequest.DELETE_ACTION, delete);
 		addCommand(CatalogActionRequest.UPLOAD_ACTION, upload);
+		addCommand(IncreaseVersionNumber.class.getSimpleName(), increaseVersionNumber);
+		addCommand(UpdateTreeLevelIndex.class.getSimpleName(), treeIndexHandler);
+		this.inheritanceHandler=inheritanceHandler;
+		addCommand(WritePublicTimelineEventDiscriminator.class.getSimpleName(),inheritanceHandler);
+		addCommand(Timestamper.class.getSimpleName(),timestamper);
 		addCommand("url", url);
-		this.peerProvider=peerProvider;
+		this.peerProvider = peerProvider;
 		this.cache = cache;
 		this.domainContextProvider = domainContextProvider;
 		this.host = host;
 		this.fieldProvider = fieldProvider;
+		this.revisionP = revisionP;
 		this.catalogProvider = catalogProvider;
 		this.i18nProvider = i18nProvider;
 		this.triggerProvider = triggerProvider;
@@ -179,7 +245,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	public CatalogActionContext spawn(CatalogActionContext parent) {
 		return makeContext(parent.getExcecutionContext(), parent);
 	}
-	
+
 	@Override
 	public Context spawn(ExcecutionContext system) {
 		return makeContext(system, null);
@@ -229,7 +295,38 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		names.add(new CatalogIdentificationImpl(DistributiedLocalizedEntry.CATALOG, "Localized Entity",
 				"/static/img/locale.png"));
 		names.add(new CatalogIdentificationImpl(LocalizedString.CATALOG, "i18n", "/static/img/locale.png"));
+		names.add(new CatalogIdentificationImpl(ContentRevision.CATALOG, "Revision", "/static/img/revision.png"));
+		if (context.getNamespaceContext().isRecycleBinEnabled()) {
+			names.add(new CatalogIdentificationImpl(Trash.CATALOG, "Trash", "/static/img/trash.png"));
+		}
 	}
+	
+
+	@Override
+	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws Exception {
+		
+		long value = key.longValue();
+		log.trace("assemble catalog descriptor FOR KEY {} ", value);
+		CatalogDescriptor regreso = null ;
+		if(value==-1){
+				regreso = builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG,
+						ContentNode.class.getSimpleName(), -1l, null);
+		}
+		
+		if(regreso==null){
+			// POLLING plugins
+			for (CatalogPlugin plugin : plugins) {
+				log.trace("asking {} for descriptor", plugin);
+				regreso = plugin.getDescriptorForKey(key, context);
+				if (regreso != null) {
+					break;
+				}
+			}
+		}
+		
+		return processDescriptor(regreso.getCatalog(), regreso, context, cache);
+	}
+
 
 	@Override
 	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) throws Exception {
@@ -242,24 +339,25 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 						FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.getTriggersValues().add(trigger);
+				regreso.addTrigger(trigger);
 				trigger = new CatalogActionTriggerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.getTriggersValues().add(trigger);
+				regreso.addTrigger(trigger);
 				return regreso;
 			} else if (CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = catalogProvider.get();
-				CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1,CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
+				CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1,
+						CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.getTriggersValues().add(trigger);
+				regreso.addTrigger(trigger);
 				trigger = new CatalogActionTriggerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.getTriggersValues().add(trigger);
+				regreso.addTrigger(trigger);
 			} else if (CatalogPeer.CATALOG.equals(catalogId)) {
 				regreso = peerProvider.get();
 			} else if (DistributiedLocalizedEntry.CATALOG.equals(catalogId)) {
@@ -276,21 +374,30 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 						true, null, null, null);
 				trigger.setFailSilence(false);
 				trigger.setStopOnFail(false);
-				regreso.getTriggersValues().add(trigger);
+				regreso.addTrigger(trigger);
 				trigger = new CatalogActionTriggerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
 						null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.getTriggersValues().add(trigger);
+				regreso.addTrigger(trigger);
+			} else if (ContentNode.NUMERIC_ID.equals(catalogId)) {
+				regreso = builder.fromClass(ContentNodeImpl.class, ContentNode.class.getSimpleName(),
+						CatalogEntry.class.getSimpleName(), -1l, null);
+			} else if (ContentRevision.CATALOG.equals(catalogId)) {
+				return revisionP.get();
 			} else {
 				// POLLING plugins
 				for (CatalogPlugin plugin : plugins) {
-					log.trace("asking {} for descriptor",plugin);
+					log.trace("asking {} for descriptor", plugin);
 					regreso = plugin.getDescriptorForName(catalogId, context);
 					if (regreso != null) {
 						break;
 					}
 				}
+			}
+			
+			if (regreso == null) {
+				throw new IllegalArgumentException("No catalog plugin recognized catalogid: " + catalogId);
 			}
 
 			return processDescriptor(catalogId, regreso, context, cache);
@@ -300,24 +407,78 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		}
 	}
 
-	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor regreso, CatalogActionContext context,CatalogResultCache cache) {
-		if (regreso == null) {
-			throw new IllegalArgumentException("No catalog plugin recognized catalogid: "+name);
+	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context,
+			CatalogResultCache cache) throws Exception {
+
+		boolean versioned = catalog.getFieldDescriptor(Versioned.FIELD) != null;
+
+		if (versioned || catalog.isVersioned()) {
+			if (!versioned) {
+				// MUST HAVE VERSION FIELD
+				catalog.putField(new VersionFields());
+			}
+			catalog.addTrigger(getVersioningTrigger());
 		}
+
+		if (catalog.isRevised()) {
+			catalog.addTrigger(getRevisionTrigger(catalog));
+		}
+		if (catalog.getParent() != null) {
+			if (catalog.getGreatAncestor() == null) {
+				// find great ancestor
+				CatalogDescriptor parent = getDescriptorForKey(catalog.getParent(), context);
+
+				while (parent != null) {
+					catalog.setGreatAncestor(parent.getCatalog());
+					parent = parent.getParent() == null ? null : getDescriptorForKey(parent.getParent(), context);
+				}
+			}
+			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()
+					&& ContentNode.CATALOG.equals(catalog.getGreatAncestor())) {
+				
+				catalog.addTrigger(timestamp);
+				List<FilterDataOrdering> sorts = catalog.getAppliedSorts();
+				FilterDataOrderingImpl index;
+				if (sorts == null) {
+					sorts = new ArrayList<FilterDataOrdering>(5);
+					catalog.setAppliedSorts(sorts);
+				}
+				if (catalog.getFieldDescriptor(HasTimestamp.FIELD) != null) {
+					index = new FilterDataOrderingImpl(HasTimestamp.FIELD, false);
+					sorts.add(index);
+				}
+
+				FieldDescriptor field = catalog.getFieldDescriptor(HasChildren.FIELD);
+				
+				if(catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField())!=null&&catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField())!=null){
+					log.debug("catalog is public timeline");
+					catalog.addTrigger(afterCreateHandledTimeline());
+				}
+				
+				if (catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX) != null && field != null
+						&& catalog.getCatalog().equals(field.getCatalog())) {
+					index = new FilterDataOrderingImpl(ContentNode.CHILDREN_TREE_LEVEL_INDEX, true);
+					sorts.add(index);
+					// INDEXED TREE
+					catalog.addTrigger(beforeIndexedTreeCreate());
+					
+				}
+			}
+		}
+
 		for (CatalogPlugin interpret2 : plugins) {
 			log.trace("POST process {} IN {}", name, interpret2);
-			interpret2.postProcessCatalogDescriptor(regreso);
+			interpret2.postProcessCatalogDescriptor(catalog);
 		}
-		if (regreso.getHost() == null) {
+		if (catalog.getHost() == null) {
 			log.trace("locally bound catalog {} @ {}", name, host);
-			regreso.setHost(host);
+			catalog.setHost(host);
 		}
-		cache.put(context, DOMAIN_METADATA,name, regreso);
-		context.getTransactionHistory().didMetadataRead(regreso);
-		log.trace("BUILT catalog {}={}", name, regreso);
-		return regreso;
+		cache.put(context, DOMAIN_METADATA, name, catalog);
+		context.getTransactionHistory().didMetadataRead(catalog);
+		log.trace("BUILT catalog {}={}", name, catalog);
+		return catalog;
 	}
-
 	@Override
 	public List<CatalogIdentification> getAvailableCatalogs(CatalogActionContext context) throws Exception {
 		List<CatalogIdentification> names = new ArrayList<CatalogIdentification>();
@@ -342,7 +503,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
-		regreso.getTriggersValues().add(trigger);
+		regreso.addTrigger(trigger);
 
 		FieldDescriptor field = regreso.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
@@ -351,13 +512,10 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 					null);
 			trigger.setFailSilence(true);
 			trigger.setStopOnFail(true);
-			regreso.getTriggersValues().add(trigger);
+			regreso.addTrigger(trigger);
 		}
 
 	}
-
-
-
 
 	public CatalogPlugin[] getPlugins() {
 		return plugins;
@@ -426,7 +584,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 			asStringList = new ArrayList<String>(map.keySet());
 		}
 	}
-	
+
 	@Override
 	public ValidationExpression[] getValidations() {// TODO catalog field
 													// consistency
@@ -524,7 +682,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 				split = property.indexOf('=');
 				if (split > 0) {
 					element = property.substring(0, split);
-					value = property.substring(split + 1, property.length()-1);
+					value = property.substring(split + 1, property.length() - 1);
 					regreso.put(element, value);
 				}
 			}
@@ -538,12 +696,12 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		return cache;
 	}
 
-	
-	public  void addBroadcastable(CacheInvalidationEvent data, CatalogActionContext ctx) {
+	public void addBroadcastable(CacheInvalidationEvent data, CatalogActionContext ctx) {
 		if (data != null) {
 			if (data.getEntry() != null) {
 				ctx = ctx.getRootAncestor();
-				List<CacheInvalidationEvent> list = (List<CacheInvalidationEvent>) ctx.get(CacheInvalidationEvent.class.getSimpleName());
+				List<CacheInvalidationEvent> list = (List<CacheInvalidationEvent>) ctx
+						.get(CacheInvalidationEvent.class.getSimpleName());
 				if (list == null) {
 					list = new ArrayList<CacheInvalidationEvent>(2);
 					ctx.put(CacheInvalidationEvent.class.getName(), list);
@@ -554,16 +712,71 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		}
 	}
 
-	
-	
-	public  CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context){
-		CatalogResultCache cache =catalog.getOptimization() != 2 /* NO_CACHE */ ? context.getCatalogManager().getCache() : null;
-		
+	public CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context) {
+		CatalogResultCache cache = catalog.getOptimization() != 2/* NO_CACHE */ ? context.getCatalogManager().getCache()
+				: null;
+
 		if (cache == null) {
-			log.debug("[CATALOG DAO] NO CACHE");
-		}else{
+			log.debug("[NUMERIC_ID DAO] NO CACHE");
+		} else {
 		}
 		return cache;
 	}
 
+	private Object createEntry(CatalogActionContext context, Object foreignValue, String catalog) throws Exception {
+		// FIXME this is not batch at all, must be able to load a context with
+		// multile input entries, just like there is multiple results by default
+		context.setEntryValue(foreignValue);
+		context.getCatalogManager().getNew().execute(context);
+		return context.getResult().getId();
+	}
+
+	@Override
+	public Object createBatch(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
+			Object foreignValue) throws Exception {
+
+		context.setCatalog(field.getCatalog());
+		if (field.isMultiple()) {
+			Collection<CatalogEntry> entries = (Collection<CatalogEntry>) foreignValue;
+			List<Object> keys = new ArrayList<Object>(entries.size());
+			for (CatalogEntry entry : entries) {
+				if (entry.getId() == null) {
+					keys.add(createEntry(context, entry, field.getCatalog()));
+				} else {
+					keys.add(entry.getId());
+				}
+
+			}
+			return keys;
+		} else {
+			return createEntry(context, foreignValue, field.getCatalog());
+		}
+	}
+
+	private CatalogActionTrigger afterCreateHandledTimeline() {
+
+		return timelineDiscriminator;
+	}
+
+	private CatalogActionTrigger beforeIndexedTreeCreate() {
+		return treeIndex;
+	}
+
+	private CatalogActionTrigger getVersioningTrigger() {
+		return versionTrigger;
+	}
+
+	private CatalogActionTrigger getRevisionTrigger(CatalogDescriptor c) {
+		ArrayList<String> properties = new ArrayList<String>(5);
+
+		properties.addAll(this.defaultVersioningTriggerproperties);
+
+		properties.add("name=" + CatalogEvaluationDelegate.SOURCE_OLD + "." + c.getDescriptiveField());
+
+		CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1, CatalogActionRequest.CREATE_ACTION, true,
+				ContentRevision.CATALOG, properties, null);
+		trigger.setFailSilence(true);
+		trigger.setStopOnFail(true);
+		return trigger;
+	}
 }

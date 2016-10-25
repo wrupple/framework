@@ -15,6 +15,10 @@ public interface NamespaceContext extends Context,CatalogNamespace {
 	public void switchToUserDomain(CatalogActionContext context)throws Exception;
 	
 	boolean isMultitenant();
+
+	public void setNamespace(CatalogActionContext context);
+
+	public void unsetNamespace(CatalogActionContext context);
 	
 
 }

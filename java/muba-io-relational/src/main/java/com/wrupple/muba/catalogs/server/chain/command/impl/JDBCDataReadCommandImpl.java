@@ -47,7 +47,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		@Override
 		protected Object handleRow(ResultSet rs) throws SQLException {
 			int dataType = field.getDataType();
-			Object r = tableNames.handleColumnField(rs, dataType, 3, dateFormat);
+			Object r = tableNames.handleColumnField(rs, field,dataType, 3, dateFormat);
 			log.trace("[DB multiple field value read] {}={}", field.getFieldId(), r);
 			return r;
 		}
@@ -82,6 +82,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
+		log.trace("[START]");
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		StringBuilder builder = new StringBuilder(150);
 		CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
@@ -137,7 +138,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 				}
 			}
 		}
-
+		log.trace("[END]");
 		return CONTINUE_PROCESSING;
 	}
 

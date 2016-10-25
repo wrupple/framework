@@ -31,6 +31,12 @@ public class Argument extends CatalogEntryImpl implements CatalogEntry {
 	public void setValue(double value) {
 		this.value = value;
 	}
+
+
+	@Override
+	public String getCatalogType() {
+		return getClass().getSimpleName();
+	}
 	
 	
 

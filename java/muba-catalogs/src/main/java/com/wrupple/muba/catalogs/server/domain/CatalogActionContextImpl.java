@@ -68,7 +68,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	private Set<ConstraintViolation<?>> constraintViolations;
 	private CatalogDescriptor catalogDescriptor;
 
-	// not injectable, always construct with RequestScopedCOntext.spawn
+	// not injectable, always construct with CatalogManager.spawn
 	public CatalogActionContextImpl(CatalogManager manager, NamespaceContext domainContext,
 			ExcecutionContext requestContext, CatalogActionContext parentValue) {
 		this.catalogManager = manager;
@@ -248,8 +248,11 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public void setCatalog(String catalog) {
-		this.catalog = catalog;
-		this.catalogDescriptor=null;
+		if(this.catalog==null || ! this.catalog.equals(catalog)){
+			this.catalog = catalog;
+			this.catalogDescriptor=null;
+		}
+		
 	}
 
 	public SessionContext getSession() {

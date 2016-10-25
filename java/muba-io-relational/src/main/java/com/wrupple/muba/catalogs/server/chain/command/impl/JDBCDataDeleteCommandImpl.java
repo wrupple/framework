@@ -28,11 +28,13 @@ public class JDBCDataDeleteCommandImpl extends AbstractDataDeleteCommand impleme
 	private final QueryRunner runner;
 	private final char DELIMITER;
 	private final CatalogReadTransaction read;
+	private final String parentKey;
 
 	@Inject
 	public JDBCDataDeleteCommandImpl(QueryRunner runner, JDBCMappingDelegate tableNames,
-			CatalogCreateTransaction create, CatalogReadTransaction read,	@Named("catalog.sql.delimiter") Character delimiter) {
+			CatalogCreateTransaction create, CatalogReadTransaction read,@Named("catalog.ancestorKeyField") String parentKey,	@Named("catalog.sql.delimiter") Character delimiter) {
 		super(create);
+		this.parentKey=parentKey;
 		this.read = read;
 		this.runner = runner;
 		this.DELIMITER=delimiter;
@@ -65,7 +67,7 @@ public class JDBCDataDeleteCommandImpl extends AbstractDataDeleteCommand impleme
 					builder.append(DELIMITER);
 					builder.append(" WHERE ");
 					builder.append(DELIMITER);
-					builder.append(CatalogEntry.ANCESTOR_ID_FIELD);
+					builder.append(parentKey);
 					builder.append(DELIMITER);
 					builder.append("=?");
 					runner.update(builder.toString(), deleteKey);

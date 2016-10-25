@@ -37,9 +37,8 @@ public class CatalogEvaluationDelegateImpl implements CatalogEvaluationDelegate 
 
 	protected static final Logger log = LoggerFactory.getLogger(CatalogEvaluationDelegateImpl.class);
 
-	private static final Object SOURCE_OLD = "old";
-	private static final Object SOURCE_CONTEXT = "context";
-	private static final Object SOURCE_ENTRY = "entry";
+
+	private final String ancestorIdField;
 	private LargeStringFieldDataAccessObject lsdao;
 	private Provider<PersistentCatalogEntity> factory;
 	private final Pattern pattern;
@@ -47,7 +46,9 @@ public class CatalogEvaluationDelegateImpl implements CatalogEvaluationDelegate 
 
 	@Inject
 	public CatalogEvaluationDelegateImpl(@Named("template.pattern") Pattern pattern,
-			LargeStringFieldDataAccessObject lsdao, Provider<PersistentCatalogEntity> factory) {
+			@Named("catalog.ancestorKeyField") String ancestorIdField, LargeStringFieldDataAccessObject lsdao,
+			Provider<PersistentCatalogEntity> factory) {
+		this.ancestorIdField = ancestorIdField;
 		this.lsdao = lsdao;
 		this.pattern = pattern;
 		bean = new PropertyUtilsBean();
@@ -144,7 +145,7 @@ public class CatalogEvaluationDelegateImpl implements CatalogEvaluationDelegate 
 			return null;
 		}
 
-		public Object getPropertyValue(CatalogEntry object, String fieldId)
+		private Object getPropertyValue(CatalogEntry object, String fieldId)
 				throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 			return bean.getProperty(object, fieldId);
@@ -162,7 +163,8 @@ public class CatalogEvaluationDelegateImpl implements CatalogEvaluationDelegate 
 	@Override
 	public Object getPropertyValue(CatalogDescriptor catalog, FieldDescriptor field, CatalogEntry object,
 			DistributiedLocalizedEntry localizedObject, Session s) throws RuntimeException {
-		//log.trace("[READ PROPERTY] {}.{}", catalog.getCatalog(), field.getFieldId());
+		// log.trace("[READ PROPERTY] {}.{}", catalog.getCatalog(),
+		// field.getFieldId());
 		FieldAccessSession session = (FieldAccessSession) s;
 		/*
 		 * if(s==null){ session = new FieldAccessSession(entry instanceof
@@ -180,94 +182,107 @@ public class CatalogEvaluationDelegateImpl implements CatalogEvaluationDelegate 
 		 * TODO cache in catalog descriptor
 		 */
 		if (value == null) {
-			if (session.accesible) {
-				try {
-					value = doGetAccesibleProperty(object, fieldId);
-				} catch (ClassCastException e) {
-					try {
-						log.debug("Catalog Property Session Changed State", e);
-						session.accesible = false;
-						value = goBeanGet(session, object, fieldId);
-					} catch (IllegalArgumentException ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					} catch (IllegalAccessException ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					} catch (InvocationTargetException ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					} catch (IntrospectionException ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					} catch (NoSuchMethodException ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					}
-				}
-
-			} else {
-				try {
-					value = goBeanGet(session, object, fieldId);
-				} catch (IllegalArgumentException e) {
-					try {
-						log.debug("Catalog Property Session Changed State", e);
-						session.accesible = true;
-						value = doGetAccesibleProperty(object, fieldId);
-					} catch (Exception ee) {
-						
-						log.debug("Access", e);
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					}
-				} catch (IllegalAccessException e) {
-					try {
-						session.accesible = true;
-						value = doGetAccesibleProperty(object, fieldId);
-					} catch (Exception ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					}
-				} catch (InvocationTargetException e) {
-					try {
-						session.accesible = true;
-						value = doGetAccesibleProperty(object, fieldId);
-					} catch (Exception ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					}
-				} catch (IntrospectionException e) {
-					try {
-						session.accesible = true;
-						value = doGetAccesibleProperty(object, fieldId);
-					} catch (Exception ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					}
-				} catch (NoSuchMethodException e) {
-					try {
-						session.accesible = true;
-						value = doGetAccesibleProperty(object, fieldId);
-					} catch (Exception ee) {
-						throw new IllegalArgumentException(
-								"access field " + fieldId + "@" + (catalog != null ? catalog.getCatalog() : null), ee);
-					}
-				}
-			}
+			value = valuedoReadProperty(fieldId, session, object,false);
 			if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
 				value = lsdao.getStringValue(value);
 			}
 		}
 
-		//log.trace("[READ PROPERTY]     value = {}", value);
+		// log.trace("[READ PROPERTY] value = {}", value);
 		return value;
+	}
+
+	private Object valuedoReadProperty(String fieldId, FieldAccessSession session, CatalogEntry object, boolean silentFail) {
+		if (session.accesible) {
+			try {
+				return doGetAccesibleProperty(object, fieldId);
+			} catch (ClassCastException e) {
+				if(silentFail){
+					return null;
+				}
+				try {
+					log.debug("Catalog Property Session Changed State");
+					session.accesible = false;
+					return goBeanGet(session, object, fieldId);
+				} catch (IllegalArgumentException ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				} catch (IllegalAccessException ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				} catch (InvocationTargetException ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				} catch (IntrospectionException ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				} catch (NoSuchMethodException ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				}
+			}
+
+		} else {
+			try {
+				return goBeanGet(session, object, fieldId);
+			} catch (IllegalArgumentException e) {
+				if(silentFail){
+					return null;
+				}
+				try {
+					log.debug("Catalog Property Session Changed State");
+					session.accesible = true;
+					return doGetAccesibleProperty(object, fieldId);
+				} catch (Exception ee) {
+
+					log.debug("Access", e);
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				}
+			} catch (IllegalAccessException e) {
+				if(silentFail){
+					return null;
+				}
+				try {
+					session.accesible = true;
+					return doGetAccesibleProperty(object, fieldId);
+				} catch (Exception ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				}
+			} catch (InvocationTargetException e) {
+				if(silentFail){
+					return null;
+				}
+				try {
+					session.accesible = true;
+					return doGetAccesibleProperty(object, fieldId);
+				} catch (Exception ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				}
+			} catch (IntrospectionException e) {
+				if(silentFail){
+					return null;
+				}
+				try {
+					session.accesible = true;
+					return doGetAccesibleProperty(object, fieldId);
+				} catch (Exception ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				}
+			} catch (NoSuchMethodException e) {
+				if(silentFail){
+					return null;
+				}
+				try {
+					session.accesible = true;
+					return doGetAccesibleProperty(object, fieldId);
+				} catch (Exception ee) {
+					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
+				}
+			}
+		}
 	}
 
 	@Override
 	public void setPropertyValue(CatalogDescriptor catalog, FieldDescriptor field, CatalogEntry object, Object value,
 			Session s) throws Exception {
-		//log.trace("[WRITE PROPERTY] {}.{}", catalog.getCatalog(), field.getFieldId());
-		//log.trace("[WRITE PROPERTY]     value = {}", value);
+		// log.trace("[WRITE PROPERTY] {}.{}", catalog.getCatalog(),
+		// field.getFieldId());
+		// log.trace("[WRITE PROPERTY] value = {}", value);
 		FieldAccessSession session = (FieldAccessSession) s;
 		/*
 		 * if(s==null){ session = new FieldAccessSession(entry instanceof
@@ -432,8 +447,12 @@ public class CatalogEvaluationDelegateImpl implements CatalogEvaluationDelegate 
 	}
 
 	@Override
-	public boolean isWriteableProperty(String string, CatalogEntry sample, Session session) {
-		return false;
+	public boolean isWriteableProperty(String property, CatalogEntry entry, Session s) {
+		FieldAccessSession session = (FieldAccessSession) s;
+		if(session.accesible){
+			return true;
+		}
+		return bean.isWriteable(entry, property) ;
 	}
 
 	@Override
@@ -479,5 +498,111 @@ public class CatalogEvaluationDelegateImpl implements CatalogEvaluationDelegate 
 
 		}
 	}
+
+	/*
+	 * INHERITANCE
+	 */
+
+	@Override
+	public CatalogEntry synthesizeCatalogObject(CatalogEntry source, CatalogDescriptor catalog,
+			boolean excludeInherited, Session session, CatalogActionContext context) throws Exception {
+		context.getNamespaceContext().setNamespace(context);
+		CatalogEntry target = synthesize(catalog);
+
+		addPropertyValues(source, target, catalog, excludeInherited, session,(DistributiedLocalizedEntry) (source instanceof DistributiedLocalizedEntry ? source : null));
+		context.getNamespaceContext().unsetNamespace(context);
+		return target;
+	}
+
+	@Override
+	public void addPropertyValues(CatalogEntry source, CatalogEntry target, CatalogDescriptor catalog,
+			boolean excludeInherited, Session session, DistributiedLocalizedEntry localizedObject) throws Exception {
+		Collection<FieldDescriptor> fields = catalog.getFieldsValues();
+		String fieldId;
+		Object value;
+
+		for (FieldDescriptor field : fields) {
+			if (excludeInherited && field.isInherited()) {
+				// ignore
+			} else {
+				fieldId = field.getFieldId();
+				// ignore id fields
+				if (!(CatalogEntry.ID_FIELD.equals(fieldId))) {
+
+					value = getPropertyValue(catalog, field, source, localizedObject, session);
+					if (value != null) {
+						setPropertyValue(catalog, field, target, value, session);
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public Object getAllegedParentId(CatalogEntry result, Session session) {
+		return valuedoReadProperty(this.ancestorIdField, (FieldAccessSession) session, result,false);
+	}
+
+	@Override
+	public void addInheritedValuesToChild(CatalogEntry parentEntity, CatalogEntry regreso, Session session,
+			CatalogDescriptor childCatalog) throws Exception {
+		Collection<FieldDescriptor> fields = childCatalog.getFieldsValues();
+		for (FieldDescriptor field : fields) {
+			if (field.isInherited()) {
+				setPropertyValue(childCatalog, field, regreso, getPropertyValue(
+						childCatalog/*
+									 * actually belongs to a totally different
+									 * catalog, bus this implementation diesnt
+									 * really care so no need to FIXME ?
+									 */, field, regreso,
+						(DistributiedLocalizedEntry) (parentEntity instanceof DistributiedLocalizedEntry ? parentEntity
+								: null),
+						session), session);
+			}
+		}
+	}
+
+	@Override
+	public CatalogEntry readEntry(CatalogDescriptor catalogId, Object parentId, CatalogActionContext readParentEntry)
+			throws Exception {
+		readParentEntry.setCatalogDescriptor(catalogId);
+		readParentEntry.setEntry(parentId);
+		readParentEntry.setAction(CatalogActionRequest.READ_ACTION);
+		readParentEntry.setEntryValue(null);
+		readParentEntry.setFilter(null);
+
+		readParentEntry.getCatalogManager().getRead().execute(readParentEntry);
+
+		return readParentEntry.getResult();
+	}
+	
+	@Override
+	public CatalogEntry synthesizeChildEntity(Object parentEntityId, CatalogEntry o, Session session, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
+		CatalogEntry childEntity = synthesizeCatalogObject(o, catalog, true, session, context);
+		setPropertyValue(catalog, this.ancestorIdField, childEntity, parentEntityId, session);
+		return childEntity;
+	}
+
+	@Override
+	public void processChild(CatalogEntry childEntity, CatalogDescriptor parentCatalogId, Object parentEntityId, CatalogActionContext readParentEntry,
+			CatalogDescriptor catalog, Session session) throws Exception {
+
+		CatalogEntry parentEntity = readEntry(parentCatalogId, parentEntityId, readParentEntry);
+		// add inherited values to child Entity
+		if (parentEntity instanceof DistributiedLocalizedEntry) {
+			DistributiedLocalizedEntry localized=(DistributiedLocalizedEntry) parentEntity;
+			addPropertyValues(parentEntity, childEntity, parentCatalogId, false, session, localized);
+		} else {
+			addPropertyValues(parentEntity, childEntity, parentCatalogId, false, session, null);
+		}
+
+	}
+
+	@Override
+	public Object getPropertyForeignKeyValue(CatalogDescriptor catalogDescriptor, FieldDescriptor field, CatalogEntry e,
+			Session session) {
+		return valuedoReadProperty(field.getFieldId()+(field.isMultiple()?CatalogEntry.MULTIPLE_FOREIGN_KEY:CatalogEntry.FOREIGN_KEY), (FieldAccessSession) session, e, true);
+	}
+	
 
 }

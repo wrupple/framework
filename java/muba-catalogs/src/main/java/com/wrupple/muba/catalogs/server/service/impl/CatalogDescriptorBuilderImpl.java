@@ -34,28 +34,29 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 	protected static final Logger log = LoggerFactory.getLogger(CatalogDescriptorBuilderImpl.class);
 
-	public CatalogDescriptor fromClass(Class<?> clazz, String catalogId, String cataogName, long numericId) {
-		
+	public CatalogDescriptor fromClass(Class<?> clazz, String catalogId, String cataogName, long numericId,
+			CatalogDescriptor parent) {
+
 		List<Field> cll = new ArrayList<Field>();
 		Class<?> current = clazz;
 		Field[] declaredFields;
-		do{ 
+		do {
 			declaredFields = current.getDeclaredFields();
-			for(Field f : declaredFields){
-				if(!java.lang.reflect.Modifier.isStatic(f.getModifiers())){
+			for (Field f : declaredFields) {
+				if (!java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
 					cll.add(f);
 				}
-				
+
 			}
-		    current = current.getSuperclass();
-		}while(current!=null && Object.class!=current);
-		
+			current = current.getSuperclass();
+		} while (current != null && Object.class != current);
+
 		FieldDescriptorImpl[] descriptors = new FieldDescriptorImpl[cll.size()];
 
-		
 		String id, name, widget, foreignCatalog, defaultValue, formulaValue;
 		String[] defaultValueOptions, properties;
-		boolean multiple, key, ephemeral, ignore, sortable, filterable, createable, writeable, detailable, summary, localized;
+		boolean multiple, key, ephemeral, ignore, sortable, filterable, createable, writeable, detailable, summary,
+				localized;
 
 		int dataType;
 		FieldDescriptorImpl fieldDescriptor;
@@ -70,7 +71,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 		CatalogFieldFormula formula;
 		CatalogFieldWidget widgetAnnot;
 		CatalogFieldProperties props;
-		
+
 		Field field;
 		for (int i = 0; i < cll.size(); i++) {
 			field = cll.get(i);
@@ -91,9 +92,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			detailable = true;
 			summary = true;
 			localized = false;
-			ignore=false;
-
-			
+			ignore = false;
 
 			argument = field.getAnnotation(CatalogField.class);
 			defaultt = field.getAnnotation(CatalogFieldDefault.class);
@@ -102,7 +101,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			foreignValue = field.getAnnotation(CatalogValue.class);
 			formula = field.getAnnotation(CatalogFieldFormula.class);
 			widgetAnnot = field.getAnnotation(CatalogFieldWidget.class);
-			props=field.getAnnotation(CatalogFieldProperties.class);
+			props = field.getAnnotation(CatalogFieldProperties.class);
 
 			if (argument != null) {
 				ephemeral = argument.ephemeral();
@@ -112,28 +111,30 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 				writeable = argument.writeable();
 				detailable = argument.detailable();
 				summary = argument.summary();
-				ignore=argument.ignore();
+				ignore = argument.ignore();
 				localized = argument.localized();
 			}
 
 			if (foreignKey != null) {
-				foreignCatalog =foreignKey.foreignCatalog();
+				foreignCatalog = foreignKey.foreignCatalog();
 			}
-			if(foreignValue!=null){
+			if (foreignValue != null) {
 				foreignCatalog = foreignValue.foreignCatalog();
-				if(foreignCatalog==null){
-					throw new IllegalArgumentException("no foreign catalog specified for "+id);
+				if (foreignCatalog == null) {
+					throw new IllegalArgumentException("no foreign catalog specified for " + id);
 				}
-				if(!id.endsWith(CatalogEntry.FOREIGN_KEY)||!id.endsWith(CatalogEntry.FOREIGN_KEY)){
-					throw new IllegalArgumentException("Unknown Foreign Key Value Postfix");
+				if (id.endsWith(CatalogEntry.FOREIGN_KEY) || id.endsWith(CatalogEntry.MULTIPLE_FOREIGN_KEY)) {
+					ephemeral = true;
+				} else {
+					throw new IllegalArgumentException("Unknown Foreign Key Value Postfix:" + id);
 				}
-				ephemeral = true;
+
 			}
-			
+
 			if (widgetAnnot != null) {
 				widget = widgetAnnot.widget();
 			}
-			
+
 			if (defaultt != null) {
 				defaultValue = defaultt.defaultValue();
 			}
@@ -143,19 +144,17 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			}
 
 			if (formula != null) {
-				formulaValue =formula.formula();
+				formulaValue = formula.formula();
 			}
-			
-			if(props!=null){
+
+			if (props != null) {
 				properties = props.properties();
 			}
 
-
 			key = CatalogEntry.ID_FIELD.equals(id) || foreignCatalog != null;
-			
 
 			if (!ignore) {
-				
+
 				if (Collection.class.isAssignableFrom(declaringClass)) {
 					genericType = (ParameterizedType) field.getGenericType();
 					declaredGeneric = (Class<?>) genericType.getActualTypeArguments()[0];
@@ -166,7 +165,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 					multiple = false;
 					dataType = getDataType(id, declaringClass, clazz);
 				}
-				if (!(dataType < 0||java.lang.reflect.Modifier.isStatic(field.getModifiers()))) {
+				if (!(dataType < 0 || java.lang.reflect.Modifier.isStatic(field.getModifiers()))) {
 
 					if (ephemeral) {
 						fieldDescriptor = new FieldDescriptorImpl().makeEphemeral(id, name, foreignCatalog, multiple);
@@ -176,8 +175,8 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						if (defaultValueOptions != null) {
 							fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));
 						}
-						
-						if(properties!=null){
+
+						if (properties != null) {
 							fieldDescriptor.setProperties(Arrays.asList(properties));
 						}
 						fieldDescriptor.setCreateable(createable);
@@ -190,11 +189,11 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setSummary(summary);
 						fieldDescriptor.setWriteable(writeable);
 					} else if (key) {
-						
-						if(CatalogEntry.ID_FIELD.equals(id)){
+
+						if (CatalogEntry.ID_FIELD.equals(id)) {
 							fieldDescriptor = new PrimaryKeyField(false);
-						}else{
-							
+						} else {
+
 							fieldDescriptor = new FieldDescriptorImpl().makeKey(id, name, foreignCatalog, multiple);
 							if (widget != null) {
 								fieldDescriptor.setWidget(widget);
@@ -202,8 +201,8 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 							if (defaultValueOptions != null) {
 								fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));
 							}
-							
-							if(properties!=null){
+
+							if (properties != null) {
 								fieldDescriptor.setProperties(Arrays.asList(properties));
 							}
 							fieldDescriptor.setCreateable(createable);
@@ -216,18 +215,18 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 							fieldDescriptor.setSummary(summary);
 							fieldDescriptor.setWriteable(writeable);
 						}
-					} else if(id.equals(PersistentImageMetadata.IMAGE_FIELD)){
+					} else if (id.equals(PersistentImageMetadata.IMAGE_FIELD)) {
 						fieldDescriptor = new ImageField();
 						if (widget != null) {
 							fieldDescriptor.setWidget(widget);
 						}
 						fieldDescriptor.setMultiple(multiple);
-						
+
 						if (defaultValueOptions != null) {
 							fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));
 						}
-						
-						if(properties!=null){
+
+						if (properties != null) {
 							fieldDescriptor.setProperties(Arrays.asList(properties));
 						}
 						fieldDescriptor.setCreateable(createable);
@@ -263,13 +262,12 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						}
 						fieldDescriptor = new FieldDescriptorImpl().makeDefault(id, name, widget, dataType);
 						fieldDescriptor.setMultiple(multiple);
-						
-						
+
 						if (defaultValueOptions != null) {
 							fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));
 						}
-						
-						if(properties!=null){
+
+						if (properties != null) {
 							fieldDescriptor.setProperties(Arrays.asList(properties));
 						}
 						fieldDescriptor.setCreateable(createable);
@@ -282,27 +280,33 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setSummary(summary);
 						fieldDescriptor.setWriteable(writeable);
 					}
-					
-					
+					if (parent != null) {
+						if (parent.getFieldDescriptor(fieldDescriptor.getFieldId())!=null) {
+							fieldDescriptor.setInherited(true);
+							fieldDescriptor.setOwnerCatalogId(parent.getCatalog());
+						}
+					}
+
 					descriptors[i] = fieldDescriptor;
 				}
 
 			}
 
 		}
-		CatalogDescriptor regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName, descriptors);
-		
-		log.trace("[PARSED CATALOG DESCRIPTOR] {}",catalogId);
+		CatalogDescriptor regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName,parent==null?null: parent.getId(),
+				descriptors);
+		log.trace("[PARSED NUMERIC_ID DESCRIPTOR] {}", catalogId);
 		return regreso;
 
 	}
 
-
 	public static int getDataType(String fieldId, Class<?> fieldClass, Class<?> catalogClazz) {
 
-		if (Long.TYPE.equals(fieldClass) || Integer.TYPE.equals(fieldClass) || fieldClass.equals(Long.class) || fieldClass.equals(Integer.class)) {
+		if (Long.TYPE.equals(fieldClass) || Integer.TYPE.equals(fieldClass) || fieldClass.equals(Long.class)
+				|| fieldClass.equals(Integer.class)) {
 			return CatalogEntry.INTEGER_DATA_TYPE;
-		} else if (Number.class.isAssignableFrom(fieldClass) || Double.TYPE.equals(fieldClass) || Float.TYPE.equals(fieldClass)) {
+		} else if (Number.class.isAssignableFrom(fieldClass) || Double.TYPE.equals(fieldClass)
+				|| Float.TYPE.equals(fieldClass)) {
 			return CatalogEntry.NUMERIC_DATA_TYPE;
 		} else if (fieldClass.equals(String.class)) {
 			return CatalogEntry.STRING_DATA_TYPE;

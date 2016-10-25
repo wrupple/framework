@@ -9,8 +9,6 @@ import javax.validation.ConstraintViolation;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.generic.LookupCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -20,7 +18,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 @Singleton
 public  class CatalogCommandImpl extends LookupCommand  implements CatalogCommand {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogCommandImpl.class);
+
 	protected final CatalogEvaluationDelegate accessor;
 	
 	private final CatalogMetadataReadImpl mdataReader;

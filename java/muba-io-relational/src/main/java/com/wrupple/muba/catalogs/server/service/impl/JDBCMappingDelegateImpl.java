@@ -1,7 +1,9 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -37,15 +39,17 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	private final String LARGE_STRING;
 	private final String BLOB_TYPE;
 	private final char DELIMITER;
+	private String parentKey;
 
 	@Inject
-	public JDBCMappingDelegateImpl(@Named("catalog.sql.delimiter") Character delimiter,
-			@Named("catalog.sql.createTable") String cREATE_TABLE,
+	public JDBCMappingDelegateImpl(@Named("catalog.ancestorKeyField") String parentKey,
+			@Named("catalog.sql.delimiter") Character delimiter, @Named("catalog.sql.createTable") String cREATE_TABLE,
 			@Named("catalog.sql.booleanColumnDef") String dEFAULT_BOOLEAN_COLUMN_DEFINITION,
 			@Named("catalog.sql.primaryColumnDef") String pRIMARY_KEY_COLUMN_DEFINITION,
 			@Named("catalog.sql.foreignKeyColumnDef") String fOREIGN_KEY_COLUMN_DEFINITION,
 			@Named("catalog.sql.longStringType") String lARGE_STRING, @Named("catalog.sql.blobType") String bLOB_TYPE) {
 		super();
+		this.parentKey = parentKey;
 		DELIMITER = delimiter;
 		CREATE_TABLE = cREATE_TABLE;
 		PRIMARY_KEY_COLUMN_DEFINITION = pRIMARY_KEY_COLUMN_DEFINITION;
@@ -70,7 +74,11 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	@Override
 	public String getColumnForField(CatalogActionContext context, CatalogDescriptor catalogDescriptor,
 			FieldDescriptor field) {
-		return field.getFieldId();
+		if (field.isInherited() && catalogDescriptor.isConsolidated()) {
+			return null;
+		} else {
+			return field.getFieldId();
+		}
 	}
 
 	@Override
@@ -104,7 +112,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		String mainTable;
 		List<String> indexes = new ArrayList<String>();
 		for (FieldDescriptor field : fields) {
-			if (!field.isEphemeral() && !(CatalogEntry.PUBLIC.equals(field.getFieldId())
+			if (!field.isEphemeral() && (catalog.isConsolidated()||!field.isInherited()||catalog.getKeyField().equals(field.getFieldId()))&& !(CatalogEntry.PUBLIC.equals(field.getFieldId())
 					|| CatalogEntry.DRAFT_FIELD.equals(field.getFieldId()))) {
 
 				dbcDataType = getDataType(field);
@@ -130,7 +138,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexstmt.append(PRIMARY_KEY_COLUMN_DEFINITION);
 						indexstmt.append(", ");
 						indexstmt.append(DELIMITER);
-						indexstmt.append(CatalogEntry.ANCESTOR_ID_FIELD);
+						indexstmt.append(parentKey);
 						indexstmt.append(DELIMITER);
 						indexstmt.append(' ');
 						indexstmt.append(FOREIGN_KEY_COLUMN_DEFINITION);
@@ -150,7 +158,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexstmt.append(DELIMITER);
 						indexstmt.append(mainTable);
 						indexstmt.append('_');
-						indexstmt.append(CatalogEntry.ANCESTOR_ID_FIELD);
+						indexstmt.append(parentKey);
 						indexstmt.append(DELIMITER);
 						indexstmt.append(" ON ");
 						indexstmt.append(DELIMITER);
@@ -158,7 +166,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexstmt.append(DELIMITER);
 						indexstmt.append(" ( ");
 						indexstmt.append(DELIMITER);
-						indexstmt.append(CatalogEntry.ANCESTOR_ID_FIELD);
+						indexstmt.append(parentKey);
 						indexstmt.append(DELIMITER);
 						indexstmt.append(" )");
 						indexes.add(indexstmt.toString());
@@ -240,7 +248,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 
 		builder.append(" WHERE ");
 		builder.append(DELIMITER);
-		builder.append(CatalogEntry.ANCESTOR_ID_FIELD);
+		builder.append(parentKey);
 		builder.append(DELIMITER);
 		builder.append("=?");
 	}
@@ -262,7 +270,8 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		Object[] params = new Object[size * 3];
 		for (int i = 0; i < size; i++) {
 			if (fieldValue.get(i) == null) {
-				throw new NullPointerException("Foreign Value Lists may not contain null values");
+				throw new NullPointerException(
+						"Foreign Value Lists may not contain null values. table:" + foreignTableName);
 			}
 			if (i != 0) {
 				builder.append(',');
@@ -278,15 +287,20 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	}
 
 	@Override
-	public Object handleColumnField(ResultSet rs, int dataType, int columnIndex, DateFormat dateFormat)
-			throws SQLException {
+	public Object handleColumnField(ResultSet rs, FieldDescriptor field, int dataType, int columnIndex,
+			DateFormat dateFormat) throws SQLException {
 		Object r = null;
 		switch (dataType) {
 		case CatalogEntry.BOOLEAN_DATA_TYPE:
 			r = (Object) Boolean.valueOf(rs.getBoolean(columnIndex));
 			break;
 		case CatalogEntry.INTEGER_DATA_TYPE:
-			r = (Object) Long.valueOf(rs.getLong(columnIndex));
+			if (field.getDefaultValueOptions() == null || field.getDefaultValueOptions().isEmpty()) {
+				r = (Object) Long.valueOf(rs.getLong(columnIndex));
+			} else {
+				r = (Object) rs.getInt(columnIndex);
+			}
+
 			break;
 		case CatalogEntry.NUMERIC_DATA_TYPE:
 			r = (Object) Double.valueOf(rs.getDouble(columnIndex));
@@ -296,11 +310,12 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 			r = (Object) rs.getString(columnIndex);
 			break;
 		case CatalogEntry.DATE_DATA_TYPE:
-			try {
-				r = (Object) dateFormat.parse(rs.getString(columnIndex));
-			} catch (ParseException e) {
-				r = null;
+			Timestamp date = rs.getTimestamp(columnIndex);
+			if(date!=null){
+				r = Date.from(date.toInstant());// (Object)
+				// dateFormat.parse(rs.getString(columnIndex));
 			}
+			
 		}
 		return r;
 	}
@@ -320,7 +335,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 			}
 			break;
 		case CatalogEntry.DATE_DATA_TYPE:
-			r = "VARCHAR(32)";
+			r = "TIMESTAMP WITH TIME ZONE";// "VARCHAR(32)";
 			break;
 		case CatalogEntry.STRING_DATA_TYPE:
 			if (field.isKey()) {

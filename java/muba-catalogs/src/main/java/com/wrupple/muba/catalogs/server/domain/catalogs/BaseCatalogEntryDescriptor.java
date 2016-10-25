@@ -15,10 +15,10 @@ public class BaseCatalogEntryDescriptor extends CatalogDescriptorImpl {
 
 	@Inject
 	public BaseCatalogEntryDescriptor(PrimaryKeyField id,NameField name,AnonymouslyVisibleField publicField) {
-		super(CatalogEntry.class.getSimpleName(),null,serialVersionUID,CatalogEntry.class.getSimpleName(),id,name);
+		super(CatalogEntry.class.getSimpleName(),null,serialVersionUID,CatalogEntry.class.getSimpleName(),null,id,name,publicField);
 	}
 	
 	protected BaseCatalogEntryDescriptor(String pseudoUniqueId,long machineId,String humanId,Class<?> clazz,PrimaryKeyField id,NameField name,AnonymouslyVisibleField publicField) {
-		super(pseudoUniqueId,clazz,machineId,humanId,id,name);
+		super(pseudoUniqueId,clazz,machineId,humanId,null,id,name,publicField);
 	}
 }

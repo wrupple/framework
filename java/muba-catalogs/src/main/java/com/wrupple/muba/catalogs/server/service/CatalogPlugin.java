@@ -11,7 +11,19 @@ public interface CatalogPlugin  {
 	
 	CatalogDescriptor getDescriptorForName(String catalogId,CatalogActionContext context) throws Exception;
 
+
+	/**
+	 * Catalogs that can be inherited from must be accesible through a numeric key
+	 * 
+	 * @param key
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws Exception;
+
 	
+
 	//UserCommand getCatalogAction(String action,CatalogActionContext context);
 	
 	ValidationExpression[] getValidations();

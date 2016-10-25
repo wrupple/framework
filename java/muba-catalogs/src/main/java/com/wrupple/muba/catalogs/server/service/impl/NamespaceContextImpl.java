@@ -139,8 +139,8 @@ public class NamespaceContextImpl extends ContextBase implements NamespaceContex
 	}
 
 	@Override
-	public String getImage() {
-		return namespace.getImage();
+	public Long getImage() {
+		return (Long) namespace.getImage();
 	}
 
 	@Override
@@ -170,6 +170,16 @@ public class NamespaceContextImpl extends ContextBase implements NamespaceContex
 	@Override
 	public boolean isMultitenant() {
 		return multitenant;
+	}
+
+	@Override
+	public void setNamespace(CatalogActionContext context) {
+		
+	}
+
+	@Override
+	public void unsetNamespace(CatalogActionContext context) {
+		
 	}
 
 }
