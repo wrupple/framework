@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.wrupple.muba.BootstrapTest;
 import com.wrupple.muba.bootstrap.domain.Bootstrap;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContextImpl;
 import com.wrupple.muba.bootstrap.domain.Host;
@@ -49,8 +50,6 @@ public class ServiceInvocationTest extends BootstrapTest {
 		excecutionContext = new ExcecutionContextImpl(new PrintWriter(System.out), session, null);
 	}
 
-	// TODO //semantic service manifest // deposit 500 in AX, 200 in MC and show
-	// balance.
 	@Test
 	public void defaultVersion() throws Exception {
 		log.trace("[-defaultVersion-]");
