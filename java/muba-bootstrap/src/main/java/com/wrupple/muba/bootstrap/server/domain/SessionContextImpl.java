@@ -16,15 +16,15 @@ public class SessionContextImpl extends ContextBase implements SessionContext {
 	private final Person stakeHolderValue;
 	private final String peer;
 	private final Host peerValue;
-	private final boolean master;
+	private Long domain;
 	
-	public SessionContextImpl(long stakeHolder, Person stakeHolderValue, String peer, Host peerValue, boolean master) {
+	public SessionContextImpl(long stakeHolder, Person stakeHolderValue, String peer, Host peerValue,Long domain) {
 		super();
 		this.stakeHolder = stakeHolder;
 		this.stakeHolderValue = stakeHolderValue;
 		this.peer = peer;
 		this.peerValue = peerValue;
-		this.master = master;
+		this.domain=domain;
 	}
 	public Long getStakeHolder() {
 		return stakeHolder;
@@ -37,9 +37,6 @@ public class SessionContextImpl extends ContextBase implements SessionContext {
 	}
 	public Host getPeerValue() {
 		return peerValue;
-	}
-	public boolean isMaster() {
-		return master;
 	}
 	@Override
 	public void setStakeHolder(long stakeHolder) {
@@ -68,6 +65,10 @@ public class SessionContextImpl extends ContextBase implements SessionContext {
 	@Override
 	public boolean hasPermission(String string) {
 		return true;
+	}
+	@Override
+	public Long getDomain() {
+		return domain;
 	}
 	
 	

@@ -9,9 +9,9 @@ public interface FilterData {
 	public final String LESS = "<";
 	public final String GREATER = ">";
 	public final String DIFFERENT = "!=";
-	public final String IN = "IN"; // FilterOperator.IN
-	public final String CONTAINS_EITHER = "HAS";
 	public final String LIKE = "LIKE";
+	public final String IN = "IN"; 
+	public final String CONTAINS_EITHER = "HAS";
 	public final String REGEX = "REGEX";
 	public final String STARTS = "START";
 	public final String ENDS = "END";

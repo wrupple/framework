@@ -13,7 +13,6 @@ public interface CatalogEntry extends Entity {
 	public static final int STRING_DATA_TYPE = 51;
 	public static final int BOOLEAN_DATA_TYPE = 1001001;
 
-	public static final String ANCESTOR_ID_FIELD = "superAncestorHIdentity";
 
 	public static final long PUBLIC_ID = -1;
 	public static final String WRUPPLE = "Wrupple";
@@ -33,8 +32,9 @@ public interface CatalogEntry extends Entity {
 	void setDomain(Long domain);
 
 	/**
-	 * @return the id of the person or organization who is stake holder for this
-	 *         entry
+	 *  the GUID consists on a combination of domain, catalog, and id then
+	 * 
+	 * @return the identifier for the Organizational Unit (ou) this entry belongs to
 	 */
 	Object getDomain();
 

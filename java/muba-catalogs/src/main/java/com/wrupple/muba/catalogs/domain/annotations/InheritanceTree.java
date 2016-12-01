@@ -11,11 +11,11 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import com.wrupple.muba.catalogs.server.service.CatalogKeyConstraintValidator;
+import com.wrupple.muba.catalogs.server.service.CatalogInheritanceValidator;
 
 @Documented
 @Inherited
-@Constraint( validatedBy = CatalogKeyConstraintValidator.class )
+@Constraint( validatedBy = CatalogInheritanceValidator.class )
 @Target( { FIELD} )
 @Retention( RUNTIME )
 public @interface InheritanceTree {

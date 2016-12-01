@@ -1,12 +1,13 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.vegetate.domain.FilterData;
-import com.wrupple.vegetate.domain.structure.HasParentValue;
+import com.wrupple.muba.bootstrap.domain.FilterData;
+import com.wrupple.muba.bootstrap.domain.reserved.HasParentValue;
 
 public interface HumanActivityTracking extends HasParentValue<String,HumanActivityTracking> {
 	String PEER_FIELD = "peer";
 	String ALLOW_IN_EVALUATION_CONTEXT = "inScope:";
 	String PAGE = "page";
+	String CATALOG = "HumanActivityTracking";
 
 	String getExitActivity();
 	

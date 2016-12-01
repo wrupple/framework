@@ -13,7 +13,6 @@ import javax.transaction.UserTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
 import com.wrupple.muba.bootstrap.domain.TransactionHistory;
@@ -25,7 +24,7 @@ import com.wrupple.muba.catalogs.server.service.impl.UndoBasedTransactionDelegat
 import com.wrupple.muba.catalogs.server.service.impl.UndoBasedTransactionDelegate.UndoToken;
 
 public class CatalogUserTransactionImpl implements TransactionHistory {
-	protected Logger log = LoggerFactory.getLogger(MubaTest.class);
+	protected Logger log = LoggerFactory.getLogger(CatalogUserTransactionImpl.class);
 
 	private int status ;
 	private final UndoBasedTransactionDelegate history;
@@ -65,7 +64,7 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 		try {
 			history.rollback();
 		} catch (Exception e) {
-			// context.getSession().getRequestContext().addWarning("unable to
+			// context.getExcecutionContext().getSession().getRequestContext().addWarning("unable to
 			// completely rollback catalog action");
 		}
 
@@ -106,7 +105,7 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 	}
 	@Override
 	public void didMetadataRead(ContractDescriptor regreso) {
-		if (regreso != null && regreso.getCatalog() != null) {
+		if (regreso != null && regreso.getDistinguishedName() != null) {
 			history.didMetadataRead((CatalogDescriptor) regreso);
 		}
 	}

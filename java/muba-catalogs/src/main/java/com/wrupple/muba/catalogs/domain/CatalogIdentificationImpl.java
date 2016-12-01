@@ -46,14 +46,4 @@ public class CatalogIdentificationImpl implements CatalogIdentification {
 		return CatalogDescriptor.CATALOG_ID;
 	}
 
-	@Override
-	public String getIdAsString() {
-		return getId();
-	}
-
-	@Override
-	public void setIdAsString(String id) {
-		setId(id);
-	}
-
 }

@@ -1,7 +1,7 @@
 package com.wrupple.vegetate.server.chain.command;
 
-import com.wrupple.vegetate.domain.VegetateServiceManifest;
+import com.wrupple.muba.catalogs.domain.ServiceManifest;
 
-public interface SusriptionService extends VegetateServiceManifest {
+public interface SusriptionService extends ServiceManifest {
 
 }

@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.vegetate.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 
 public interface Organization extends CatalogEntry{
 	

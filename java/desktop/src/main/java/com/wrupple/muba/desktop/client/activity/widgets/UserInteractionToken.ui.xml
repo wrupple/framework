@@ -1,0 +1,10 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<g:InlineHTML styleName="request-toolbar-wrapper"
+		ui:field="wrapper">
+		<span class="request-toolbar-first" ui:field="firstSpan" />
+		<span class="request-toolbar-important" ui:field="nameSpan" />
+		<span class="request-toolbar-last" ui:field="lastSpan" />
+	</g:InlineHTML>
+</ui:UiBinder> 

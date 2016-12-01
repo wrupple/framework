@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer  xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
+	 type="com.wrupple.muba.bpm.client.activity.widget.Toolbar" serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="type" defaultPropertyValue="action">
+	<parent>
+		<property name="type"  />
+		<hint name="collapsible" value="true" />
+		<hint name="direction" valueEnum="com.wrupple.muba.desktop.client.activity.widgets.ContentPanel.ToolbarDirection" />
+		<hint name="size" value="0"/>
+	</parent>
+	<service id="ruler" creator="rulerToolbar">
+		<property name="rulerDescending" />
+		<property name="verticalScroll" />
+		<property name="horisontalScroll" />
+		<property name="rulerBucketSize" />
+		<property name="rulerBucketValue" />
+		<property name="viewportWidth" />
+		<property name="viewportHeight" />
+	</service>
+	<service id="action" creator="actionToolbar" >
+		<property name="renderPlaceChildren" />
+		<property name="cell" />
+	</service>
+	<service id="HTML" creator="htmlToolbar">
+		<property name="HTML" />
+	</service>
+	<service id="filterToolbar" creator="filterToolbar">
+		<property name="modelAlterationTarget" />
+		<property name="hideNewCriteriaButton" />
+		<property name="visibleFields"/>
+		<property name="label"/>
+		<property name="hideOperatorSymbol"/>
+	</service>
+	<service id="select" creator="cmsToolbar">
+		<property name="catalog" />
+		<property name="type" />
+		<property name="delegateTask" />
+	</service>
+	<service id="write" creator="cmsToolbar">
+		<property name="catalog" />
+		<property name="delegateTask" />
+	</service>
+	<service id="read" creator="cmsToolbar">
+		<property name="catalog" />
+		<property name="delegateTask" />
+	</service>
+	<service id="selectionModel" creator="selectionToolbar">
+	</service>
+
+	
+</servicer>

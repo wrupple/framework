@@ -85,7 +85,7 @@ public class UndoBasedTransactionDelegate {
 
 	public void didMetadataRead(CatalogDescriptor regreso) {
 		log.debug("[NEW INSPECT HISTORY TOKEN] result={}",regreso);
-		if (regreso != null && regreso.getCatalog() != null) {
+		if (regreso != null && regreso.getDistinguishedName() != null) {
 			history.add(new UndoToken(CatalogAction.READ, 1,null,null));
 		}
 	}

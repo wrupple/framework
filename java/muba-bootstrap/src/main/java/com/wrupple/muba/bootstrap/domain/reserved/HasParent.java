@@ -5,4 +5,6 @@ public interface HasParent<T> {
 	
 	T getParent();
 
+	
+	T spawnChild();
 }

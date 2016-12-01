@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd" 
+	type="com.wrupple.muba.desktop.client.services.presentation.BrowserSelectionModel"
+	serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="selectionModel" defaultPropertyValue="single">
+	<parent>
+		<!-- dictionary="commands"? so user can pick selection handler-->
+		<property name="selectionHandler"  default="commit" />
+	</parent>
+	<service id="NAME" typedConstant="true" creator="multipleSelection" />
+	<service id="NAME" typedConstant="true" creator="singleSelection" />
+</servicer>

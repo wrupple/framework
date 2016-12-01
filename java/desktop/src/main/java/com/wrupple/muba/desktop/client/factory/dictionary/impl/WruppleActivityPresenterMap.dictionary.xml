@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer  xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd" 
+	type="com.wrupple.muba.desktop.client.activity.widgets.ProcessPresenter"  serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="activityPresenter" defaultPropertyValue="nested">
+
+	<service id="tabbed" creator="tabbed"></service>
+	<service id="nested" creator="nested"/>
+	<!-- <service id="simple" creator="simpleActivityPresenter"/> -->
+
+</servicer>

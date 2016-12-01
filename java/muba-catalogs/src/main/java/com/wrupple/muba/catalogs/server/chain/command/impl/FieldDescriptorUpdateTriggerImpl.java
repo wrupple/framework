@@ -11,8 +11,8 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.server.chain.command.FieldDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 @Singleton
 public class FieldDescriptorUpdateTriggerImpl implements FieldDescriptorUpdateTrigger {
@@ -31,7 +31,7 @@ public class FieldDescriptorUpdateTriggerImpl implements FieldDescriptorUpdateTr
 		//TODO read catalog's owned fields and ¡¡ONLY!! if updated field is owned invalidate catalog descriptor cache
 		CatalogEntry updatedField=context.getOldValue();
 		if(updatedField==null){
-			updatedField=context.getResult();
+			updatedField=context.getEntryResult();
 		}
 		
 		
@@ -39,7 +39,7 @@ public class FieldDescriptorUpdateTriggerImpl implements FieldDescriptorUpdateTr
 		List<CatalogIdentification> names = context.getCatalogManager().getAvailableCatalogs(context);
 		
 		for(CatalogIdentification key: names){
-			cache.delete(context, CatalogManager.DOMAIN_METADATA,key.getId());
+			cache.delete(context, SystemCatalogPlugin.DOMAIN_METADATA,key.getId());
 		}
 		
 		return CONTINUE_PROCESSING;

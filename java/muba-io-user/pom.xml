@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.wrupple.muba</groupId>
+	<artifactId>muba-catalogs-mail</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0</version>
+	<name>Access Mailing server’s content as catalogs</name>
+	<properties>
+		<muba.version>1.0</muba.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.wrupple.muba</groupId>
+			<artifactId>muba-catalogs</artifactId>
+			<version>${muba.version}</version>
+		</dependency>
+
+
+		<!-- Read & Write -->
+
+	
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-email</artifactId>
+			<version>1.3.3</version>
+		</dependency>
+
+
+
+
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<!-- <testSourceDirectory>src/test</testSourceDirectory> -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<!-- ... any other configurations -->
+		</plugins>
+	</build>
+</project>

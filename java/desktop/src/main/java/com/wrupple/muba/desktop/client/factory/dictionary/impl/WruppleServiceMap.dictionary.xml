@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer  xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
+	 type="com.wrupple.muba.desktop.client.services.command.CommandService" serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="command" defaultPropertyValue="catalog">
+	<!-- CONTEXT SWITCH -->
+	<service id="COMMAND" creator="gotoActivity" typedConstant="true" >
+		<property name="targetActivity" />
+	</service>
+	<service id="currentPlace" creator="currentPlace" />
+	<service id="historyBack" creator="historyBack" />
+	<!--PROCESS SWITCH -->
+	<service id="processSwitch" creator="processSwitch" />
+	<!-- STATE INTERACTION -->
+	<service id="modifyDesktop" creator="modifyDesktop" />
+	<service id="modifyModel" creator="modifyModel"  >
+		<property name="modelAlterationFunction"  />
+	</service>
+	<service id="commit" creator="commitState" />
+	<!-- Command Services -->
+	<service id="catalog" creator="catalog">
+		<property name="catalog" />
+		<property name="action" />
+		<property name="entry" />
+		<property name="providerField" />
+		<property name="factoryMethod" />
+	</service>
+	<service id="callFunction" creator="excecuteJavascriptFuntion" >
+		<property name="function" />
+	</service>
+	<service id="readCurrentPlace" creator="readCurrentPlace" />
+</servicer>

@@ -7,11 +7,11 @@ import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 @Singleton
 public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigger {
@@ -32,7 +32,7 @@ public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigge
 			e=(List)context.getResults();
 		}
 		for(HasCatalogId i :e){
-			cache.delete(context, CatalogManager.DOMAIN_METADATA, i.getCatalog());
+			cache.delete(context, SystemCatalogPlugin.DOMAIN_METADATA, i.getCatalog());
 		}
 		
 		return CONTINUE_PROCESSING;

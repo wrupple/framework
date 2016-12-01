@@ -9,7 +9,7 @@ import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 
 public interface CatalogPlugin  {
 	
-	CatalogDescriptor getDescriptorForName(String catalogId,CatalogActionContext context) throws Exception;
+	CatalogDescriptor getDescriptorForName(String catalogId,CatalogActionContext context) throws RuntimeException;
 
 
 	/**
@@ -20,9 +20,8 @@ public interface CatalogPlugin  {
 	 * @return
 	 * @throws Exception 
 	 */
-	CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws Exception;
+	CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws RuntimeException;
 
-	
 
 	//UserCommand getCatalogAction(String action,CatalogActionContext context);
 	

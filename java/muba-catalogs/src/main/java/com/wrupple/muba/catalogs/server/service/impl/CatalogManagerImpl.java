@@ -22,7 +22,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.CatalogBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +29,14 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.CatalogKey;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
-import com.wrupple.muba.bootstrap.domain.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasChildren;
 import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
 import com.wrupple.muba.bootstrap.domain.reserved.Versioned;
-import com.wrupple.muba.catalogs.domain.CacheInvalidationEvent;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
@@ -45,16 +44,22 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
+import com.wrupple.muba.catalogs.domain.Constraint;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 import com.wrupple.muba.catalogs.domain.ContentRevision;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.catalogs.domain.FieldConstraint;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.domain.IsPinnable;
 import com.wrupple.muba.catalogs.domain.LocalizedString;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
+import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.domain.WebEventTrigger;
+import com.wrupple.muba.catalogs.domain.WrupleSVGDocument;
+import com.wrupple.muba.catalogs.domain.WruppleAudioMetadata;
+import com.wrupple.muba.catalogs.domain.WruppleFileMetadata;
+import com.wrupple.muba.catalogs.domain.WruppleVideoMetadata;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
@@ -71,7 +76,6 @@ import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
 import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
 import com.wrupple.muba.catalogs.server.chain.command.TrashDeleteTrigger;
 import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
-import com.wrupple.muba.catalogs.server.chain.command.ValidateUserData;
 import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionContextImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
@@ -79,15 +83,13 @@ import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
-import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
 import com.wrupple.muba.catalogs.server.service.RestoreTrash;
-import com.wrupple.muba.catalogs.shared.services.PrimaryKeyEncodingService;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 @Singleton
-public class CatalogManagerImpl extends CatalogBase implements CatalogManager, CatalogPlugin, JSRAnnotationsDictionary {
+public class CatalogManagerImpl extends CatalogBase implements  SystemCatalogPlugin {
 
 	protected static final Logger log = LoggerFactory.getLogger(CatalogManagerImpl.class);
 
@@ -102,8 +104,6 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	private final Command write;
 
 	private final Command delete;
-
-	private final PrimaryKeyEncodingService keyEncodingService;
 
 	private final String host;
 	private final CatalogPlugin[] plugins;
@@ -142,10 +142,10 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 
 	@Inject
 	public CatalogManagerImpl(CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host,
-			Provider<NamespaceContext> domainContextProvider, PrimaryKeyEncodingService keyEncodingService,
+			Provider<NamespaceContext> domainContextProvider, 
 			CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read,
 			CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect,
-			ValidateUserData validate, RestoreTrash restore, TrashDeleteTrigger dump,
+			RestoreTrash restore, TrashDeleteTrigger dump,
 			CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url,
 			FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate,
 			EntryDeleteTrigger trash,  UpdateTreeLevelIndex treeIndexHandler,Timestamper timestamper,
@@ -155,7 +155,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 			@Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider,
 			@Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider,
 			@Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider,
-			@Named(FieldConstraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider,
+			@Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider,
 			@Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP,
 			@Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP,
 			@Named("catalog.plugins") Provider<Object> pluginProvider) {
@@ -178,6 +178,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 				null, null, null);
 		timestamp.setFailSilence(false);
 		timestamp.setStopOnFail(true);
+		
 		
 		
 		this.defaultVersioningTriggerproperties = new ArrayList<String>(5);
@@ -219,7 +220,6 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		this.localizedStringProvider = localizedStringProvider;
 		this.plugins = (CatalogPlugin[]) pluginProvider.get();
 		this.trashP = trashP;
-		this.keyEncodingService = keyEncodingService;
 		this.create = create;
 		this.read = read;
 		this.write = write;
@@ -247,7 +247,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	}
 
 	@Override
-	public Context spawn(ExcecutionContext system) {
+	public CatalogActionContext spawn(ExcecutionContext system) {
 		return makeContext(system, null);
 	}
 
@@ -279,16 +279,11 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	}
 
 	@Override
-	public PrimaryKeyEncodingService getKeyEncodingService() {
-		return keyEncodingService;
-	}
-
-	@Override
 	public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) {
 		names.add(new CatalogIdentificationImpl(CatalogDescriptor.CATALOG_ID, "Catalogs", "/static/img/catalog.png"));
 		names.add(new CatalogIdentificationImpl(FieldDescriptor.CATALOG_ID, "Fields", "/static/img/fields.png"));
 		names.add(
-				new CatalogIdentificationImpl(FieldConstraint.CATALOG_ID, "Validation Data", "/static/img/check.png"));
+				new CatalogIdentificationImpl(Constraint.CATALOG_ID, "Validation Data", "/static/img/check.png"));
 		names.add(new CatalogIdentificationImpl(CatalogActionTrigger.CATALOG, "Action Triggers",
 				"/static/img/excecute.png"));
 		names.add(new CatalogIdentificationImpl(WebEventTrigger.CATALOG, "Web Triggers", "/static/img/excecute.png"));
@@ -303,7 +298,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	
 
 	@Override
-	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws Exception {
+	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws RuntimeException {
 		
 		long value = key.longValue();
 		log.trace("assemble catalog descriptor FOR KEY {} ", value);
@@ -324,12 +319,12 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 			}
 		}
 		
-		return processDescriptor(regreso.getCatalog(), regreso, context, cache);
+		return processDescriptor(regreso.getDistinguishedName(), regreso, context, cache);
 	}
 
 
 	@Override
-	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) throws Exception {
+	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) throws RuntimeException {
 		CatalogDescriptor regreso = cache.get(context, DOMAIN_METADATA, catalogId);
 		if (regreso == null) {
 			log.trace("assemble catalog descriptor {} ", catalogId);
@@ -366,7 +361,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 				regreso = triggerProvider.get();
 			} else if (LocalizedString.CATALOG.equals(catalogId)) {
 				regreso = localizedStringProvider.get();
-			} else if (FieldConstraint.CATALOG_ID.equals(catalogId)) {
+			} else if (Constraint.CATALOG_ID.equals(catalogId)) {
 				regreso = constraintProvider.get();
 			} else if (Trash.CATALOG.equals(catalogId)) {
 				regreso = trashP.get();
@@ -408,7 +403,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	}
 
 	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context,
-			CatalogResultCache cache) throws Exception {
+			CatalogResultCache cache) throws RuntimeException {
 
 		boolean versioned = catalog.getFieldDescriptor(Versioned.FIELD) != null;
 
@@ -429,7 +424,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 				CatalogDescriptor parent = getDescriptorForKey(catalog.getParent(), context);
 
 				while (parent != null) {
-					catalog.setGreatAncestor(parent.getCatalog());
+					catalog.setGreatAncestor(parent.getDistinguishedName());
 					parent = parent.getParent() == null ? null : getDescriptorForKey(parent.getParent(), context);
 				}
 			}
@@ -443,10 +438,15 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 					sorts = new ArrayList<FilterDataOrdering>(5);
 					catalog.setAppliedSorts(sorts);
 				}
+				if (catalog.getFieldDescriptor(IsPinnable.FIELD) != null) {
+					index = new FilterDataOrderingImpl(IsPinnable.FIELD, false);
+					sorts.add(index);
+				}
 				if (catalog.getFieldDescriptor(HasTimestamp.FIELD) != null) {
 					index = new FilterDataOrderingImpl(HasTimestamp.FIELD, false);
 					sorts.add(index);
 				}
+				
 
 				FieldDescriptor field = catalog.getFieldDescriptor(HasChildren.FIELD);
 				
@@ -456,7 +456,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 				}
 				
 				if (catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX) != null && field != null
-						&& catalog.getCatalog().equals(field.getCatalog())) {
+						&& catalog.getDistinguishedName().equals(field.getCatalog())) {
 					index = new FilterDataOrderingImpl(ContentNode.CHILDREN_TREE_LEVEL_INDEX, true);
 					sorts.add(index);
 					// INDEXED TREE
@@ -522,8 +522,8 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 	}
 
 	@Override
-	public Annotation buildAnnotation(FieldConstraint constraint) {
-		String name = constraint.getConstraint();
+	public Annotation buildAnnotation(Constraint constraint) {
+		String name = constraint.getDistinguishedName();
 		if (map == null) {
 			initialize();
 		}
@@ -552,19 +552,19 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		if (map == null) {
 			map = new LinkedHashMap<String, ValidationExpression>();
 			map.put(NotNull.class.getSimpleName(),
-					new ValidationExpression(NotNull.class, FieldConstraint.EVALUATING_VARIABLE,
-							FieldConstraint.EVALUATING_VARIABLE + "==null?\"{validator.null}\":null"));
+					new ValidationExpression(NotNull.class, Constraint.EVALUATING_VARIABLE,
+							Constraint.EVALUATING_VARIABLE + "==null?\"{validator.null}\":null"));
 			// fields must declare a "value" property specifiying min or max
 			// value
 			map.put(Min.class.getSimpleName(),
-					new ValidationExpression(Min.class, FieldConstraint.EVALUATING_VARIABLE + ",value",
-							FieldConstraint.EVALUATING_VARIABLE + "<value?\"{validator.min}\":null"));
+					new ValidationExpression(Min.class, Constraint.EVALUATING_VARIABLE + ",value",
+							Constraint.EVALUATING_VARIABLE + "<value?\"{validator.min}\":null"));
 			map.put(Max.class.getSimpleName(),
-					new ValidationExpression(Max.class, FieldConstraint.EVALUATING_VARIABLE + ",value",
-							FieldConstraint.EVALUATING_VARIABLE + ">value?\"{validator.max}\":null"));
+					new ValidationExpression(Max.class, Constraint.EVALUATING_VARIABLE + ",value",
+							Constraint.EVALUATING_VARIABLE + ">value?\"{validator.max}\":null"));
 			map.put(CAPTCHA.class.getSimpleName(),
-					new ValidationExpression(CAPTCHA.class, FieldConstraint.EVALUATING_VARIABLE,
-							FieldConstraint.EVALUATING_VARIABLE + "==null?\"{captcha.message}\":null"));
+					new ValidationExpression(CAPTCHA.class, Constraint.EVALUATING_VARIABLE,
+							Constraint.EVALUATING_VARIABLE + "==null?\"{captcha.message}\":null"));
 
 			CatalogPlugin[] catalogPlugins = getPlugins();
 
@@ -618,7 +618,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		private final Class<?> type;
 		private final Map<String, Object> properties;
 
-		public Defaults(Class<?> annotation, FieldConstraint constraint) {
+		public Defaults(Class<?> annotation, Constraint constraint) {
 			this.type = annotation;
 			if (constraint.getProperties() == null || constraint.getProperties().isEmpty()) {
 				properties = null;
@@ -662,7 +662,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		}
 
 		@SuppressWarnings("unchecked")
-		public static <A extends Annotation> A of(Class<A> annotation, FieldConstraint constraint) {
+		public static <A extends Annotation> A of(Class<A> annotation, Constraint constraint) {
 			return (A) Proxy.newProxyInstance(annotation.getClassLoader(), new Class[] { annotation },
 					new Defaults(annotation, constraint));
 		}
@@ -696,22 +696,6 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		return cache;
 	}
 
-	public void addBroadcastable(CacheInvalidationEvent data, CatalogActionContext ctx) {
-		if (data != null) {
-			if (data.getEntry() != null) {
-				ctx = ctx.getRootAncestor();
-				List<CacheInvalidationEvent> list = (List<CacheInvalidationEvent>) ctx
-						.get(CacheInvalidationEvent.class.getSimpleName());
-				if (list == null) {
-					list = new ArrayList<CacheInvalidationEvent>(2);
-					ctx.put(CacheInvalidationEvent.class.getName(), list);
-				}
-				log.trace("[stored catalog broadcast event to dispatch later...]");
-				list.add(data);
-			}
-		}
-	}
-
 	public CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context) {
 		CatalogResultCache cache = catalog.getOptimization() != 2/* NO_CACHE */ ? context.getCatalogManager().getCache()
 				: null;
@@ -728,7 +712,7 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		// multile input entries, just like there is multiple results by default
 		context.setEntryValue(foreignValue);
 		context.getCatalogManager().getNew().execute(context);
-		return context.getResult().getId();
+		return context.getEntryResult().getId();
 	}
 
 	@Override
@@ -778,5 +762,209 @@ public class CatalogManagerImpl extends CatalogBase implements CatalogManager, C
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 		return trigger;
+	}
+	
+	/*
+	 * KEY SERVICES
+	 */
+	
+
+	@Override
+	public Object encodeClientPrimaryKeyFieldValue(Object rawValue,
+			FieldDescriptor field, CatalogDescriptor catalog) {
+		if(rawValue==null){
+			return null;
+		}
+		if (field!=null && field.isMultiple()) {
+			List<Object> rawCollection = (List<Object>) rawValue;
+			List<String> encodedValues = new ArrayList<String>(
+					rawCollection.size());
+			boolean wasTested = false;
+			boolean expectLongValues = false;
+			for (Object rawCollectionValue : rawCollection) {
+				if (!wasTested) {
+					wasTested =true;
+					expectLongValues = rawCollectionValue instanceof Long;
+				}
+				if (expectLongValues) {
+					encodedValues.add(encodeLongKey((Long) rawCollectionValue));
+				} else {
+					encodedValues.add(String.valueOf(rawCollectionValue));
+				}
+			}
+			return encodedValues;
+		} else {
+			if(field==null||field.isKey()||field.getDataType()==CatalogEntry.INTEGER_DATA_TYPE){
+				try{
+					return encodeLongKey((Long) rawValue);
+				}catch(Exception e){
+					System.err.println("Unable to encode numeric key most likely already a String");
+					return String.valueOf(rawValue);
+				}
+				
+			}else{
+				return rawValue;
+			}
+		}
+	}
+
+	
+
+
+	@Override
+	public List<Object> decodePrimaryKeyFilters(List<Object> values) {
+		if(values!=null&&!values.isEmpty()){
+			try{
+				List<Object> ids = new ArrayList<Object>(values.size());
+				String raw;
+				for(int  i = 0; i< values.size(); i++){
+					raw = (String) values.get(i);
+					ids.add(decodeKey(raw));
+				}
+				return ids;
+			}catch(NumberFormatException e){
+				return values;
+			}catch(ClassCastException e){
+				return values;
+			}
+		}
+		return values;
+	}
+	
+	@Override
+	public boolean qualifiesForEncoding(FieldDescriptor field, CatalogDescriptor catalog) {
+		return field.isKey();
+	}
+
+	
+
+	@Override
+	public Long decodePrimaryKeyToken(String targetEntryId) {
+		if(targetEntryId==null){
+			return null;
+		}
+	
+		return decodeKey(targetEntryId);
+	}
+	
+	private String encodeLongKey(Long key) {
+		return Long.toString(key, 36);
+	}
+
+	
+	private Long decodeKey(String key) {
+		return Long.parseLong(key,36);
+	}
+
+	@Override
+	public boolean isPrimaryKey(String vanityId) {
+		/*if (StringUtils.isEmpty(str)) {
+            return false;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }*/
+		//lets try, shall we?
+        return true;
+	}
+	
+
+	public  String[][] getJoins(SystemCatalogPlugin serverSide,Object clientSide,CatalogDescriptor descriptor,String[][] customJoins, Object domain,String host) throws Exception {
+		// TODO configure how many levels/orders deep to go into for
+		// joinable fields
+
+		Collection<FieldDescriptor> thisCatalogFields = descriptor.getFieldsValues();
+		List<FieldDescriptor> thisCatalogJoinableFields = new ArrayList<FieldDescriptor>();
+		String foreignCatalogId;
+		String foreignField;
+		String localField;
+
+		// GATHER JOINABLE FIELDS
+
+		for (FieldDescriptor field : thisCatalogFields) {
+			if (isJoinableValueField(field)) {
+				thisCatalogJoinableFields.add(field);
+			}
+		}
+		int size = thisCatalogJoinableFields.size();
+		int customJoinsSize = customJoins == null ? 0 : customJoins.length;
+		// Generate join sentence
+		String[][] allJoinSentences = new String[size + customJoinsSize][];
+		FieldDescriptor currentJoinableField;
+		int i;
+		CatalogDescriptor foreign;
+		for (i = 0; i < size; i++) {
+			currentJoinableField = thisCatalogJoinableFields.get(i);
+			foreignCatalogId = currentJoinableField.getCatalog();
+			localField = null;
+			foreignField = null;
+			if(serverSide==null){
+				throw new RuntimeException("not implemented");
+				//foreign =clientSide.loadFromCache(host, (String)domain, foreignCatalogId);
+			}else{
+				foreign =serverSide.getDescriptorForName(foreignCatalogId,(CatalogActionContext) domain);
+			}
+			
+			if (currentJoinableField.isKey()) {
+				localField = currentJoinableField.getFieldId();
+				foreignField = getCatalogKeyFieldId(foreign);
+			} else if (currentJoinableField.isEphemeral()) {
+				localField = descriptor.getKeyField();
+				foreignField = getIncomingForeignJoinableFieldId(foreign,descriptor.getDistinguishedName());
+			}
+			if(localField==null){
+				localField=CatalogKey.ID_FIELD;
+			}
+			allJoinSentences[i] = new String[] { foreignCatalogId, foreignField, localField };
+		}
+		if (customJoins != null) {
+			for (String[] customJoinStatement : customJoins) {
+				allJoinSentences[i] = customJoinStatement;
+				i++;
+			}
+		}
+		return allJoinSentences;
+	}
+
+	public  String getIncomingForeignJoinableFieldId(CatalogDescriptor foreignDescriptor,String catalog) {
+		
+			Collection<FieldDescriptor> fields = foreignDescriptor.getFieldsValues();
+			String fieldsForeignCatalog;
+			for (FieldDescriptor field : fields) {
+				fieldsForeignCatalog = field.getCatalog();
+				if (catalog.equals(fieldsForeignCatalog)) {
+					return field.getFieldId();
+				}
+			}
+			throw new IllegalArgumentException("No fields in " + foreignDescriptor.getDistinguishedName()
+					+ " point to " + catalog);
+
+	}
+
+	private  String getCatalogKeyFieldId(CatalogDescriptor descriptor) {
+		if (descriptor == null) {
+			return CatalogEntry.ID_FIELD;
+		} else {
+			String keyField = descriptor.getKeyField();
+			if (keyField == null) {
+				// FIXME validate produced catalog descriptors properly when
+				// generated, recover from "poorly formed" persistent
+				// descriptors
+				return CatalogEntry.ID_FIELD;
+			} else {
+				return keyField;
+			}
+		}
+	}
+	
+	public  boolean isJoinableValueField(FieldDescriptor field) {
+		return (field.getCatalog() != null&& (field.isEphemeral()|| field.isKey() && !isFileField(field)));
+	}
+	
+	public  boolean isFileField(FieldDescriptor field){
+		String catalog = field.getCatalog();
+		return (field.isKey()&& catalog!=null && (catalog.equals(PersistentImageMetadata.CATALOG)||catalog.equals(WrupleSVGDocument.CATALOG)||catalog.equals(WruppleFileMetadata.CATALOG)||catalog.equals(WruppleAudioMetadata.CATALOG)||catalog.equals(WruppleVideoMetadata.CATALOG) ));
 	}
 }

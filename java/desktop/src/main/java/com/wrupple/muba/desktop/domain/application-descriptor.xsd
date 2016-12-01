@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.w3schools.com" xmlns="http://www.w3schools.com"
+	elementFormDefault="qualified">
+	<xs:include schemaLocation=""></xs:include>
+	<xs:complexType name="slice">
+		<xs:sequence>
+			<xs:element name="settings" type="settings" maxOccurs="1"
+				minOccurs="1" />
+			<xs:element name="items" type="app-itemList" maxOccurs="1"
+				minOccurs="1"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="settings">
+		<xs:sequence>
+			<xs:element name="definedGroups" type="app-defined-groups"
+				maxOccurs="1" minOccurs="0">
+			</xs:element>
+			<xs:element name="properties" type="item-property"
+				maxOccurs="unbounded" minOccurs="0">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="app-itemList">
+		<xs:sequence>
+			<xs:element name="item" type="app-item" maxOccurs="unbounded"
+				minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="app-defined-groups">
+		<xs:sequence>
+			<xs:element name="item" type="app-item" maxOccurs="unbounded"
+				minOccurs="0"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="app-item">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" maxOccurs="1"
+				minOccurs="1" />
+			<xs:element name="childMenu" type="item-menu" maxOccurs="1"
+				minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						if not null, all the child items of this item
+						will be appended to the named Modular Menu
+						specified in this tag
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="slice" type="xs:string" maxOccurs="1"
+				minOccurs="0"></xs:element>
+			<xs:element name="group" type="xs:string" maxOccurs="1"
+				minOccurs="0">
+			</xs:element>
+			<xs:element name="items" type="app-itemList" maxOccurs="1"
+				minOccurs="0">
+			</xs:element>
+			<xs:element name="property" minOccurs="0" type="item-property"
+				maxOccurs="unbounded"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="item-property">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" maxOccurs="1"
+				minOccurs="1" />
+			<xs:element name="value" type="xs:string" maxOccurs="1"
+				minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="item-notification">
+		<xs:sequence>
+			<xs:element name="service" type="xs:string" maxOccurs="1"
+				minOccurs="1" />
+			<xs:element name="state" type="notification-state"
+				maxOccurs="unbounded" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="item-slice">
+		<xs:sequence>
+			<xs:element name="refreshOnClick" type="xs:boolean"
+				maxOccurs="1" minOccurs="1" />
+			<xs:element name="name" type="xs:string" maxOccurs="unbounded"
+				minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="item-menu">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" maxOccurs="1"
+				minOccurs="1" />
+			<xs:element name="injectItems" type="xs:boolean"
+				maxOccurs="unbounded" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="notification-state">
+		<xs:sequence>
+			<xs:element name="status" type="xs:string" />
+			<xs:element name="icon" type="xs:string" />
+			<xs:element name="tooltip" type="xs:string" />
+			<xs:element name="href" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+
+
+	<xs:element name="slice" type="slice"></xs:element>
+</xs:schema>

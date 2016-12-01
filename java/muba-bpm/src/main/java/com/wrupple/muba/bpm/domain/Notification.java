@@ -2,15 +2,15 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.Date;
 
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.Location;
-import com.wrupple.vegetate.domain.CatalogEntry;
 
 
 /**
  * @author japi
  *
  */
-public interface Notification extends ProcessControlNode{
+public interface Notification extends ProcessRequest{
 
 	String CATALOG = "Notification";
 	

@@ -1,8 +1,8 @@
 package com.wrupple.muba.bootstrap.domain;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasLocale;
 
-public interface CatalogActionRequest extends CatalogEntry,HasLocale,HasEntryId,HasCatalogId{
+public interface CatalogActionRequest extends HasLocale,CatalogChangeEvent{
 
 	final String CATALOG = "CatalogAction";
 
@@ -37,8 +37,6 @@ public interface CatalogActionRequest extends CatalogEntry,HasLocale,HasEntryId,
 	String getFormat();
 
 	FilterData getFilter();
-
-	Object getEntryValue();
 
 	final String FULL_CACHE = "com.wrupple.fullcache";
 	final String QUERY_CACHE = "com.wrupple.querycache";

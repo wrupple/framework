@@ -2,10 +2,10 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.List;
 
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.vegetate.domain.HasCatalogId;
-import com.wrupple.vegetate.domain.HasEntryId;
-import com.wrupple.vegetate.domain.HasStakeHolder;
 
 public interface BusinessRule extends ContentNode, HasStakeHolder,HasCatalogId,HasEntryId {
 

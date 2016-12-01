@@ -42,7 +42,7 @@ public  class CatalogCommandImpl extends LookupCommand  implements CatalogComman
 			return mdataReader.execute(context);
 		}
 		
-		Set<ConstraintViolation<?>> violations = context.getConstraintViolations();
+		Set<ConstraintViolation<?>> violations = context.getExcecutionContext().getConstraintViolations();
 		if (violations == null || violations.isEmpty()) {
 			return	super.execute(context);
 		}else{

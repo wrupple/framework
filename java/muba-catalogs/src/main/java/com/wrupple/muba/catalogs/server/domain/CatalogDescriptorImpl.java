@@ -12,17 +12,16 @@ import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
-import com.wrupple.muba.bootstrap.domain.KnownException;
-import com.wrupple.muba.bootstrap.domain.KnownExceptionImpl;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
+import com.wrupple.muba.catalogs.domain.Constraint;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
-import com.wrupple.muba.catalogs.domain.annotations.ConsistentFields;
 import com.wrupple.muba.catalogs.domain.annotations.InheritanceTree;
 import com.wrupple.muba.catalogs.server.chain.command.I18nProcessing;
 
@@ -37,8 +36,10 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	@InheritanceTree
 	private Long parent;
 
-	@CatalogFieldValues(defaultValueOptions = { "Map" })
-	private String clazz;
+	private boolean typed;
+
+	@CatalogField(ignore = true)
+	private Class<? extends CatalogEntry> clazz;
 
 	@CatalogFieldValues(defaultValueOptions = { MAIN_STORAGE_UNIT, QUICK_STORAGE_UNIT, LOCAL, LOCAL_KEY_VALUE_PAIR,
 			LOCAL_CACHE, MAIN_CACHE, SECURE })
@@ -57,9 +58,14 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 						 * domain data as a field
 						 */;
 
-	@ConsistentFields
 	@CatalogKey(foreignCatalog = FieldDescriptor.CATALOG_ID)
 	private List<Long> fields;
+	
+	@CatalogKey(foreignCatalog = Constraint.CATALOG_ID)
+	private List<Long> constraints;
+	
+	@CatalogKey(foreignCatalog = Constraint.CATALOG_ID)
+	private List<Constraint> constraintsValues;
 
 	@CatalogKey(foreignCatalog = CatalogActionTrigger.CATALOG)
 	private List<Long> triggers;
@@ -73,7 +79,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	private int foreignKeyCount = -1;
 
 	@CatalogField(ignore = true)
-	private String  greatAncestor, greatDescendant, host;
+	private String greatAncestor, greatDescendant, host;
 
 	@CatalogField(ignore = true)
 	private Class<? extends CatalogEntry> javaClass;
@@ -86,16 +92,18 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	private List<? extends FilterCriteria> appliedCriteria;
 
 	@CatalogField(ignore = true)
-	@CatalogValue(foreignCatalog=FieldDescriptor.CATALOG_ID)
+	@CatalogValue(foreignCatalog = FieldDescriptor.CATALOG_ID)
 	protected Map<String, FieldDescriptor> fieldsValues;
 
 	@CatalogField(filterable = true)
-	private String catalog;
+	private String distinguishedName;
+
+	private Long version;
 
 	public CatalogDescriptorImpl() {
 	}
 
-	public CatalogDescriptorImpl(String catalogId, Class<?> clazz, long numericId, String catalogName, Long parentId,
+	public CatalogDescriptorImpl(String catalogId, Class<? extends CatalogEntry> clazz, long numericId, String catalogName, Long parentId,
 			FieldDescriptor... descriptors) {
 		this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>();
 		if (descriptors != null) {
@@ -106,31 +114,41 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 			}
 		}
 		setParent(parentId);
-		setConsolidated(parentId==null);
+		setConsolidated(parentId == null);
 		setDescriptiveField(CatalogEntry.NAME_FIELD);
-		setCatalog(catalogId);
+		setDistinguishedName(catalogId);
 		setId(numericId);
 		setKeyField(CatalogEntry.ID_FIELD);
 		setDescriptiveField(CatalogEntry.NAME_FIELD);
 		setName(catalogName);
+		setClazz(clazz);
 		if (clazz != null)
-			setClazz(clazz.getCanonicalName());
+			this.setTyped(PersistentCatalogEntity.class.equals(clazz));
 	}
 
-	public final String getCatalog() {
-		return catalog;
+	public List<Long> getConstraints() {
+		return constraints;
 	}
 
-	public final void setCatalog(String catalogId) {
-		this.catalog = catalogId;
+	public void setConstraints(List<Long> constraints) {
+		this.constraints = constraints;
 	}
 
-	/**
-	 * @return the clazz
-	 */
+	public List<Constraint> getConstraintsValues() {
+		return constraintsValues;
+	}
+
+	public void setConstraintsValues(List<Constraint> constraintsValues) {
+		this.constraintsValues = constraintsValues;
+	}
+
 	@Override
-	public String getClazz() {
-		return clazz;
+	public final String getDistinguishedName() {
+		return distinguishedName;
+	}
+
+	public final void setDistinguishedName(String catalogId) {
+		this.distinguishedName = catalogId;
 	}
 
 	@Override
@@ -178,15 +196,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		return triggersValues;
 	}
 
-	/**
-	 * @param clazz
-	 *            the clazz to set
-	 */
-	@Override
-	public void setClazz(String clazz) {
-		this.clazz = clazz;
-	}
-
 	public void setTriggersValues(List<CatalogActionTrigger> triggersValues) {
 		this.triggersValues = triggersValues;
 	}
@@ -206,7 +215,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	public void setPeer(Long peer) {
 		this.peer = peer;
 	}
-
 
 	public List<Long> getTriggers() {
 		return triggers;
@@ -384,27 +392,16 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	}
 
 	@Override
-	public Class<? extends CatalogEntry> getJavaClass() {
-		if (javaClass == null) {
-			try {
-				javaClass = (Class<? extends CatalogEntry>) Class.forName(getClazz());
-			} catch (ClassNotFoundException e) {
-				throw new KnownExceptionImpl(e.getMessage(), KnownException.UNAVAILABLE_METADATA, e);
-			}
-		}
-		return javaClass;
-	}
-
-
-	@Override
 	public String toString() {
-		return "CatalogDescriptorImpl [catalog=" + catalog +", fields=" + fields + ", fieldsValues=" + fieldsValues + "]";
+		return "CatalogDescriptorImpl [distinguishedName=" + distinguishedName + ", fields=" + fields
+				+ ", fieldsValues=" + fieldsValues + "]";
 	}
 
 	@Override
 	public Collection<String> getFieldsIds() {
-		return fieldsValues==null?null :fieldsValues.keySet();
+		return fieldsValues == null ? null : fieldsValues.keySet();
 	}
+
 	@Override
 	public String getCatalogType() {
 		return CatalogDescriptor.CATALOG_ID;
@@ -416,6 +413,36 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 			triggersValues = new ArrayList<CatalogActionTrigger>(3);
 		}
 		triggersValues.add(t);
+	}
+
+	public boolean isTyped() {
+		return typed;
+	}
+
+	public void setTyped(boolean typed) {
+		this.typed = typed;
+	}
+
+	public Class<? extends CatalogEntry> getClazz() {
+		return clazz;
+	}
+
+	public void setClazz(Class<? extends CatalogEntry> clazz) {
+		this.clazz = clazz;
+	}
+
+	@Override
+	public Long spawnChild() {
+		throw new IllegalAccessError();
+	}
+
+	@Override
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

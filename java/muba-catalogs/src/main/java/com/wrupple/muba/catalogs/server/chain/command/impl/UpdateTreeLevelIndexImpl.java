@@ -72,7 +72,7 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 			for (Object childId : newChildren) {
 				updateContext.setEntry(childId);
 				read.execute(updateContext);
-				child = updateContext.getResult();
+				child = updateContext.getEntryResult();
 				accessor.setPropertyValue(catalog, treeIndex, child, childrenTreeIndex, session);
 				//FIXME update bulk
 				updateContext.setEntryValue(child);

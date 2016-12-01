@@ -2,10 +2,10 @@ package com.wrupple.muba.bpm.server.domain;
 
 import java.util.List;
 
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasFieldId;
 import com.wrupple.muba.bpm.domain.ManagedObject;
-import com.wrupple.vegetate.domain.CatalogTrigger;
-import com.wrupple.vegetate.domain.HasCatalogId;
-import com.wrupple.vegetate.domain.HasFieldId;
+import com.wrupple.muba.catalogs.domain.CatalogTrigger;
 
 public interface ValueChangeTrigger extends CatalogTrigger,HasCatalogId ,ManagedObject,HasFieldId{
 	

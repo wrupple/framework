@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldConstraint;
+import com.wrupple.muba.catalogs.domain.Constraint;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
@@ -40,12 +40,12 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 	@CatalogField(ignore=true)
 	private String ownerCatalogId;
 	
-	@CatalogKey(foreignCatalog=FieldConstraint.CATALOG_ID)
+	@CatalogKey(foreignCatalog=Constraint.CATALOG_ID)
 	private List<Long> constraints;
 	private List<String> defaultValueOptions, properties;
 
-	@CatalogValue(foreignCatalog=FieldConstraint.CATALOG_ID)
-	private List<FieldConstraint> constraintsValues;
+	@CatalogValue(foreignCatalog=Constraint.CATALOG_ID)
+	private List<Constraint> constraintsValues;
 	
 	
 	public FieldDescriptorImpl() {
@@ -340,12 +340,12 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 
 
 	@Override
-	public List<FieldConstraint> getConstraintsValues() {
+	public List<Constraint> getConstraintsValues() {
 		return constraintsValues;
 	}
 	
-	public void setConstraintsValues(List<? extends FieldConstraint> consta){
-		this.constraintsValues=(List<FieldConstraint>) consta;
+	public void setConstraintsValues(List<? extends Constraint> consta){
+		this.constraintsValues=(List<Constraint>) consta;
 	}
 
 	@Override
@@ -380,15 +380,6 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 		return CATALOG_ID;
 	}
 
-	@Override
-	public String getIdAsString() {
-		return String.valueOf(id);
-	}
-
-	@Override
-	public void setIdAsString(String id) {
-		this.id=Long.parseLong(id);
-	}
 
 	@Override
 	public void setDomain(Long domain) {

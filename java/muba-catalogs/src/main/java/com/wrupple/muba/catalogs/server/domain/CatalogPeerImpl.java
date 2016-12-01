@@ -11,7 +11,7 @@ public class CatalogPeerImpl extends CatalogEntryImpl implements CatalogPeer {
 	private static final long serialVersionUID = -42266955486460366L;
 	private Date expirationDate,presence;
 	private Integer subscriptionStatus,channel,remoteStakeholder;
-	private String host,publicKey,agent,catalogDomain,catalogUrlBase;
+	private String host,publicKey,agent,catalogUrlBase;
 	private Long stakeHolder;
 	private List<String> subscribedEvents;
 	public Date getExpirationDate() {
@@ -61,12 +61,6 @@ public class CatalogPeerImpl extends CatalogEntryImpl implements CatalogPeer {
 	}
 	public void setAgent(String agent) {
 		this.agent = agent;
-	}
-	public String getCatalogDomain() {
-		return catalogDomain;
-	}
-	public void setCatalogDomain(String catalogDomain) {
-		this.catalogDomain = catalogDomain;
 	}
 	public String getCatalogUrlBase() {
 		return catalogUrlBase;

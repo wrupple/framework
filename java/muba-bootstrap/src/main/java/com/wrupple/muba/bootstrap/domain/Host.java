@@ -12,6 +12,8 @@ public interface Host extends CatalogEntry,HasStakeHolder {
 	int STATUS_IDLE = 2;// reachable and subscribed but inactive
 	int STATUS_ONLINE = 3;// subscribed
 
+	String CHANNEL_FIELD = "channel";
+
 	Date getExpirationDate();
 
 	Integer getSubscriptionStatus();
@@ -68,4 +70,11 @@ public interface Host extends CatalogEntry,HasStakeHolder {
 	void setChannel(int c);
 
 	void setDomain(long domain);
+	
+	/**
+	 * @return the platform the peer is running on
+	 */
+	String getAgent();
+	void setAgent(String s);
+	
 }

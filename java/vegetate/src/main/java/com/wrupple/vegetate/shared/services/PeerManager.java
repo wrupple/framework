@@ -1,7 +1,7 @@
 package com.wrupple.vegetate.shared.services;
 
-import com.wrupple.vegetate.domain.VegetatePeer;
-import com.wrupple.vegetate.domain.structure.HasTimestamp;
+import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
+import com.wrupple.muba.catalogs.domain.VegetatePeer;
 
 /**
  * @author japi

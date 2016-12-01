@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd" 
+	type="com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider"
+	serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	 
+	propertyName="elementCell"
+	defaultPropertyValue="icon"
+>
+	<!-- ClickableElementTemplate -->
+	<service id="text" creator="fieldText" />
+	<service id="date" creator="fieldDate" />
+	<service id="listPicker" creator="fieldList" />
+	<service id="mapPicker" creator="fieldMap"/>
+	<service id="catalogPicker" creator="namedCatalogPicker" />
+	<service id="checkBox" creator="fieldCheckBox" />
+	<service id="richText" creator="fieldRichText" />
+	<service id="multiText" creator="fieldMultiText" />
+	<service id="rating" creator="rating" />
+	<service id="latitude" creator="latitudeProvider"/>
+	<service id="longitude" creator="longitudeProvider"/>
+	<service id="captcha" creator="captchaCell" />
+	<service id="color" creator="fieldColor"/>
+	<service id="numericCatalogId" creator="catalogIdAndEntryId" />
+	<service id="genericCatalogEntryId" creator="catalogIdAndEntryId" />
+	
+	<service id="HTML" creator="genericValueCell" />
+	<service id="genericKey" creator="genericKeyCell" />
+	<service id="imageKey" creator="imageKey" />
+	<service id="image" creator="image" />
+	<service id="genericValue" creator="genericValueCell" />
+	<service id="currencyValue" creator="currencyValueCell" />
+	<service id="icon" creator="genericIconCell" />
+	<service id="custom" creator="customCell" />
+	
+	
+	<!-- ServicePickers -->
+	
+	<service id="fields" creator="servicePicker" />
+	<service id="transactionPanels" creator="servicePicker" />
+	<service id="editors" creator="servicePicker" />
+	<service id="layoutDelegates" creator="servicePicker" />
+	<service id="outputHandlers" creator="servicePicker" />
+	<service id="commands" creator="servicePicker" />
+	<service id="aggregateCanvasRenderers" creator="servicePicker" />
+	<service id="relationBrowsers" creator="servicePicker" />
+	<service id="browsers" creator="servicePicker" />
+	<service id="toolbars" creator="servicePicker" />
+	<service id="transactionType" creator="servicePicker" />
+	<service id="activityPresenter" creator="servicePicker" />
+</servicer>

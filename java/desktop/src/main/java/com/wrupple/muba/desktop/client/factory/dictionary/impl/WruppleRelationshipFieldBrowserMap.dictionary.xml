@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd" 
+	type="com.wrupple.muba.desktop.client.services.presentation.ForeignRelationWidgetHandle"
+	serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="layout"
+	defaultPropertyValue="vertical"	
+>
+	<!-- always set slider page size to -1 -->
+	<parent>
+	<!-- goal is to make these the same as browsermap's, and eventually make a single dictionary out of the two -->
+		<property name="customJoins" />
+		<property name="pageSize" />
+	</parent>
+	<service id="flow" creator="flowRelationBrowser" >
+		<property name="cellWrapperClass" />
+		<property name="inline"  />
+	</service>
+	<service id="vertical" creator="listRelationBrowser" />
+	<service id="select" creator="selectRelationBrowser" />
+	<service id="slider" creator="sliderRelationBrowser" >
+		<property name="viewportWidth"/>
+		<property name="viewportHeight"/>
+		<property name="cellWrapperClass"/>
+		<property name="cellClass"/>
+	</service>
+	
+	
+</servicer>

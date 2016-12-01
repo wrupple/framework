@@ -22,16 +22,16 @@ import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.FormatResultSet;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionResultImpl;
-import com.wrupple.muba.catalogs.shared.services.PrimaryKeyEncodingService;
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 
 @Singleton
 public class FormatResultSetImpl implements FormatResultSet {
 	protected final ObjectMapper mapper;
 	private final ImplicitDataJoin resultService;
-	private final PrimaryKeyEncodingService pkes;
+	private final CatalogKeyServices pkes;
 
 	@Inject
-	public FormatResultSetImpl(ObjectMapper mapper, ImplicitDataJoin resultService, PrimaryKeyEncodingService pkes) {
+	public FormatResultSetImpl(ObjectMapper mapper, ImplicitDataJoin resultService, CatalogKeyServices pkes) {
 		super();
 		this.mapper = mapper;
 		this.resultService = resultService;
@@ -45,7 +45,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 		String action = (String) c.get(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
 
 		List<String> warnings = context.getExcecutionContext().resetWarnings();
-		Set<ConstraintViolation<?>> constraintViolations = context.getConstraintViolations();
+		Set<ConstraintViolation<?>> constraintViolations = context.getExcecutionContext().getConstraintViolations();
 		List<CatalogColumnResultSet> responseList = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 
@@ -63,7 +63,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 				warnings = new ArrayList<String>();
 			}
 			for (ConstraintViolation<?> violation : constraintViolations) {
-				warnings.add("! " + violation.getMessage());
+				warnings.add( violation.getMessage());
 			}
 		}
 
@@ -79,7 +79,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 		LengthReportingWriter wrapper = new LengthReportingWriter(out);
 		mapper.writeValue(wrapper, responseContract);
 		long length = wrapper.getLength();
-		context.setTotalResponseSize(length);
+		context.getExcecutionContext().setTotalResponseSize(length);
 		return CONTINUE_PROCESSING;
 	}
 

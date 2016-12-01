@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
@@ -32,7 +32,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 	private final CatalogDeleteTransaction delete;
 	private final CatalogUpdateTransaction update;
 	private final CatalogReadTransaction read;
-	
+
 	@Inject
 	public RestoreTrashImpl(CatalogEvaluationDelegate accessory, CatalogDeleteTransaction delete,
 			CatalogUpdateTransaction update, CatalogReadTransaction read) {
@@ -46,7 +46,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
-		Trash e = (Trash) context.getResult();
+		Trash e = (Trash) context.getEntryResult();
 		if (e == null) {
 			log.warn("[RESTORE ALL TRASH ITEMS]");
 
@@ -92,14 +92,12 @@ public class RestoreTrashImpl implements RestoreTrash {
 			context.setFilter(null);
 			undelete(e, context, descriptor, trashField, session);
 
-			
 			// DUMP TRASH
-						context.setCatalog(Trash.CATALOG);
-						context.setFilter(null);
-						context.setEntry(e.getId());
-						delete.execute(context);
-						
-						
+			context.setCatalog(Trash.CATALOG);
+			context.setFilter(null);
+			context.setEntry(e.getId());
+			delete.execute(context);
+
 			// SINCE THIS TRIGGER IS PERFORMED BEFORE ACTION IS COMMITED,
 			// AND FAILS SILENTLY, then when the restoring action is
 			// attempted, it will fail and everything will be fine
@@ -118,11 +116,11 @@ public class RestoreTrashImpl implements RestoreTrash {
 			context.setCatalog(catalogId);
 			context.setEntry(entryId);
 			read.execute(context);
-			CatalogEntry trashedEntry =context.getResult();
+			CatalogEntry trashedEntry = context.getEntryResult();
 			accessor.setPropertyValue(descriptor, trashField, trashedEntry, false, session);
 			context.setEntryValue(trashedEntry);
 			update.execute(context);
-			
+
 		}
 	}
 }

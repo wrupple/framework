@@ -1,15 +1,13 @@
 package com.wrupple.muba.bpm.domain;
 
-import java.util.List;
-
+import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 
-public interface DomainRolePermission extends ContentNode {
+public interface DomainRolePermission extends ContentNode ,HasProperties{
 
 	String CATALOG  = "DomainRolePermission";
 	String SERVICE_FIELD = "service";
 	
-	List<String> getProperties();
 	
 	int getService();
 	

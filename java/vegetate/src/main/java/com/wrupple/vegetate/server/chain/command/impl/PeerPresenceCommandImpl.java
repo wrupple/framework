@@ -10,13 +10,13 @@ import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.vegetate.domain.CatalogActionRequest;
-import com.wrupple.vegetate.domain.CatalogExcecutionContext;
-import com.wrupple.vegetate.domain.VegetatePeer;
-import com.wrupple.vegetate.server.chain.command.PeerPresenceCommand;
-import com.wrupple.vegetate.server.chain.command.SusriptionService;
-import com.wrupple.vegetate.server.services.RequestScopedContext;
-import com.wrupple.vegetate.server.services.RootServiceManifest;
+import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
+import com.wrupple.muba.catalogs.domain.CatalogExcecutionContext;
+import com.wrupple.muba.catalogs.domain.VegetatePeer;
+import com.wrupple.muba.catalogs.server.chain.command.PeerPresenceCommand;
+import com.wrupple.muba.catalogs.server.chain.command.SusriptionService;
+import com.wrupple.muba.catalogs.server.services.RequestScopedContext;
+import com.wrupple.muba.catalogs.server.services.RootServiceManifest;
 
 @Singleton
 public class PeerPresenceCommandImpl implements PeerPresenceCommand {
@@ -32,7 +32,7 @@ public class PeerPresenceCommandImpl implements PeerPresenceCommand {
 		super();
 		this.peerCatalogId = peerCatalogId;
 		this.SUSCRIPTION_SERVICE_NAME = suscriptionServiceManifest.getServiceName();
-		VEGETATE_SERVICE_NAME = rootMani.getUrlPathParameters()[0];
+		VEGETATE_SERVICE_NAME = rootMani.getGrammar()[0];
 		this.requestScopeProvider = requestScopeProvider;
 	}
 
@@ -57,7 +57,7 @@ public class PeerPresenceCommandImpl implements PeerPresenceCommand {
 				status = VegetatePeer.STATUS_ONLINE;
 			}
 
-			CatalogExcecutionContext catalogContext = request.getStorageManager().spawn(null);
+			CatalogExcecutionContext catalogContext = request.getStorageManager().spawn(request);
 			String publicKey = setPeerPresence(peer, catalogContext, request, status);
 			PrintWriter out = request.getScopedWriter(context);
 			out.write('{');
@@ -91,7 +91,7 @@ public class PeerPresenceCommandImpl implements PeerPresenceCommand {
 		if (changed) {
 			context.set(context.getDomain().longValue(), peerCatalogId, CatalogActionRequest.WRITE_ACTION, desktopSession.getIdAsString(), desktopSession,
 					null);
-			request.getStorageManager().getWrite().execute(context);
+			request.getStorageManager().getWrite(false).execute(context);
 		}
 
 		return desktopSession.getPublicKey();

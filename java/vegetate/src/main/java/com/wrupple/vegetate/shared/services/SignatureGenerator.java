@@ -2,7 +2,7 @@ package com.wrupple.vegetate.shared.services;
 
 import java.util.Date;
 
-import com.wrupple.vegetate.domain.structure.HasTimestamp;
+import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
 
 public interface SignatureGenerator extends HasTimestamp{
 

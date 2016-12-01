@@ -16,8 +16,6 @@ public interface SessionContext extends Context, HasStakeHolder {
 
 	<T> T getStakeHolderPrincipal(Class<T> clazz);
 
-	boolean isMaster();
-
 	boolean hasPermissionsToProcessContext(Context context, ServiceManifest manifest);
 
 	boolean isGranted(String roleCatalogMaster);
@@ -30,5 +28,12 @@ public interface SessionContext extends Context, HasStakeHolder {
 	boolean hasPermission(String string);
 
 	Long getStakeHolder();
+
+	/**
+	 * @return hand picked by the session's stakeHolder, does't mean the
+	 *         stakeHolder has authority in the domain, just means that's the
+	 *         domain currently in
+	 */
+	Long getDomain();
 
 }

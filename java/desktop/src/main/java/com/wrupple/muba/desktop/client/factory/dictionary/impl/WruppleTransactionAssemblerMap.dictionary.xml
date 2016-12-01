@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
+	type="com.wrupple.muba.bpm.client.services.TransactionAssembler"
+	serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="transactionType">
+	<parent>
+		<property name="saveTo" />
+		<property name="contentManager" dictionary="cms" />
+		<property name="layoutUnit" />
+		<property name="transactionViewClass" />
+	</parent>
+	<service id="new" creator="newTransaction" />
+	<service id="read" creator="readTransaction" />
+	<service id="write" creator="writeTransaction" />
+	<service id="select" creator="selectTransaction" />
+	<service id="navigate" creator="selectTransaction" />
+
+</servicer>

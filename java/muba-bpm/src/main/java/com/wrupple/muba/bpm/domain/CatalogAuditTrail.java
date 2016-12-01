@@ -8,7 +8,7 @@ public interface CatalogAuditTrail extends ManagedObject{
 
 	String getTargetActionId();
 
-	String getTargetEntryId();
+	String getTargetEntry();
 
 	String getTargetCatalogId();
 

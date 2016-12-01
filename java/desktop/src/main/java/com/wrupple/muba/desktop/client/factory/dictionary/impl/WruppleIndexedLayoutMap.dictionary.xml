@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd" 
+	type="com.wrupple.muba.desktop.client.services.presentation.layout.IndexedLayoutDelegate"
+	serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="layout"
+	defaultPropertyValue="grid"
+>
+	
+	<service id="grid" creator="gridLayout" >
+		<property name="cellWrapperClass" />
+		<property name="autoMargin" />
+		<property name="cellSize" />
+	</service>
+	<service id="histogram" creator="histogramLayout" >
+		<property name="numericField" />
+		<property name="averageNumericValues" />
+		<property name="gridIverted" source="histogramAxisFlip" />
+		<property name="cumulative" source="histogramCumulative" />
+		<property name="flipVertical" source="histogramColumnFlip" />
+		<property name="cellWrapperClass" />
+	</service>
+
+
+</servicer>

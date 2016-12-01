@@ -21,6 +21,8 @@ import com.wrupple.muba.catalogs.server.service.CatalogKeyConstraintValidator;
 public @interface CatalogKey {
 	
 	String foreignCatalog();
+	
+	boolean unique() default true;
 
     Class<?>[] groups() default {};
 

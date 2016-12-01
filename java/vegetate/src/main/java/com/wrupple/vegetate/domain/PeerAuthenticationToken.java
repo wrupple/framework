@@ -1,6 +1,7 @@
 package com.wrupple.vegetate.domain;
 
-import com.wrupple.vegetate.domain.structure.HasTimestamp;
+import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
+import com.wrupple.muba.catalogs.domain.CatalogKey;
 
 public interface PeerAuthenticationToken extends HasTimestamp,CatalogKey {
 

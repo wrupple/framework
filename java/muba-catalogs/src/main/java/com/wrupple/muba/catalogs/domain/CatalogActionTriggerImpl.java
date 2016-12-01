@@ -18,7 +18,7 @@ public class CatalogActionTriggerImpl extends CatalogEntryImpl implements Catalo
 		this.action=action;
 		this.seed=seed;
 		this.handler = handler;
-		this.before = before;
+		this.advise = before;
 		this.catalog = targetCatalogId;
 		this.properties = properties;
 	}
@@ -26,12 +26,12 @@ public class CatalogActionTriggerImpl extends CatalogEntryImpl implements Catalo
 	private String description,catalog,entry,seed,expression,systemEvent;
 	private String handler;
 	private int action;
-	private boolean before,runAsStakeHolder,failSilence,stopOnFail;
+	private boolean advise,runAsStakeHolder,failSilence,stopOnFail;
 	
 	
 	private List<String> properties;
 	
-	public String getExpression() {
+	public String getSentence() {
 		return expression;
 	}
 
@@ -57,11 +57,11 @@ public class CatalogActionTriggerImpl extends CatalogEntryImpl implements Catalo
 	public void setAction(int action) {
 		this.action = action;
 	}
-	public boolean isBefore() {
-		return before;
+	public boolean isAdvice() {
+		return advise;
 	}
-	public void setBefore(boolean before) {
-		this.before = before;
+	public void setAdvice(boolean before) {
+		this.advise = before;
 	}
 	public String getCatalog() {
 		return catalog;
@@ -145,12 +145,12 @@ public class CatalogActionTriggerImpl extends CatalogEntryImpl implements Catalo
 
 	@Override
 	public Map<String, String> getParsedProperties(List<String> rawProperties, Map context) {
-		return (Map<String, String>) context.get(getId());
+		return (Map<String, String>) context.get(getCatalogType()+getId());
 	}
 
 	@Override
 	public void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context) {
-		context.put(getId(), parsed);		
+		context.put(getCatalogType()+getId(), parsed);		
 	}
 
 	@Override

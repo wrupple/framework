@@ -34,7 +34,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 	protected static final Logger log = LoggerFactory.getLogger(CatalogDescriptorBuilderImpl.class);
 
-	public CatalogDescriptor fromClass(Class<?> clazz, String catalogId, String cataogName, long numericId,
+	public CatalogDescriptor fromClass(Class<? extends CatalogEntry> clazz, String catalogId, String cataogName, long numericId,
 			CatalogDescriptor parent) {
 
 		List<Field> cll = new ArrayList<Field>();
@@ -283,7 +283,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 					if (parent != null) {
 						if (parent.getFieldDescriptor(fieldDescriptor.getFieldId())!=null) {
 							fieldDescriptor.setInherited(true);
-							fieldDescriptor.setOwnerCatalogId(parent.getCatalog());
+							fieldDescriptor.setOwnerCatalogId(parent.getDistinguishedName());
 						}
 					}
 

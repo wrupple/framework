@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd" 
+	type="com.wrupple.muba.desktop.client.factory.ServiceDictionary" serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="dictionary"
+	 >
+	<!-- "id" of the service map should be equeal to the property that invokes 
+		it (the property obviously has another value) -->
+	<service id="outputHandlers" creator="outputHandlers" /> <!--ApplicationItem ReadNextPlaceImpl -->
+	<service id="commands" creator="commands" /> <!-- ServiceBus -->
+	<service id="transactionType" creator="transactionType" /> <!-- ProcessTaskDescriptor TransactionalActivityAssembly -->
+	<service id="editors" creator="editors" /> <!--taskDescriptor.properties.widget CMS -->
+	<service id="browsers" creator="browsers" /><!--taskDescriptor.properties.widget CMS -->
+	<service id="transactionPanels" creator="transactionPanels" /><!--taskDescriptor.properties.transactionPanelType User Interaction State -->
+	<service id="toolbars" creator="toolbars" /><!--TaskToolbarDescriptor.type TaskDisplayDelegate -->
+	<service id="fields" creator="fields" /><!--FieldDescriptor.widget (overriden in task properties) GenericFieldFactory@CompositeEditor -->
+	<service id="relationBrowsers" creator="relationBrowsers" /><!--taskDescriptor.properties.[field]Layout BrowserWidgetAssembler@FieldFactory -->
+	<service id="layoutDelegates" creator="layoutDelegates" /> <!--taskDescriptor.properties.layout WruppleIndexedLayoutDataWidget -->
+	<service id="aggregateCanvasRenderers" creator="aggregateCanvasRenderers" /> <!--taskDescriptor.properties.layout WruppleAggregateCanvasDataWidget -->
+	<service id="cms" creator="cms" /> <!--taskDescriptor.properties.layout WruppleAggregateCanvasDataWidget -->
+	<service id="selectionModel" creator="selectionModel"/>
+	<service id="activityPresenter" creator="activityPresenter"/>
+	<service id="activity" creator="activityMap"/>
+	<service id="api" creator="apiLoaderMap"/>
+	<service id="aidProviders" creator="aidProviders"/>
+	<service id="images" creator="images"/>
+</servicer>

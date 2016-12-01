@@ -11,9 +11,9 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.vegetate.domain.VegetateServiceManifest;
-import com.wrupple.vegetate.domain.VegetateServiceManifestImpl;
-import com.wrupple.vegetate.server.services.ObjectMapper;
+import com.wrupple.muba.catalogs.domain.ServiceManifest;
+import com.wrupple.muba.catalogs.domain.ServiceManifestImpl;
+import com.wrupple.muba.catalogs.server.services.ObjectMapper;
 
 public class VegetateUrlServiceBuilder {
 	protected static final Logger log = LoggerFactory.getLogger(VegetateUrlServiceBuilder.class);
@@ -22,10 +22,10 @@ public class VegetateUrlServiceBuilder {
 	private final String host;
 	private final int port;
 	private final String serviceUrl;
-	private VegetateServiceManifest manifest;
+	private ServiceManifest manifest;
 	protected final ObjectMapper mapper;
 
-	public VegetateUrlServiceBuilder(String protocol, String host, int port, String serviceUrl, VegetateServiceManifest manifest, ObjectMapper mapper) {
+	public VegetateUrlServiceBuilder(String protocol, String host, int port, String serviceUrl, ServiceManifest manifest, ObjectMapper mapper) {
 		super();
 		this.protocol = protocol;
 		this.host = host;
@@ -68,7 +68,7 @@ public class VegetateUrlServiceBuilder {
 			manifest = getServiceManifest();
 		}
 		log.trace("[deduce object path with manifest {}] {}",manifest,object);
-		String[] addressTokens = manifest.getUrlPathParameters();
+		String[] addressTokens = manifest.getGrammar();
 		StringBuilder builder;
 		if(writer==null){
 			builder = new StringBuilder(serviceUrl.length() + addressTokens.length * 10);
@@ -104,7 +104,7 @@ public class VegetateUrlServiceBuilder {
 		return r;
 	}
 
-	private VegetateServiceManifest getServiceManifest()
+	private ServiceManifest getServiceManifest()
 			throws IllegalAccessError, IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		URL url = buildUrl(null);
 		log.trace("[get service manifest] {}",url);
@@ -118,7 +118,7 @@ public class VegetateUrlServiceBuilder {
 
 			InputStream inputStream = connection.getInputStream();
 
-			VegetateServiceManifest response = readVegetateServiceManifest(inputStream);
+			ServiceManifest response = readServiceManifest(inputStream);
 			
 			log.trace("[ServiceManifest] {}",url,response);
 			
@@ -128,8 +128,8 @@ public class VegetateUrlServiceBuilder {
 		}
 	}
 
-	protected VegetateServiceManifest readVegetateServiceManifest(InputStream inputStream) throws IOException {
-		return mapper.readValue(inputStream, VegetateServiceManifestImpl.class);
+	protected ServiceManifest readServiceManifest(InputStream inputStream) throws IOException {
+		return mapper.readValue(inputStream, ServiceManifestImpl.class);
 	}
 
 	static class UrlBuilder {

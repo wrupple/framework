@@ -29,4 +29,6 @@ public interface FilterCriteria {
 
 	List<String> getPath();
 
+	public boolean getEvaluate();
+
 }

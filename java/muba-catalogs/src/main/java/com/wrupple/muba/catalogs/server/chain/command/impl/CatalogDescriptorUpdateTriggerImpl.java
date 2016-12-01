@@ -6,8 +6,8 @@ import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogDescriptorUpdateTriggerImpl implements CatalogDescriptorUpdateTrigger {
 
@@ -21,7 +21,7 @@ public class CatalogDescriptorUpdateTriggerImpl implements CatalogDescriptorUpda
 	public boolean execute(Context ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		
-		cache.put(context, CatalogManager.DOMAIN_METADATA, null);
+		cache.put(context, SystemCatalogPlugin.DOMAIN_METADATA, null);
 		
 		return CONTINUE_PROCESSING;
 	}

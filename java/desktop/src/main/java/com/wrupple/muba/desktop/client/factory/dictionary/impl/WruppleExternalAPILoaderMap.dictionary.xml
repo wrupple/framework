@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
+	type="com.wrupple.muba.desktop.client.services.logic.ExternalAPILoader"
+	serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="api">
+	
+	<service id="maps" creator="mapsApi" />
+	<service id="svg" creator="svgApi" />
+	<service id="captcha" creator="captchaApi" />
+	<service id="payment" creator="paymentApi" />
+	
+</servicer>

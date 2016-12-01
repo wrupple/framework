@@ -26,23 +26,22 @@ import org.apache.commons.chain.web.servlet.ServletWebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.vegetate.domain.PeerAuthenticationToken;
-import com.wrupple.vegetate.domain.VegetatePeer;
-import com.wrupple.vegetate.domain.VegetateServiceManifest;
-import com.wrupple.vegetate.domain.structure.HasTimestamp;
-import com.wrupple.vegetate.server.chain.command.VegetateService;
-import com.wrupple.vegetate.server.domain.VegetateException;
-import com.wrupple.vegetate.server.services.ObjectMapper;
-import com.wrupple.vegetate.server.services.RequestScopedContext;
-import com.wrupple.vegetate.server.services.RootServiceManifest;
-import com.wrupple.vegetate.shared.services.PeerManager;
+import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
+import com.wrupple.muba.catalogs.domain.PeerAuthenticationToken;
+import com.wrupple.muba.catalogs.domain.VegetatePeer;
+import com.wrupple.muba.catalogs.domain.ServiceManifest;
+import com.wrupple.muba.catalogs.server.chain.command.VegetateService;
+import com.wrupple.muba.catalogs.server.domain.KnownExceptionImpl;
+import com.wrupple.muba.catalogs.server.services.ObjectMapper;
+import com.wrupple.muba.catalogs.server.services.RequestScopedContext;
+import com.wrupple.muba.catalogs.server.services.RootServiceManifest;
+import com.wrupple.muba.catalogs.shared.services.PeerManager;
 
-public class VegetateServiceImpl extends LookupCommand implements VegetateService {
+public class VegetateServiceImpl  implements VegetateService {
 
 	private static final Logger log = LoggerFactory.getLogger(VegetateServiceImpl.class);
 
-	public static final String FIRST_TOKEN_INDEX = "vegetate.firstToken", INLINE_DIVERSE_SERIVICE_CALLS = "vegetate.dinamic", QUEUE_ID = "_queued",
-			MANIFEST_HOLDER = "manifestObj", THREAD = "vegetate.thread";
+	public static final String FIRST_TOKEN_INDEX = "vegetate.firstToken", INLINE_DIVERSE_SERIVICE_CALLS = "vegetate.dinamic", QUEUE_ID = "_queued";
 
 	private final RootServiceManifest rootManifest;
 
@@ -77,7 +76,7 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 		super.setCatalogName(dictionaryName);
 		this.mapper = mapper;
 		this.threading = threading;
-		super.setNameKey(rootManifest.getUrlPathParameters()[0]);
+		super.setNameKey(rootManifest.getGrammar()[0]);
 		this.rootManifest = rootManifest;
 		this.splitter = Pattern.compile("/", Pattern.LITERAL);
 		this.rscp = rscp;
@@ -86,46 +85,47 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 
 	@Override
 	public boolean execute(Context c) throws Exception {
-		ServletWebContext ctx = (ServletWebContext) c;
+		ServletWebContext systemContext= (ServletWebContext) c;
 
 		if (firstTokenIndex < 0) {
-			firstTokenIndex = Integer.parseInt((String) ctx.getInitParam().get(FIRST_TOKEN_INDEX));
-			log.debug("start processing path at token index {} in context path", firstTokenIndex, ctx.getContext().getContextPath());
+			firstTokenIndex = Integer.parseInt((String) systemContext.getInitParam().get(FIRST_TOKEN_INDEX));
+			log.debug("start processing path at token index {} in context path", firstTokenIndex, systemContext.getContext().getContextPath());
 		}
 		if (dinamic == null) {
-			dinamic = Boolean.parseBoolean((String) ctx.getInitParam().get(INLINE_DIVERSE_SERIVICE_CALLS));
+			dinamic = Boolean.parseBoolean((String) systemContext.getInitParam().get(INLINE_DIVERSE_SERIVICE_CALLS));
 			if (dinamic) {
-				log.debug("context path {} will inline responses from any required services", ctx.getContext().getContextPath());
+				log.debug("context path {} will inline responses from any required services", systemContext.getContext().getContextPath());
 			} else {
-				log.debug("context path {} will inline responses from single service", ctx.getContext().getContextPath());
+				log.debug("context path {} will inline responses from single service", systemContext.getContext().getContextPath());
 			}
 
 		}
-		log.trace("[ INCOMMING REQUEST {} ]", ctx.getContext().getContextPath());
-		RequestScopedContext requestContext = rscp.get();
-		requestContext.setScopedWriting(threading);
-		requestContext.setServletContext(ctx);
-		HttpServletRequest req = ctx.getRequest();
-		HttpServletResponse resp = requestContext.getServletContext().getResponse();
+		log.trace("[ INCOMMING REQUEST {} ]", systemContext.getContext().getContextPath());
+		RequestScopedContext excecutionContext= rscp.get();
+		//THIS IS IMPORTANT
+		excecutionContext.setScopedWriting(threading);
+		excecutionContext.setServletContext(systemContext);
+		HttpServletRequest req = systemContext.getRequest();
+		HttpServletResponse resp = excecutionContext.getServletContext().getResponse();
 		PrintWriter writer = resp.getWriter();
-		Context excecutionContext;
-		Queue<ExcecutionContextThread> excecutionQueue = new LinkedList<>();
+		Context serviceContext;
+		Queue<ServiceTransactionThread> excecutionQueue = new LinkedList<>();
 		String[] pathTokens = getAllTokens(req);
-		requestContext.setFirstTokenIndex(firstTokenIndex);
-		requestContext.setNextPathToken(firstTokenIndex);
-		requestContext.setPathTokens(pathTokens);
+		excecutionContext.setFirstWordIndex(firstTokenIndex);
+		excecutionContext.setNextWordIndex(firstTokenIndex);
+		excecutionContext.setSentence(pathTokens);
 
 		log.debug("request path tokens: {}", pathTokens);
-		VegetateServiceManifest service = rootManifest.getChildServiceManifest(requestContext, pathTokens);
+		ServiceManifest service = rootManifest.getChildServiceManifest(excecutionContext, pathTokens);
 		log.debug("path points to service {}", service.getServiceId());
-		VegetateServiceManifest dinamicPick;
+		ServiceManifest dinamicPick;
 
 		//////////////////////////////////////////////
 		/////////////////// ACCESS //////////////////
 		//////////////////////////////////////////////
 
 		if (req.getParameter(PeerManager.ACCESS_TOKEN) != null) {
-			requestContext.getSession().processAccessToken(req.getParameter(VegetatePeer.PUBLIC_KEY), req.getParameter(PeerManager.ACCESS_TOKEN),
+			excecutionContext.getSession().processAccessToken(req.getParameter(VegetatePeer.PUBLIC_KEY), req.getParameter(PeerManager.ACCESS_TOKEN),
 					req.getParameter(PeerAuthenticationToken.MAIN_PARAMETER), req.getParameter(PeerManager.REQUEST_SALT),
 					mapper.parseDate(req.getParameter(HasTimestamp.FIELD)));
 		}
@@ -134,7 +134,7 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 
 		String paramV;
 		long totalRequestSize;
-		ExcecutionContextThread thread;
+		ServiceTransactionThread thread;
 
 		// READ ALL PARAMETERS
 		if (names.hasMoreElements()) {
@@ -147,9 +147,9 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 
 				if (PeerManager.CALLBACK_FUNCTION.equals(urlParam)) {
 					// reserved param: callback
-					requestContext.setCallbackFunction(req.getParameterValues(urlParam)[0]);
+					excecutionContext.setCallbackFunction(req.getParameterValues(urlParam)[0]);
 
-					log.debug("processing parameter {} as request principal = {}", urlParam, requestContext.getCallbackFunction());
+					log.debug("processing parameter {} as request principal = {}", urlParam, excecutionContext.getCallbackFunction());
 
 				} else if ((dinamicPick = isServiceInvocation(urlParam, service)) != null) {
 
@@ -160,11 +160,11 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 						log.debug("processing parameter {} as service {}'s context = {}", urlParam, dinamicPick.getServiceId(),
 								req.getParameterValues(urlParam)[0]);
 						totalRequestSize = paramV.length();
-						excecutionContext = (Context) dinamicPick.createExcecutionContext(requestContext, requestContext.getPathTokens(), paramV);
-						excecutionContext.put(MANIFEST_HOLDER, dinamicPick);
-						excecutionContext.put(VegetateService.REQUEST_SIZE_VARIABLE, totalRequestSize);
-						excecutionContext.put(QUEUE_ID, urlParam);
-						thread = new ExcecutionContextThread(excecutionContext, requestContext, urlParam);
+						serviceContext = (Context) dinamicPick.createServiceContext(excecutionContext, paramV);
+						serviceContext.put(MANIFEST_HOLDER, dinamicPick);
+						serviceContext.put(VegetateService.REQUEST_SIZE_VARIABLE, totalRequestSize);
+						serviceContext.put(QUEUE_ID, urlParam);
+						thread = new ServiceTransactionThread(serviceContext, excecutionContext, urlParam);
 
 						excecutionQueue.add(thread);
 						if (threading) {
@@ -177,13 +177,13 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 
 		} else if (readCookies) {
 			log.trace("no request parameters to process");
-			excecutionContext = (Context) service.createExcecutionContext(requestContext, requestContext.getPathTokens(), null);
-			putCookieParameters(req, excecutionContext, service);
-			excecutionContext.put(MANIFEST_HOLDER, service);
-			excecutionContext.put(VegetateService.REQUEST_SIZE_VARIABLE, req.getContentLengthLong());
-			excecutionContext.put(QUEUE_ID, PeerAuthenticationToken.MAIN_PARAMETER);
+			serviceContext = (Context) service.createServiceContext(excecutionContext, null);
+			putCookieParameters(req, serviceContext, service);
+			serviceContext.put(MANIFEST_HOLDER, service);
+			serviceContext.put(VegetateService.REQUEST_SIZE_VARIABLE, req.getContentLengthLong());
+			serviceContext.put(QUEUE_ID, PeerAuthenticationToken.MAIN_PARAMETER);
 
-			thread = new ExcecutionContextThread(excecutionContext, requestContext, PeerAuthenticationToken.MAIN_PARAMETER);
+			thread = new ServiceTransactionThread(serviceContext, excecutionContext, PeerAuthenticationToken.MAIN_PARAMETER);
 
 			excecutionQueue.add(thread);
 			if (threading) {
@@ -193,25 +193,25 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 
 		}
 
-		log.info("INITIATING RESPONSE OUTPUT WRITING");
+		log.trace("INITIATING RESPONSE OUTPUT WRITING");
 
 		// when a format is specified dont alter respose
-		if (requestContext.getFormat() == null) {
+		if (excecutionContext.getFormat() == null) {
 			resp.setContentType(mapper.getMimeType());
 			resp.setCharacterEncoding(mapper.getCharacterEncoding());
-			log.info("response content type = {}, charset={}", mapper.getMimeType(), mapper.getCharacterEncoding());
+			log.trace("response content type = {}, charset={}", mapper.getMimeType(), mapper.getCharacterEncoding());
 		}
-		if (requestContext.getCallbackFunction() != null) {
-			mapper.writeInvocationStart(requestContext.getCallbackFunction(), writer);
+		if (excecutionContext.getCallbackFunction() != null) {
+			mapper.writeInvocationStart(excecutionContext.getCallbackFunction(), writer);
 		}
 
 		if (excecutionQueue.isEmpty()) {
-			log.info("empty request queue, will print service manifest");
+			log.trace("empty request queue, will print service manifest");
 			// write service manifest
 			mapper.writeValue(writer, service);
 		} else {
 			// when a format is specified dont alter respose
-			if (requestContext.getFormat() == null) {
+			if (excecutionContext.getFormat() == null) {
 				mapper.writeContentStart(writer);
 
 			}
@@ -219,15 +219,15 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 
 			int i = 0;
 
-			Iterator<ExcecutionContextThread> iterator = excecutionQueue.iterator();
+			Iterator<ServiceTransactionThread> iterator = excecutionQueue.iterator();
 			String contextKey;
 			while (iterator.hasNext()) {
 				thread = iterator.next();
-				excecutionContext = thread.context;
+				serviceContext = thread.context;
 
-				contextKey = (String) excecutionContext.get(QUEUE_ID);
+				contextKey = (String) serviceContext.get(QUEUE_ID);
 				// start to excecute context
-				if (requestContext.getFormat() == null) {
+				if (excecutionContext.getFormat() == null) {
 
 					mapper.writePropertyOpen(writer, contextKey);
 
@@ -236,7 +236,7 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 				if (threading) {
 					thread.join();
 					if (thread.exception == null && thread.unrecoverable==null) {
-						writer.println(requestContext.getScopedOutput(excecutionContext));
+						writer.println(excecutionContext.getScopedOutput(serviceContext));
 					}
 				} else {
 					thread.run();
@@ -252,7 +252,7 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 					return PROCESSING_COMPLETE;
 				}
 				// end excecution context
-				if (requestContext.getFormat() == null) {
+				if (excecutionContext.getFormat() == null) {
 					mapper.writePropertyClose(writer, contextKey, i < last);
 				}
 				i++;
@@ -260,32 +260,32 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 			}
 
 			// when a format is specified dont alter respose
-			if (requestContext.getFormat() == null) {
+			if (excecutionContext.getFormat() == null) {
 				mapper.writeContentEnd(writer);
 			}
 		}
 
-		if (requestContext.getCallbackFunction() != null) {
+		if (excecutionContext.getCallbackFunction() != null) {
 			// when a format is specified dont alter respose
-			if (requestContext.getFormat() == null) {
-				mapper.writeInvocationEnd(requestContext.getCallbackFunction(), writer);
+			if (excecutionContext.getFormat() == null) {
+				mapper.writeInvocationEnd(excecutionContext.getCallbackFunction(), writer);
 			}
 		}
 		// when a format is specified dont alter respose
-		if (requestContext.getFormat() == null) {
+		if (excecutionContext.getFormat() == null) {
 			writer.close();
 		}
 
-		log.info("RESPONSE FINISHED");
+		log.trace("RESPONSE FINISHED");
 
 		resp.setStatus(HttpServletResponse.SC_OK);
 
-		requestContext.end();
+		excecutionContext.end();
 
 		return CONTINUE_PROCESSING;
 	}
 
-	private VegetateServiceManifest isServiceInvocation(String urlParam, VegetateServiceManifest urlPickedService) {
+	private ServiceManifest isServiceInvocation(String urlParam, ServiceManifest urlPickedService) {
 		if (dinamic) {
 			int split = urlParam.lastIndexOf('_');
 			if (split > 0 && split < urlParam.length() - 1) {
@@ -324,7 +324,7 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 		return true;
 	}
 
-	private void putCookieParameters(HttpServletRequest request, Context context, VegetateServiceManifest manifest) {
+	private void putCookieParameters(HttpServletRequest request, Context context, ServiceManifest manifest) {
 		log.trace("writing service manifest descriptor fields from cookies");
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -349,67 +349,7 @@ public class VegetateServiceImpl extends LookupCommand implements VegetateServic
 		return allTokens;
 	}
 
-	private class ExcecutionContextThread extends Thread {
-
-		private final RequestScopedContext request;
-		private final Context context;
-		private final String contextKey;
-		private VegetateException exception;
-		private Exception unrecoverable;
-
-		public ExcecutionContextThread(Context context, RequestScopedContext request, String contextKey) {
-			this.request = request;
-			this.context = context;
-			this.contextKey = contextKey;
-			context.put(THREAD, this);
-		}
-
-		public void run() {
-			log.trace("EXCECUTING SERVICE context {}", contextKey);
-			UserTransaction transaction = request.getTransaction(context);
-			try {
-				try {
-
-					if (request.getSession().hasPermissionsToProcessContext(context, (VegetateServiceManifest) context.get(MANIFEST_HOLDER))) {
-
-						log.trace("excecution permission GRANTED on {}, transaction will begin ", contextKey);
-						
-						if (transaction != null) {
-							transaction.begin();
-						}
-						
-						doEx(context);
-
-					} else {
-						throw new VegetateException(" Context Processing Denied ", VegetateException.DENIED, null);
-					}
-
-				} catch (VegetateException e) {
-					log.error("Error while processing {}={}",contextKey,context);
-					log.error("Error while processing context",  e);
-					if (transaction != null) {
-						transaction.rollback();
-					}
-					this.exception = e;
-				} catch (Exception e) {
-					this.unrecoverable=e;
-					log.error("Unknown Error while processing {}={}",contextKey,context);
-					log.error(contextKey,  e);
-					if (transaction != null) {
-						transaction.rollback();
-					}
-				} finally {
-					if (transaction != null) {
-						log.trace("commit transaction");
-							transaction.commit();
-					}
-
-				}
-			} catch (IllegalStateException | SecurityException | SystemException |RollbackException | HeuristicMixedException | HeuristicRollbackException  e1) {
-				log.error("Unknown error while handling transaction",e1);
-			}
-		}
-	}
+	
 
 	private void doEx(Context context) throws Exception {
 		super.execute(context);

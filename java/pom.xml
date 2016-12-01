@@ -7,13 +7,19 @@
 	<artifactId>muba</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0</version>
-	<name>Implementation of the Chain of Responsibility Pattern to streamline processing data across network and user interfaces.</name>
+	<name>Human Interaction API</name>
 	<modules>
-		<module>vegetate</module>
+		<module>muba-bootstrap</module>
+		<module>validation-bval</module>
 		<module>muba-catalogs</module>
-		<module>muba-cms</module>
+		
+		<module>muba-catalogs-jdbc</module>
+		<module>muba-catalogs-jdbc-mysql</module>
+		<module>muba-catalogs-jdbc-hsql</module>
 		<module>muba-bpm</module>
-		<module>muba-security</module>
+		<module>vegetate</module>
+		<module>vegetate-security</module>
+		<module>desktop</module>
 	</modules>
 
 

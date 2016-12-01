@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasLocale;
+import com.wrupple.muba.bootstrap.domain.reserved.HasLocale;
 
 
 

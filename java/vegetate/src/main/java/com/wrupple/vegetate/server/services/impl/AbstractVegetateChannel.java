@@ -9,9 +9,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Map;
 
-import com.wrupple.vegetate.domain.VegetateServiceManifest;
-import com.wrupple.vegetate.server.services.ErrorAccuser;
-import com.wrupple.vegetate.server.services.ObjectMapper;
+import com.wrupple.muba.catalogs.domain.ServiceManifest;
+import com.wrupple.muba.catalogs.server.services.ErrorAccuser;
+import com.wrupple.muba.catalogs.server.services.ObjectMapper;
 
 public abstract class AbstractVegetateChannel<T, R> extends VegetateUrlServiceBuilder{
 
@@ -22,12 +22,12 @@ public abstract class AbstractVegetateChannel<T, R> extends VegetateUrlServiceBu
 
 	
 
-	public AbstractVegetateChannel(String host, String vegetateUrlBase, VegetateServiceManifest manifest,ObjectMapper mapper) {
+	public AbstractVegetateChannel(String host, String vegetateUrlBase, ServiceManifest manifest,ObjectMapper mapper) {
 		this(host, vegetateUrlBase, "http", UrlBuilder.PORT_UNSPECIFIED, 10000, 10000, "GET", manifest,mapper);
 	}
 
 	public AbstractVegetateChannel(String host, String serviceUrl, String protocol, int port, int connectionTimeOut, int readTimeout, String requestMethod,
-			VegetateServiceManifest manifest,ObjectMapper mapper) {
+			ServiceManifest manifest,ObjectMapper mapper) {
 		super(protocol,host,port,serviceUrl,manifest,mapper);
 		this.readTimeout = readTimeout;
 		this.connectionTimeOut = connectionTimeOut;

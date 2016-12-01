@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -23,7 +23,7 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogManager;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
@@ -49,50 +49,50 @@ public class GarbageCollectionImpl implements GarbageCollection {
 				// ??what now???
 				log.trace("invoked with an empty result set");
 			} else {
-				
+
 				CatalogDescriptor catalog = context.getCatalogDescriptor();
 
-				CatalogManager database = context.getCatalogManager();
+				SystemCatalogPlugin database = context.getCatalogManager();
 				List<CatalogIdentification> names = database.getAvailableCatalogs(context);
 
-				log.trace("[SEARCHING {} CATALOGS FOR hard keys referencing {}]", names.size(), catalog.getCatalog());
+				log.trace("[SEARCHING {} CATALOGS FOR hard keys referencing {}]", names.size(),
+						catalog.getDistinguishedName());
 
-				String parentCatalogId = catalog.getCatalog();
+				String parentCatalogId = catalog.getDistinguishedName();
 				CatalogDescriptor temp;
 				Collection<FieldDescriptor> tempFields;
 				FilterData garbageFilter;
 				FilterCriteria garbageCriteria;
 				List<CatalogEntry> collectedGarbage;
-				
+
 				List<Object> ids = new ArrayList<Object>(results.size());
-				for(CatalogEntry e : results){
+				for (CatalogEntry e : results) {
 					ids.add(e.getId());
 				}
-				
+
 				CatalogActionContext garbageContext = null;
 				for (CatalogIdentification idem : names) {
 
 					garbageFilter = null;
-					temp = database.getDescriptorForName(idem.getIdAsString(), context);
+					temp = database.getDescriptorForName((String) idem.getId(), context);
 					tempFields = temp.getFieldsValues();
 
-					log.trace("[PROCESSING {}]", idem.getIdAsString());
+					log.trace("[PROCESSING {}]", idem.getId());
 					// FIND SIMPLE KEYS
 					for (FieldDescriptor linkingField : tempFields) {
 						if (linkingField.isKey() && linkingField.isHardKey() && !linkingField.isMultiple()
 								&& parentCatalogId.equals(linkingField.getCatalog())) {
 
 							log.trace("field {}@{} is hard not-multiple key referncing {}  ", linkingField.getFieldId(),
-									temp.getCatalog(), parentCatalogId);
+									temp.getDistinguishedName(), parentCatalogId);
 
 							if (garbageFilter == null) {
 								garbageFilter = FilterDataUtils.newFilterData();
 								garbageFilter.setConstrained(false);
 							}
 
-							//APPEND-CREATE
-							garbageCriteria = new FilterCriteriaImpl(linkingField.getFieldId(), FilterData.EQUALS,
-									ids);
+							// APPEND-CREATE
+							garbageCriteria = new FilterCriteriaImpl(linkingField.getFieldId(), FilterData.EQUALS, ids);
 							garbageFilter.addFilter(garbageCriteria);
 
 							// we found a catalog, with a field that is hard
@@ -113,8 +113,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 						garbageCriteria = new FilterCriteriaImpl(HasCatalogId.CATALOG_FIELD, FilterData.EQUALS,
 								parentCatalogId);
 						garbageFilter.addFilter(garbageCriteria);
-						garbageCriteria = new FilterCriteriaImpl(HasEntryId.ENTRY_ID_FIELD, FilterData.EQUALS,
-								ids);
+						garbageCriteria = new FilterCriteriaImpl(HasEntryId.ENTRY_ID_FIELD, FilterData.EQUALS, ids);
 						garbageFilter.addFilter(garbageCriteria);
 
 						log.trace(
@@ -122,12 +121,12 @@ public class GarbageCollectionImpl implements GarbageCollection {
 					}
 
 					if (garbageFilter != null) {
-						if(garbageContext==null){
+						if (garbageContext == null) {
 							garbageContext = context.getCatalogManager().spawn(context);
 						}
 						log.trace("Querying for hard references");
 						garbageContext.setEntry(null);
-						garbageContext.setCatalog(temp.getCatalog());
+						garbageContext.setCatalog(temp.getDistinguishedName());
 						garbageContext.setFilter(garbageFilter);
 						delete.execute(garbageContext);
 					}

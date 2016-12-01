@@ -47,21 +47,25 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 		}
 		Session session = null;
 		Boolean trashed;
+
+		CatalogActionContext trashContext = null;
 		for (CatalogEntry e : oldValues) {
-			if (session == null) {
+			if (trashContext == null) {
 				session = accessor.newSession(e);
+				trashContext = context.getCatalogManager().spawn(context);
+
+				trashContext.setAction(CatalogActionRequest.CREATE_ACTION);
 			}
 			trashed = (Boolean) accessor.getPropertyValue(catalog, field, e, null, session);
 			if (trashed != null && trashed) {
 				Trash trashItem = trashp.get();
 				trashItem.setName(e.getName());
-				trashItem.setEntry(e.getIdAsString());
-				trashItem.setCatalog(catalog.getCatalog());
+				trashItem.setEntry(context.getCatalogManager().encodeClientPrimaryKeyFieldValue(e.getId(), field, catalog));
+				trashItem.setCatalog(catalog.getDistinguishedName());
 
-				CatalogActionContext trashContext = context.getCatalogManager().spawn(context);
-				trashContext.setCatalog(catalog.getCatalog());
-				trashContext.setAction(CatalogActionRequest.CREATE_ACTION);
+				trashContext.setCatalog(catalog.getDistinguishedName());
 				trashContext.setEntryValue(trashItem);
+				trashContext.setDomain((Long) e.getDomain());
 				create.execute(trashContext);
 			}
 		}

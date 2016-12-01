@@ -3,7 +3,7 @@ package com.wrupple.muba.catalogs.server.domain.catalogs;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.wrupple.muba.bootstrap.domain.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
@@ -14,7 +14,7 @@ import com.wrupple.muba.catalogs.server.domain.fields.NameField;
 import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
 import com.wrupple.muba.catalogs.server.domain.fields.PropertiesField;
 
-public class DistributiedLocalizedEntryDescriptor extends BaseCatalogEntryDescriptor {
+public class DistributiedLocalizedEntryDescriptor extends CatalogEntryDescriptor {
 	private static final long serialVersionUID = -8884049376144966265L;
 	@Inject
 	public DistributiedLocalizedEntryDescriptor(@Named(DistributiedLocalizedEntry.CATALOG) Class clazz,

@@ -62,7 +62,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		localize.setCatalog(CatalogDescriptor.CATALOG_ID);
 		// what catalog is this localized entity pointing to?
 		context.getCatalogManager().getRead().execute(localize);
-		CatalogDescriptor pointsTo = localize.getResult();
+		CatalogDescriptor pointsTo = localize.getEntryResult();
 		Session session = accessor.newSession(pointsTo);
 
 		// what strategy does the referenced catalog use to localize it's
@@ -70,7 +70,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		int strategy = pointsTo.getLocalization();
 		if (0 == strategy /* CONSOLIDATED */) {
 			// this is the special case we need to intercept
-			String catalogId = pointsTo.getCatalog();
+			String catalogId = pointsTo.getDistinguishedName();
 			session.resample(o);
 
 			// read localized field values
@@ -82,7 +82,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 			localize.setCatalog(catalogId);
 			CatalogDescriptor localizedCatalog=localize.getCatalogDescriptor();
 			context.getCatalogManager().getRead().execute(localize);
-			PersistentCatalogEntity targetEntity= localize.getResult();
+			PersistentCatalogEntity targetEntity= localize.getEntryResult();
 
 			// write localized values
 			FieldDescriptor field;
@@ -102,9 +102,9 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 			localize.setEntryValue(targetEntity);
 			// persist without performing any validations
 			context.getCatalogManager().getWrite().execute(localize);
-			 targetEntity= localize.getResult();
+			 targetEntity= localize.getEntryResult();
 
-			o.setIdAsString(targetEntity.getIdAsString());
+			o.setId(targetEntity.getId());
 			context.setResults(Collections.singletonList(o));
 		} else {
 			/*DISTRIBUTED*/

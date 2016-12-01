@@ -3,39 +3,33 @@ package com.wrupple.muba.catalogs.server.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
-import javax.validation.ConstraintViolation;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.chain.Chain;
 import org.apache.commons.chain.impl.ContextBase;
 
+import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.KnownException;
-import com.wrupple.muba.bootstrap.domain.KnownExceptionImpl;
 import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.domain.TransactionHistory;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogTrigger;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
-import com.wrupple.muba.catalogs.server.service.CatalogManager;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {
 
 	private static final long serialVersionUID = 3599727649189964912L;
-
-	private static final CatalogDescriptor CATALOG_DESCRIPTOR = null;
 
 	private Long id;
 
 	/*
 	 * SYSTEM CONTEXT
 	 */
-	private final CatalogManager catalogManager;
+	private final SystemCatalogPlugin catalogManager;
 
 	private final NamespaceContext namespace;
 
@@ -50,6 +44,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	 */
 	private Object entryValue, entry;
 	private FilterDataImpl filter;
+	@NotNull
 	private String action, catalog;
 	// dont change the name of this variable see RequestTokenizer
 	private long totalRequestSize;
@@ -57,48 +52,34 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	 * OUTPUT
 	 */
 	private List<CatalogEntry> oldValues;
-	/**
-	 * trigger that gave origin to this context
-	 */
-	private CatalogTrigger trigger;
-	private Exception error;
-	private long totalResponseSize;
+	private List<CatalogChangeEvent> events;
+
 	private List<CatalogEntry> results;
 	private CatalogResultSet resultSet;
-	private Set<ConstraintViolation<?>> constraintViolations;
+
 	private CatalogDescriptor catalogDescriptor;
 
 	// not injectable, always construct with CatalogManager.spawn
-	public CatalogActionContextImpl(CatalogManager manager, NamespaceContext domainContext,
+	public CatalogActionContextImpl(SystemCatalogPlugin manager, NamespaceContext domainContext,
 			ExcecutionContext requestContext, CatalogActionContext parentValue) {
 		this.catalogManager = manager;
 		this.excecutionContext = requestContext;
 		this.namespace = domainContext;
 		this.parentValue = parentValue;
-		totalResponseSize = 0;
 		if (parentValue != null) {
-			set(parentValue.getDomain(), parentValue.getCatalog(), parentValue.getAction(), parentValue.getEntry(),
-					parentValue.getEntryValue(), parentValue.getFilter());
+			events = new ArrayList<CatalogChangeEvent>(2);
+			setEntry(parentValue.getEntry());
+			setEntryValue(parentValue.getEntryValue());
+			setCatalog((String) parentValue.getCatalog());
+			setAction(parentValue.getAction());
+			setFilter(parentValue.getFilter());
+			setDomain((Long) parentValue.getDomain());
 		}
 	}
 
 	@Override
-	public CatalogManager getCatalogManager() {
+	public SystemCatalogPlugin getCatalogManager() {
 		return catalogManager;
-	}
-
-	public void set(long requestedDomain, String catalog, String action, Object entry, Object entryValue,
-			FilterData filter) {
-		setEntry(entry);
-		setEntryValue(entryValue);
-		setCatalog(catalog);
-		setAction(action);
-		setFilter(filter);
-		try {
-			getNamespaceContext().setId(requestedDomain, this);
-		} catch (Exception e) {
-			throw new KnownExceptionImpl("metada unavailable", KnownException.UNREACHABLE, e);
-		}
 	}
 
 	@Override
@@ -167,7 +148,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		this.results = (List) discriminated;
 	}
 
-	public CatalogDescriptor getCatalogDescriptor() throws Exception {
+	public CatalogDescriptor getCatalogDescriptor() throws CatalogException {
 		if (catalogDescriptor == null) {
 			setCatalogDescriptor(getCatalogManager().getDescriptorForName(getCatalog(), this));
 		}
@@ -175,12 +156,12 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public void setCatalogDescriptor(CatalogDescriptor catalog) {
-		if(catalog ==null){
+		if (catalog == null) {
 			setCatalog(null);
-		}else{
-			setCatalog(catalog.getCatalog());
+		} else {
+			setCatalog(catalog.getDistinguishedName());
 		}
-		
+
 		this.catalogDescriptor = catalog;
 	}
 
@@ -190,22 +171,6 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	public void setResultSet(CatalogResultSet mainResultSet) {
 		this.resultSet = mainResultSet;
-	}
-
-	public void setConstraintViolations(Set<ConstraintViolation<?>> aggregate) {
-		this.constraintViolations = aggregate;
-	}
-
-	public Set<ConstraintViolation<?>> getConstraintViolations() {
-		return constraintViolations;
-	}
-
-	public void setTotalResponseSize(long lenght) {
-		this.totalResponseSize = lenght;
-	}
-
-	public long getTotalResponseSize() {
-		return totalResponseSize;
 	}
 
 	public String getAction() {
@@ -226,7 +191,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public void setEntry(String entry) {
-		this.entry = getCatalogManager().getKeyEncodingService().decodePrimaryKeyToken(entry);
+		this.entry = getCatalogManager().decodePrimaryKeyToken(entry);
 
 	}
 
@@ -242,17 +207,17 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	@Override
 	public String getCatalog() {
 		if (catalog == null) {
-			catalog = catalogDescriptor == null ? null : catalogDescriptor.getCatalog();
+			catalog = catalogDescriptor == null ? null : catalogDescriptor.getDistinguishedName();
 		}
 		return catalog;
 	}
 
 	public void setCatalog(String catalog) {
-		if(this.catalog==null || ! this.catalog.equals(catalog)){
+		if (this.catalog == null || !this.catalog.equals(catalog)) {
 			this.catalog = catalog;
-			this.catalogDescriptor=null;
+			this.catalogDescriptor = null;
 		}
-		
+
 	}
 
 	public SessionContext getSession() {
@@ -312,18 +277,12 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	@Override
-	public String getDomainAwareCatalogId(String catalogId) {
-		if (getDomain().longValue() == CatalogEntry.PUBLIC_ID) {
-			return catalogId;
-		} else {
-			String domain = getDomain().toString();
-			return new StringBuilder(domain.length() + catalogId.length() + 1).append(domain).append('_')
-					.append(catalogId).toString();
-		}
+	public <T> T getConvertedResult() {
+		return (T) (results == null ? null : results.get(0));
 	}
 
 	@Override
-	public <T extends CatalogEntry> T getResult() {
+	public <T extends CatalogEntry> T getEntryResult() {
 		return (T) (results == null ? null : results.get(0));
 	}
 
@@ -345,57 +304,22 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		return oldValues;
 	}
 
-	public CatalogTrigger getTrigger() {
-		return trigger;
-	}
+	@Override
+	public void setNamespace(String domain) throws Exception {
+		if (domain == null) {
+			getNamespaceContext().setId(CatalogEntry.PUBLIC_ID, this);
+		} else if (CatalogEntry.DOMAIN_TOKEN.equals(domain)) {
 
-	public void setTrigger(CatalogTrigger trigger) {
-		this.trigger = trigger;
-	}
+			getNamespaceContext().setId(getSession().getDomain(), this);
 
-	public Exception getError() {
-		return error;
-	}
-
-	public void setError(Exception error) {
-		this.error = error;
-	}
-
-	public void setNamespace(String domain) {
-		try {
-			if (domain == null) {
-				throw new IllegalArgumentException("cannot act upon a null domain");
-			} else if (CatalogEntry.DOMAIN_TOKEN.equals(domain)) {
-
-				getNamespaceContext().switchToUserDomain(this);
-
-			} else {
-				getNamespaceContext()
-						.setId((Long) getCatalogManager().getKeyEncodingService().decodePrimaryKeyToken(domain), this);
-			}
-		} catch (Exception e) {
-			throw new KnownExceptionImpl("unavailable namespace", KnownException.UNREACHABLE, e);
+		} else {
+			getNamespaceContext().setId((Long) getCatalogManager().decodePrimaryKeyToken(domain), this);
 		}
 	}
 
 	@Override
 	public void setDomain(Long domain) {
-		try {
-			if (domain == null) {
-				throw new IllegalArgumentException("cannot act upon a null domain");
-			}
-			getNamespaceContext().setId(domain, this);
-		} catch (Exception e) {
-			throw new KnownExceptionImpl("unavailable namespace", KnownException.UNREACHABLE, e);
-		}
-	}
-
-	public void setDomain(long domain) {
-		try {
-			getNamespaceContext().setId(domain, this);
-		} catch (Exception e) {
-			throw new KnownExceptionImpl("unavailable namespace", KnownException.UNREACHABLE, e);
-		}
+		getNamespaceContext().setId(domain, this);
 	}
 
 	@Override
@@ -420,7 +344,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	@Override
 	public String getName() {
-		return getIdAsString();
+		return String.valueOf(id);
 	}
 
 	@Override
@@ -428,17 +352,6 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		return id;
 	}
 
-	@Override
-	public String getIdAsString() {
-		return (String) (id == null ? null
-				: getCatalogManager().getKeyEncodingService().encodeClientPrimaryKeyFieldValue(getId(),
-						CATALOG_DESCRIPTOR.getFieldDescriptor(CatalogEntry.ID_FIELD), CATALOG_DESCRIPTOR));
-	}
-
-	@Override
-	public void setIdAsString(String id) {
-		setId((Long) getCatalogManager().getKeyEncodingService().decodePrimaryKeyToken(id));
-	}
 
 	private void setId(Long decodePrimaryKeyToken) {
 		this.id = decodePrimaryKeyToken;
@@ -459,6 +372,18 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		}
 	}
 
+	public void addBroadcastable(CatalogChangeEvent data) {
+		if (data != null) {
+			if (data.getEntry() != null) {
+				events.add(data);
+			}
+		}
+	}
+
+	public List<CatalogChangeEvent> getEvents() {
+		return events;
+	}
+
 	private TransactionHistory assertTransaction() {
 		if (transaction == null) {
 			transaction = new CatalogUserTransactionImpl(getExcecutionContext().getTransaction());
@@ -466,11 +391,19 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		return transaction;
 	}
 
+	@Override
+	public CatalogActionContext spawnChild() {
+		return getCatalogManager().spawn(this);
+	}
 
 	@Override
-	public void setCallback(Chain callback) {
-		// TODO Auto-generated method stub
-		
+	public Object getResult() {
+		return getEntryResult();
+	}
+
+	@Override
+	public void setResult(Object r) {
+		setResults((List) Collections.singletonList(r));
 	}
 
 }

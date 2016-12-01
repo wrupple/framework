@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
+	type="com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser"
+	serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+	propertyName="widget" defaultPropertyValue="table">
+	<parent>
+		<property name="widget" suggest="false" />
+		<property name="selectionModel" dictionary="selectionModel" />
+		<property name="customJoins" source="customJoins" />
+		<property name="cumulative" source="cumulative" />
+		<property name="postSortField" source="postSortField" />
+		<property name="notificationsDue" source="modelChangeNotifications" />
+		<property name="backgroundColor" source="backgroundColorField" />
+		<property name="textColor" source="colorField" />
+		<property name="runtimeParams" source="catalog" />
+	</parent>
+	<service id="layout" creator="layoutBrowser">
+		<property name="layoutDelegate" dictionary="layoutDelegates" />
+		<property name="cell" dictionary="fields" />
+		<property name="rulerToolbars" />
+		<property name="zoomFactor" />
+		<property name="transition" />
+	</service>
+	<service id="flow" creator="flowBrowser">
+		<property name="inline" />
+		<property name="cell" dictionary="fields" />
+		<property name="cellWrapperClass" />
+	</service>
+	<service id="table" creator="tableBrowser">
+		<property name="addSelectorColumn" />
+	</service>
+	<service id="groupCanvas" creator="aggregateCanvasBrowser">
+		<property name="groupingField" />
+		<property name="renderService" dictionary="aggregateCanvasRenderers" />
+	</service>
+	<service id="groupTable" creator="aggregateTableBrowser">
+		<property name="groupingField" />
+		<property name="customColumnIds" />
+	</service>
+	<service id="pointMap" creator="pointMapBrowser" />
+</servicer>

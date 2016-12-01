@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.chain;
 
-import com.wrupple.vegetate.server.services.VegetateProcess;
+import org.apache.commons.chain.Chain;
 
-public interface BusinessEngine extends VegetateProcess {
+public interface BusinessEngine extends Chain {
 
 }

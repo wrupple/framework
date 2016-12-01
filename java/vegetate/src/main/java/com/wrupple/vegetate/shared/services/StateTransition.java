@@ -1,6 +1,6 @@
 package com.wrupple.vegetate.shared.services;
 
-import com.wrupple.vegetate.domain.structure.HasChildren;
+import com.wrupple.muba.bootstrap.domain.reserved.HasChildren;
 
 public interface StateTransition<T> extends  HasChildren<StateTransition<T>> {
 	

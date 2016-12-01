@@ -10,7 +10,7 @@ import com.wrupple.muba.catalogs.server.domain.fields.NameField;
 import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
 import com.wrupple.muba.catalogs.server.domain.fields.StringValue;
 
-public class LocalizedStringDescriptor extends BaseCatalogEntryDescriptor {
+public class LocalizedStringDescriptor extends CatalogEntryDescriptor {
 	private static final long serialVersionUID = -4905547001329770733L;
 
 	@Inject

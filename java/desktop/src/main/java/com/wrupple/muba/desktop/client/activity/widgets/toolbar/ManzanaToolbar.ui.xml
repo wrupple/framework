@@ -1,0 +1,36 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.left {
+		width: 35%;
+		}
+
+		.center {
+		width: 30%;
+		text-align: center;
+		}
+
+		.right {
+		width: 35%;
+		}
+	</ui:style>
+	<g:HTMLPanel ui:field="top">
+		<table class="navigationPanel-head" width="100%" cellpadding="0"
+			cellspacing="0">
+			<tr>
+				<td class="{style.left}" align="right" ui:field="leftControls">
+					<g:Anchor ui:field="back" styleName="navigationPanel-button-back" />
+					<g:SimplePanel ui:field="backWrapper" />
+				</td>
+				<td class="{style.center}">
+					<g:Label ui:field="title" styleName="navigationPanel-title" />
+				</td>
+				<td class="{style.right}" align="left" ui:field="rightControls">
+					<g:SimplePanel ui:field="forwardWrapper" />
+					<g:Anchor ui:field="forward" styleName="navigationPanel-button-forward" />
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+</ui:UiBinder> 

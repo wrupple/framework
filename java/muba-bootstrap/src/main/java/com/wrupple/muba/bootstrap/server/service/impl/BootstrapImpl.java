@@ -4,12 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.chain.Context;
-
 import com.wrupple.muba.bootstrap.domain.Bootstrap;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ContractDescriptorImpl;
 import com.wrupple.muba.bootstrap.domain.ParentServiceManifest;
 import com.wrupple.muba.bootstrap.domain.ServiceManifest;
@@ -19,33 +17,25 @@ import com.wrupple.muba.bootstrap.server.chain.command.ServiceInvocationCommand;
 @Singleton
 public class BootstrapImpl extends ServiceManifestImpl implements Bootstrap {
 
-	
+	private static String[] TOKENS = new String[] { "service", "version" };
+	// Names.named("bootstrap.seoAwareService")
+	private ParentServiceManifest fallbackService;
 
-	private static String[] TOKENS=new String[] { "service", "version" };
-	
-	private final ParentServiceManifest optimized;
-	
-
-	
 	// {service,{version,()}
 
 	@Inject
-	public BootstrapImpl(  List<ServiceManifest> chilcdren,
-			@Named("bootstrap.seoAwareService") ParentServiceManifest optimized,  ServiceInvocationCommand invoke) {
-		super(NAME,"1.0", new ContractDescriptorImpl(Arrays.asList(TOKENS),
-				Context.class.getCanonicalName()),chilcdren,TOKENS, null, invoke);
-		this.optimized = optimized;
-		invoke.setRootService(this);
+	public BootstrapImpl(List<ServiceManifest> chilcdren, ServiceInvocationCommand invoke) {
+		super(NAME, "1.0", new ContractDescriptorImpl(Arrays.asList(TOKENS), CatalogEntry.class), chilcdren, TOKENS,
+				null, invoke);
 	}
-	
-
 
 	@Override
 	public ParentServiceManifest getFallbackService() {
-		return optimized;
+		return fallbackService;
 	}
 
-
-
+	public void setFallbackService(ParentServiceManifest fallbackService) {
+		this.fallbackService = fallbackService;
+	}
 
 }

@@ -14,7 +14,7 @@ public class ServiceManifestImpl implements ServiceManifest {
 	private String serviceName,serviceVersion,serviceId;
 	private ContractDescriptor contractDescriptor;
 	private List<ServiceManifest> childServiceManifests;
-	private String[] vocabulary,childServiceIds;
+	private String[] grammar,childServiceIds;
 	private final Command contextParsingCommand;
 	private final Command contextProcessingCommand;
 	
@@ -29,7 +29,7 @@ public class ServiceManifestImpl implements ServiceManifest {
 		this.serviceVersion = serviceVersion;
 		this.contractDescriptor = contractDescriptor;
 		this.childServiceManifests = childServiceManifests;
-		this.vocabulary = vocabulary;
+		this.grammar = vocabulary;
 		setServiceId(getServiceName() + "-" + getServiceVersion());
 		if (childServiceManifests == null) {
 			childServices = Collections.EMPTY_MAP;
@@ -81,11 +81,12 @@ public class ServiceManifestImpl implements ServiceManifest {
 	public void setChildServiceManifests(List<ServiceManifest> childServiceManifests) {
 		this.childServiceManifests = (List)childServiceManifests;
 	}
+	@Override
 	public String[] getGrammar() {
-		return vocabulary;
+		return grammar;
 	}
-	public void setVocabulary(String[] urlPathParameters) {
-		this.vocabulary = urlPathParameters;
+	public void setGrammar(String[] urlPathParameters) {
+		this.grammar = urlPathParameters;
 	}
 	public String[] getChildServiceIds() {
 		return childServiceIds;
@@ -109,6 +110,20 @@ public class ServiceManifestImpl implements ServiceManifest {
 	@Override
 	public Command getContextProcessingCommand() {
 		return contextProcessingCommand;
+	}
+	public String buildUri(String[] grammar, char tokenSeparator,String... values ) {
+		StringBuilder builder = new StringBuilder(grammar.length*25);
+		
+		for(int i = 0 ; i< grammar.length && i< values.length; i++){
+			if(values[i]==null){
+				break;
+			}else{
+				builder.append(values[i]);
+				builder.append(tokenSeparator);
+			}
+		}
+		builder.deleteCharAt(builder.length()-1);
+		return builder.toString();
 	}
 
 

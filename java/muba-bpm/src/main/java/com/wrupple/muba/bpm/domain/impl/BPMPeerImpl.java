@@ -3,11 +3,12 @@ package com.wrupple.muba.bpm.domain.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.catalogs.domain.Location;
 
 public class BPMPeerImpl implements BPMPeer {
-	private String agent,catalogDomain,catalogUrlBase,bPUrlBase,host,image,name,id,publicKey,privateKey;
+	private String agent,catalogUrlBase,bPUrlBase,host,image,name,id,publicKey,privateKey;
 	int channel,stakeHolderIndex;
 	Long domain,stakeHolder;
 	Integer subscriptionStatus;
@@ -69,13 +70,6 @@ public class BPMPeerImpl implements BPMPeer {
 		this.agent = agent;
 	}
 
-	public String getCatalogDomain() {
-		return catalogDomain;
-	}
-
-	public void setCatalogDomain(String catalogDomain) {
-		this.catalogDomain = catalogDomain;
-	}
 
 	public String getCatalogUrlBase() {
 		return catalogUrlBase;
@@ -197,10 +191,6 @@ public class BPMPeerImpl implements BPMPeer {
 		this.timestamp = timestamp;
 	}
 
-	@Override
-	public String getCatalog() {
-		return BPMPeer.CATALOG;
-	}
 
 	@Override
 	public String getIdAsString() {
@@ -246,6 +236,17 @@ private List<String> events;
 
 	public void setEvents(List<String> events) {
 		this.events = events;
+	}
+
+	@Override
+	public void setDomain(long domain) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getCatalogType() {
+		return Host.CATALOG;
 	}
 	
 

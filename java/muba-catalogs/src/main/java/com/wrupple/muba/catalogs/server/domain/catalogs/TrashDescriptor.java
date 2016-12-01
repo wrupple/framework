@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.ContentNode;
@@ -14,7 +14,7 @@ import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;
 import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
 
-public class TrashDescriptor extends BaseCatalogEntryDescriptor {
+public class TrashDescriptor extends CatalogEntryDescriptor {
 
 	/**
 	 * 

@@ -15,13 +15,15 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 public class CatalogServiceManifestImpl extends ServiceManifestImpl implements CatalogServiceManifest {
 
 
+	private static final String[] GRAMMAR = new String[] { CatalogDescriptor.DOMAIN_TOKEN, CatalogActionRequest.LOCALE_FIELD,
+						CatalogActionRequest.CATALOG_FIELD, CatalogActionRequest.CATALOG_ACTION_PARAMETER,
+						CatalogActionRequest.ENTRY_ID_FIELD, CatalogActionRequest.FORMAT_PARAMETER };
+
 	@Inject
 	public CatalogServiceManifestImpl(
 			@Named(CatalogActionRequest.CATALOG) CatalogDescriptor descriptor, CatalogRequestInterpret requestInterpret, CatalogEngine catalogEngine) {
 		super(SERVICE_NAME, "1.0", descriptor, null,
-				new String[] { CatalogDescriptor.DOMAIN_TOKEN, CatalogActionRequest.LOCALE_FIELD,
-						CatalogActionRequest.CATALOG_FIELD, CatalogActionRequest.CATALOG_ACTION_PARAMETER,
-						CatalogActionRequest.ENTRY_ID_FIELD, CatalogActionRequest.FORMAT_PARAMETER }, requestInterpret, catalogEngine);
+				GRAMMAR, requestInterpret, catalogEngine);
 	}
 
 	@Override
