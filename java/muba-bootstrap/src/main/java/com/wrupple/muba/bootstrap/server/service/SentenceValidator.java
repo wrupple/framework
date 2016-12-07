@@ -6,5 +6,5 @@ import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.annotations.Sentence;
 
 public interface SentenceValidator extends ConstraintValidator<Sentence, ExcecutionContext> {
-
+	final String UNCONFIGURED = "{chain.empty}";
 }

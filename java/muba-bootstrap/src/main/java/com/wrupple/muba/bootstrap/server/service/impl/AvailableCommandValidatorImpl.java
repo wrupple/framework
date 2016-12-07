@@ -23,13 +23,12 @@ public class AvailableCommandValidatorImpl implements AvailableCommandValidator 
 	
 	@Override
 	public void initialize(AvailableCommand constraintAnnotation) {
-		this.catalog=injector.getInstance(constraintAnnotation.dictionary());
+		this.catalog=injector.getInstance(CatalogFactory.class).getCatalog(constraintAnnotation.dictionary());
 	}
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		// TODO Auto-generated method stub
-		return false;
+		return value==null||catalog!=null&&catalog.getCommand(value)!=null;
 	}
 
 }

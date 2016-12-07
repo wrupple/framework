@@ -14,16 +14,18 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryAssembler;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 
-	final CatalogEvaluationDelegate access;
+
+	private SystemCatalogPlugin cms;
 
 	@Inject
-	public CatalogEntryAssemblerImpl(CatalogEvaluationDelegate access) {
-		this.access = access;
+	public CatalogEntryAssemblerImpl(SystemCatalogPlugin cms) {
+		this.cms=cms;
+		
 	}
 	@Override
 	public List<CatalogEntry> processMultipleResponse(CatalogActionResult response, CatalogDescriptor catalogdescriptor)
@@ -79,7 +81,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 			size = fieldContents.size();
 			regreso = new ArrayList<T>(size);
 			for (int i = 0; i < size; i++) {
-				newEntry = (T) access.synthesize(catalog);
+				newEntry = (T) cms.synthesize(catalog);
 				regreso.add(newEntry);
 			}
 			break;
@@ -89,7 +91,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 		FieldDescriptor field;
 		if (newEntry != null) {
 			// at least one entry got created (logically)
-			Session session = access.newSession(newEntry);
+			Session session = cms.newSession(newEntry);
 			for (String fieldId : containedFields) {
 				field = catalog.getFieldDescriptor(fieldId);
 				if (field != null) {
@@ -101,7 +103,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 							// entry to put field value in
 							newEntry = regreso.get(j);
 							value = fieldContents.get(j);
-							access.setPropertyValue(catalog, field, newEntry, value, session);
+							cms.setPropertyValue(catalog, field, newEntry, value, session);
 						}
 					}
 				}

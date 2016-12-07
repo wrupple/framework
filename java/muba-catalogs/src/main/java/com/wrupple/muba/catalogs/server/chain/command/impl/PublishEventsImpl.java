@@ -17,21 +17,18 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.PublishEvents;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class PublishEventsImpl  extends LookupCommand   implements PublishEvents {
 	
 	private final EventSuscriptionChain chain;
-	private CatalogEvaluationDelegate accessor;
 	public static boolean ENABLE_IMPLICIT_SUSCRIPTIONS = true;
 
 	@Inject
-	public PublishEventsImpl(EventSuscriptionChain a,CatalogFactory factory,CatalogEvaluationDelegate accessor) {
+	public PublishEventsImpl(EventSuscriptionChain a,CatalogFactory factory) {
 		super(factory);
 		this.chain = a;
-		this.accessor=accessor;
 		super.setNameKey(PublishEvents.CHANNEL_DICTIONARY);
 		super.setCatalogName(PublishEvents.CHANNEL_DICTIONARY);
 	}
@@ -70,7 +67,7 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 
 				// push to online clients
 				concernedClients = getConcernedClients(data, context);
-				Session session = accessor.newSession(null);
+				Session session = context.getCatalogManager().newSession(null);
 				if (concernedClients != null) {
 					publishImplicitEvents(data, concernedClients,context,session);
 				}
@@ -98,7 +95,7 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 			for(CatalogPeer client : concernedClients){
 				context.put(EventSuscriptionChain.CONCERNED_CLIENTS, client);
 				context.put(EventSuscriptionChain.CURRENT_EVENT, event);
-				context.put(CHANNEL_DICTIONARY, accessor.getDenormalizedFieldValue(client,CatalogPeer.CHANNEL_FIELD, session, context));
+				context.put(CHANNEL_DICTIONARY, context.getCatalogManager().getDenormalizedFieldValue(client,CatalogPeer.CHANNEL_FIELD, session, context));
 				super.execute(context);
 			}
 		}

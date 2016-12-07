@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
+import javax.validation.Validator;
 
 import org.apache.commons.chain.Command;
 import org.junit.Before;
@@ -18,15 +20,19 @@ import org.junit.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
+import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bootstrap.BootstrapModule;
+import com.wrupple.muba.bootstrap.domain.ApplicationContext;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.Person;
+import com.wrupple.muba.bootstrap.domain.ServiceManifest;
 import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
+import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCHSQLTestModule;
@@ -34,6 +40,8 @@ import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.domain.CatalogIdentification;
+import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.domain.ContentNode;
@@ -42,6 +50,7 @@ import com.wrupple.muba.catalogs.domain.MathProblem;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadUrlHandlerTransaction;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
 import com.wrupple.muba.catalogs.server.chain.command.DataDeleteCommand;
 import com.wrupple.muba.catalogs.server.chain.command.DataQueryCommand;
@@ -68,11 +77,15 @@ public class CatalogEngineTest extends MubaTest {
 
 	protected WriteAuditTrails mockLogger;
 
+	protected CatalogPeer peerValue;
+
+	protected EventSuscriptionChain chainMock;
+
 	class CatalogEngineTestModule extends AbstractModule {
 
 		@Override
 		protected void configure() {
-
+			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
 			// this makes JDBC the default storage unit
 			bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
 			bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
@@ -83,9 +96,11 @@ public class CatalogEngineTest extends MubaTest {
 			// mocks
 			mockWriter = mock(WriteOutput.class);
 			mockLogger = mock(WriteAuditTrails.class);
+			peerValue = mock(CatalogPeer.class);
+			chainMock = mock(EventSuscriptionChain.class);
 			bind(WriteAuditTrails.class).toInstance(mockLogger);
 			bind(WriteOutput.class).toInstance(mockWriter);
-
+			bind(EventSuscriptionChain.class).toInstance(chainMock);
 			/*
 			 * COMMANDS
 			 */
@@ -103,7 +118,7 @@ public class CatalogEngineTest extends MubaTest {
 		public SessionContext sessionContext(@Named("host") String peer) {
 			long stakeHolder = 1;
 			Person stakeHolderValue = mock(Person.class);
-			Host peerValue = mock(Host.class);
+
 			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
 		}
 
@@ -125,15 +140,32 @@ public class CatalogEngineTest extends MubaTest {
 	}
 
 	public CatalogEngineTest() {
-		init(new CatalogEngineTestModule(), new JDBCModule(), new JDBCHSQLTestModule(), new HSQLDBModule(),
-				new SingleUserModule(), new CatalogModule(), new BootstrapModule());
+		init(new CatalogEngineTestModule(), new JDBCHSQLTestModule(), new HSQLDBModule(), new JDBCModule(),
+				new ValidationModule(), new SingleUserModule(), new CatalogModule(), new BootstrapModule());
+	}
+
+	@Override
+	protected void registerServices(Validator v, ValidationGroupProvider g, ApplicationContext switchs) {
+		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
+		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
+		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
+	}
+
+	@Provides
+	@Inject
+	public List<ServiceManifest> foos(CatalogServiceManifest catalog) {
+		// this is what makes it purr
+		List<ServiceManifest> r = (List) Arrays.asList(catalog);
+		return r;
 	}
 
 	@Before
 	public void setUp() throws Exception {
-
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+		expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+		expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+
 		excecutionContext = injector.getInstance(ExcecutionContext.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}
@@ -167,7 +199,7 @@ public class CatalogEngineTest extends MubaTest {
 		excecutionContext.setServiceContract(action);
 		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-
+		// locale is set in catalog
 		excecutionContext.process();
 
 		CatalogActionContext catalogContext = excecutionContext.getServiceContext();
@@ -182,27 +214,34 @@ public class CatalogEngineTest extends MubaTest {
 
 		excecutionContext.setServiceContract(null);
 		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-				CatalogActionRequest.LOCALE_FIELD, CatalogActionRequest.LIST_ACTION_TOKEN);
+				CatalogActionRequest.LOCALE_FIELD, CatalogActionRequest.READ_ACTION);
 		excecutionContext.process();
 		catalogContext = excecutionContext.getServiceContext();
-		Object raw = catalogContext.get(CatalogResultSet.MULTIPLE_FOREIGN_KEY);
-		assertTrue(raw != null);
-		assertTrue(raw instanceof List);
+		assertTrue(catalogContext.getResults() != null);
+		assertTrue(!catalogContext.getResults().isEmpty());
+		boolean contained = false;
+
+		for (CatalogEntry id : catalogContext.getResults()) {
+			if(id.getId().equals(problemContract.getDistinguishedName())){
+				contained = true ;
+				break;
+			}
+		}
+
+		assertTrue(contained);
 		log.trace("[-see registered catalog Descriptor-]");
 
 		excecutionContext.reset();
 
 		excecutionContext.setServiceContract(null);
 		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-				CatalogActionRequest.LOCALE_FIELD, CatalogActionRequest.LIST_ACTION_TOKEN,
-				MathProblem.class.getSimpleName());
+				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(), CatalogActionRequest.READ_ACTION);
 
 		excecutionContext.process();
 
 		catalogContext = excecutionContext.getServiceContext();
-		raw = catalogContext.get(CatalogResultSet.MULTIPLE_FOREIGN_KEY);
-		assertTrue(raw != null);
-		assertTrue(raw instanceof CatalogDescriptor);
+		assertTrue(catalogContext.getResult() != null);
+		assertTrue(catalogContext.getResults().get(0).getName().equals(problemContract.getName()));
 
 		log.debug("-create math problem entry-");
 		excecutionContext.reset();
@@ -242,17 +281,17 @@ public class CatalogEngineTest extends MubaTest {
 	}
 	// DROP COLUMN/INDEX CatalogDescriptorUpdateTriggerImpl
 
-		// ADD COLUMN/INDEX
-		// pluggable! FIXME delete all catalogs of a domain when domain is dropped
-		// FIXME Clean entities with no corresponding catalog in namespace
-		// https://cloud.google.com/appengine/docs/java/datastore/metadataqueries?csw=1#Namespace_Queries
+	// ADD COLUMN/INDEX
+	// pluggable! FIXME delete all catalogs of a domain when domain is dropped
+	// FIXME Clean entities with no corresponding catalog in namespace
+	// https://cloud.google.com/appengine/docs/java/datastore/metadataqueries?csw=1#Namespace_Queries
 	/*
 	 * @Test is multiple delete handles by triggers gracefully (batch processes
-	 * in general)  i18n LocalizedEntityInterceptor security for unanted
+	 * in general) i18n LocalizedEntityInterceptor security for unanted
 	 * crossdomain access by querying for ids trash, restore, dump public
 	 * timeline
 	 * 
-	 * transactiondemarcation() { 
+	 * transactiondemarcation() {
 	 * 
 	 * @Test public void vanityId() { fail("Not yet implemented"); }
 	 * 

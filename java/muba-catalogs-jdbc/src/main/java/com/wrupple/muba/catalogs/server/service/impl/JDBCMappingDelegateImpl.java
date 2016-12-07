@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -332,6 +331,13 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		case CatalogEntry.STRING_DATA_TYPE:
 			r = (Object) rs.getString(columnIndex);
 			break;
+		case CatalogEntry.OBJECT_DATA_TYPE:
+			try {
+				r = Class.forName(rs.getString(columnIndex));
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException("this catalog jdbc implementation only supports deserialization of clazz type objects");
+			}
+			break;
 		case CatalogEntry.DATE_DATA_TYPE:
 			Timestamp date = rs.getTimestamp(columnIndex);
 			if(date!=null){
@@ -370,6 +376,9 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		case CatalogEntry.BOOLEAN_DATA_TYPE:
 			r = DEFAULT_BOOLEAN_COLUMN_DEFINITION;
 			break;
+		case CatalogEntry.OBJECT_DATA_TYPE:
+			r = LARGE_STRING;
+			break;
 		case CatalogEntry.BLOB_DATA_TYPE:
 			r = BLOB_TYPE;
 			break;
@@ -377,7 +386,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 			r = LARGE_STRING;
 			break;
 		default:
-			r = null;
+			throw new UnsupportedOperationException("this JDBC implementation of catalogs does not support storage of field "+field.getFieldId());
 		}
 		return r;
 	}

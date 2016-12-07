@@ -26,8 +26,8 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 
@@ -81,16 +81,13 @@ public abstract class DataJoiner implements Command {
 
 	}
 
-	protected final CatalogEvaluationDelegate axs;
 	private final SameEntityLocalizationStrategy sameEntityStrategy;
 	private final DiscriminateEntriesImpl separateEntityStrategy;
 
 	@Inject
-	public DataJoiner(DiscriminateEntriesImpl separateEntityStrategy, SameEntityLocalizationStrategy sameEntityStrategy,
-			CatalogEvaluationDelegate propertyAccessor) {
+	public DataJoiner(DiscriminateEntriesImpl separateEntityStrategy, SameEntityLocalizationStrategy sameEntityStrategy) {
 		super();
 		this.sameEntityStrategy = sameEntityStrategy;
-		this.axs = propertyAccessor;
 		this.separateEntityStrategy = separateEntityStrategy;
 	}
 
@@ -237,13 +234,13 @@ public abstract class DataJoiner implements Command {
 				throw new RuntimeException("no results to join");
 			} else {
 				log.trace("[READ JOIN DISCRIMINATORS] ");
-				putFieldValues(fieldId, results, catalog, session, fieldValues);
+				putFieldValues(fieldId, results, catalog, session, fieldValues,context.getCatalogManager());
 			}
 		}
 	}
 
 	private void putFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog, Session session,
-			Set<Object> fieldValues) throws Exception {
+			Set<Object> fieldValues, SystemCatalogPlugin cms) throws Exception {
 		FieldDescriptor field = catalog.getFieldDescriptor(fieldId);
 		if (field == null) {
 		} else {
@@ -253,7 +250,7 @@ public abstract class DataJoiner implements Command {
 			if (field.isMultiple()) {
 				Collection<?> temp;
 				for (CatalogEntry e : results) {
-					temp = (Collection<?>) axs.getPropertyValue(catalog, field, e, null, session);
+					temp = (Collection<?>) cms.getPropertyValue(catalog, field, e, null, session);
 					if (temp != null) {
 						for (Object o : temp) {
 							if (o != null) {
@@ -267,7 +264,7 @@ public abstract class DataJoiner implements Command {
 
 				Object value;
 				for (CatalogEntry e : results) {
-					value = axs.getPropertyValue(catalog, field, e, null, session);
+					value = cms.getPropertyValue(catalog, field, e, null, session);
 					if (value != null) {
 						fieldValues.add(value);
 					}
@@ -343,7 +340,7 @@ public abstract class DataJoiner implements Command {
 	 * List<Object> fieldContents; log.trace("[RESULT SET CREATED] {}",
 	 * catalog.getDistinguishedName()); // System.err.println(list);
 	 * 
-	 * Session session = axs.newSession(list.get(0)); int j = 0; for
+	 * Session session = context.getCatalogManager().newSession(list.get(0)); int j = 0; for
 	 * (FieldDescriptor field : fields) { fieldId = field.getFieldId();
 	 * fieldContents = new ArrayList<Object>(list.size()); collectedValues[j] =
 	 * fieldContents; log.trace("[ALLOCATED SPACE FOR FIELD] {}", fieldId);
@@ -361,7 +358,7 @@ public abstract class DataJoiner implements Command {
 	 * for (FieldDescriptor field : fields) { fieldContents =
 	 * collectedValues[j]; if (field.isMasked()) { log.debug(
 	 * "[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId()); fieldValue =
-	 * null; } else { fieldValue = axs.getPropertyValue(catalog, field, object,
+	 * null; } else { fieldValue = context.getCatalogManager().getPropertyValue(catalog, field, object,
 	 * localizedObject, session); } fieldContents.add(fieldValue); }
 	 * 
 	 * } regreso.setIdAsString(catalog.getDistinguishedName()); return ; }
@@ -480,7 +477,7 @@ public abstract class DataJoiner implements Command {
 						log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId());
 						fieldValue = null;
 					} else {
-						fieldValue = axs.getPropertyValue(catalog, field, object, localizedObject, session);
+						fieldValue = context.getCatalogManager().getPropertyValue(catalog, field, object, localizedObject, session);
 					}
 					fieldContents.add(fieldValue);
 				}

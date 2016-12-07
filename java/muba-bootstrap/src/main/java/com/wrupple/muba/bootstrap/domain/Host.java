@@ -23,7 +23,7 @@ public interface Host extends CatalogEntry,HasStakeHolder {
 	 */
 	Date getPresence();
 
-	void setSubscriptionStatus(int s);
+	void setSubscriptionStatus(Integer s);
 
 	/**
 	 * @param statusIdle
@@ -65,11 +65,11 @@ public interface Host extends CatalogEntry,HasStakeHolder {
 	/**
 	 * @return the language used to speak to this peer
 	 */
-	int getChannel();
+	Integer getChannel();
 
-	void setChannel(int c);
+	void setChannel(Integer c);
 
-	void setDomain(long domain);
+	void setDomain(Long domain);
 	
 	/**
 	 * @return the platform the peer is running on

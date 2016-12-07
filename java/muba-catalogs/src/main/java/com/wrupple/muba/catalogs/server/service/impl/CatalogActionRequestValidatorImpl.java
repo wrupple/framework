@@ -32,9 +32,9 @@ import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
-public class CatalogEntryValidatorImpl implements CatalogActionRequestValidator {
+public class CatalogActionRequestValidatorImpl implements CatalogActionRequestValidator {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogEntryValidatorImpl.class);
+	protected static final Logger log = LoggerFactory.getLogger(CatalogActionRequestValidatorImpl.class);
 
 	private final SystemCatalogPlugin dictionary;
 	private final Provider<ExcecutionContext> exp;
@@ -46,7 +46,7 @@ public class CatalogEntryValidatorImpl implements CatalogActionRequestValidator 
 	private final LargeStringFieldDataAccessObject lsdao;
 
 	@Inject
-	public CatalogEntryValidatorImpl(ContextAwareValidator delegate, Provider<ExcecutionContext> exp,
+	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<ExcecutionContext> exp,
 			SystemCatalogPlugin cms, LargeStringFieldDataAccessObject lsdao) {
 		this.lsdao = lsdao;
 		this.exp = exp;
@@ -65,18 +65,20 @@ public class CatalogEntryValidatorImpl implements CatalogActionRequestValidator 
 		// had to be done this way because security violations occur when
 		// using reflection on the apache chain context map
 		boolean report = true;
-		log.trace("[VALIDATE CATALOG ACTION REQUEST]");
+		log.debug("[VALIDATE CATALOG ACTION REQUEST]");
 
 		String action = req.getAction();
-		if (dictionary.getCommand(action) == null) {
-			report = false;
-		}
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();
 		String catalog = (String) req.getCatalog();
 		String domain = (String) req.getDomain();
 		FilterData filter = req.getFilter();
 		CatalogDescriptor descriptor = null;
+		
+		if (CatalogActionRequest.READ_ACTION.equals(catalog)) {
+			return report;
+		}
 
+		log.trace("validate suficient action parameters");
 		if ((CatalogActionRequest.CREATE_ACTION.equals(action) || CatalogActionRequest.WRITE_ACTION.equals(action))
 				&& req.getEntryValue() == null) {
 			// a writing action requires an incomming entry
@@ -94,6 +96,7 @@ public class CatalogEntryValidatorImpl implements CatalogActionRequestValidator 
 			report = false;
 		}
 
+		log.trace("validate filters");
 		if (report && filter != null) {
 			List<? extends FilterCriteria> criterias = filter.getFilters();
 			// lower limit < upper limit
@@ -125,10 +128,13 @@ public class CatalogEntryValidatorImpl implements CatalogActionRequestValidator 
 			}
 		}
 
+		
 		if (report && entryValue != null) {
+			log.trace("validate entry Value");
 			descriptor = assertDescriptor(descriptor, catalog, domain);
 			// otherwise the validator will descend to java beans
 			if (HasAccesablePropertyValues.class.equals(descriptor.getClazz())) {
+				log.debug("Dynamic validation of non-java-bean entry Value");
 				Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
 				Annotation[] annotations;
 				PropertyValidationContext accessStrategy;
@@ -142,6 +148,7 @@ public class CatalogEntryValidatorImpl implements CatalogActionRequestValidator 
 						try {
 							if (delegate.processAnnotationInContext(annotations, descriptor.getClass(),
 									accessStrategy)) {
+								log.trace("invalid field {}",field.getFieldId());
 								report = false;
 							}
 						} catch (ReflectiveOperationException e) {
@@ -177,9 +184,11 @@ public class CatalogEntryValidatorImpl implements CatalogActionRequestValidator 
 							}
 						};
 						// type level constriants
+						log.trace("validating entry level constraints");
 						try {
 							if (delegate.processAnnotationInContext(annotations, descriptor.getClass(),
 									accessStrategy)) {
+								log.trace("class level constraint encountered");
 								report = false;
 							}
 						} catch (ReflectiveOperationException e) {

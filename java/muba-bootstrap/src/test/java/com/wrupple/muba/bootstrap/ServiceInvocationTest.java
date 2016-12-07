@@ -7,8 +7,7 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.validation.Validator;
-
+import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
@@ -23,24 +22,25 @@ import com.wrupple.muba.bootstrap.domain.ContractDescriptorImpl;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.Person;
+import com.wrupple.muba.bootstrap.domain.RootServiceManifestImpl;
 import com.wrupple.muba.bootstrap.domain.ServiceManifest;
 import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
-import com.wrupple.muba.bootstrap.server.chain.command.ServiceInvocationCommand;
-import com.wrupple.muba.bootstrap.server.chain.command.impl.SyntaxParsingCommang;
-import com.wrupple.muba.bootstrap.server.chain.command.impl.ServiceInvocationCommandImpl;
+import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
+import com.wrupple.muba.bootstrap.server.chain.command.impl.ContextSwitchCommandImpl;
 import com.wrupple.muba.bootstrap.server.domain.ExcecutionContextImpl;
 import com.wrupple.muba.bootstrap.server.domain.LocalSystemContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
-import com.wrupple.muba.bootstrap.server.service.impl.BootstrapImpl;
 
 public class ServiceInvocationTest extends BootstrapTest {
 
 	private ApplicationContext application;
-	
+
 	protected ContractDescriptor operationContract = new ContractDescriptorImpl(
 			Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), CatalogEntryImpl.class);
+
+	private ContextSwitchCommand cwtich;
+
 	public abstract class OldVesionService implements Command {
 
 		@SuppressWarnings("unchecked")
@@ -56,6 +56,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 		protected abstract int operation(int first, int second);
 	}
+
 	private abstract class UpdatedVersionService implements Command {
 
 		@SuppressWarnings("unchecked")
@@ -85,72 +86,57 @@ public class ServiceInvocationTest extends BootstrapTest {
 		protected abstract Double operation(Double first, Double second);
 	}
 
-	private class MathServiceManifest extends ServiceManifestImpl {
-
-		public MathServiceManifest(String service, String version, ContractDescriptor contract, Command command, Validator v, ValidationGroupProvider g) {
-			super(service, version, contract, null, new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME },
-					new SyntaxParsingCommang(v,g) {
-
-						@Override
-						protected Context createBlankContext(ExcecutionContext requestContext) {
-							return requestContext;
-						}
-					}, command);
-		}
-
-	}
-
 	public ServiceInvocationTest() {
-
+		Host peerValue = createNiceMock(Host.class);
 		Person person = createNiceMock(Person.class);
 
-		Host peerValue = createNiceMock(Host.class);
+		RootServiceManifestImpl rootService = new RootServiceManifestImpl();
 
-		
 
-		 ServiceManifest multiply = new MathServiceManifest(MULTIPLICATION, DEFAULT_VERSION, operationContract,
-				new UpdatedVersionService() {
-
-					@Override
-					protected Double operation(Double first, Double second) {
-						log.trace("DEFAULT_VERSION MULTIPLY {}*{}", first, second);
-						return first * second;
-					}
-				}, null, null);
-		 ServiceManifest addInt = new MathServiceManifest(ADDITION, DEFAULT_VERSION, operationContract,
-				new OldVesionService() {
-
-					@Override
-					protected int operation(int first, int second) {
-						log.trace("DEFAULT_VERSION ADD {}+{}", first, second);
-						return first + second;
-					}
-
-				}, null, null);
-		 ServiceManifest addDouble = new MathServiceManifest(ADDITION, UPGRADED_VERSION, operationContract,
-				new UpdatedVersionService() {
-
-					@Override
-					protected Double operation(Double first, Double second) {
-						log.trace("UPGRADED_VERSION ADD {}+{}", first, second);
-						return first + second;
-					}
-				}, null, null);
-		
-		List<ServiceManifest> childServiceVersions = Arrays.asList(multiply, addInt, addDouble);
-
+		this.application = new LocalSystemContext(rootService, System.out, CatalogFactory.getInstance());
 		// http://stackoverflow.com/questions/4796172/is-there-a-way-to-get-users-uid-on-linux-machine-using-java
 		session = new SessionContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
 
-		ServiceInvocationCommand serviceInvocationCommand = new ServiceInvocationCommandImpl(null, null);
-		BootstrapImpl rootService = new BootstrapImpl(childServiceVersions,  serviceInvocationCommand);
-		this.application = new LocalSystemContext(rootService, System.out);
+		cwtich = new ContextSwitchCommandImpl(null, null);
 
+		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });
+
+		ServiceManifest multiply = new ServiceManifestImpl(MULTIPLICATION, DEFAULT_VERSION, operationContract, grammar);
+		ServiceManifest addInt = new ServiceManifestImpl(ADDITION, DEFAULT_VERSION, operationContract, grammar);
+		ServiceManifest addDouble = new ServiceManifestImpl(ADDITION, UPGRADED_VERSION, operationContract, grammar);
+
+		application.registerService(addInt, new OldVesionService() {
+
+			@Override
+			protected int operation(int first, int second) {
+				log.trace("DEFAULT_VERSION ADD {}+{}", first, second);
+				return first + second;
+			}
+
+		});
+		
+		application.registerService( addDouble, new UpdatedVersionService() {
+
+			@Override
+			protected Double operation(Double first, Double second) {
+				log.trace("UPGRADED_VERSION ADD {}+{}", first, second);
+				return first + second;
+			}
+		});
+	
+		application.registerService( multiply, new UpdatedVersionService() {
+
+			@Override
+			protected Double operation(Double first, Double second) {
+				log.trace("DEFAULT_VERSION multiply {}+{}", first, second);
+				return first * second;
+			}
+		});
 	}
 
 	@Before
 	public void prepare() {
-		excecutionContext = new ExcecutionContextImpl(application, session, null, null);
+		excecutionContext = new ExcecutionContextImpl(cwtich, application, session, null, null);
 	}
 
 	@Test

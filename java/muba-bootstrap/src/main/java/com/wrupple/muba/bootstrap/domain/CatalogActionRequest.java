@@ -26,8 +26,6 @@ public interface CatalogActionRequest extends HasLocale,CatalogChangeEvent{
 
 	public final String PUBLISH_ACTION = "publish";
 
-	public final String LIST_ACTION_TOKEN = "list";
-
 	public final String UPLOAD_ACTION = "upload";
 
 	public final String UPLOAD_URL = "url";

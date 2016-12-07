@@ -5,10 +5,11 @@ import javax.validation.constraints.NotNull;
 @SuppressWarnings("serial")
 public abstract class CatalogEntryImpl implements CatalogEntry {
 
-	@NotNull
-	private Long domain;
+	
 	private Long id,image;
 	private String  name;
+	@NotNull
+	private Long domain;
 	private boolean anonymouslyVisible;
 	
 

@@ -21,10 +21,9 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataCreationCommand;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.SQLCompatibilityDelegate;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.impl.JDBCSingleLongKeyResultHandler;
 
 @Singleton
@@ -34,7 +33,6 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 	private final JDBCMappingDelegate tableNames;
 	private final SQLCompatibilityDelegate compatibility;
-	private final CatalogEvaluationDelegate accessor;
 
 	private final QueryRunner runner;
 
@@ -47,7 +45,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 	@Inject
 	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, CatalogReadTransaction read,
-			JDBCMappingDelegate tableNames, SQLCompatibilityDelegate compatibility, CatalogEvaluationDelegate accessor,
+			JDBCMappingDelegate tableNames, SQLCompatibilityDelegate compatibility, 
 			@Named("catalog.missingTableErrorCode") Integer missingTableErrorCode /*
 																					 * 1146
 																					 * in
@@ -61,7 +59,6 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		this.read = read;
 		this.missingTableErrorCode = missingTableErrorCode;
 		this.runner = runner;
-		this.accessor = accessor;
 		this.tableNames = tableNames;
 	}
 	
@@ -74,7 +71,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		CatalogEntry e = (CatalogEntry) context.getEntryValue();
 		e.setDomain((Long) context.getDomain());
 		log.trace("[Will create Entry] {} in domain {}", e,e.getDomain());
-		Session session = accessor.newSession(e);
+		Session session = context.getCatalogManager().newSession(e);
 		Object id = null;
 
 		Collection<FieldDescriptor> fields = catalogDescriptor.getFieldsValues();
@@ -97,12 +94,23 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {
-					fieldValue = accessor.getPropertyValue(catalogDescriptor, field, e, null, session);
+					fieldValue = context.getCatalogManager().getPropertyValue(catalogDescriptor, field, e, null, session);
 					if (paramz.size() > 0) {
 						values.append(",");
 						builder.append(",");
 					}
-					paramz.add(fieldValue);
+					if( CatalogEntry.OBJECT_DATA_TYPE==field.getDataType()){
+						//use conversion strategy and object mapper to achieve full serialization? is this even desirable?
+						if(fieldValue==null){
+							paramz.add(fieldValue);
+						}else{
+							paramz.add(((Class)fieldValue).getCanonicalName());
+						}
+						
+					}else{
+						paramz.add(fieldValue);
+					}
+					
 					builder.append(DELIMITER);
 					builder.append(column);
 					builder.append(DELIMITER);
@@ -152,7 +160,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && field.isMultiple() && !field.isEphemeral()) {
-				fieldValue = accessor.getPropertyValue(catalogDescriptor, field, e, null, session);
+				fieldValue = context.getCatalogManager().getPropertyValue(catalogDescriptor, field, e, null, session);
 				if (fieldValue != null) {
 					foreignTableName = tableNames.getTableNameForCatalogField(context, catalogDescriptor, field);
 					if (foreignTableName != null) {
@@ -163,7 +171,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 			}
 		}
-		log.trace("[CREATE DONE] {}/{} ",catalogDescriptor.getDistinguishedName(),id);
+		log.debug("[CREATE DONE] {}/{} ",catalogDescriptor.getDistinguishedName(),id);
 		
 		context.setCatalogDescriptor(catalogDescriptor);
 		context.setFilter(null);

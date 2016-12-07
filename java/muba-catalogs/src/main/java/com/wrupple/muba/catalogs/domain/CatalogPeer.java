@@ -10,7 +10,7 @@ public interface CatalogPeer extends Host {
 	 * 
 	 * @return
 	 */
-	int getStakeHolderIndex();
+	Integer getStakeHolderIndex();
 
 	String getCatalogUrlBase();
 	

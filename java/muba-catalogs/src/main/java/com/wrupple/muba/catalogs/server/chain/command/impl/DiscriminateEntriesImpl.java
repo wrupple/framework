@@ -20,8 +20,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
@@ -29,12 +28,8 @@ public class DiscriminateEntriesImpl implements CatalogReadTransaction {
 	static public final String DISCRIMINATING_FIELD_KEY = "discriminatingField";
 
 	protected static final Logger log = LoggerFactory.getLogger(DiscriminateEntriesImpl.class);
-	private final CatalogReadTransaction read;
-	private final CatalogEvaluationDelegate accesor;
 	@Inject
-	public DiscriminateEntriesImpl(CatalogReadTransaction read,CatalogEvaluationDelegate accesor) {
-		this.read = read;
-		this.accesor=accesor;
+	public DiscriminateEntriesImpl() {
 	}
 
 	public boolean execute(Context c) throws Exception {
@@ -54,7 +49,7 @@ public class DiscriminateEntriesImpl implements CatalogReadTransaction {
 		discriminatingCriteria.setOperator(FilterData.EQUALS);
 		discriminatingCriteria.setValue(entryIds);
 
-		read.execute(context);
+		context.getCatalogManager().getRead().execute(context);
 
 		// entries with the right catalog and locale, with all disciminators
 		// mixed in
@@ -70,9 +65,9 @@ public class DiscriminateEntriesImpl implements CatalogReadTransaction {
 		log.trace("[BUILD DISCRIMINATOR MAP]");
 		for (CatalogEntry e : members) {
 			if (session == null) {
-				session = accesor.newSession(e);
+				session = context.getCatalogManager().newSession(e);
 			}
-			disciminator = (Long) accesor.getPropertyValue(catalog, field, e, null, session);
+			disciminator = (Long) context.getCatalogManager().getPropertyValue(catalog, field, e, null, session);
 			discriminatedMap.put(disciminator, e);
 		}
 		// IN THE SAME ORDER AS DISCRIMINATORS, this only works for long primary

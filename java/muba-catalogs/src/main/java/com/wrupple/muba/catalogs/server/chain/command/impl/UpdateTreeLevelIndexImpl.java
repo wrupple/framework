@@ -19,27 +19,17 @@ import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogCommandImpl.class);
+	protected static final Logger log = LoggerFactory.getLogger(CommitCatalogActionImpl.class);
 
-	private final CatalogEvaluationDelegate accessor;
-	private final CatalogUpdateTransaction write;
-	private final CatalogReadTransaction read;
-	
 	@Inject
-	public UpdateTreeLevelIndexImpl(CatalogEvaluationDelegate accessor, CatalogUpdateTransaction write,
-			CatalogReadTransaction read) {
+	public UpdateTreeLevelIndexImpl() {
 		super();
-		this.accessor = accessor;
-		this.write = write;
-		this.read = read;
 	}
-
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
@@ -47,17 +37,19 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 		CatalogDescriptor catalog = (CatalogDescriptor) context.getCatalogDescriptor();
 		CatalogEntry newe = (CatalogEntry) context.getEntryValue();
 		CatalogEntry olde = context.getOldValue();
-		Session session = accessor.newSession(newe);
+		Session session = context.getCatalogManager().newSession(newe);
 		FieldDescriptor treeIndex = catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX);
 		FieldDescriptor childrenField = catalog.getFieldDescriptor(HasChildren.FIELD);
-		accessor.setPropertyValue(catalog,treeIndex , newe, 0,
-				session);
+		context.getCatalogManager().setPropertyValue(catalog, treeIndex, newe, 0, session);
 
 		log.trace("[UpdateTreeLevelIndex]");
-		List<Object> newChildren = (List<Object>) accessor.getPropertyValue(catalog, childrenField, newe, null, session);
-		List<Object> oldChildren = (List<Object>) (olde == null ? null : accessor.getPropertyValue(catalog, childrenField, olde, null, session));
-		
-		long childrenTreeIndex = (Long)accessor.getPropertyValue(catalog, treeIndex, newe, null, session); 
+		List<Object> newChildren = (List<Object>) context.getCatalogManager().getPropertyValue(catalog, childrenField,
+				newe, null, session);
+		List<Object> oldChildren = (List<Object>) (olde == null ? null
+				: context.getCatalogManager().getPropertyValue(catalog, childrenField, olde, null, session));
+
+		long childrenTreeIndex = (Long) context.getCatalogManager().getPropertyValue(catalog, treeIndex, newe, null,
+				session);
 		if (newChildren != null && !newChildren.isEmpty()) {
 			if (oldChildren != null) {
 				if (oldChildren.equals(newChildren)) {
@@ -71,12 +63,12 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 			updateContext.setCatalogDescriptor(catalog);
 			for (Object childId : newChildren) {
 				updateContext.setEntry(childId);
-				read.execute(updateContext);
+				updateContext.getCatalogManager().getRead().execute(updateContext);
 				child = updateContext.getEntryResult();
-				accessor.setPropertyValue(catalog, treeIndex, child, childrenTreeIndex, session);
-				//FIXME update bulk
+				context.getCatalogManager().setPropertyValue(catalog, treeIndex, child, childrenTreeIndex, session);
+				// FIXME update bulk
 				updateContext.setEntryValue(child);
-				write.execute(updateContext);
+				updateContext.getCatalogManager().getWrite().execute(updateContext);
 			}
 
 		}

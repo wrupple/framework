@@ -12,33 +12,31 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTimelineEventDiscriminator {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogCommandImpl.class);
+	protected static final Logger log = LoggerFactory.getLogger(CommitCatalogActionImpl.class);
 	private final String discriminatorField, catalogField;
-	private final CatalogEvaluationDelegate axs;
 
 	@Inject
-	public WritePublicTimelineEventDiscriminatorImpl(@Named("catalog.timeline.entryDiscriminator")String discriminatorField,@Named("catalog.timeline.typeDiscriminator") String catalogField,
-			CatalogEvaluationDelegate axs) {
+	public WritePublicTimelineEventDiscriminatorImpl(
+			@Named("catalog.timeline.entryDiscriminator") String discriminatorField,
+			@Named("catalog.timeline.typeDiscriminator") String catalogField) {
 		super();
 		this.discriminatorField = discriminatorField;
 		this.catalogField = catalogField;
-		this.axs = axs;
 	}
 
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogEntry node = (CatalogEntry) context.getEntryValue();
-		Session session = axs.newSession(node);
+		Session session = context.getCatalogManager().newSession(node);
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		axs.setPropertyValue(catalog, getDiscriminatorField(), node, node.getId(), session);
-		axs.setPropertyValue(catalog, getCatalogField(), node,catalog.getId(), session);
+		context.getCatalogManager().setPropertyValue(catalog, getDiscriminatorField(), node, node.getId(), session);
+		context.getCatalogManager().setPropertyValue(catalog, getCatalogField(), node, catalog.getId(), session);
 		return CONTINUE_PROCESSING;
 	}
 

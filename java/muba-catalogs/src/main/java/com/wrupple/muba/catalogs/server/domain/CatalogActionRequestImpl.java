@@ -4,15 +4,12 @@ import javax.validation.constraints.NotNull;
 
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.annotations.AvailableCommand;
-import com.wrupple.muba.bootstrap.server.service.CatalogManager;
-import com.wrupple.muba.bootstrap.server.service.ContentManagementSystem;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 
 @ValidCatalogActionRequest
-public class CatalogActionRequestImpl extends CatalogEntryImpl implements CatalogActionRequest {
+public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
 	private static final long serialVersionUID = 1743825364474840159L;
 
@@ -20,14 +17,61 @@ public class CatalogActionRequestImpl extends CatalogEntryImpl implements Catalo
 
 	private FilterDataImpl filter;
 	@NotNull
-	@AvailableCommand(dictionary=CatalogManager.class)
+	@AvailableCommand(dictionary=CatalogActionRequest.CATALOG_ACTION_PARAMETER)
 	private String action;
-	@AvailableCommand(dictionary=ContentManagementSystem.class)
+	@AvailableCommand(dictionary=CatalogActionRequest.CATALOG_FIELD)
 	private String format;
 	private String entry;
 	@NotNull
 	private String catalog;
 	private String locale;
+	
+	private String domain;
+	private Long id,image;
+	private String  name;
+	private boolean anonymouslyVisible;
+	
+
+	public final Long getId() {
+		return id;
+	}
+
+	public final void setId(Long catalogId) {
+		this.id = catalogId;
+	}
+
+	public final String getName() {
+		return name;
+	}
+
+	public final void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public final Long getImage() {
+		return image;
+	}
+
+	public final void setImage(Long image) {
+		this.image = image;
+	}
+
+	public final String getDomain() {
+		return domain;
+	}
+
+	public final void setDomain(String domain) {
+		this.domain = domain;
+	}
+
+	public final boolean isAnonymouslyVisible() {
+		return anonymouslyVisible;
+	}
+
+	public final void setAnonymouslyVisible(boolean anonymouslyVisible) {
+		this.anonymouslyVisible = anonymouslyVisible;
+	}
 
 	public CatalogActionRequestImpl() {
 		super();
@@ -114,6 +158,7 @@ public class CatalogActionRequestImpl extends CatalogEntryImpl implements Catalo
 	public void setCatalog(String catalog) {
 		this.catalog = catalog;
 	}
+	
 
 	@Override
 	public String toString() {
@@ -129,6 +174,15 @@ public class CatalogActionRequestImpl extends CatalogEntryImpl implements Catalo
 	@Override
 	public String getCatalogType() {
 		return CATALOG;
+	}
+
+	@Override
+	public void setDomain(Long domain) {
+		if(domain==null){
+			this.domain=null;
+		}else{
+			this.domain = String.valueOf(domain);
+		}
 	}
 
 }

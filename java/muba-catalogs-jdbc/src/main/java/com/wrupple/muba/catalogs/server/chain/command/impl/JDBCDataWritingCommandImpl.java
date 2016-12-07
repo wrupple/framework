@@ -23,9 +23,8 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataWritingCommand;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implements JDBCDataWritingCommand{
@@ -33,18 +32,16 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 	private final JDBCMappingDelegate tableNames;
 	private final QueryRunner runner;
-	private final CatalogEvaluationDelegate accessor;
 	private final JDBCDataReadCommand read;
 	private final char DELIMITER;
 	private String parentKey;
 
 	@Inject
-	public JDBCDataWritingCommandImpl( JDBCDataReadCommand read,Provider<CatalogUpdateTransaction> write, QueryRunner runner, JDBCMappingDelegate tableNames, CatalogEvaluationDelegate accessor,@Named("catalog.ancestorKeyField") String parentKey,@Named("catalog.sql.delimiter") Character delimiter) {
+	public JDBCDataWritingCommandImpl( JDBCDataReadCommand read,Provider<CatalogUpdateTransaction> write, QueryRunner runner, JDBCMappingDelegate tableNames, @Named("catalog.ancestorKeyField") String parentKey,@Named("catalog.sql.delimiter") Character delimiter) {
 		super(write);
 		this.parentKey=parentKey;
 		this.DELIMITER=delimiter;
 		this.runner = runner;
-		this.accessor = accessor;
 		this.tableNames = tableNames;
 		this.read=read;
 	}
@@ -54,10 +51,10 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		CatalogEntry originalEntry = accessor.catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
+		CatalogEntry originalEntry = context.getCatalogManager().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
 
 		CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
-		Session session = accessor.newSession(originalEntry);
+		Session session = context.getCatalogManager().newSession(originalEntry);
 
 		updatedEntry.setDomain((Long) originalEntry.getDomain());
 		Object id = context.getEntry();
@@ -77,8 +74,8 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && !field.isEphemeral()) {
-				fieldValue = accessor.getPropertyValue(descriptor, field, updatedEntry, null, session);
-				accessor.setPropertyValue(descriptor, field, originalEntry, fieldValue, session);
+				fieldValue = context.getCatalogManager().getPropertyValue(descriptor, field, updatedEntry, null, session);
+				context.getCatalogManager().setPropertyValue(descriptor, field, originalEntry, fieldValue, session);
 				if (field.isMultiple() && !field.isEphemeral()) {
 					// also update (delete and create) and create multiple
 					// fields
@@ -123,7 +120,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		params.add(id);
 
 		if (descriptor.isVersioned()) {
-			Long version = (Long) accessor.getPropertyValue(descriptor, descriptor.getFieldDescriptor(Versioned.FIELD),
+			Long version = (Long) context.getCatalogManager().getPropertyValue(descriptor, descriptor.getFieldDescriptor(Versioned.FIELD),
 					context.getOldValue(), null, session);
 			builder.append(" && ");
 			builder.append(Versioned.FIELD);

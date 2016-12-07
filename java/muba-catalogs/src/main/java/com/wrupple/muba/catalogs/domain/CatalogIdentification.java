@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.Entity;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 
 
-public interface CatalogIdentification  extends Entity {
+public interface CatalogIdentification  extends CatalogEntry {
 }

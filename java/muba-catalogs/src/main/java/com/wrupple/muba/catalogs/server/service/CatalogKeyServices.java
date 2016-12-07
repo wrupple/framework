@@ -24,7 +24,7 @@ public interface CatalogKeyServices {
 	 * @param targetEntryId
 	 * @return
 	 */
-	Object decodePrimaryKeyToken(String targetEntryId);
+	Object decodePrimaryKeyToken(Object targetEntryId);
 
 	/** 
 	 * Used to decode incoming filter criterias

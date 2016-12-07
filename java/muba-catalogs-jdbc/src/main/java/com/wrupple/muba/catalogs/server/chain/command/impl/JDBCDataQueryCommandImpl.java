@@ -26,10 +26,9 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataQueryCommand;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl.MultipleFieldResultsHandler;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
@@ -77,7 +76,6 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 	}
 
 	private final JDBCMappingDelegate tableNames;
-	private final CatalogEvaluationDelegate accessor;
 	private final QueryRunner runner;
 	private final Provider<QueryResultHandler> rshp;
 	private final Boolean multitenant;
@@ -88,7 +86,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 	@Inject
 	public JDBCDataQueryCommandImpl(QueryRunner runner, Provider<QueryResultHandler> rshp,
-			JDBCMappingDelegate tableNames, CatalogEvaluationDelegate accessor,
+			JDBCMappingDelegate tableNames, 
 			@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
 			@Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
 			@Named("catalog.domainField") String domainField, @Named("catalog.sql.delimiter") Character delimiter) {
@@ -96,7 +94,6 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 		this.dateFormat = dateFormat;
 		this.rshp = rshp;
 		this.runner = runner;
-		this.accessor = accessor;
 		this.tableNames = tableNames;
 		this.domainField = domainField;
 		this.multitenant = multitenant;
@@ -196,14 +193,14 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 					for (CatalogEntry o : results) {
 						if (session == null) {
-							session = accessor.newSession(o);
+							session = context.getCatalogManager().newSession(o);
 						}
 						log.trace("[DB secondary query for] {} ", o.getId());
 						// FIXME this is terrible, at lest use prepared
 						// statements??
 						fieldValues = runner.query(queryL, handler, o.getId());
 						log.trace("[DB results for {}] {}", o.getId(), fieldValues == null ? 0 : fieldValues.size());
-						accessor.setPropertyValue(catalogDescriptor, field, o, fieldValues, session);
+						context.getCatalogManager().setPropertyValue(catalogDescriptor, field, o, fieldValues, session);
 					}
 				}
 

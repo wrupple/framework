@@ -53,6 +53,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 				CatalogDescriptor catalog = context.getCatalogDescriptor();
 
 				SystemCatalogPlugin database = context.getCatalogManager();
+				//TODO descriptor extends identification, if we want the short version we read identifictation
 				List<CatalogIdentification> names = database.getAvailableCatalogs(context);
 
 				log.trace("[SEARCHING {} CATALOGS FOR hard keys referencing {}]", names.size(),

@@ -16,21 +16,17 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 	private final Provider<Trash> trashp;
-	private final CatalogEvaluationDelegate accessor;
 	private final CatalogCreateTransaction create;
 
 	@Inject
-	public EntryDeleteTriggerImpl(Provider<Trash> trashp, CatalogEvaluationDelegate accesor,
-			CatalogCreateTransaction create) {
+	public EntryDeleteTriggerImpl(Provider<Trash> trashp, CatalogCreateTransaction create) {
 		super();
 		this.trashp = trashp;
-		this.accessor = accesor;
 		this.create = create;
 	}
 
@@ -51,16 +47,17 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 		CatalogActionContext trashContext = null;
 		for (CatalogEntry e : oldValues) {
 			if (trashContext == null) {
-				session = accessor.newSession(e);
+				session = context.getCatalogManager().newSession(e);
 				trashContext = context.getCatalogManager().spawn(context);
 
 				trashContext.setAction(CatalogActionRequest.CREATE_ACTION);
 			}
-			trashed = (Boolean) accessor.getPropertyValue(catalog, field, e, null, session);
+			trashed = (Boolean) context.getCatalogManager().getPropertyValue(catalog, field, e, null, session);
 			if (trashed != null && trashed) {
 				Trash trashItem = trashp.get();
 				trashItem.setName(e.getName());
-				trashItem.setEntry(context.getCatalogManager().encodeClientPrimaryKeyFieldValue(e.getId(), field, catalog));
+				trashItem.setEntry(
+						context.getCatalogManager().encodeClientPrimaryKeyFieldValue(e.getId(), field, catalog));
 				trashItem.setCatalog(catalog.getDistinguishedName());
 
 				trashContext.setCatalog(catalog.getDistinguishedName());

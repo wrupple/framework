@@ -1,13 +1,16 @@
 package com.wrupple.muba.bootstrap.domain;
 
-import org.apache.commons.chain.Command;
+import java.util.List;
 
-public interface ServiceManifest {
+import com.wrupple.muba.bootstrap.domain.reserved.HasChildrenValues;
+import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
+
+public interface ServiceManifest extends HasDistinguishedName,  HasChildrenValues<Long, ServiceManifest>,CatalogEntry {
 	final String ROOT_SERVICE_MANIFEST ="vegetate.manifest";
+	final String CATALOG = "ServiceManifest";
 	
-	String getServiceName();
 	
-	String getServiceVersion();
+	String getVersionDistinguishedName();
 	
 	/**
 	 * @return a unique string for this services version
@@ -19,13 +22,10 @@ public interface ServiceManifest {
 	 * 
 	 * @return
 	 */
-	String[] getGrammar();
-
-
-	ContractDescriptor getContractDescriptor();
-
-	Command getContextParsingCommand();
+	List<String> getGrammar();
 	
-	Command getContextProcessingCommand();
-	
+	public List<String> getChildrenPaths();
+
+	ContractDescriptor getContractDescriptorValue();
+
 }

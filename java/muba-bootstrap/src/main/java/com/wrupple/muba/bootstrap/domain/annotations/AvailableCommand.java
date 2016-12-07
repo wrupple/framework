@@ -10,8 +10,6 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.apache.commons.chain.Catalog;
-
 import com.wrupple.muba.bootstrap.server.service.AvailableCommandValidator;
 
 @Documented
@@ -26,5 +24,5 @@ public @interface AvailableCommand {
 
     Class<? extends Payload>[] payload() default {};
 
-    Class<? extends Catalog> dictionary();
+    String dictionary();
 }

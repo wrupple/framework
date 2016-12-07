@@ -15,9 +15,8 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandle
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.Writers;
 
 @Singleton
@@ -26,16 +25,16 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 
 	private final CatalogActionTriggerHandler trigerer;
 
-	private final CatalogEvaluationDelegate access;
+	
 
 	private final Writers writers;
 
 	@Inject
-	public CatalogUpdateTransactionImpl(CatalogEvaluationDelegate access, CatalogActionTriggerHandler trigerer,
+	public CatalogUpdateTransactionImpl( CatalogActionTriggerHandler trigerer,
 			Writers writers) {
 		this.trigerer = trigerer;
 		this.writers = writers;
-		this.access = access;
+		
 	}
 
 	@Override
@@ -55,23 +54,23 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 		CatalogDescriptor parentCatalog = null;
 		Object parentEntityId = null;
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
-			session = access.newSession(originalEntry);
+			session = context.getCatalogManager().newSession(originalEntry);
 			// we are certain this catalog has a parent, otherwise this DAO
 			// would
 			// not be called
 			CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
 			parentCatalog = context.getCatalogManager().getDescriptorForKey(catalog.getParent(), context);
-			parentEntityId = access.getAllegedParentId(originalEntry, session);
+			parentEntityId = context.getCatalogManager().getAllegedParentId(originalEntry, session);
 
 			// synthesize parent entity from all non-inherited, passing all
 			// inherited field Values
-			CatalogEntry updatedParentEntity = access.synthesizeCatalogObject(updatedEntry, catalog, false, session,
+			CatalogEntry updatedParentEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, false, session,
 					context);
 			// delegate deeper inheritance to another instance of an
 			// AncestorAware
 			// DAO
 			CatalogActionContext childContext = context.getCatalogManager().spawn(context);
-			CatalogEntry originalParentEntity = access.readEntry(parentCatalog, parentEntityId, childContext);
+			CatalogEntry originalParentEntity = context.getCatalogManager().readEntry(parentCatalog, parentEntityId, childContext);
 			childContext.setEntry(originalParentEntity.getId());
 			childContext.setEntryValue(updatedParentEntity);
 			context.getCatalogManager().getWrite().execute(childContext);
@@ -79,13 +78,13 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 
 			// synthesize childEntity (Always will be Entity Kind) ignoring all
 			// inheritedFields
-			childEntity = access.synthesizeCatalogObject(updatedEntry, catalog, true, session, context);
+			childEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, true, session, context);
 		}
 		dao.execute(context);
 
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
 			// add inherited values to child Entity (result)
-			access.processChild(childEntity, parentCatalog, parentEntityId,
+			context.getCatalogManager().processChild(childEntity, parentCatalog, parentEntityId,
 					context.getCatalogManager().spawn(context), catalog, session);
 		}
 		CatalogEntry ress = context.getEntryResult();

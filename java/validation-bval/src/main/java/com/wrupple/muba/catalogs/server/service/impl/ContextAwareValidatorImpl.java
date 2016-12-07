@@ -2,10 +2,10 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidatorContext;
 
@@ -22,6 +22,7 @@ import org.apache.bval.util.AccessStrategy;
 import com.wrupple.muba.bootstrap.server.service.ContextAwareValidator;
 import com.wrupple.muba.bootstrap.server.service.PropertyValidationContext;
 
+@Singleton
 public class ContextAwareValidatorImpl implements ContextAwareValidator {
 
 	private final AnnotationProcessor annotationProcessor;

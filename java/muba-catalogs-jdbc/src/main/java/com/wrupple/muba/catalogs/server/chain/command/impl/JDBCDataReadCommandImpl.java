@@ -22,10 +22,9 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
@@ -59,7 +58,6 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 	}
 
 	private final JDBCMappingDelegate tableNames;
-	private final CatalogEvaluationDelegate accessor;
 	private final QueryRunner runner;
 	private final Provider<QueryResultHandler> rshp;
 	private final Boolean multitenant;
@@ -68,14 +66,13 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 
 	@Inject
 	public JDBCDataReadCommandImpl(QueryRunner runner, Provider<QueryResultHandler> rshp,
-			JDBCMappingDelegate tableNames, CatalogEvaluationDelegate accessor,
+			JDBCMappingDelegate tableNames,
 			@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
 			@Named("catalog.sql.delimiter") Character delimiter) {
 		DELIMITER = delimiter;
 		this.dateFormat = dateFormat;
 		this.rshp = rshp;
 		this.runner = runner;
-		this.accessor = accessor;
 		this.tableNames = tableNames;
 		this.multitenant = multitenant;
 	}
@@ -132,9 +129,9 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 					log.trace("[DB secondary read] {}  id={}", builder.toString(), id);
 					fieldValues = runner.query(builder.toString(), handler, id);
 					if (session == null) {
-						session = accessor.newSession(r);
+						session = context.getCatalogManager().newSession(r);
 					}
-					accessor.setPropertyValue(catalogDescriptor, field, r, fieldValues, session);
+					context.getCatalogManager().setPropertyValue(catalogDescriptor, field, r, fieldValues, session);
 				}
 			}
 		}

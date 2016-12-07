@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -26,27 +27,30 @@ import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.domain.annotations.Sentence;
 import com.wrupple.muba.bootstrap.domain.reserved.HasLocale;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
+import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
 
 @Sentence
 public class ExcecutionContextImpl extends ContextBase implements ExcecutionContext {
 	@Override
 	public String toString() {
-		return "ExcecutionContextImpl [serviceContract=" + serviceContract + ", sentence=" + Arrays.toString(sentence)
-				+ ", nextIndex=" + nextIndex + "]";
+		return "ExcecutionContextImpl [serviceContract=" + serviceContract + ", sentence=" + sentence + ", nextIndex="
+				+ nextIndex + "]";
 	}
 
 	private static final long serialVersionUID = 6829551639243495084L;
 	public static final String SCOPED_WRITER = "muba.bootstrap.writer";
 	public static final String SCOPED_BUFFER = SCOPED_WRITER + ".buffer";
 
+	private ContextSwitchCommand process;
+	private List<String> sentence;
+	private int nextIndex, error;
+
 	private ServiceManifest serviceManifest;
-	private final SessionContext session;
-	private final ApplicationContext application;
 	private Object serviceContract;
 
 	private Context serviceContext;
-	private String[] sentence;
-	private int nextIndex, firstWordIndex, error;
+	private final SessionContext session;
+	private final ApplicationContext application;
 
 	private String locale, format, callbackFunction, id;
 	private boolean scopedWriting;
@@ -58,10 +62,12 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	private Object result;
 	private long totalResponseSize;
 	private Set<ConstraintViolation<?>> constraintViolations;
+	private ListIterator<String> wordIterator;
 
-	public ExcecutionContextImpl(ApplicationContext appication, SessionContext session,
+	public ExcecutionContextImpl(ContextSwitchCommand process, ApplicationContext appication, SessionContext session,
 			Provider<UserTransaction> transactionProvider, ExcecutionContext parent) {
 		super();
+		this.process = process;
 		this.application = appication;
 		this.transactionProvider = transactionProvider;
 		this.session = session;
@@ -69,9 +75,9 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	}
 
 	@Inject
-	public ExcecutionContextImpl(ApplicationContext appication, SessionContext session,
+	public ExcecutionContextImpl(ContextSwitchCommand process, ApplicationContext appication, SessionContext session,
 			Provider<UserTransaction> transactionProvider) {
-		this(appication, session, transactionProvider, null);
+		this(process, appication, session, transactionProvider, null);
 	}
 
 	@Override
@@ -202,35 +208,27 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 		this.scopedWriting = scopedWriting;
 	}
 
+	private ListIterator<String> assertSentenceIterator() {
+		if (wordIterator == null) {
+			wordIterator = sentence.listIterator();
+		}
+		return wordIterator;
+
+	}
+
 	@Override
-	public String[] getSentence() {
+	public List<String> getSentence() {
 		return sentence;
 	}
 
 	@Override
-	public void setSentence(String[] paramTokens) {
-		this.sentence = paramTokens;
+	public void setSentence(String... paramTokens) {
+		this.sentence = Arrays.asList(paramTokens);
 	}
 
 	@Override
 	public void setNextWordIndex(int nextTokenIndex) {
-		if (nextTokenIndex < firstWordIndex || nextTokenIndex >= sentence.length) {
-			throw new IllegalArgumentException("out of bounds word");
-		}
-		this.nextIndex = nextTokenIndex;
-	}
-
-	@Override
-	public int getFirstWordIndex() {
-		return firstWordIndex;
-	}
-
-	@Override
-	public void setFirstWordIndex(int firstTokenIndex) {
-		if (nextIndex < firstWordIndex) {
-			nextIndex = firstWordIndex;
-		}
-		this.firstWordIndex = firstTokenIndex;
+		wordIterator = sentence.listIterator(nextTokenIndex);
 	}
 
 	@Override
@@ -250,48 +248,48 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 
 	@Override
 	public boolean hasNext() {
-		return nextIndex < sentence.length;
+		return assertSentenceIterator().hasNext();
 	}
 
 	@Override
 	public String next() {
-		String next = sentence[nextIndex];
-		nextIndex++;
-		return next;
+		return assertSentenceIterator().next();
 	}
 
 	@Override
 	public boolean hasPrevious() {
-		return nextIndex > firstWordIndex;
+		return assertSentenceIterator().hasPrevious();
 	}
 
 	@Override
 	public String previous() {
-		nextIndex--;
-		String next = sentence[nextIndex];
-		return next;
+
+		return assertSentenceIterator().previous();
 	}
 
 	@Override
 	public int nextIndex() {
-		return nextIndex;
+		return assertSentenceIterator().nextIndex();
 	}
 
 	@Override
 	public int previousIndex() {
-		return nextIndex - 1;
+		return assertSentenceIterator().previousIndex();
 	}
 
 	@Override
 	public void remove() {
+		assertSentenceIterator().remove();
 	}
 
 	@Override
 	public void set(String e) {
+		assertSentenceIterator().set(e);
 	}
 
 	@Override
 	public void add(String e) {
+		assertSentenceIterator().add(e);
 	}
 
 	@Override
@@ -302,14 +300,12 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	@Override
 	public Object getId() {
 		if (id == null) {
-			//FIXME SCOPED!
+			// FIXME SCOPED!
 			Thread t = Thread.currentThread();
 			id = t.getName();
 		}
 		return id;
 	}
-
-
 
 	@Override
 	public Object getServiceContract() {
@@ -342,7 +338,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 
 	@Override
 	public void reset() {
-		setNextWordIndex(this.firstWordIndex);
+		setNextWordIndex(0);
 		serviceContext = null;
 	}
 
@@ -357,7 +353,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 
 	@Override
 	public boolean process() throws Exception {
-		return getApplication().getRootService().getContextProcessingCommand().execute(this);
+		return process.execute(this);
 	}
 
 	@Override
@@ -377,7 +373,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 
 	@Override
 	public ExcecutionContext spawnChild() {
-		return new ExcecutionContextImpl(getApplication(), getSession(), transactionProvider, this);
+		return new ExcecutionContextImpl(process, getApplication(), getSession(), transactionProvider, this);
 	}
 
 	@Override
@@ -432,24 +428,28 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	}
 
 	@Override
+	public void setSentence(List<String> pathTokens) {
+		this.sentence = sentence;
+	}
+
+	@Override
 	public int hashCode() {
-		//FIXME validation of context makes hascode overflow, so if were just gonna validate sentences, maybe use a separate validator?
 		final int prime = 31;
-		int result = 7;
+		int result = prime;
 		result = prime * result + ((application == null) ? 0 : application.hashCode());
 		result = prime * result + ((callbackFunction == null) ? 0 : callbackFunction.hashCode());
 		result = prime * result + ((caughtException == null) ? 0 : caughtException.hashCode());
 		result = prime * result + ((constraintViolations == null) ? 0 : constraintViolations.hashCode());
 		result = prime * result + error;
-		result = prime * result + firstWordIndex;
 		result = prime * result + ((format == null) ? 0 : format.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
 		result = prime * result + nextIndex;
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		result = prime * result + ((process == null) ? 0 : process.hashCode());
 		result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
 		result = prime * result + (scopedWriting ? 1231 : 1237);
-		result = prime * result + Arrays.hashCode(sentence);
+		result = prime * result + ((sentence == null) ? 0 : sentence.hashCode());
 		result = prime * result + ((serviceContract == null) ? 0 : serviceContract.hashCode());
 		result = prime * result + ((serviceManifest == null) ? 0 : serviceManifest.hashCode());
 		result = prime * result + ((session == null) ? 0 : session.hashCode());
@@ -457,6 +457,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 		result = prime * result + ((transaction == null) ? 0 : transaction.hashCode());
 		result = prime * result + ((transactionProvider == null) ? 0 : transactionProvider.hashCode());
 		result = prime * result + ((warnings == null) ? 0 : warnings.hashCode());
+		result = prime * result + ((wordIterator == null) ? 0 : wordIterator.hashCode());
 		return result;
 	}
 
@@ -491,8 +492,6 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 			return false;
 		if (error != other.error)
 			return false;
-		if (firstWordIndex != other.firstWordIndex)
-			return false;
 		if (format == null) {
 			if (other.format != null)
 				return false;
@@ -515,6 +514,11 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 				return false;
 		} else if (!parent.equals(other.parent))
 			return false;
+		if (process == null) {
+			if (other.process != null)
+				return false;
+		} else if (!process.equals(other.process))
+			return false;
 		if (result == null) {
 			if (other.result != null)
 				return false;
@@ -522,7 +526,10 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 			return false;
 		if (scopedWriting != other.scopedWriting)
 			return false;
-		if (!Arrays.equals(sentence, other.sentence))
+		if (sentence == null) {
+			if (other.sentence != null)
+				return false;
+		} else if (!sentence.equals(other.sentence))
 			return false;
 		if (serviceContract == null) {
 			if (other.serviceContract != null)
@@ -556,8 +563,14 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 				return false;
 		} else if (!warnings.equals(other.warnings))
 			return false;
+		if (wordIterator == null) {
+			if (other.wordIterator != null)
+				return false;
+		} else if (!wordIterator.equals(other.wordIterator))
+			return false;
 		return true;
 	}
+
 
 	
 }

@@ -23,10 +23,9 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataDeleteCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Deleters;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
@@ -39,15 +38,13 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 
 	private final CatalogUpdateTransaction update;
 
-	private final CatalogEvaluationDelegate accesor;
 
 	private final Deleters deleters;
 
 	@Inject
-	public CatalogDeleteTransactionImpl(Deleters deleters, CatalogUpdateTransaction update, CatalogEvaluationDelegate accesor,
+	public CatalogDeleteTransactionImpl(Deleters deleters, CatalogUpdateTransaction update,
 			CatalogActionTriggerHandler trigerer, CatalogReadTransaction read, CatalogFactory factory) {
 		this.trigerer = trigerer;
-		this.accesor = accesor;
 		this.read = read;
 		this.update = update;
 		this.deleters = deleters;
@@ -61,15 +58,14 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 		FieldDescriptor trashableField = catalog.getFieldDescriptor(Trash.TRASH_FIELD);
 		read.execute(context);
 		List<CatalogEntry> originalEntries = context.getResults();
-		Session session = accesor.newSession(originalEntries.get(0));
+		Session session = context.getCatalogManager().newSession(originalEntries.get(0));
 
 		if (trashableField != null && trashableField.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE
 				&& context.getNamespaceContext().isRecycleBinEnabled()) {
 			log.trace("Trashing results");
 
-			
 			for (CatalogEntry originalEntry : originalEntries) {
-				accesor.setPropertyValue(catalog, trashableField, originalEntry, true, session);
+				context.getCatalogManager().setPropertyValue(catalog, trashableField, originalEntry, true, session);
 				context.setEntry(originalEntry.getId());
 				context.setEntryValue(originalEntry);
 				update.execute(context);
@@ -85,11 +81,12 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 			trigerer.execute(context);
 
 			// single or multiple delete
-			
+
 			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
 				context.getCatalogManager().getRead().execute(context);
-				Object parentEntityId = accesor.getAllegedParentId((CatalogEntry) context.getEntryResult(), session);
-				// we are certain this catalog has a parent, otherwise this DAO would
+				Object parentEntityId = context.getCatalogManager().getAllegedParentId((CatalogEntry) context.getEntryResult(), session);
+				// we are certain this catalog has a parent, otherwise this DAO
+				// would
 				// not be called
 				Long parentCatalogId = catalog.getParent();
 				CatalogActionContext childContext = context.getCatalogManager().spawn(context);
@@ -97,7 +94,8 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 				if (parentEntityId != null) {
 					// delegate deeper inheritance to another instance of an
 					// AncestorAware DAO
-					childContext.setCatalogDescriptor(childContext.getCatalogManager().getDescriptorForKey(parentCatalogId, childContext));
+					childContext.setCatalogDescriptor(
+							childContext.getCatalogManager().getDescriptorForKey(parentCatalogId, childContext));
 					childContext.setEntry(parentEntityId);
 
 					context.getCatalogManager().getDelete().execute(childContext);
@@ -105,8 +103,7 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 				}
 
 			}
-			
-			
+
 			dao.execute(context);
 			CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 			for (CatalogEntry originalEntry : originalEntries) {
@@ -114,12 +111,13 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 				if (cache != null) {
 					cache.delete(context, catalog.getDistinguishedName(), originalEntry);
 				}
-				
-				CatalogChangeEvent event=new CatalogChangeEventImpl((Long) context.getDomain(), catalog.getDistinguishedName(), CatalogActionRequest.DELETE_ACTION, originalEntry);
-				//cache invalidation
+
+				CatalogChangeEvent event = new CatalogChangeEventImpl((Long) context.getDomain(),
+						catalog.getDistinguishedName(), CatalogActionRequest.DELETE_ACTION, originalEntry);
+				// cache invalidation
 				context.getRootAncestor().addBroadcastable(event);
 			}
-			
+
 			// performAfterDelete
 			trigerer.postprocess(context, context.getExcecutionContext().getCaughtException());
 
@@ -129,5 +127,4 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 		return CONTINUE_PROCESSING;
 	}
 
-	
 }

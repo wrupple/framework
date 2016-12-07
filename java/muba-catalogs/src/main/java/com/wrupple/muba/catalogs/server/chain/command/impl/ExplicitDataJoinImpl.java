@@ -17,8 +17,7 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 
 @Singleton
@@ -26,8 +25,8 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 
 	@Inject
 	public ExplicitDataJoinImpl(DiscriminateEntriesImpl separateEntityStrategy,
-			SameEntityLocalizationStrategy sameEntityStrategy, CatalogEvaluationDelegate propertyAccessor) {
-		super(separateEntityStrategy, sameEntityStrategy, propertyAccessor);
+			SameEntityLocalizationStrategy sameEntityStrategy) {
+		super(separateEntityStrategy, sameEntityStrategy);
 	}
 
 	@Override
@@ -37,32 +36,32 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 			return CONTINUE_PROCESSING;
 		}
 		List<CatalogEntry> result = context.getResults();
-		Session session = axs.newSession(result.get(0));
-		CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(), (String) context.getCatalog(), context, session);
+		Session session = context.getCatalogManager().newSession(result.get(0));
+		CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
+				(String) context.getCatalog(), context, session);
 		FilterData filter = context.getFilter();
-		if(filter!=null){
+		if (filter != null) {
 			resultSet.setCursor(filter.getCursor());
 		}
 		String[][] joins = filter.getJoins();
 		Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);
-		ArrayList<CatalogColumnResultSet> regreso = new ArrayList<CatalogColumnResultSet>(filterMap.size()+1);
+		ArrayList<CatalogColumnResultSet> regreso = new ArrayList<CatalogColumnResultSet>(filterMap.size() + 1);
 		regreso.add(resultSet);
-		context.put(CompleteCatalogGraph.JOINED_DATA, regreso);	
-		
+		context.put(CompleteCatalogGraph.JOINED_DATA, regreso);
+
 		joinWithGivenJoinData(result, context.getCatalogDescriptor(), joins, context, filterMap, session);
 		return CONTINUE_PROCESSING;
 	}
 
-
 	@Override
 	protected void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog, List<CatalogEntry> joins,
 			CatalogDescriptor joinCatalog, CatalogActionContext context, Session session) throws Exception {
-		CatalogColumnResultSet resultSet = super.createResultSet(joins, joinCatalog, joinCatalog.getDistinguishedName(), context,
-				session);
+		CatalogColumnResultSet resultSet = super.createResultSet(joins, joinCatalog, joinCatalog.getDistinguishedName(),
+				context, session);
 		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 		joinsThusFar.add(resultSet);
-		
+
 	}
 
 }

@@ -32,7 +32,7 @@ public class BootstrapTest extends EasyMockSupport {
 
 	protected ExcecutionContext excecutionContext;
 
-	// @TestSubject protected Bootstrap muba;
+	// @TestSubject protected RootServiceManifest muba;
 
 	
 

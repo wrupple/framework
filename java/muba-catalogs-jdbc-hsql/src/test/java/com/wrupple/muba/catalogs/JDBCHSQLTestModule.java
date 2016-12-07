@@ -2,8 +2,6 @@ package com.wrupple.muba.catalogs;
 
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,8 +14,6 @@ import org.hsqldb.jdbc.JDBCDataSource;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 
@@ -59,24 +55,6 @@ public class JDBCHSQLTestModule extends AbstractModule {
 	}
 	
 	
-
-
-	@Provides
-	@Inject
-	public List<ServiceManifest> foos(CatalogServiceManifest catalog) {
-		// this is what makes it purr
-		List<ServiceManifest> r = (List) Arrays.asList(catalog);
-		return r;
-	}
-	/*	@Inject
-	public HeadlessServiceDictionary(RootServiceManifest root,VegetateService vegetate,CatalogServiceManifest catalogManifest,CatalogEngine catalog,ContentDeterminationManifest processManifest,BusinessEngine bp,WebEventServiceManifest eventManifest) {
-		addCommand(root.getServiceId(), vegetate);
-		addCommand(catalogManifest.getServiceId(), catalog);
-		addCommand(processManifest.getServiceId(), bp);
-		addCommand(eventManifest.getServiceId(), catalog);
-	}
-	
-	*/
 
 
 	@Provides

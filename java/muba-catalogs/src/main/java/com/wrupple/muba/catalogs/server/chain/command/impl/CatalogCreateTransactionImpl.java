@@ -22,10 +22,9 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandle
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
@@ -33,14 +32,12 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 
 	private final CatalogActionTriggerHandler trigerer;
 	private final EntryCreators creators;
-	private final CatalogEvaluationDelegate accessor;
 	private final boolean CREATE_RECURSIVE;
 
 	@Inject
-	public CatalogCreateTransactionImpl(EntryCreators creators,CatalogActionTriggerHandler trigerer,CatalogFactory factory, String creatorsDictionary, CatalogEvaluationDelegate accessor,@Named("catalog.create.recursive") Boolean recursive) {
+	public CatalogCreateTransactionImpl(EntryCreators creators,CatalogActionTriggerHandler trigerer,CatalogFactory factory, String creatorsDictionary,@Named("catalog.create.recursive") Boolean recursive) {
 		this.trigerer=trigerer;
 		this.creators=creators;
-		this.accessor=accessor;
 		this.CREATE_RECURSIVE=recursive;
 	}
 
@@ -52,26 +49,28 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 
 		// must have been deserialized by this point
 		CatalogEntry result = (CatalogEntry) context.getEntryValue();
-		assert result != null : "no data";
+		if(result ==null){
+			throw new NullPointerException("no entry in context");
+		}
 		context.setAction(CatalogActionRequest.CREATE_ACTION);
 		trigerer.execute(context);
 		
 		CatalogDescriptor catalog=context.getCatalogDescriptor();
 		DataCreationCommand createDao = (DataCreationCommand) creators.getCommand(String.valueOf(catalog.getStorage()));
 
-		Session session = accessor.newSession(result);
+		Session session = context.getCatalogManager().newSession(result);
 		
 		log.trace("[catalog/storage] {}/{}",catalog.getDistinguishedName(),createDao.getClass());
 		if(this.CREATE_RECURSIVE){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 			for(FieldDescriptor field: fields){
-				if(field.isKey() && accessor.getPropertyValue(catalog, field, result, null, session)==null){
-					Object foreignValue = accessor.getPropertyForeignKeyValue(catalog, field, result, session);
+				if(field.isKey() && context.getCatalogManager().getPropertyValue(catalog, field, result, null, session)==null){
+					Object foreignValue = context.getCatalogManager().getPropertyForeignKeyValue(catalog, field, result, session);
 					if(foreignValue!=null){
 						CatalogActionContext recursiveCreationContext  = context.getCatalogManager().spawn(context);
 						recursiveCreationContext.setCatalog(field.getCatalog());
 						foreignValue= recursiveCreationContext.getCatalogManager().createBatch(recursiveCreationContext,catalog,field,foreignValue);
-						accessor.setPropertyValue(catalog, field, result, foreignValue, session);
+						context.getCatalogManager().setPropertyValue(catalog, field, result, foreignValue, session);
 					}
 				}
 			}
@@ -91,7 +90,7 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		
 		if(regreso!=null){
 			if (parentEntry!=null &&catalog.getGreatAncestor() != null && !catalog.isConsolidated() ) {
-				accessor.addInheritedValuesToChild(parentEntry,  regreso, session,catalog);
+				context.getCatalogManager().addInheritedValuesToChild(parentEntry,  regreso, session,catalog);
 			}
 			context.getTransactionHistory().didCreate(context, regreso, createDao);
 		}
@@ -117,11 +116,11 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 	
 	private CatalogEntry create(CatalogEntry result, Session session,CatalogDescriptor catalog,CatalogActionContext childContext, CatalogActionContext parentContext) throws Exception {
 		Long parentCatalogId = catalog.getParent();
-		Object allegedParentId = accessor.getAllegedParentId(result,session);
+		Object allegedParentId = childContext.getCatalogManager().getAllegedParentId(result,session);
 		CatalogDescriptor parentCatalog = childContext.getCatalogManager().getDescriptorForKey(parentCatalogId, childContext);
 		CatalogEntry parentEntity = createAncestorsRecursively(result, parentCatalog, allegedParentId, session,childContext);
 		Object parentEntityId = parentEntity.getId();
-		CatalogEntry childEntity = accessor.synthesizeChildEntity(parentEntityId, result, session, catalog,childContext);
+		CatalogEntry childEntity = childContext.getCatalogManager().synthesizeChildEntity(parentEntityId, result, session, catalog,childContext);
 		
 		parentContext.setEntryValue(childEntity);
 		return parentEntity;
@@ -135,13 +134,13 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 
 		CatalogEntry parentEntity;
 		if (allegedParentId == null) {
-			parentEntity = accessor.synthesizeCatalogObject(o, parentCatalog, false, session, childContext);
+			parentEntity = childContext.getCatalogManager().synthesizeCatalogObject(o, parentCatalog, false, session, childContext);
 			childContext.setEntryValue(parentEntity);
 			childContext.setCatalogDescriptor(parentCatalog);
 			childContext.getCatalogManager().getNew().execute(childContext);
 			parentEntity = childContext.getEntryResult();
 		} else {
-			parentEntity = accessor.readEntry(parentCatalog, allegedParentId, childContext);
+			parentEntity = childContext.getCatalogManager().readEntry(parentCatalog, allegedParentId, childContext);
 			if (parentEntity == null) {
 				throw new IllegalArgumentException("entry parent does not exist " + allegedParentId + "@" + parentCatalog.getDistinguishedName());
 			}

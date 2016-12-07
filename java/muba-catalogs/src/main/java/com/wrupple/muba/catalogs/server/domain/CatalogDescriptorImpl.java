@@ -38,7 +38,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	private boolean typed;
 
-	@CatalogField(ignore = true)
 	private Class<? extends CatalogEntry> clazz;
 
 	@CatalogFieldValues(defaultValueOptions = { MAIN_STORAGE_UNIT, QUICK_STORAGE_UNIT, LOCAL, LOCAL_KEY_VALUE_PAIR,
@@ -393,8 +392,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	@Override
 	public String toString() {
-		return "CatalogDescriptorImpl [distinguishedName=" + distinguishedName + ", fields=" + fields
-				+ ", fieldsValues=" + fieldsValues + "]";
+		return "Catalog["+ distinguishedName + "]";
 	}
 
 	@Override

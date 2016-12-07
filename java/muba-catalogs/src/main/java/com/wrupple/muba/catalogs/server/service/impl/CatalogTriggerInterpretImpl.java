@@ -20,24 +20,21 @@ import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.domain.CatalogTrigger;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 @Singleton
 public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private static final Logger log = LoggerFactory.getLogger(CatalogTriggerInterpretImpl.class);
 
 	private final CatalogServiceManifest manifest;
-	private final CatalogEvaluationDelegate accessor;
 	private final CatalogDeserializationService deserializer;
 
 	@Inject
-	public CatalogTriggerInterpretImpl(CatalogServiceManifest manifest, CatalogEvaluationDelegate accessor,
+	public CatalogTriggerInterpretImpl(CatalogServiceManifest manifest, 
 			CatalogDeserializationService deserializer) {
 		super();
 		this.manifest = manifest;
-		this.accessor = accessor;
 		this.deserializer = deserializer;
 	}
 
@@ -75,7 +72,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			}
 
 			if (entryIdPointer != null) {
-				Session session = accessor.newSession((CatalogEntry) context.getEntryValue());
+				Session session = context.getCatalogManager().newSession((CatalogEntry) context.getEntryValue());
 				entryIdPointer = synthethizeKeyValue(entryIdPointer, context, session,
 						targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()));
 				context.setEntry(entryIdPointer);
@@ -123,7 +120,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Session session,
 			FieldDescriptor field) throws Exception {
 		if (entryIdPointer instanceof String) {
-			return accessor.synthethizeFieldValue((String) entryIdPointer, context);
+			return context.getCatalogManager().synthethizeFieldValue((String) entryIdPointer, context);
 		} else {
 			return entryIdPointer;
 		}
@@ -159,20 +156,20 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		context.setCatalog(targetCatalog.getDistinguishedName());
 
-		Session session = accessor.newSession(synthesizedEntry);
+		Session session = context.getCatalogManager().newSession(synthesizedEntry);
 		Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
 		String fieldId;
 		String token;
 		Object fieldValue;
-		Session lowSession = accessor.newSession((CatalogEntry) context.getEntryValue());
+		Session lowSession = context.getCatalogManager().newSession((CatalogEntry) context.getEntryValue());
 
 		for (FieldDescriptor field : fields) {
 			fieldId = field.getFieldId();
 			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isEphemeral()) {
 				token = properties.get(fieldId);
 				if (token != null) {
-					fieldValue = accessor.synthethizeFieldValue(token, context);
-					accessor.setPropertyValue(targetCatalog, field, synthesizedEntry, fieldValue, session);
+					fieldValue = context.getCatalogManager().synthethizeFieldValue(token, context);
+					context.getCatalogManager().setPropertyValue(targetCatalog, field, synthesizedEntry, fieldValue, session);
 				}
 			}
 

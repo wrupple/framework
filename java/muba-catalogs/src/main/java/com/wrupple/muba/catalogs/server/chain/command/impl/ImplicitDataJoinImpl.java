@@ -16,9 +16,7 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
-import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 
 @Singleton
@@ -26,8 +24,8 @@ public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin
 
 	@Inject
 	public ImplicitDataJoinImpl(DiscriminateEntriesImpl separateEntityStrategy,
-			SameEntityLocalizationStrategy sameEntityStrategy, CatalogEvaluationDelegate propertyAccessor) {
-		super(separateEntityStrategy, sameEntityStrategy, propertyAccessor);
+			SameEntityLocalizationStrategy sameEntityStrategy) {
+		super(separateEntityStrategy, sameEntityStrategy);
 	}
 
 	@Override
@@ -38,7 +36,7 @@ public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin
 		}
 
 		List<CatalogEntry> result = context.getResults();
-		Session session = axs.newSession(result.get(0));
+		Session session = context.getCatalogManager().newSession(result.get(0));
 		CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
 				(String) context.getCatalog(), context, session);
 

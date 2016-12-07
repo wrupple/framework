@@ -20,10 +20,10 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> implements QueryResultHandler {
 	protected Logger log = LoggerFactory.getLogger(QueryResultHandlerImpl.class);
@@ -33,19 +33,20 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 
 	private CatalogRowProcessor mapper;
 	private Class<? extends CatalogEntry> clazz;
-	private final CatalogEvaluationDelegate axs;
+
+	private SystemCatalogPlugin cms;
 
 	@Inject
-	public QueryResultHandlerImpl(JDBCMappingDelegate delegate, DateFormat format, CatalogEvaluationDelegate axs) {
+	public QueryResultHandlerImpl(JDBCMappingDelegate delegate, DateFormat format) {
 		super();
-		this.axs = axs;
 		this.delegate = delegate;
 		this.format = format;
 	}
 
 	@Override
 	public void setContext(CatalogActionContext context) throws Exception {
-		log.info("created result haandler");
+		log.trace("created result haandler");
+		this.cms=context.getCatalogManager();
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		mapper = new CatalogRowProcessor(catalog);
 		clazz = catalog.getClazz();
@@ -82,7 +83,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 			FieldDescriptor field;
 			for (int i = 1; i <= cols; i++) {
 				String columnName = rsmd.getColumnLabel(i);
-				log.info("Handle column {} as map key",columnName);
+				log.trace("Handle column {} as map key",columnName);
 				if (null == columnName || 0 == columnName.length()) {
 					columnName = rsmd.getColumnName(i);
 				}
@@ -111,12 +112,12 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				throw new IllegalArgumentException("cannot instantiate " + type);
 			}
 			if (session == null) {
-				session = axs.newSession((CatalogEntry) result);
+				session = cms.newSession((CatalogEntry) result);
 			}
 			FieldDescriptor field;
 			for (int i = 1; i <= cols; i++) {
 				String columnName = rsmd.getColumnLabel(i);
-				log.info("Handle column {} as bean property",columnName);
+				log.trace("Handle column {} as bean property",columnName);
 				if (null == columnName || 0 == columnName.length()) {
 					columnName = rsmd.getColumnName(i);
 				}
@@ -124,7 +125,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				field = catalog.getFieldDescriptor(delegate.getFieldNameForColumn(columnName,false));
 				if (field != null) {
 					try {
-						axs.setPropertyValue(catalog, field, (CatalogEntry) result,
+						cms.setPropertyValue(catalog, field, (CatalogEntry) result,
 								delegate.handleColumnField(rs,field, field.getDataType(), i, format), session);
 					} catch (Exception e) {
 						throw new IllegalArgumentException(e);

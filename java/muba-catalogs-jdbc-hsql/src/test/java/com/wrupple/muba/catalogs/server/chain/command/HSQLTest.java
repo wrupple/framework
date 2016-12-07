@@ -4,12 +4,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
+import javax.validation.Validator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +21,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bootstrap.BootstrapModule;
+import com.wrupple.muba.bootstrap.domain.ApplicationContext;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.FilterData;
@@ -28,6 +29,7 @@ import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.Person;
 import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
+import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCHSQLTestModule;
@@ -36,7 +38,9 @@ import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.Argument;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.domain.Trash;
+import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataCreationCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataDeleteCommandImpl;
@@ -63,6 +67,14 @@ public class HSQLTest extends MubaTest {
 		init(new CRUDModule(), new CatalogModule(), new SingleUserModule(), new JDBCHSQLTestModule(),
 				new HSQLDBModule(), new JDBCModule(), new ValidationModule(), new BootstrapModule());
 
+	}
+	
+
+	@Override
+	protected void registerServices(Validator v, ValidationGroupProvider g, ApplicationContext switchs) {
+		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
+		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
+		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));		
 	}
 
 	/*
@@ -352,6 +364,7 @@ public class HSQLTest extends MubaTest {
 		log.trace("[CRUD tests passed]");
 
 	}
+
 
 	// i18n locale-dependent field values
 

@@ -7,17 +7,21 @@ import java.util.Map;
  * @author japi
  *
  */
-public interface Bootstrap extends ParentServiceManifest {
+public interface RootServiceManifest extends ServiceManifest {
 
 	final String NAME = "root",THREAD = "vegetate.thread",MANIFEST_HOLDER = "manifestObj";
 	
 
-	ParentServiceManifest getFallbackService();
+	ServiceManifest getFallbackService();
 
 
 	Map<String, ServiceManifest> getVersions(String service);
 
 
+	void setFallBackService(ServiceManifest instance);
+
+
+	void register(ServiceManifest manifest);
 
 
 

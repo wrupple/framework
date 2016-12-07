@@ -19,15 +19,15 @@ import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
 import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
 import com.wrupple.muba.catalogs.server.service.QueryReaders;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
@@ -38,9 +38,6 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	public interface JoinCondition {
 		boolean match(CatalogEntry o);
 	}
-	
-	private final CatalogEvaluationDelegate access;
-	
 
 	private final CompleteCatalogGraph graphJoin;
 
@@ -55,14 +52,11 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 
 	private int MIN_TREE_LEVELS;
 
-
-
 	@Inject
 	public CatalogReadTransactionImpl(@Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
-			QueryReaders queryers, PrimaryKeyReaders primaryKeyers, CompleteCatalogGraph graphJoin,CatalogEvaluationDelegate access,
+			QueryReaders queryers, PrimaryKeyReaders primaryKeyers, CompleteCatalogGraph graphJoin,
 			ExplicitDataJoin join, CatalogReaderInterceptor queryRewriter) {
 		this.graphJoin = graphJoin;
-		this.access=access;
 		this.join = join;
 		this.MIN_TREE_LEVELS = minLevelsDeepOfhierarchy;
 		this.queryers = queryers;
@@ -75,21 +69,32 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	 * READING ACTION (lucky!)?
 	 */
 	@Override
-	public boolean execute(Context x) throws Exception {log.trace("[START READ]");
+	public boolean execute(Context x) throws Exception {
+		log.trace("[START READ]");
 		CatalogActionContext context = (CatalogActionContext) x;
+		String catalogId = (String) context.getCatalog();
+		if (catalogId == null) {
+			log.trace("[GET AVAILABLE CATALOG LIST]");
+			// list all domain catalogs
+			context.setResults(context.getCatalogManager().getAvailableCatalogs(context));
+			return CONTINUE_PROCESSING;
+		}
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 
 		Object targetEntryId = context.getEntry();
-		Session session = access.newSession(null);
+		Session session = context.getCatalogManager().newSession(null);
 		if (targetEntryId == null) {
 			FilterData filter = context.getFilter();
 			if (filter == null) {
-				throw new IllegalArgumentException(
-						"Neither filter data, nor target entry id was specified for this read operation");
+				log.trace("[ASSEMBLE CATALOG DESCRIPTOR]");
+				// get full catalog descriptor
+
+				context.setResults(Collections.singletonList(catalog));
+				return CONTINUE_PROCESSING;
 			}
-			applySorts(filter,catalog.getAppliedSorts());
-			applyCriteria(filter,catalog,catalog.getAppliedCriteria(), context, session);
+			applySorts(filter, catalog.getAppliedSorts());
+			applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, session);
 			List<CatalogEntry> result = null;
 			FilterCriteria keyCriteria = filter.fetchCriteria(CatalogEntry.ID_FIELD);
 			if (!filter.isConstrained() || keyCriteria == null) {
@@ -129,8 +134,8 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 				graphJoin.execute(context);
 			}
 		} else {
-			CatalogEntry originalEntry = read(targetEntryId, catalog, context, cache,session);
-			
+			CatalogEntry originalEntry = read(targetEntryId, catalog, context, cache, session);
+
 			context.setResults(Collections.singletonList(originalEntry));
 
 			if (context.containsKey(READ_GRAPH)) {
@@ -148,15 +153,15 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		filterData = queryRewriter.interceptQuery(filterData, context, catalog);
 
 		if (cache == null) {
-			regreso = doRead(filterData, catalog, context,session);
+			regreso = doRead(filterData, catalog, context, session);
 		} else {
 			regreso = cache.satisfy(context, catalog.getDistinguishedName(), filterData);
 			if (regreso == null) {
-				regreso = doRead(filterData, catalog, context,session);
+				regreso = doRead(filterData, catalog, context, session);
 				if (regreso != null) {
 					if (log.isInfoEnabled()) {
-						log.trace("Saving {} query result(s) in cache {} list {}", regreso.size(), catalog.getDistinguishedName(),
-								filterData);
+						log.trace("Saving {} query result(s) in cache {} list {}", regreso.size(),
+								catalog.getDistinguishedName(), filterData);
 					}
 					cache.put(context, catalog.getDistinguishedName(), regreso, filterData);
 				}
@@ -173,11 +178,11 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			CatalogResultCache cache, Session session) throws Exception {
 		CatalogEntry regreso;
 		if (cache == null) {
-			regreso = doRead(targetEntryId, catalog, context,session);
+			regreso = doRead(targetEntryId, catalog, context, session);
 		} else {
 			regreso = cache.get(context, catalog.getDistinguishedName(), targetEntryId);
 			if (regreso == null) {
-				regreso = doRead(targetEntryId, catalog, context,session);
+				regreso = doRead(targetEntryId, catalog, context, session);
 				if (regreso != null) {
 					cache.put(context, catalog.getDistinguishedName(), regreso);
 				}
@@ -195,7 +200,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		if (context.getCatalogManager().isPrimaryKey(vanityId)) {
 			// almost certainly an Id
 			Object primaryId = context.getCatalogManager().decodePrimaryKeyToken(vanityId);
-			regreso = read(primaryId, catalog, context, cache,session);
+			regreso = read(primaryId, catalog, context, cache, session);
 		}
 
 		if (regreso == null) {
@@ -214,8 +219,8 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		return regreso;
 	}
 
-	private List<CatalogEntry> doRead(FilterData filterData, CatalogDescriptor catalog, CatalogActionContext context, Session session)
-			throws Exception {
+	private List<CatalogEntry> doRead(FilterData filterData, CatalogDescriptor catalog, CatalogActionContext context,
+			Session session) throws Exception {
 		log.trace("DATASTORE QUERY");
 		context.setFilter(filterData);
 		Command command = queryers.getCommand(String.valueOf(catalog.getStorage()));
@@ -224,29 +229,28 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
 
 			// read child Results
-					List<CatalogEntry> children = context.getResults();
-					if (children != null && !children.isEmpty()) {
-						
-						CatalogActionContext readContext = context.getCatalogManager().spawn(context);
-						processChildren(children, readContext,catalog, session);
-						return children;
-					} else {
-						return Collections.EMPTY_LIST;
-					}
+			List<CatalogEntry> children = context.getResults();
+			if (children != null && !children.isEmpty()) {
+
+				CatalogActionContext readContext = context.getCatalogManager().spawn(context);
+				processChildren(children, readContext, catalog, session);
+				return children;
+			} else {
+				return Collections.EMPTY_LIST;
+			}
 		}
-				
-				
+
 		return context.getResults();
 	}
 
-	private CatalogEntry doRead(Object targetEntryId, CatalogDescriptor catalog, CatalogActionContext context, Session session)
-			throws Exception {
+	private CatalogEntry doRead(Object targetEntryId, CatalogDescriptor catalog, CatalogActionContext context,
+			Session session) throws Exception {
 		log.trace("DATASTORE READ");
 		context.setEntry(targetEntryId);
 
 		Command command = primaryKeyers.getCommand(String.valueOf(catalog.getStorage()));
 		command.execute(context);
-		
+
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
 			// read child entity
 			CatalogEntry childEntity = context.getEntryResult();
@@ -255,40 +259,44 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			// not be called
 			Long parentCatalogId = catalog.getParent();
 			// aquire parent id
-			Object parentEntityId = access.getAllegedParentId(childEntity, session);
+			Object parentEntityId = context.getCatalogManager().getAllegedParentId(childEntity, session);
 			// delegate deeper inheritance to another instance of an
 			// AncestorAware
 			// DAO
-			
+
 			log.trace("[PROCESSING CHILD ENTRY]");
-			access.processChild(childEntity, context.getCatalogManager().getDescriptorForKey(parentCatalogId, context), parentEntityId, context.getCatalogManager().spawn(context),
-					catalog, session);
+			context.getCatalogManager().processChild(childEntity,
+					context.getCatalogManager().getDescriptorForKey(parentCatalogId, context), parentEntityId,
+					context.getCatalogManager().spawn(context), catalog, session);
 		}
 		return context.getEntryResult();
 
 	}
-	
-	protected void processChildren(List<CatalogEntry> children, CatalogActionContext readContext, CatalogDescriptor catalog, Session session) throws Exception {
+
+	protected void processChildren(List<CatalogEntry> children, CatalogActionContext readContext,
+			CatalogDescriptor catalog, Session session) throws Exception {
 		// we are certain this catalog has a parent, otherwise this DAO would
 		// not be called
 		Long parentCatalogId = catalog.getParent();
 		CatalogDescriptor parent = readContext.getCatalogManager().getDescriptorForKey(parentCatalogId, readContext);
 		Object parentEntityId;
 		for (CatalogEntry childEntity : children) {
-			parentEntityId = access.getAllegedParentId(childEntity, session);
-			access.processChild(childEntity, parent, parentEntityId, readContext,catalog, session);
+			parentEntityId = readContext.getCatalogManager().getAllegedParentId(childEntity, session);
+			readContext.getCatalogManager().processChild(childEntity, parent, parentEntityId, readContext, catalog,
+					session);
 		}
 	}
 
-
-
-	private void applyCriteria(FilterData filter, CatalogDescriptor catalog, List<? extends FilterCriteria> appliedCriteria, CatalogActionContext context, Session session) throws Exception {
-		if(appliedCriteria!=null){
-			for(FilterCriteria criteria: appliedCriteria){
-				if(criteria.getEvaluate()){
+	private void applyCriteria(FilterData filter, CatalogDescriptor catalog,
+			List<? extends FilterCriteria> appliedCriteria, CatalogActionContext context, Session session)
+			throws Exception {
+		if (appliedCriteria != null) {
+			for (FilterCriteria criteria : appliedCriteria) {
+				if (criteria.getEvaluate()) {
 					String operator = criteria.getOperator();
-					Object criteriaValue= access.synthethizeFieldValue((String) criteria.getValue(), context);
-					criteria = FilterDataUtils.createSingleFieldFilter(criteria.getPath(),criteriaValue);
+					Object criteriaValue = context.getCatalogManager()
+							.synthethizeFieldValue((String) criteria.getValue(), context);
+					criteria = FilterDataUtils.createSingleFieldFilter(criteria.getPath(), criteriaValue);
 					criteria.setOperator(operator);
 				}
 				filter.addFilter(criteria);
@@ -297,16 +305,15 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	}
 
 	private void applySorts(FilterData filter, List<FilterDataOrdering> appliedSorts) {
-		if(appliedSorts!=null){
-			for(FilterDataOrdering ordering: appliedSorts){
+		if (appliedSorts != null) {
+			for (FilterDataOrdering ordering : appliedSorts) {
 				filter.addOrdering(ordering);
 			}
-		}		
+		}
 	}
 
 	/*
-	 * FIXME 
-	 * public static String buildVanityToken(HasDistinguishedName task) {
+	 * FIXME public static String buildVanityToken(HasDistinguishedName task) {
 	 * 
 	 * String name = task.getDistinguishedName(); if (name == null) { name =
 	 * task.getName(); if (name == null) { name = task.getIdAsString(); } else {

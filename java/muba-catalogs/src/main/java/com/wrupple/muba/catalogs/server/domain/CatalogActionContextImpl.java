@@ -373,15 +373,30 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public void addBroadcastable(CatalogChangeEvent data) {
-		if (data != null) {
-			if (data.getEntry() != null) {
-				events.add(data);
+		CatalogActionContext ans = getRootAncestor();
+		if(ans==this){
+			if (data != null) {
+				if (data.getEntry() != null) {
+					
+					if(events==null){
+						events = new ArrayList<CatalogChangeEvent>(5);
+					}
+					events.add(data);
+				}
 			}
+		}else{
+			ans.addBroadcastable(data);
 		}
+		
 	}
 
 	public List<CatalogChangeEvent> getEvents() {
-		return events;
+		CatalogActionContext ans = getRootAncestor();
+		if(ans==this){
+			return events;
+		}else{
+			return ans.getEvents();
+		}
 	}
 
 	private TransactionHistory assertTransaction() {

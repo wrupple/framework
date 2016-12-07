@@ -16,31 +16,18 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.Trash;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
+import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
-import com.wrupple.muba.catalogs.server.service.RestoreTrash;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
 public class RestoreTrashImpl implements RestoreTrash {
 	private static Logger log = LoggerFactory.getLogger(RestoreTrashImpl.class);
-	private final CatalogEvaluationDelegate accessor;
-	private final CatalogDeleteTransaction delete;
-	private final CatalogUpdateTransaction update;
-	private final CatalogReadTransaction read;
 
 	@Inject
-	public RestoreTrashImpl(CatalogEvaluationDelegate accessory, CatalogDeleteTransaction delete,
-			CatalogUpdateTransaction update, CatalogReadTransaction read) {
+	public RestoreTrashImpl( ) {
 		super();
-		this.accessor = accessory;
-		this.delete = delete;
-		this.update = update;
-		this.read = read;
 	}
 
 	@Override
@@ -50,14 +37,14 @@ public class RestoreTrashImpl implements RestoreTrash {
 		if (e == null) {
 			log.warn("[RESTORE ALL TRASH ITEMS]");
 
-			Session session = accessor.newSession(null);
+			Session session = context.getCatalogManager().newSession(null);
 			FilterData all = FilterDataUtils.newFilterData();
 			all.setConstrained(false);
 			all.addOrdering(new FilterDataOrderingImpl(HasCatalogId.CATALOG_FIELD, false));
 
 			// READ ALL TRASH ITEMS ORDERED BY NUMERIC_ID TYPE
 			context.setFilter(all);
-			read.execute(context);
+			context.getCatalogManager().getRead().execute(context);
 			List<Trash> trash = context.getResults();
 			String catalogId = null;
 			CatalogDescriptor descriptor = null;
@@ -80,7 +67,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			context.setCatalog(Trash.CATALOG);
 			context.setFilter(all);
 			context.setEntry(null);
-			delete.execute(context);
+			context.getCatalogManager().getDelete().execute(context);
 		} else {
 
 			log.trace("[RESTORE TRASH ITEM] {}", e);
@@ -88,7 +75,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			String catalogId = e.getCatalog();
 			CatalogDescriptor descriptor = context.getCatalogManager().getDescriptorForName(catalogId, context);
 			FieldDescriptor trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
-			Session session = accessor.newSession(null);
+			Session session = context.getCatalogManager().newSession(null);
 			context.setFilter(null);
 			undelete(e, context, descriptor, trashField, session);
 
@@ -96,7 +83,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			context.setCatalog(Trash.CATALOG);
 			context.setFilter(null);
 			context.setEntry(e.getId());
-			delete.execute(context);
+			context.getCatalogManager().getDelete().execute(context);
 
 			// SINCE THIS TRIGGER IS PERFORMED BEFORE ACTION IS COMMITED,
 			// AND FAILS SILENTLY, then when the restoring action is
@@ -115,11 +102,11 @@ public class RestoreTrashImpl implements RestoreTrash {
 			String catalogId = e.getCatalog();
 			context.setCatalog(catalogId);
 			context.setEntry(entryId);
-			read.execute(context);
+			context.getCatalogManager().getRead().execute(context);
 			CatalogEntry trashedEntry = context.getEntryResult();
-			accessor.setPropertyValue(descriptor, trashField, trashedEntry, false, session);
+			context.getCatalogManager().setPropertyValue(descriptor, trashField, trashedEntry, false, session);
 			context.setEntryValue(trashedEntry);
-			update.execute(context);
+			context.getCatalogManager().getWrite().execute(context);
 
 		}
 	}

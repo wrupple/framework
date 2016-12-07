@@ -3,58 +3,42 @@ package com.wrupple.muba.catalogs.server.domain;
 import java.util.Date;
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
+import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 
-public class CatalogPeerImpl extends CatalogEntryImpl implements CatalogPeer {
+public class CatalogPeerImpl extends ContentNodeImpl implements CatalogPeer {
 	
-	private static final long serialVersionUID = -42266955486460366L;
-	private Date expirationDate,presence;
-	private Integer subscriptionStatus,channel,remoteStakeholder;
-	private String host,publicKey,agent,catalogUrlBase;
+
+	private static final long serialVersionUID = -671577088785926566L;
+
+	private Date expirationDate;
+	
 	private Long stakeHolder;
-	private List<String> subscribedEvents;
-	public Date getExpirationDate() {
-		return expirationDate;
+	private String agent;
+	private Integer channel;
+	private Integer stakeHolderIndex;
+	private String catalogUrlBase;
+	
+	private Integer subscriptionStatus;
+	private Date presence;
+	private String publicKey;
+	private List<String> properties;
+	private String host;
+	
+
+	
+	public List<String> getProperties() {
+		return properties;
 	}
-	public void setExpirationDate(Date expirationDate) {
-		this.expirationDate = expirationDate;
+	public void setProperties(List<String> properties) {
+		this.properties = properties;
 	}
-	public Date getPresence() {
-		return presence;
+	
+	public Long getStakeHolder() {
+		return stakeHolder;
 	}
-	public void setPresence(Date presence) {
-		this.presence = presence;
-	}
-	public Integer getSubscriptionStatus() {
-		return subscriptionStatus;
-	}
-	public void setSubscriptionStatus(int subscriptionStatus) {
-		this.subscriptionStatus = subscriptionStatus;
-	}
-	public int getChannel() {
-		return channel;
-	}
-	public void setChannel(int channel) {
-		this.channel = channel;
-	}
-	public int getRemoteStakeholder() {
-		return remoteStakeholder;
-	}
-	public void setRemoteStakeholder(int remoteStakeholder) {
-		this.remoteStakeholder = remoteStakeholder;
-	}
-	public String getHost() {
-		return host;
-	}
-	public void setHost(String host) {
-		this.host = host;
-	}
-	public String getPublicKey() {
-		return publicKey;
-	}
-	public void setPublicKey(String publicKey) {
-		this.publicKey = publicKey;
+	public void setStakeHolder(Long stakeHolder) {
+		this.stakeHolder = stakeHolder;
 	}
 	public String getAgent() {
 		return agent;
@@ -62,51 +46,82 @@ public class CatalogPeerImpl extends CatalogEntryImpl implements CatalogPeer {
 	public void setAgent(String agent) {
 		this.agent = agent;
 	}
+	public Integer getChannel() {
+		return channel;
+	}
+	public void setChannel(Integer channel) {
+		this.channel = channel;
+	}
+	public Integer getStakeHolderIndex() {
+		return stakeHolderIndex;
+	}
+	public void setStakeHolderIndex(Integer stakeHolderIndex) {
+		this.stakeHolderIndex = stakeHolderIndex;
+	}
 	public String getCatalogUrlBase() {
 		return catalogUrlBase;
 	}
 	public void setCatalogUrlBase(String catalogUrlBase) {
 		this.catalogUrlBase = catalogUrlBase;
 	}
-	public Long getStakeHolder() {
-		return stakeHolder;
+	
+
+	public Integer getSubscriptionStatus() {
+		return subscriptionStatus;
 	}
-	public void setStakeHolder(Long stakeHolder) {
-		this.stakeHolder = stakeHolder;
+	public void setSubscriptionStatus(Integer subscriptionStatus) {
+		this.subscriptionStatus = subscriptionStatus;
 	}
-	public List<String> getSubscribedEvents() {
-		return subscribedEvents;
+	public Date getPresence() {
+		return presence;
 	}
-	public void setSubscribedEvents(List<String> subscribedEvents) {
-		this.subscribedEvents = subscribedEvents;
+	public void setPresence(Date presence) {
+		this.presence = presence;
+	}
+	public String getPublicKey() {
+		return publicKey;
+	}
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
 	}
 	@Override
-	public boolean setMinimumActivityStatus(int requiredStatus) {
-		if(requiredStatus>this.subscriptionStatus||this.subscriptionStatus==null){
-			this.subscriptionStatus=requiredStatus;
+	public boolean setMinimumActivityStatus(int statusIdle) {
+		if(this.subscriptionStatus==null||this.subscriptionStatus.intValue()<statusIdle){
+			this.subscriptionStatus=statusIdle;
+			return true;
 		}
 		return false;
 	}
 	@Override
 	public boolean isSuscribed(String eventName) {
-		return this.subscribedEvents!=null && this.subscribedEvents.contains(eventName);
+		if(properties==null){
+			return false;
+		}
+		return properties.contains(eventName);
 	}
 	@Override
-	public void setDomain(long domain) {
-		super.setDomain(domain);
+	public String getHost() {
+		return host;
+	}
+	@Override
+	public void setHost(String h) {
+		this.host=h;
 	}
 	@Override
 	public void setStakeHolder(long stakeHolder) {
 		this.stakeHolder=stakeHolder;
 	}
 	@Override
-	public int getStakeHolderIndex() {
-		return this.remoteStakeholder;
-	}
-	
-	@Override
 	public String getCatalogType() {
-		return CATALOG;
+		return CatalogPeer.CATALOG;
 	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
 
 }

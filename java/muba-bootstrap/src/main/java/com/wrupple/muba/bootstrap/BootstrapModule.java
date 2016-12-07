@@ -1,16 +1,18 @@
 package com.wrupple.muba.bootstrap;
 
+import org.apache.commons.chain.CatalogFactory;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.Bootstrap;
+import com.wrupple.muba.bootstrap.domain.RootServiceManifest;
+import com.wrupple.muba.bootstrap.domain.RootServiceManifestImpl;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.server.chain.command.ServiceInvocationCommand;
-import com.wrupple.muba.bootstrap.server.chain.command.impl.ServiceInvocationCommandImpl;
+import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
+import com.wrupple.muba.bootstrap.server.chain.command.impl.ContextSwitchCommandImpl;
 import com.wrupple.muba.bootstrap.server.domain.ExcecutionContextImpl;
 import com.wrupple.muba.bootstrap.server.domain.LocalSystemContext;
 import com.wrupple.muba.bootstrap.server.service.SentenceValidator;
-import com.wrupple.muba.bootstrap.server.service.impl.BootstrapImpl;
 import com.wrupple.muba.bootstrap.server.service.impl.SentenceValidatorImpl;
 
 public class BootstrapModule extends AbstractModule {
@@ -25,11 +27,12 @@ public class BootstrapModule extends AbstractModule {
 		/*
 		 * Commands
 		 */
-		bind(ServiceInvocationCommand.class).to(ServiceInvocationCommandImpl.class);
+		bind(ContextSwitchCommand.class).to(ContextSwitchCommandImpl.class);
 		/*
 		 * Services
 		 */
-		bind(Bootstrap.class).to(BootstrapImpl.class);
+		bind(CatalogFactory.class).toInstance(CatalogFactory.getInstance());
+		bind(RootServiceManifest.class).to(RootServiceManifestImpl.class);
 		bind(SentenceValidator.class).to(SentenceValidatorImpl.class);
 	}
 
