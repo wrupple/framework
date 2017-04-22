@@ -12,9 +12,9 @@ public class HSQLDBModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		
+
 		bind(Integer.class).annotatedWith(Names.named("catalog.missingTableErrorCode")).toInstance(
-				org.hsqldb.error.ErrorCode.X_42501 * -1/* 1146 in MySQL */);
+				/*org.hsqldb.error.ErrorCode.X_42501*/5501 * -1/* 1146 in MySQL */);
 		
 		bind(Character.class).annotatedWith(Names.named("catalog.sql.delimiter")).toInstance('\"');
 		bind(String.class).annotatedWith(Names.named("catalog.sql.createTable")).toInstance("CREATE TABLE IF NOT EXISTS");
