@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bpm.domain.ContentDeterminationManifest;
 import com.wrupple.muba.bpm.server.chain.command.AbstractComparationCommand;
 import com.wrupple.muba.bpm.server.chain.command.BPMValidationTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;

@@ -3,6 +3,7 @@ package com.wrupple.muba.bpm.server.chain.command;
 import java.util.Collection;
 import java.util.Date;
 
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
@@ -11,14 +12,13 @@ import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 public abstract class AbstractComparationCommand implements Command {
 
-	protected final CatalogEvaluationDelegate accesor;
+	protected final SystemCatalogPlugin accesor;
 
-	public AbstractComparationCommand(CatalogEvaluationDelegate accesor) {
+	public AbstractComparationCommand(SystemCatalogPlugin accesor) {
 		super();
 		this.accesor = accesor;
 	}

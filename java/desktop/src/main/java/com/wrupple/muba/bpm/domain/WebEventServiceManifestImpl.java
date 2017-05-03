@@ -1,4 +1,4 @@
-package com.wrupple.muba.bpm.domain.impl;
+package com.wrupple.muba.bpm.domain;
 
 import javax.inject.Inject;
 import javax.inject.Named;

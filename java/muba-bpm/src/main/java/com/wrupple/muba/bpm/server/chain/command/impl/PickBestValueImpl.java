@@ -2,13 +2,13 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import java.util.List;
 
+import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bpm.server.chain.command.PickBestValue;
 import com.wrupple.muba.bpm.server.domain.ContentContext;
 import com.wrupple.muba.bpm.server.domain.ContentContext.PossibleValue;
 
-public class PickBestValueImpl implements PickBestValue {
+public class PickBestValueImpl implements Command {
 
 	@Override
 	public boolean execute(Context c) throws Exception {

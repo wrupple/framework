@@ -5,18 +5,18 @@ import java.util.List;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bpm.server.chain.command.DefinePosibilitySpace;
 import com.wrupple.muba.bpm.server.domain.ContentContext;
 import com.wrupple.muba.bpm.server.domain.ContentContext.PossibleValue;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 
 @Singleton
-public class DefinePosibilitySpaceImpl  implements DefinePosibilitySpace {
+public class DefinePosibilitySpaceImpl  implements Command {
 
 
 	@Override

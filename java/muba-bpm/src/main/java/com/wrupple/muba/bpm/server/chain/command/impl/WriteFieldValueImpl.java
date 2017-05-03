@@ -2,16 +2,16 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import javax.inject.Inject;
 
+import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bpm.server.chain.command.WriteFieldValue;
 import com.wrupple.muba.bpm.server.domain.ContentContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 
-public class WriteFieldValueImpl implements WriteFieldValue {
+public class WriteFieldValueImpl implements Command {
 
 	private final CatalogEvaluationDelegate access;
 	

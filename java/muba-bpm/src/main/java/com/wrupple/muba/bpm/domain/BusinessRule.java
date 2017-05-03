@@ -7,6 +7,9 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 
+/*
+ * as a business rule, user are granted or denied permission to change value from a specific initial value
+ */
 public interface BusinessRule extends ContentNode, HasStakeHolder,HasCatalogId,HasEntryId {
 
 	String CATALOG = "BusinessRule";

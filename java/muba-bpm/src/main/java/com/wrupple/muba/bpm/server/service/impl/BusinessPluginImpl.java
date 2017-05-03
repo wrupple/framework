@@ -96,7 +96,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			@Named(ProcessDescriptor.CATALOG) Provider<CatalogDescriptor> processDescriptorProvider,
 			@Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
 			@Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
-			@Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex, CheckSecureConditions secureTrigger) {
+			@Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
 		this.taskDescP = taskDescP;
 		this.actionDescP = actionDescP;
 		this.toolbarDescP = toolbarDescP;
@@ -115,7 +115,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 		transactions.addCommand(BPMValidationTrigger.class.getSimpleName(), validationTrigger);
 		transactions.addCommand(BPMValueChangeListener.class.getSimpleName(), changeListener);
 		transactions.addCommand(BPMStakeHolderTrigger.class.getSimpleName(), stakeHolderTrigger);
-		transactions.addCommand(CheckSecureConditions.class.getSimpleName(), secureTrigger);
 	}
 
 	@Override
