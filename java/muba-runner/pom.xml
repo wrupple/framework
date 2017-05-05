@@ -14,7 +14,6 @@
 	</properties>
 	<dependencies>
 
-
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>muba-catalogs</artifactId>
