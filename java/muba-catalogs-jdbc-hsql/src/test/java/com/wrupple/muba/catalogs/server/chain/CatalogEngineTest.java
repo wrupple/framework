@@ -151,14 +151,6 @@ public class CatalogEngineTest extends MubaTest {
 		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
 	}
 
-	@Provides
-	@Inject
-	public List<ServiceManifest> foos(CatalogServiceManifest catalog) {
-		// this is what makes it purr
-		List<ServiceManifest> r = (List) Arrays.asList(catalog);
-		return r;
-	}
-
 	@Before
 	public void setUp() throws Exception {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
