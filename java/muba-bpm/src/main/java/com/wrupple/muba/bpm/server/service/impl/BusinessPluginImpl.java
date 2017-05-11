@@ -71,25 +71,18 @@ import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 public class BusinessPluginImpl implements BusinessPlugin {
 
 	private final int SECURE_STORAGE;
-	private final Provider<CatalogDescriptor> taskDescP;
-	private final Provider<CatalogDescriptor> actionDescP;
-	private final Provider<CatalogDescriptor> toolbarDescP;
+
 
 	private final Provider<CatalogDescriptor> processDescriptorProvider;
 	private Provider<CatalogDescriptor> notificationProvider;
 	private Provider<CatalogDescriptor> clientProvider;
 
 	private Provider<CatalogDescriptor> authTokenDescriptor;
-	private final CatalogDescriptorBuilder builder;
 	private final Provider<CatalogDescriptor> event;
 
 	@Inject
 	public BusinessPluginImpl(CatalogManager databasePlugin, WriteFormatedDocument documentWriter, ContentManagementSystem cms, CatalogEvaluationDelegate synthesizer,
-			@Named(BusinessEvent.CATALOG) Provider<CatalogDescriptor> event,
-			@Named(ProcessTaskDescriptor.CATALOG) Provider<CatalogDescriptor> taskDescP,
-			@Named(TaskToolbarDescriptor.CATALOG) Provider<CatalogDescriptor> toolbarDescP,
-			@Named(WruppleActivityAction.CATALOG) Provider<CatalogDescriptor> actionDescP,
-			CatalogDescriptorBuilder builder, BPMValueChangeListener changeListener,
+			@Named(BusinessEvent.CATALOG) Provider<CatalogDescriptor> event, BPMValueChangeListener changeListener,
 			BPMValidationTrigger validationTrigger, BPMStakeHolderTrigger stakeHolderTrigger,
 			CatalogManager transactions,
 			@Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
@@ -97,9 +90,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			@Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
 			@Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
 			@Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
-		this.taskDescP = taskDescP;
-		this.actionDescP = actionDescP;
-		this.toolbarDescP = toolbarDescP;
+
 		this.event = event;
 		this.SECURE_STORAGE = secureStorageIndex;
 
@@ -111,7 +102,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 		this.notificationProvider = notificationProvider;
 		this.clientProvider = clientProvider;
 		this.authTokenDescriptor = authTokenDescriptor;
-		this.builder = builder;
 		transactions.addCommand(BPMValidationTrigger.class.getSimpleName(), validationTrigger);
 		transactions.addCommand(BPMValueChangeListener.class.getSimpleName(), changeListener);
 		transactions.addCommand(BPMStakeHolderTrigger.class.getSimpleName(), stakeHolderTrigger);
@@ -124,13 +114,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 	@Override
 	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) {
-		if (ProcessTaskDescriptor.CATALOG.equals(catalogId)) {
-			return taskDescP.get();
-		} else if (TaskToolbarDescriptor.CATALOG.equals(catalogId)) {
-			return toolbarDescP.get();
-		} else if (WruppleActivityAction.CATALOG.equals(catalogId)) {
-			return actionDescP.get();
-		} else if (ProcessDescriptor.CATALOG.equals(catalogId)) {
+		if (ProcessDescriptor.CATALOG.equals(catalogId)) {
 			return processDescriptorProvider.get();
 		} else if (Notification.CATALOG.equals(catalogId)) {
 			return notificationProvider.get();
@@ -146,12 +130,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 	@Override
 	public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) {
-		names.add(new CatalogIdentificationImpl(ProcessTaskDescriptor.CATALOG, "Task Descriptor",
-				"/static/img/task.png"));
-		names.add(
-				new CatalogIdentificationImpl(WruppleActivityAction.CATALOG, "Task Action", "/static/img/action.png"));
-		names.add(new CatalogIdentificationImpl(TaskToolbarDescriptor.CATALOG, "Task Toolbar",
-				"/static/img/task-piece.png"));
 		names.add(new CatalogIdentificationImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
 				"/static/img/notification.png"));
 		names.add(new CatalogIdentificationImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));

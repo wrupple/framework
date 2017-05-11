@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,8 +14,14 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
 import com.wrupple.muba.ChocoRunnerTestModule;
+import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.bpm.domain.EquationSystemSolution;
+import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
+import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import org.apache.commons.chain.Command;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.variables.IntVar;
@@ -29,26 +34,12 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
-import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
 import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
-import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadUrlHandlerTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
@@ -64,10 +55,8 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataDeleteCommand
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataQueryCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingCommandImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 
 public class SolveEquationSystem extends MubaTest {
@@ -83,7 +72,7 @@ public class SolveEquationSystem extends MubaTest {
 
     protected EventSuscriptionChain chainMock;
 
-    class CatalogEngineTestModule extends AbstractModule {
+    class RunnerTestModule extends AbstractModule {
 
         @Override
         protected void configure() {
@@ -141,8 +130,8 @@ public class SolveEquationSystem extends MubaTest {
     }
 
     public SolveEquationSystem() {
-        init(new CatalogEngineTestModule(), new ChocoRunnerTestModule(), new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new SingleUserModule(), new CatalogModule(), new BootstrapModule());
+        init(new RunnerTestModule(), new ChocoRunnerTestModule(), new SingleUserModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
+                new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
 
     @Override
@@ -181,22 +170,66 @@ public class SolveEquationSystem extends MubaTest {
      */
     @Test
     public void engineTest() throws Exception {
-
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-        log.trace("[-create catalog-]");
+
 
         // expectations
 
-        replayAll();
+        //replayAll();
+        log.trace("[-Register EquationSystemSolution catalog type-]");
+
+
+        CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
+                "Equation System Solution", 0, null);
+
+        CatalogActionRequestImpl action = new CatalogActionRequestImpl();
+        action.setEntryValue(solutionContract);
+
+        excecutionContext.setServiceContract(action);
+        excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
+        // locale is set in catalog
+        excecutionContext.process();
+
+        CatalogActionContext catalogContext = excecutionContext.getServiceContext();
+
+        solutionContract = catalogContext.getEntryResult();
+
+        log.trace("[-create a task with problem constraints-]");
+        ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
+        problem.setDistinguishedName("my first problem");
+        problem.setName("my first problem");
+        problem.setCatalog(EquationSystemSolution.CATALOG);
+        problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
+        problem.setSentence(
+                Arrays.asList(
+                // x + y < 5
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","x", "+", "y", "<", "5",
+                // x * y = 4
+                ProcessTaskDescriptor.CONSTRAINT,"times","x","y","4")
+        );
+
+        action = new CatalogActionRequestImpl();
+        action.setEntryValue(problem);
+
+        excecutionContext.setServiceContract(action);
+        excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
+        // locale is set in catalog
+        excecutionContext.process();
+
+        log.trace("[-post a solver request to the runner engine-]");
+        //TODO
 
         // 1. Create a Model
         Model model = new Model("my first problem");
         // 2. Create variables
-        IntVar x = model.intVar("X", 0, 5); // x in [0,5]
-        IntVar y = model.intVar("Y", new int[]{2, 3, 8}); // y in {2, 3, 8}
+        IntVar x = model.intVar("x", 0, 5); // x in [0,5]
+        IntVar y = model.intVar("y", new int[]{2, 3, 8}); // y in {2, 3, 8}
 // 3. Post constraints
         model.arithm(x, "+", y, "<", 5).post(); // x + y < 5
         model.times(x,y,4).post(); // x * y = 4
+
 // 4. Solve the problem
         model.getSolver().solve();
 // 5. Print the solution

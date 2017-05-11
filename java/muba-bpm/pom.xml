@@ -20,7 +20,7 @@
 
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
-			<artifactId>muba-catalogs</artifactId>
+			<artifactId>muba-runner</artifactId>
 			<version>${muba.version}</version>
 		</dependency>
 

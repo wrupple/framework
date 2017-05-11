@@ -1,4 +1,4 @@
-package com.wrupple.muba.bpm.server.domain;
+package com.wrupple.muba.bpm.domain.impl;
 
 import java.util.List;
 
@@ -9,7 +9,13 @@ public class ProcessTaskDescriptorImpl implements ProcessTaskDescriptor {
 	private static final long serialVersionUID = 7957074775049623796L;
 	private Long id,domain;
 	private boolean anonymouslyVisible;
-	private String image,name,catalog,vanityId;
+	private String image;
+	private String name;
+	private String catalog;
+	private String vanityId;
+
+
+	private String transactionType;
 	private List<String> properties,urlTokens,sentence;
 	private List<Long> toolbars,userActions;
 	private List<? extends TaskToolbarDescriptor> toolbarsValues;
@@ -103,7 +109,15 @@ public class ProcessTaskDescriptorImpl implements ProcessTaskDescriptor {
 	public String getCatalogType() {
 		return CATALOG;
 	}
-	
-	
+
+	@Override
+	public String getTransactionType() {
+		return transactionType;
+	}
+
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
+	}
+
 
 }
