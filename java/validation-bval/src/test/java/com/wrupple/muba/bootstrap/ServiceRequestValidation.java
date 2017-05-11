@@ -117,7 +117,7 @@ public class ServiceRequestValidation extends MubaTest {
 		excecutionContext.setServiceContract(problemRequest);
 		// version 1.1, nesting return double (1 + ( 1.1*(1+1) ) )
 		excecutionContext.setSentence(ADDITION, UPGRADED_VERSION, "1", MULTIPLICATION, "1.1", ADDITION,
-				UPGRADED_VERSION, "1", "invalid");
+				UPGRADED_VERSION, "1", "malformedToken");
 		excecutionContext.process();
 		assertEquals(9, excecutionContext.nextIndex());
 		//some error must be thrown or validation constraint shown when the application has no servicesregistered

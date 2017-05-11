@@ -3,7 +3,6 @@ package com.wrupple.muba;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;

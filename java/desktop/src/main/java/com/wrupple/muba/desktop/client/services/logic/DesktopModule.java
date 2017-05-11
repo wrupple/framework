@@ -23,7 +23,7 @@ public interface DesktopModule extends Ginjector {
 	 */
 
 	DesktopActivityMapper getActivityMapper();
-
+//TaskMapper
 	PlaceHistoryMapper getPlaceHistoryMapper();
 
 	DesktopManager getDesktopManager();

@@ -15,9 +15,13 @@ import javax.validation.Validator;
 
 import com.wrupple.muba.ChocoRunnerTestModule;
 import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCommand;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.RunnerServiceManifest;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
+import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
+import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
@@ -139,6 +143,10 @@ public class SolveEquationSystem extends MubaTest {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
         switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
         switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
+
+        RunnerServiceManifest runnerServiceManifest = injector.getInstance(RunnerServiceManifest.class);
+        switchs.registerService(runnerServiceManifest, injector.getInstance(TaskRunnerEngine.class));
+        switchs.registerContractInterpret(runnerServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
     }
 
 
@@ -176,26 +184,26 @@ public class SolveEquationSystem extends MubaTest {
         // expectations
 
         //replayAll();
-        log.trace("[-Register EquationSystemSolution catalog type-]");
+        log.info("[-Register EquationSystemSolution catalog type-]");
 
 
         CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
                 "Equation System Solution", 0, null);
 
-        CatalogActionRequestImpl action = new CatalogActionRequestImpl();
-        action.setEntryValue(solutionContract);
+        CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
+        catalogRequest.setEntryValue(solutionContract);
 
-        excecutionContext.setServiceContract(action);
+        excecutionContext.setServiceContract(catalogRequest);
         excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
                 CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-        // locale is set in catalog
+
         excecutionContext.process();
 
         CatalogActionContext catalogContext = excecutionContext.getServiceContext();
 
         solutionContract = catalogContext.getEntryResult();
 
-        log.trace("[-create a task with problem constraints-]");
+        log.info("[-create a task with problem constraints-]");
         ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
         problem.setDistinguishedName("my first problem");
         problem.setName("my first problem");
@@ -204,22 +212,28 @@ public class SolveEquationSystem extends MubaTest {
         problem.setSentence(
                 Arrays.asList(
                 // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","x", "+", "y", "<", "5",
-                // x * y = 4
-                ProcessTaskDescriptor.CONSTRAINT,"times","x","y","4")
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","x", "+", "y", "<", "5"
+                )
         );
 
-        action = new CatalogActionRequestImpl();
-        action.setEntryValue(problem);
+        catalogRequest = new CatalogActionRequestImpl();
+        catalogRequest.setEntryValue(problem);
 
-        excecutionContext.setServiceContract(action);
+        excecutionContext.setServiceContract(catalogRequest);
         excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
                 CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
-        // locale is set in catalog
-        excecutionContext.process();
 
-        log.trace("[-post a solver request to the runner engine-]");
-        //TODO
+        excecutionContext.process();
+        catalogContext = excecutionContext.getServiceContext();
+
+        problem = catalogContext.getEntryResult();
+
+        log.info("[-post a solver request to the runner engine-]");
+        excecutionContext.setServiceContract(problem);
+        excecutionContext.setSentence(HasCommand.COMMAND_FIELD,// x * y = 4
+                ProcessTaskDescriptor.CONSTRAINT,"times","x","y","4");
+
+        excecutionContext.process();
 
         // 1. Create a Model
         Model model = new Model("my first problem");

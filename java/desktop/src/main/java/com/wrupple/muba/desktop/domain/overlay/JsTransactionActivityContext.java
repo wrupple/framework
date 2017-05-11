@@ -2,9 +2,11 @@ package com.wrupple.muba.desktop.domain.overlay;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.wrupple.muba.bpm.domain.ActivityContext;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 
-public final class JsTransactionActivityContext extends JavaScriptObject {
+public final class JsTransactionActivityContext extends JavaScriptObject implements ActivityContext
+{
 
 	protected JsTransactionActivityContext() {
 		super();
@@ -22,7 +24,7 @@ public final class JsTransactionActivityContext extends JavaScriptObject {
 																return this.userOutput;
 																}-*/;
 
-	public native <T extends JsCatalogKey> JsArray<T> getUserOutputAsCatalogEntryArray() /*-{
+	public native <T extends JsCatalogKey> JsArray<T> getUserSelection() /*-{
 																							return this.userOutput;
 																							}-*/;
 

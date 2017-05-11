@@ -6,9 +6,9 @@ import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.desktop.client.activity.widgets.ProcessPresenter;
 import com.wrupple.muba.desktop.client.activity.widgets.TaskPresenter;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.client.services.logic.HeadlessProcessContext;
+import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 
-public interface ProcessContextServices extends HeadlessProcessContext {
+public interface ProcessContextServices extends TaskRunnerPlugin {
 
 	/**
 	 * this also holds a reference to the root task presenter
