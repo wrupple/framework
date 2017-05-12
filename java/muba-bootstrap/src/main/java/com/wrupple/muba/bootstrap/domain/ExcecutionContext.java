@@ -14,7 +14,7 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasParent;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 
 public interface ExcecutionContext extends Context, HasValidations, HasLocale, ListIterator<String>, CatalogKey,
-		HasParent<ExcecutionContext>, HasResult {
+		HasParent<ExcecutionContext>, HasResult<Object> {
 
 	final int Unauthorized = 401;
 	final int PaymentRequired = 402;

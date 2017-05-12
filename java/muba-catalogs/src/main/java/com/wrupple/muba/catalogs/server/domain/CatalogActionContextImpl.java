@@ -276,10 +276,6 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		return ancestor;
 	}
 
-	@Override
-	public <T> T getConvertedResult() {
-		return (T) (results == null ? null : results.get(0));
-	}
 
 	@Override
 	public <T extends CatalogEntry> T getEntryResult() {
@@ -411,14 +407,19 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		return getCatalogManager().spawn(this);
 	}
 
+
 	@Override
-	public Object getResult() {
+	public <T extends CatalogEntry> T getConvertedResult() {
 		return getEntryResult();
 	}
 
 	@Override
-	public void setResult(Object r) {
-		setResults((List) Collections.singletonList(r));
+	public CatalogEntry getResult() {
+		 return getEntryResult();
 	}
 
+	@Override
+	public void setResult(CatalogEntry catalogEntry) {
+		setResults((List) Collections.singletonList(catalogEntry));
+	}
 }

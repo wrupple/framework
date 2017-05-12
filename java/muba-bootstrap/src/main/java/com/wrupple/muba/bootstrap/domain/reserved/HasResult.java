@@ -1,8 +1,8 @@
 package com.wrupple.muba.bootstrap.domain.reserved;
 
-public interface HasResult {
-	public <T> T getConvertedResult();
+public interface HasResult<R> {
+	public <T extends R> T getConvertedResult();
 
-	public Object getResult();
-	public void setResult(Object r);
+	public R getResult();
+	public void setResult(R r);
 }

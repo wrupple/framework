@@ -139,7 +139,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	@Override
 	public void end() {
 		// do sometihing when processing ends, it doesnt necesarly mean it's
-		// finished
+		// finished, it may never be required to actually finish like if a constraint violation was found
 		// TODO release resources
 	}
 
@@ -360,7 +360,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	public <T> T getConvertedResult() {
 		if (this.result == null) {
 			if (this.serviceContext != this && this.serviceContext instanceof HasResult) {
-				return ((HasResult) this.serviceContext).getConvertedResult();
+				return ((HasResult<T>) this.serviceContext).getConvertedResult();
 			} else {
 				return null;
 			}

@@ -212,7 +212,9 @@ public class SolveEquationSystem extends MubaTest {
         problem.setSentence(
                 Arrays.asList(
                 // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","x", "+", "y", "<", "5"
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","x", "+", "y", "<", "5",
+                        // x * y = 4
+                        ProcessTaskDescriptor.CONSTRAINT,"times","x","y","4"
                 )
         );
 
@@ -230,25 +232,12 @@ public class SolveEquationSystem extends MubaTest {
 
         log.info("[-post a solver request to the runner engine-]");
         excecutionContext.setServiceContract(problem);
-        excecutionContext.setSentence(HasCommand.COMMAND_FIELD,// x * y = 4
-                ProcessTaskDescriptor.CONSTRAINT,"times","x","y","4");
+        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME);
 
         excecutionContext.process();
 
-        // 1. Create a Model
-        Model model = new Model("my first problem");
-        // 2. Create variables
-        IntVar x = model.intVar("x", 0, 5); // x in [0,5]
-        IntVar y = model.intVar("y", new int[]{2, 3, 8}); // y in {2, 3, 8}
-// 3. Post constraints
-        model.arithm(x, "+", y, "<", 5).post(); // x + y < 5
-        model.times(x,y,4).post(); // x * y = 4
-
-// 4. Solve the problem
-        model.getSolver().solve();
-// 5. Print the solution
-        System.out.println(x); // Prints X = 2
-        System.out.println(y); // Prints Y = 2
+        //FIXME get solution result, verufy each field has the correct value
+        assertTrue(true);
 
     }
 

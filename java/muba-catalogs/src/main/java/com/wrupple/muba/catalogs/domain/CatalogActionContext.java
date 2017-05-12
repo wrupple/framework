@@ -14,12 +14,10 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public interface CatalogActionContext
-		extends UserContext, HasParent<CatalogActionContext>, HasResult, CatalogActionRequest {
+		extends UserContext, HasParent<CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
 
 	final String CATALOG = "CatalogActionContext";
-
-	public ExcecutionContext getExcecutionContext();
-
+	
 	public NamespaceContext getNamespaceContext();
 
 	public SystemCatalogPlugin getCatalogManager();

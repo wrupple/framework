@@ -548,7 +548,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			Annotation annotation = Defaults.of(clazz, constraint);
 			return annotation;
 		}
-
 	}
 
 	@Override

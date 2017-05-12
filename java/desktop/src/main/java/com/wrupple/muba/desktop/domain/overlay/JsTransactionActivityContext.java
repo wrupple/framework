@@ -20,7 +20,7 @@ public final class JsTransactionActivityContext extends JavaScriptObject impleme
 													this.targetEntryId = id;
 													}-*/;
 
-	public native <T extends JsCatalogKey> T getUserOutput() /*-{
+	public native <T extends JsCatalogKey> T getResult() /*-{
 																return this.userOutput;
 																}-*/;
 

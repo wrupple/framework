@@ -4,6 +4,9 @@ import org.apache.commons.chain.Chain;
 import org.apache.commons.chain.Context;
 
 public interface UserContext extends Context {
+
+
+    public ExcecutionContext getExcecutionContext();
 		
 	//void setCallback(/*chain so anyone can add his own callback*/Chain callback);
 }

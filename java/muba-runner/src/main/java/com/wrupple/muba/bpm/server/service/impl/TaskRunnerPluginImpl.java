@@ -3,6 +3,7 @@ package com.wrupple.muba.bpm.server.service.impl;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
 import com.wrupple.muba.bpm.domain.WruppleActivityAction;
+import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -23,14 +24,16 @@ public class TaskRunnerPluginImpl implements TaskRunnerPlugin {
     private final Provider<CatalogDescriptor> taskDescP;
     private final Provider<CatalogDescriptor> actionDescP;
     private final Provider<CatalogDescriptor> toolbarDescP;
+    private final Solver solver;
 
     @Inject
-    public TaskRunnerPluginImpl(			@Named(ProcessTaskDescriptor.CATALOG) Provider<CatalogDescriptor> taskDescP,
+    public TaskRunnerPluginImpl(	Solver solver,		@Named(ProcessTaskDescriptor.CATALOG) Provider<CatalogDescriptor> taskDescP,
                                             @Named(TaskToolbarDescriptor.CATALOG) Provider<CatalogDescriptor> toolbarDescP,
                                             @Named(WruppleActivityAction.CATALOG) Provider<CatalogDescriptor> actionDescP) {
         this.taskDescP = taskDescP;
         this.actionDescP = actionDescP;
         this.toolbarDescP = toolbarDescP;
+        this.solver=solver;
     }
 
     @Override
@@ -68,5 +71,10 @@ public class TaskRunnerPluginImpl implements TaskRunnerPlugin {
     @Override
     public void postProcessCatalogDescriptor(CatalogDescriptor c) {
 
+    }
+
+    @Override
+    public Solver getSolver() {
+        return solver;
     }
 }
