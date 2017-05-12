@@ -7,11 +7,16 @@ import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ChainBase;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Created by rarl on 11/05/17.
  */
+@Singleton
 public class TaskRunnerEngineImpl extends ChainBase implements TaskRunnerEngine {
 
+    @Inject
     public TaskRunnerEngineImpl(//4. the actual solving of the problem to the chain
                                 SolveTask findSolutions,
                                 //5. Minimize Error

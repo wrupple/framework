@@ -338,7 +338,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 
 	@Override
 	public void reset() {
-		setNextWordIndex(0);
+		wordIterator=null;
 		serviceContext = null;
 	}
 

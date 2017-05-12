@@ -134,7 +134,7 @@ public class SolveEquationSystem extends MubaTest {
     }
 
     public SolveEquationSystem() {
-        init(new RunnerTestModule(), new ChocoRunnerTestModule(), new SingleUserModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
+        init(new RunnerTestModule(), new ChocoRunnerTestModule(), new SingleUserModule(),new ChocoSolverModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
 
@@ -177,18 +177,20 @@ public class SolveEquationSystem extends MubaTest {
      * @throws Exception
      */
     @Test
-    public void engineTest() throws Exception {
+    public void equationSolverTest() throws Exception {
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 
 
         // expectations
 
-        //replayAll();
+        replayAll();
+
         log.info("[-Register EquationSystemSolution catalog type-]");
 
-
+        //FIXME stack overflow when no parent is specified
         CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
-                "Equation System Solution", 0, null);
+                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG,
+                        ContentNode.class.getSimpleName(), -1l, null));
 
         CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(solutionContract);
@@ -203,6 +205,7 @@ public class SolveEquationSystem extends MubaTest {
 
         solutionContract = catalogContext.getEntryResult();
 
+        excecutionContext.reset();
         log.info("[-create a task with problem constraints-]");
         ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
         problem.setDistinguishedName("my first problem");
@@ -230,6 +233,7 @@ public class SolveEquationSystem extends MubaTest {
 
         problem = catalogContext.getEntryResult();
 
+        excecutionContext.reset();
         log.info("[-post a solver request to the runner engine-]");
         excecutionContext.setServiceContract(problem);
         excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME);

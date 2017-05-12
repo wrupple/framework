@@ -9,6 +9,7 @@ import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.Optional;
 /**
  * Created by rarl on 11/05/17.
  */
+@Singleton
 public class JavaSentenceNativeInterface implements SentenceNativeInterface {
     protected Logger log = LoggerFactory.getLogger(JavaSentenceNativeInterface.class);
 

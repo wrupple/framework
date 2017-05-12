@@ -5,5 +5,5 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 
 public interface CatalogDescriptorBuilder {
 
-	public  CatalogDescriptor fromClass(Class<? extends CatalogEntry> clazz, String catalogId, String catalogName, long numericId, CatalogDescriptor parent);
+	public <T extends CatalogEntry>  CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String catalogName, long numericId, CatalogDescriptor parent);
 }

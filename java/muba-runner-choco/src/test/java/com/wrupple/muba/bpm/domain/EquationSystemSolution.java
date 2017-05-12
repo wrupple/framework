@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by rarl on 10/05/17.
  */
-public class EquationSystemSolution extends CatalogEntryImpl  {
+public class EquationSystemSolution extends ContentNodeImpl  {
     public static final String CATALOG = "EquationSystemSolution";
     // x in [0,5]
     @Min(0)

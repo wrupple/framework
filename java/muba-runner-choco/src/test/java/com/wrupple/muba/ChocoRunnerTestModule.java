@@ -3,6 +3,7 @@ package com.wrupple.muba;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
+import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;
@@ -60,7 +61,7 @@ public class ChocoRunnerTestModule  extends AbstractModule {
     @Inject
     @Singleton
     @Named("catalog.plugins")
-    public Object plugins(TaskRunnerPlugin /* domain driven */ runner,UserCatalogPlugin /* domain driven */ user) {
+    public Object plugins(TaskRunnerPlugin /* domain driven */ runner, UserCatalogPlugin /* domain driven */ user) {
         CatalogPlugin[] plugins = new CatalogPlugin[] { user,runner };
         return plugins;
     }

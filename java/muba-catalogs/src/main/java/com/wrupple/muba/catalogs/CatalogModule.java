@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.google.inject.Singleton;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.LongConverter;
@@ -245,6 +246,7 @@ public class CatalogModule extends AbstractModule {
 	 */
 
 	@Provides
+	@Singleton
 	@Inject
 	@Named(Constraint.CATALOG_ID)
 	public CatalogDescriptor constraint(CatalogDescriptorBuilder builder) {
@@ -254,6 +256,7 @@ public class CatalogModule extends AbstractModule {
 	}
 
 	@Provides
+	@Singleton
 	@Inject
 	@Named(CatalogPeer.CATALOG)
 	public CatalogDescriptor catalogPeer(CatalogDescriptorBuilder builder) {
@@ -262,6 +265,7 @@ public class CatalogModule extends AbstractModule {
 	}
 
 	@Provides
+	@Singleton
 	@Inject
 	@Named(ContentRevision.CATALOG)
 	public CatalogDescriptor contentRevision(@Named(ContentRevision.CATALOG) java.lang.Class clazz) {
@@ -292,6 +296,7 @@ public class CatalogModule extends AbstractModule {
 
 	@Provides
 	@Inject
+	@Singleton
 	@Named(CatalogDescriptor.CATALOG_ID)
 	public CatalogDescriptor catalogDescriptor(@Named(CatalogDescriptor.CATALOG_ID) Class clazz,
 			CatalogDescriptorBuilder builder) {
@@ -303,6 +308,7 @@ public class CatalogModule extends AbstractModule {
 
 	@Provides
 	@Inject
+	@Singleton
 	@Named(FieldDescriptor.CATALOG_ID)
 	public CatalogDescriptor catalogFieldDescriptor(@Named(FieldDescriptor.CATALOG_ID) Class clazz,
 			CatalogDescriptorBuilder builder) {
@@ -321,6 +327,7 @@ public class CatalogModule extends AbstractModule {
 
 	@Provides
 	@Inject
+	@Singleton
 	@Named(CatalogActionTrigger.CATALOG)
 	public CatalogDescriptor catalogActionTrigger(@Named(CatalogActionTrigger.CATALOG) Class clazz,
 			CatalogDescriptorBuilder builder) {
@@ -332,6 +339,7 @@ public class CatalogModule extends AbstractModule {
 
 	@Provides
 	@Inject
+	@Singleton
 	@Named(CatalogActionRequest.CATALOG)
 	public CatalogDescriptor actionRequest(@Named(CatalogActionRequest.CATALOG) Class clazz,
 			CatalogDescriptorBuilder builder) {

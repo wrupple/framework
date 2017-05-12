@@ -1,5 +1,7 @@
 package com.wrupple.muba.bootstrap;
 
+import com.wrupple.muba.bootstrap.server.chain.command.SentenceNativeInterface;
+import com.wrupple.muba.bootstrap.server.chain.command.impl.JavaSentenceNativeInterface;
 import org.apache.commons.chain.CatalogFactory;
 
 import com.google.inject.AbstractModule;
@@ -28,6 +30,7 @@ public class BootstrapModule extends AbstractModule {
 		 * Commands
 		 */
 		bind(ContextSwitchCommand.class).to(ContextSwitchCommandImpl.class);
+		bind(SentenceNativeInterface.class).to(JavaSentenceNativeInterface.class);
 		/*
 		 * Services
 		 */

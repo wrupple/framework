@@ -19,11 +19,10 @@ public interface ActivityContext extends UserContext,ContentNode,HasResult<Catal
 
     ProcessTaskDescriptor getTaskDescriptorValue();
 
-    public <T extends CatalogEntry> List<T> getUserSelection();
+    public <T extends CatalogEntry> List<T> getUserSelectionValues();
 
     public boolean isCanceled();
 
-    //TODO
     void setExcecutionContext(ExcecutionContext context);
 
     void setTaskDescriptorValue(ProcessTaskDescriptor request);

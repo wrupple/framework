@@ -13,10 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Created by rarl on 11/05/17.
  */
+@Singleton
 public class SolveTaskImpl implements SolveTask {
     protected Logger log = LoggerFactory.getLogger(SolveTaskImpl.class);
 

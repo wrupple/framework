@@ -63,6 +63,9 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	public CatalogActionContextImpl(SystemCatalogPlugin manager, NamespaceContext domainContext,
 			ExcecutionContext requestContext, CatalogActionContext parentValue) {
 		this.catalogManager = manager;
+		if(requestContext==null){
+			throw new NullPointerException("Must provide an excecution context");
+		}
 		this.excecutionContext = requestContext;
 		this.namespace = domainContext;
 		this.parentValue = parentValue;

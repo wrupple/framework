@@ -17,7 +17,6 @@ import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.plugin2.liveconnect.ArgumentHelper;
 
 import javax.inject.Inject;
 import javax.validation.constraints.Max;
@@ -63,9 +62,10 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
     }
 
     private Variable makeIntegerVariable(FieldDescriptor field, Model model ) {
-        log.debug("Assigning solution domain for:");
         String fieldId = field.getFieldId();
-        log.debug(fieldId);
+        log.debug("Assigning solution domain for {}",fieldId);
+
+
         IntVar variable;
         //TODO each of this cases should be named and mapped to easily add more variable types
         if(field.getDefaultValueOptions()!=null && !field.getDefaultValueOptions().isEmpty()){
@@ -127,6 +127,10 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         //only integer fields with constraints or defined domains are eligible
         boolean eligibility = field.getDataType()== CatalogEntry.INTEGER_DATA_TYPE && ((field.getDefaultValueOptions()!=null && !field.getDefaultValueOptions().isEmpty())
                 || (field.getConstraintsValues()!=null && !field.getConstraintsValues().isEmpty()));
+
+        if(!eligibility){
+            log.debug("field {} is not eligible as a solution variable",field.getFieldId());
+        }
 
         return eligibility;
     }

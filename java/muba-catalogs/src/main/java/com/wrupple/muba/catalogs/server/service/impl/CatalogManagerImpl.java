@@ -416,7 +416,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context,
 			CatalogResultCache cache) throws RuntimeException {
-
+		if(log.isTraceEnabled()){
+			log.trace("process descriptor with DN :"+name);
+		}
 		boolean versioned = catalog.getFieldDescriptor(Versioned.FIELD) != null;
 
 		if (versioned || catalog.isVersioned()) {
@@ -999,7 +1001,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 	@Override
-	public CatalogEntry synthesize(CatalogDescriptor catalog) throws ReflectiveOperationException {
+	public CatalogEntry synthesize(CatalogDescriptor catalog) throws IllegalAccessException, InstantiationException {
 		if (catalog.getClazz() == null || PersistentCatalogEntity.class.equals(catalog.getClazz())) {
 
 			PersistentCatalogEntity target = factory.get();
