@@ -18,6 +18,7 @@ public class EquationSystemSolution extends ContentNodeImpl  {
     // x in [0,5]
     @Min(0)
     @Max(5)
+    //@CatalogFieldValues(defaultValueOptions = {"0","1","2","3","4","5"})
     private int x;
     // y in {2, 3, 8}
     @CatalogFieldValues(defaultValueOptions = {"2","3","8"})

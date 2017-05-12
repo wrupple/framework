@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -29,13 +30,11 @@ import java.util.stream.Stream;
 public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
     private final TaskRunnerPlugin plugin;
-    private final SystemCatalogPlugin catalogPlugin;
     private final SentenceNativeInterface nativeInterface;
 
     @Inject
-    public DefineSolutionCriteriaImpl(TaskRunnerPlugin plugin,SystemCatalogPlugin catalogPlugin,SentenceNativeInterface nativeInterface) {
+    public DefineSolutionCriteriaImpl(TaskRunnerPlugin plugin,SentenceNativeInterface nativeInterface) {
         this.plugin = plugin;
-        this.catalogPlugin=catalogPlugin;
         this.nativeInterface=nativeInterface;
     }
 
@@ -49,12 +48,16 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         log.info("Resolving problem model");
         Model model = plugin.getSolver().resolveProblemContext(context);
 
+        ListIterator<String> activitySentence = request.getSentence().listIterator();
+        JavaNativeInterfaceContext invoker = new JavaNativeInterfaceContext(model,activitySentence);
+        log.debug("exposing problem variables to native apit ivoker");
+
+        Arrays.stream(model.getVars()).forEach(var -> invoker.put(var.getName(),var));
 
         log.debug("posting solution constraints from task definition");
-        ListIterator<String> activitySentence = requestContext.getSentence().listIterator();
-        JavaNativeInterfaceContext invoker = new JavaNativeInterfaceContext(model,activitySentence);
         processNextConstraint(invoker,activitySentence,model,request,context);
         log.debug("posting solution constraints from excecution context");
+        activitySentence = requestContext.getSentence().listIterator();
         processNextConstraint(invoker,activitySentence,model,request,context);
 
         return CONTINUE_PROCESSING;

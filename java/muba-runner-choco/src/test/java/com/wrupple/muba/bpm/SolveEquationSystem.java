@@ -215,9 +215,9 @@ public class SolveEquationSystem extends MubaTest {
         problem.setSentence(
                 Arrays.asList(
                 // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","x", "+", "y", "<", "5",
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")",
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","x","y","4"
+                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4"
                 )
         );
 
@@ -240,8 +240,11 @@ public class SolveEquationSystem extends MubaTest {
 
         excecutionContext.process();
 
-        //FIXME get solution result, verufy each field has the correct value
-        assertTrue(true);
+        EquationSystemSolution solution = excecutionContext.getConvertedResult();
+
+        assertTrue(solution.getX()==2);
+
+        assertTrue(solution.getY()==2);
 
     }
 
