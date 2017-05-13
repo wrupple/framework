@@ -1,6 +1,8 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,8 +10,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.bootstrap.server.service.CatalogManager;
+import com.wrupple.muba.catalogs.domain.Constraint;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +39,20 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 
 @Singleton
 public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
-	protected static final Logger log = LoggerFactory.getLogger(CatalogDescriptorBuilderImpl.class);
+    @Inject
+    public CatalogDescriptorBuilderImpl(Provider<SystemCatalogPlugin> cms) {
+        this.cms = cms;
+    }
+
+    protected static final Logger log = LoggerFactory.getLogger(CatalogDescriptorBuilderImpl.class);
+
+
+	private Provider<SystemCatalogPlugin> cms;
+
+
 
 	public <T extends CatalogEntry> CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String cataogName, long numericId,
-			CatalogDescriptor parent) {
+			CatalogDescriptor parent) throws  RuntimeException {
 
 		List<Field> cll = new ArrayList<Field>();
 		Class<?> current = clazz;
@@ -62,6 +79,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 		FieldDescriptorImpl fieldDescriptor;
 		Class<?> declaringClass, declaredGeneric;
 		ParameterizedType genericType;
+
 
 		CatalogField argument;
 		CatalogFieldDefault defaultt;
@@ -102,6 +120,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			formula = field.getAnnotation(CatalogFieldFormula.class);
 			widgetAnnot = field.getAnnotation(CatalogFieldWidget.class);
 			props = field.getAnnotation(CatalogFieldProperties.class);
+
 
 			if (argument != null) {
 				ephemeral = argument.ephemeral();
@@ -287,7 +306,30 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						}
 					}
 
-					descriptors[i] = fieldDescriptor;
+                    //PARSE annotations as constraint objects
+                    Annotation[] allAnnotations = field.getAnnotations();
+
+					List<Constraint> constraints =null;
+                    Constraint built ;
+					for(Annotation an: allAnnotations){
+                        try {
+                            built = this.cms.get().buildConstraint(an);
+                        } catch (NoSuchMethodException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                        if(built!=null){
+					        if(constraints==null){
+                                constraints = new ArrayList<Constraint>(2);
+                            }
+                            constraints.add(built);
+                        }
+                    }
+                    fieldDescriptor.setConstraintsValues(constraints);
+                    descriptors[i] = fieldDescriptor;
 				}
 
 			}

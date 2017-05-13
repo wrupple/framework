@@ -176,6 +176,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		context.setCatalogDescriptor(catalogDescriptor);
 		context.setFilter(null);
 		context.setEntry(id);
+		context.put(CatalogReadTransaction.READ_GRAPH,true);
 		read.execute(context);
 		return CONTINUE_PROCESSING;
 	}

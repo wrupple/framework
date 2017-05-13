@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
+import com.wrupple.muba.catalogs.server.service.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,10 +50,6 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandIm
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingCommandImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
-import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogDescriptorBuilderImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
@@ -60,10 +57,8 @@ import com.wrupple.muba.catalogs.server.service.impl.UserCatalogPluginImpl;
 
 public class HSQLTest extends MubaTest {
 
-	private CatalogDescriptorBuilderImpl builder;
 
 	public HSQLTest() {
-		builder = new CatalogDescriptorBuilderImpl();
 		init(new CRUDModule(), new CatalogModule(), new SingleUserModule(), new JDBCHSQLTestModule(),
 				new HSQLDBModule(), new JDBCModule(), new ValidationModule(), new BootstrapModule());
 
@@ -149,6 +144,7 @@ public class HSQLTest extends MubaTest {
 	public void setUp() throws Exception {
 		ExcecutionContext excecution = injector.getInstance(ExcecutionContext.class);
 		SystemCatalogPlugin manager = injector.getInstance(SystemCatalogPlugin.class);
+		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 		context = manager.spawn(excecution);
 		catalog = builder.fromClass(Argument.class, "Argument", "Argument", -49723l, null);
 		context.setCatalogDescriptor(catalog);

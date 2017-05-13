@@ -10,13 +10,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +21,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.wrupple.muba.catalogs.domain.*;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.chain.CatalogFactory;
@@ -47,30 +42,6 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasChildren;
 import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
 import com.wrupple.muba.bootstrap.domain.reserved.Versioned;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
-import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
-import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
-import com.wrupple.muba.catalogs.domain.Constraint;
-import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
-import com.wrupple.muba.catalogs.domain.ContentRevision;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.IsPinnable;
-import com.wrupple.muba.catalogs.domain.LocalizedString;
-import com.wrupple.muba.catalogs.domain.NamespaceContext;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
-import com.wrupple.muba.catalogs.domain.Trash;
-import com.wrupple.muba.catalogs.domain.WebEventTrigger;
-import com.wrupple.muba.catalogs.domain.WrupleSVGDocument;
-import com.wrupple.muba.catalogs.domain.WruppleAudioMetadata;
-import com.wrupple.muba.catalogs.domain.WruppleFileMetadata;
-import com.wrupple.muba.catalogs.domain.WruppleVideoMetadata;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
@@ -552,7 +523,36 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		}
 	}
 
-	@Override
+    @Override
+    public Constraint buildConstraint(Annotation annotation) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Class<? extends Annotation> clazz = annotation.annotationType();
+        String name = clazz.getSimpleName();
+        if (map == null) {
+            initialize();
+        }
+        ValidationExpression registry = map.get(name);
+        if (registry == null || registry.getGivenVariable()==null) {
+            return null;
+        } else {
+            String givenValue = registry.getGivenVariable();
+            ConstraintImpl constraint = new ConstraintImpl();
+            constraint.setDistinguishedName(name);
+            constraint.setProperties(Arrays.asList(givenValue+"="+getGivenValue(annotation,givenValue)));
+            return constraint;
+        }
+    }
+
+    private String getGivenValue(Annotation annotation, String givenValue) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+	    Object r = annotation.getClass().getMethod(givenValue).invoke(annotation);
+	    if(r==null){
+	        return null;
+        }else{
+	        return r.toString();
+        }
+    }
+
+    @Override
 	public List<String> getAvailableAnnotationNames() {
 		if (map == null) {
 			initialize();
@@ -567,7 +567,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			map = new LinkedHashMap<String, ValidationExpression>();
 			map.put(NotNull.class.getSimpleName(),
 					new ValidationExpression(NotNull.class, Constraint.EVALUATING_VARIABLE,
-							Constraint.EVALUATING_VARIABLE + "==null?\"{validator.null}\":null"));
+							Constraint.EVALUATING_VARIABLE + "==null?\"{validator.null}\":null",null));
 			// fields must declare a "value" property specifiying min or max
 			// value
 			map.put(Min.class.getSimpleName(),
@@ -578,7 +578,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 							Constraint.EVALUATING_VARIABLE + ">value?\"{validator.max}\":null"));
 			map.put(CAPTCHA.class.getSimpleName(),
 					new ValidationExpression(CAPTCHA.class, Constraint.EVALUATING_VARIABLE,
-							Constraint.EVALUATING_VARIABLE + "==null?\"{captcha.message}\":null"));
+							Constraint.EVALUATING_VARIABLE + "==null?\"{captcha.message}\":null",null));
 
 			CatalogPlugin[] catalogPlugins = getPlugins();
 

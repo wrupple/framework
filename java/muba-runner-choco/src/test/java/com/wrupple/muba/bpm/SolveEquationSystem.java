@@ -180,14 +180,13 @@ public class SolveEquationSystem extends MubaTest {
     public void equationSolverTest() throws Exception {
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 
-
         // expectations
 
         replayAll();
 
         log.info("[-Register EquationSystemSolution catalog type-]");
 
-        //FIXME stack overflow when no parent is specified
+        //FIXME stack overflow when no parent is specified, ok when consolidated?
         CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
                 "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG,
                         ContentNode.class.getSimpleName(), -1l, null));

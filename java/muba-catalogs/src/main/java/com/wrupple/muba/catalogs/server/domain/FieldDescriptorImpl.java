@@ -40,10 +40,11 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 	@CatalogField(ignore=true)
 	private String ownerCatalogId;
 	
-	@CatalogKey(foreignCatalog=Constraint.CATALOG_ID)
-	private List<Long> constraints;
+
 	private List<String> defaultValueOptions, properties;
 
+	@CatalogKey(foreignCatalog=Constraint.CATALOG_ID)
+	private List<Long> constraints;
 	@CatalogValue(foreignCatalog=Constraint.CATALOG_ID)
 	private List<Constraint> constraintsValues;
 	
