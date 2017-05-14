@@ -7,6 +7,9 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 public class MathProblem extends ContentNodeImpl implements CatalogEntry, HasProperties {
 	private static final long serialVersionUID = 279321914166336671L;
 	private List<String> properties,statement;
@@ -15,7 +18,16 @@ public class MathProblem extends ContentNodeImpl implements CatalogEntry, HasPro
 	@CatalogValue(foreignCatalog=Argument.CATALOG)
 	private List<Argument> argumentsValues;
 	private Long superAncestorHIdentity;
+	@Min(0)
+	@Max(5)
+	private int solution;
 
+	public int getSolution() {
+		return solution;
+	}
+	public void setSolution(int solution) {
+		this.solution = solution;
+	}
 	public List<String> getProperties() {
 		return properties;
 	}

@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
+import com.wrupple.muba.catalogs.domain.*;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,16 +39,6 @@ import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCHSQLTestModule;
 import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
-import com.wrupple.muba.catalogs.domain.CatalogResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
-import com.wrupple.muba.catalogs.domain.MathProblem;
-import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadUrlHandlerTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
@@ -197,8 +188,13 @@ public class CatalogEngineTest extends MubaTest {
 		CatalogActionContext catalogContext = excecutionContext.getServiceContext();
 
 		problemContract = catalogContext.getEntryResult();
+		log.trace("[-verifying catalog integrity-]");
 		assertTrue(problemContract.getId() != null);
 		assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
+		FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
+		assertTrue( solutionFieldDescriptor!= null);
+		assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
+		assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
 
 		log.trace("[-see changes in catalog list-]");
 

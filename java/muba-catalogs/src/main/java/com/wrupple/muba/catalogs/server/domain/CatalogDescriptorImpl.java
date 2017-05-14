@@ -62,8 +62,9 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	
 	@CatalogKey(foreignCatalog = Constraint.CATALOG_ID)
 	private List<Long> constraints;
-	
-	@CatalogKey(foreignCatalog = Constraint.CATALOG_ID)
+
+	@CatalogField(ignore = true)
+	@CatalogValue(foreignCatalog = Constraint.CATALOG_ID)
 	private List<Constraint> constraintsValues;
 
 	@CatalogKey(foreignCatalog = CatalogActionTrigger.CATALOG)
