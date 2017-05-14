@@ -231,6 +231,15 @@ public class CatalogEngineTest extends MubaTest {
 		assertTrue(catalogContext.getResult() != null);
 		assertTrue(catalogContext.getResults().get(0).getName().equals(problemContract.getName()));
 
+        problemContract = catalogContext.getEntryResult();
+        assertTrue(problemContract.getId() != null);
+        assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
+        solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
+        assertTrue( solutionFieldDescriptor!= null);
+        assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
+        assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
+
+
 		log.debug("-create math problem entry-");
 		excecutionContext.reset();
 		MathProblem problem = new MathProblem();
