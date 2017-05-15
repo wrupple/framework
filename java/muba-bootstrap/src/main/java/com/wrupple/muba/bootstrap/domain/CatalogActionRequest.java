@@ -36,9 +36,12 @@ public interface CatalogActionRequest extends HasLocale,CatalogChangeEvent{
 
 	FilterData getFilter();
 
+	boolean getFollowReferences();
+
 	final String FULL_CACHE = "com.wrupple.fullcache";
 	final String QUERY_CACHE = "com.wrupple.querycache";
 	final String NO_CACHE = "com.wrupple.nocache";
-	
 
+
+    void setFollowReferences(boolean followReferences);
 }

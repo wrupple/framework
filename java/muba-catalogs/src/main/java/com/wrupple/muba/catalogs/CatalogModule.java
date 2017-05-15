@@ -155,7 +155,6 @@ public class CatalogModule extends AbstractModule {
 		bind(String.class).annotatedWith(Names.named("catalog.timeline.entryDiscriminator"))
 				.toInstance("childHIdentity");
 		bind(String.class).annotatedWith(Names.named("catalog.timeline.typeDiscriminator")).toInstance("childHType");
-		bind(Boolean.class).annotatedWith(Names.named("catalog.create.recursive")).toInstance(true);
 
 		bind(Class.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
 				.toInstance(HasAccesablePropertyValues.class);

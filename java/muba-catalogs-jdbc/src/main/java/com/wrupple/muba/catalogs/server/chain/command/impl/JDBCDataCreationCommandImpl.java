@@ -67,7 +67,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 	@Override
 	public boolean execute(Context ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
-		CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
+		final CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
 		CatalogEntry e = (CatalogEntry) context.getEntryValue();
 		e.setDomain((Long) context.getDomain());
 		log.trace("[Will create Entry] {} in domain {}", e,e.getDomain());

@@ -43,9 +43,7 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
 		context.setCatalog(CatalogDescriptor.CATALOG_ID);
 		context.setFilter(filter);
-		if(assemble){
-			context.put(CatalogReadTransaction.READ_GRAPH, assemble);
-		}
+		context.setFollowReferences(assemble);
 		try {
 			context.getCatalogManager().getRead().execute(context);
 		} catch (Exception e) {
@@ -59,9 +57,7 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
 		context.setCatalog(CatalogDescriptor.CATALOG_ID);
 		context.setEntry(key);
-		if(assemble){
-			context.put(CatalogReadTransaction.READ_GRAPH, assemble);
-		}
+		context.setFollowReferences(assemble);
 		try {
 			context.getCatalogManager().getRead().execute(context);
 		} catch (Exception e) {

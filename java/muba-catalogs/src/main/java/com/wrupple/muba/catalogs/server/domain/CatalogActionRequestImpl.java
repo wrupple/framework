@@ -30,6 +30,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	private Long id,image;
 	private String  name;
 	private boolean anonymouslyVisible;
+	private boolean followReferences;
 	
 
 	public final Long getId() {
@@ -123,6 +124,11 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		return filter;
 	}
 
+	@Override
+	public boolean getFollowReferences() {
+		return isFollowReferences();
+	}
+
 	public void setFilter(FilterDataImpl filter) {
 		this.filter = filter;
 	}
@@ -185,4 +191,12 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		}
 	}
 
+	public boolean isFollowReferences() {
+		return followReferences;
+	}
+
+	@Override
+	public void setFollowReferences(boolean followReferences) {
+		this.followReferences = followReferences;
+	}
 }

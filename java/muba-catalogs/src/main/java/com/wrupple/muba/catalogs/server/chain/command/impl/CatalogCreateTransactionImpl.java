@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -32,13 +33,11 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 
 	private final CatalogActionTriggerHandler trigerer;
 	private final EntryCreators creators;
-	private final boolean CREATE_RECURSIVE;
 
 	@Inject
-	public CatalogCreateTransactionImpl(EntryCreators creators,CatalogActionTriggerHandler trigerer,CatalogFactory factory, String creatorsDictionary,@Named("catalog.create.recursive") Boolean recursive) {
+	public CatalogCreateTransactionImpl(EntryCreators creators,CatalogActionTriggerHandler trigerer,CatalogFactory factory, String creatorsDictionary) {
 		this.trigerer=trigerer;
 		this.creators=creators;
-		this.CREATE_RECURSIVE=recursive;
 	}
 
 	
@@ -61,13 +60,14 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		Session session = context.getCatalogManager().newSession(result);
 		
 		log.trace("[catalog/storage] {}/{}",catalog.getDistinguishedName(),createDao.getClass());
-		if(this.CREATE_RECURSIVE){
+		if(context.getFollowReferences()){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 			for(FieldDescriptor field: fields){
 				if(field.isKey() && context.getCatalogManager().getPropertyValue(catalog, field, result, null, session)==null){
 					Object foreignValue = context.getCatalogManager().getPropertyForeignKeyValue(catalog, field, result, session);
 					if(foreignValue!=null){
 						CatalogActionContext recursiveCreationContext  = context.getCatalogManager().spawn(context);
+						recursiveCreationContext.setFollowReferences(context.getFollowReferences());
 						recursiveCreationContext.setCatalog(field.getCatalog());
 						foreignValue= recursiveCreationContext.getCatalogManager().createBatch(recursiveCreationContext,catalog,field,foreignValue);
 						context.getCatalogManager().setPropertyValue(catalog, field, result, foreignValue, session);

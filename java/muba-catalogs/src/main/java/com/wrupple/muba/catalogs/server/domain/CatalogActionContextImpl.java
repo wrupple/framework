@@ -39,6 +39,16 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	/* usually use the root ancestor of the catalog context */
 	private TransactionHistory transaction;
 
+	public boolean getFollowReferences() {
+		return followReferences;
+	}
+
+	public void setFollowReferences(boolean followReferences) {
+		this.followReferences = followReferences;
+	}
+
+	private boolean followReferences;
+
 	/*
 	 * INPUT
 	 */

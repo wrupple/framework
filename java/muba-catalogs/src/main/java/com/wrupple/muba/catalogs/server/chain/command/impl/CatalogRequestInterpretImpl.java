@@ -140,6 +140,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 				}
 			}
 			context.setFilter(filter);
+			context.setFollowReferences(request.getFollowReferences());
 		}
 
 		return CONTINUE_PROCESSING;

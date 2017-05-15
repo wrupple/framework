@@ -126,7 +126,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			String[][] joins = filter.getJoins();
 			if (joins != null && joins.length > 0) {
 				join.execute(context);
-			} else if (MIN_TREE_LEVELS > 0 || context.containsKey(READ_GRAPH)) {// interceptor
+			} else if (MIN_TREE_LEVELS > 0 || context.getFollowReferences()) {// interceptor
 																				// decides
 																				// to
 																				// read
@@ -138,7 +138,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 
 			context.setResults(Collections.singletonList(originalEntry));
 
-			if (context.containsKey(READ_GRAPH)) {
+			if ( context.getFollowReferences()) {
 				graphJoin.execute(context);
 			}
 			log.trace("[RESULT ] {}", originalEntry);

@@ -15,6 +15,7 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
 import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.command.*;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,16 +40,6 @@ import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCHSQLTestModule;
 import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadUrlHandlerTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
-import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataDeleteCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataQueryCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataReadCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
-import com.wrupple.muba.catalogs.server.chain.command.WriteAuditTrails;
-import com.wrupple.muba.catalogs.server.chain.command.WriteOutput;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataCreationCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataDeleteCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataQueryCommandImpl;
@@ -175,10 +166,12 @@ public class CatalogEngineTest extends MubaTest {
 		CatalogDescriptor problemContract = builder.fromClass(MathProblem.class, MathProblem.class.getSimpleName(),
 				"Math Problem", 0, builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG,
 						ContentNode.class.getSimpleName(), -1l, null));
+        FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
+        assertTrue( solutionFieldDescriptor!= null);
 
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
 		action.setEntryValue(problemContract);
-
+        action.setFollowReferences(true);
 		excecutionContext.setServiceContract(action);
 		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
@@ -188,13 +181,10 @@ public class CatalogEngineTest extends MubaTest {
 		CatalogActionContext catalogContext = excecutionContext.getServiceContext();
 
 		problemContract = catalogContext.getEntryResult();
-		log.trace("[-verifying catalog integrity-]");
 		assertTrue(problemContract.getId() != null);
 		assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
-		FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
+		solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
 		assertTrue( solutionFieldDescriptor!= null);
-		assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
-		assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
 
 		log.trace("[-see changes in catalog list-]");
 
@@ -218,24 +208,15 @@ public class CatalogEngineTest extends MubaTest {
 
 		assertTrue(contained);
 		log.trace("[-see registered catalog Descriptor-]");
-
 		excecutionContext.reset();
 
-		excecutionContext.setServiceContract(null);
-		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(), CatalogActionRequest.READ_ACTION);
-
-		excecutionContext.process();
-
-		catalogContext = excecutionContext.getServiceContext();
-		assertTrue(catalogContext.getResult() != null);
-		assertTrue(catalogContext.getResults().get(0).getName().equals(problemContract.getName()));
-
-        problemContract = catalogContext.getEntryResult();
+        catalogContext.setCatalog(MathProblem.class.getSimpleName());
+        problemContract = catalogContext.getCatalogDescriptor();
+        log.trace("[-verifying catalog integrity-]");
         assertTrue(problemContract.getId() != null);
         assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
         solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
-        assertTrue( solutionFieldDescriptor!= null);
+        assertTrue(solutionFieldDescriptor!= null);
         assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
         assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
 
