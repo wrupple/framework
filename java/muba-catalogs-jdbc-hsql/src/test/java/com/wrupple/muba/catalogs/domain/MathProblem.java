@@ -10,38 +10,27 @@ import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-public class MathProblem extends ContentNodeImpl implements CatalogEntry, HasProperties {
+public class MathProblem extends ContentNodeImpl implements CatalogEntry {
 	private static final long serialVersionUID = 279321914166336671L;
-	private List<String> properties,statement;
-	@CatalogKey(foreignCatalog=Argument.CATALOG)
-	private List<Long> arguments;
-	@CatalogValue(foreignCatalog=Argument.CATALOG)
-	private List<Argument> argumentsValues;
-	private Long superAncestorHIdentity;
+
 	@Min(0)
 	@Max(5)
-	private int solution;
+	private Long solution;
 
-	public int getSolution() {
+	@CatalogKey(foreignCatalog=Argument.CATALOG)
+	private List<Long> arguments;
+
+	@CatalogValue(foreignCatalog=Argument.CATALOG)
+	private List<Argument> argumentsValues;
+
+	private Long superAncestorHIdentity;
+
+
+	public Long getSolution() {
 		return solution;
 	}
-	public void setSolution(int solution) {
+	public void setSolution(Long solution) {
 		this.solution = solution;
-	}
-	public List<String> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(List<String> properties) {
-		this.properties = properties;
-	}
-
-	public List<String> getStatement() {
-		return statement;
-	}
-
-	public void setStatement(List<String> statement) {
-		this.statement = statement;
 	}
 
 	public List<Long> getArguments() {

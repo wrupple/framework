@@ -114,8 +114,8 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 		 * @return id or collection of ids of created objects
 		 * @throws Exception
 		 */
-		Object createBatch(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
-				Object fieldValue) throws Exception;
+		void createRefereces(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
+							   Object fieldValue,CatalogEntry parent, Session session) throws Exception;
 
 		boolean isJoinableValueField(FieldDescriptor field);
 

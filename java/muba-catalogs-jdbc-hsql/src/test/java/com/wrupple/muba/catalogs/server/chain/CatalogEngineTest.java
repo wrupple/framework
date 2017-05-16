@@ -185,6 +185,8 @@ public class CatalogEngineTest extends MubaTest {
 		assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
 		solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
 		assertTrue( solutionFieldDescriptor!= null);
+        assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
+        assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
 
 		log.trace("[-see changes in catalog list-]");
 
@@ -212,7 +214,7 @@ public class CatalogEngineTest extends MubaTest {
 
         catalogContext.setCatalog(MathProblem.class.getSimpleName());
         problemContract = catalogContext.getCatalogDescriptor();
-        log.trace("[-verifying catalog integrity-]");
+        log.trace("[-verifying catalog graph integrity-]");
         assertTrue(problemContract.getId() != null);
         assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
         solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
@@ -225,7 +227,6 @@ public class CatalogEngineTest extends MubaTest {
 		excecutionContext.reset();
 		MathProblem problem = new MathProblem();
 		problem.setName(MathProblem.class.getSimpleName());
-		problem.setStatement(Arrays.asList("do", "this"));
 		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
 		excecutionContext.setServiceContract(contract);

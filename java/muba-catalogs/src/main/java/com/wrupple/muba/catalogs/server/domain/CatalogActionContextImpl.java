@@ -86,6 +86,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 			setCatalog((String) parentValue.getCatalog());
 			setAction(parentValue.getAction());
 			setFilter(parentValue.getFilter());
+            setFollowReferences(parentValue.getFollowReferences());
 			setDomain((Long) parentValue.getDomain());
 		}
 	}

@@ -118,6 +118,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 				}
 			}
 		}
+
 		/*if (this.multitenant && this.domainField != null) {
 			values.append(",");
 			values.append(context.getDomain());
@@ -126,6 +127,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 			builder.append(this.domainField);
 			builder.append(DELIMITER);
 		}*/
+
 		values.append(")");
 		builder.append(")");
 		builder.append(" VALUES ");

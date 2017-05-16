@@ -4,10 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -69,8 +67,7 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 						CatalogActionContext recursiveCreationContext  = context.getCatalogManager().spawn(context);
 						recursiveCreationContext.setFollowReferences(context.getFollowReferences());
 						recursiveCreationContext.setCatalog(field.getCatalog());
-						foreignValue= recursiveCreationContext.getCatalogManager().createBatch(recursiveCreationContext,catalog,field,foreignValue);
-						context.getCatalogManager().setPropertyValue(catalog, field, result, foreignValue, session);
+						 recursiveCreationContext.getCatalogManager().createRefereces(recursiveCreationContext,catalog,field,foreignValue,result,session);
 					}
 				}
 			}
@@ -95,7 +92,7 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 			context.getTransactionHistory().didCreate(context, regreso, createDao);
 		}
 		
-		//local cache
+		//local cache FIXME only empty lists when storage is not guarantee sequential insertion
 		CatalogResultCache cache = context.getCatalogManager().getCache(catalog, context);
 		if (cache != null) {
 			cache.clearLists(context,catalog.getDistinguishedName());

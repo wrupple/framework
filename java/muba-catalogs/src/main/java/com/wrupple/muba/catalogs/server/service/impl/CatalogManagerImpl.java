@@ -13,6 +13,7 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -721,34 +722,47 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		return cache;
 	}
 
-	private Object createEntry(CatalogActionContext context, Object foreignValue, String catalog) throws Exception {
+
+
+	@Override
+	public void createRefereces(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
+								  Object foreignValue,CatalogEntry owner, Session session) throws Exception {
+        String reservedField;
+		context.setCatalog(field.getCatalog());
+		if (field.isMultiple()) {
+			Collection<CatalogEntry> entries = (Collection<CatalogEntry>) foreignValue;
+			List<CatalogEntry> createdValues = new ArrayList<CatalogEntry>(entries.size());
+			for (CatalogEntry entry : entries) {
+				if (entry.getId() == null) {
+					createdValues.add(createEntry(context, entry, field.getCatalog()));
+				} else {
+					createdValues.add(entry);
+				}
+			}
+
+            reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+            if (isWriteableProperty(reservedField, owner, session)) {
+               setPropertyValue(catalog, reservedField, owner, createdValues, session);
+            }
+            List<Object> keys = createdValues.stream().map(v -> v.getId()).collect(Collectors.toList());
+
+			context.getCatalogManager().setPropertyValue(catalog, field, owner, keys, session);
+		} else {
+			CatalogEntry value =  createEntry(context, foreignValue, field.getCatalog());
+            reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+            if (isWriteableProperty(reservedField, owner, session)) {
+                setPropertyValue(catalog, reservedField, owner, value, session);
+            }
+			context.getCatalogManager().setPropertyValue(catalog, field, owner, value.getId(), session);
+		}
+	}
+
+	private CatalogEntry createEntry(CatalogActionContext context, Object foreignValue, String catalog) throws Exception {
 		// FIXME this is not batch at all, must be able to load a context with
 		// multile input entries, just like there is multiple results by default
 		context.setEntryValue(foreignValue);
 		context.getCatalogManager().getNew().execute(context);
-		return context.getEntryResult().getId();
-	}
-
-	@Override
-	public Object createBatch(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
-			Object foreignValue) throws Exception {
-
-		context.setCatalog(field.getCatalog());
-		if (field.isMultiple()) {
-			Collection<CatalogEntry> entries = (Collection<CatalogEntry>) foreignValue;
-			List<Object> keys = new ArrayList<Object>(entries.size());
-			for (CatalogEntry entry : entries) {
-				if (entry.getId() == null) {
-					keys.add(createEntry(context, entry, field.getCatalog()));
-				} else {
-					keys.add(entry.getId());
-				}
-
-			}
-			return keys;
-		} else {
-			return createEntry(context, foreignValue, field.getCatalog());
-		}
+		return context.getEntryResult();
 	}
 
 	private CatalogActionTrigger afterCreateHandledTimeline() {

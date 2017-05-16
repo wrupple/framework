@@ -415,7 +415,7 @@ public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
 
 	@Override
 	public String toString() {
-		return "FieldDescriptorImpl [id=" + id + ", fieldId=" + fieldId + ", name=" + name + "]";
+		return "FieldDescriptor[" + fieldId + "]";
 	}
 
 	public String getDescription() {

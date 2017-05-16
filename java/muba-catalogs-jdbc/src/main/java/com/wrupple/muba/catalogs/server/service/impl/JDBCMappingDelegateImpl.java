@@ -312,40 +312,43 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	public Object handleColumnField(ResultSet rs, FieldDescriptor field, int dataType, int columnIndex,
 			DateFormat dateFormat) throws SQLException {
 		Object r = null;
-		switch (dataType) {
-		case CatalogEntry.BOOLEAN_DATA_TYPE:
-			r = (Object) Boolean.valueOf(rs.getBoolean(columnIndex));
-			break;
-		case CatalogEntry.INTEGER_DATA_TYPE:
-			if (field.getDefaultValueOptions() == null || field.getDefaultValueOptions().isEmpty()) {
-				r = (Object) Long.valueOf(rs.getLong(columnIndex));
-			} else {
-				r = (Object) rs.getInt(columnIndex);
-			}
+		if(rs.getObject(columnIndex)!=null){
+			switch (dataType) {
+				case CatalogEntry.BOOLEAN_DATA_TYPE:
+					r = (Object) Boolean.valueOf(rs.getBoolean(columnIndex));
+					break;
+				case CatalogEntry.INTEGER_DATA_TYPE:
+					if (field.getDefaultValueOptions() == null || field.getDefaultValueOptions().isEmpty()) {
+						r = (Object) Long.valueOf(rs.getLong(columnIndex));
+					} else {
+						r = (Object) rs.getInt(columnIndex);
+					}
 
-			break;
-		case CatalogEntry.NUMERIC_DATA_TYPE:
-			r = (Object) Double.valueOf(rs.getDouble(columnIndex));
-			break;
-		case CatalogEntry.LARGE_STRING_DATA_TYPE:
-		case CatalogEntry.STRING_DATA_TYPE:
-			r = (Object) rs.getString(columnIndex);
-			break;
-		case CatalogEntry.OBJECT_DATA_TYPE:
-			try {
-				r = Class.forName(rs.getString(columnIndex));
-			} catch (ClassNotFoundException e) {
-				throw new IllegalArgumentException("this catalog jdbc implementation only supports deserialization of clazz type objects");
+					break;
+				case CatalogEntry.NUMERIC_DATA_TYPE:
+					r = (Object) Double.valueOf(rs.getDouble(columnIndex));
+					break;
+				case CatalogEntry.LARGE_STRING_DATA_TYPE:
+				case CatalogEntry.STRING_DATA_TYPE:
+					r = (Object) rs.getString(columnIndex);
+					break;
+				case CatalogEntry.OBJECT_DATA_TYPE:
+					try {
+						r = Class.forName(rs.getString(columnIndex));
+					} catch (ClassNotFoundException e) {
+						throw new IllegalArgumentException("this catalog jdbc implementation only supports deserialization of clazz type objects");
+					}
+					break;
+				case CatalogEntry.DATE_DATA_TYPE:
+					Timestamp date = rs.getTimestamp(columnIndex);
+					if(date!=null){
+						r = Date.from(date.toInstant());// (Object)
+						// dateFormat.parse(rs.getString(columnIndex));
+					}
+
 			}
-			break;
-		case CatalogEntry.DATE_DATA_TYPE:
-			Timestamp date = rs.getTimestamp(columnIndex);
-			if(date!=null){
-				r = Date.from(date.toInstant());// (Object)
-				// dateFormat.parse(rs.getString(columnIndex));
-			}
-			
 		}
+
 		return r;
 	}
 
