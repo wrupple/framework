@@ -4,6 +4,8 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bpm.domain.ActivityContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.VariableDescriptor;
+import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.command.DetermineSolutionFieldsDomain;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -21,8 +23,10 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by rarl on 11/05/17.
@@ -43,20 +47,24 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
     @Override
     public boolean execute(Context ctx) throws Exception {
         ExcecutionContext requestContext = (ExcecutionContext) ctx;
-        ActivityContext context = requestContext.getServiceContext();
+        final ActivityContext context = requestContext.getServiceContext();
         ProcessTaskDescriptor request = context.getTaskDescriptorValue();
         log.info("Resolving problem model");
-        Model model = plugin.getSolver().resolveProblemContext(context);
+        final Model model = plugin.getSolver().resolveProblemContext(context);
         log.debug("Resolving Solution Type");
         String solutionType =(String) request.getCatalog();
         CatalogActionContext catalogContext= catalogPlugin.spawn(context.getExcecutionContext());
         CatalogDescriptor solutionDescriptor = catalogPlugin.getDescriptorForName(solutionType,catalogContext);
+        context.setSolutionDescriptor(solutionDescriptor);
 
         //by default, all fields are eligible for solving
+        Collection<FieldDescriptor> fieldValues = solutionDescriptor.getFieldsValues();
         log.debug("Resolving problem variable names");
-        solutionDescriptor.getFieldsValues().stream().
+        List<VariableDescriptor> variables  = fieldValues.stream().
                 filter(field -> isEligible(field)).
-                forEach(field -> makeIntegerVariable(field,model));
+                map(field ->new VariableDescriptorImpl(makeIntegerVariable(field,model),field)).
+                collect(Collectors.toList());
+        context.setSolutionVariables(variables);
 
         return CONTINUE_PROCESSING;
     }
@@ -104,7 +112,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         if(match.isPresent()){
             String property = match.get();
             int split = property.indexOf('=');
-            String value = property.substring(split + 1, property.length() - 1);
+            String value = property.substring(split+1 );
             if(log.isDebugEnabled()){
                 log.debug("bounded value :"+value);
             }

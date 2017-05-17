@@ -4,6 +4,8 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bpm.domain.ActivityContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.VariableDescriptor;
+import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import org.apache.commons.chain.impl.ContextBase;
 
 import javax.validation.constraints.NotNull;
@@ -24,7 +26,28 @@ public class ActivityContextImpl extends ContextBase implements ActivityContext 
     private boolean canceled;
     private List userSelectionValues;
     private Long taskDescriptor;
+    private CatalogDescriptor solutionDescriptor;
+    private List<VariableDescriptor> solutionVariables;
 
+    @Override
+    public List<VariableDescriptor> getSolutionVariables() {
+        return solutionVariables;
+    }
+
+    @Override
+    public void setSolutionVariables(List<VariableDescriptor> solutionVariables) {
+        this.solutionVariables = solutionVariables;
+    }
+
+    @Override
+    public CatalogDescriptor getSolutionDescriptor() {
+        return solutionDescriptor;
+    }
+
+    @Override
+    public void setSolutionDescriptor(CatalogDescriptor solutionDescriptor) {
+        this.solutionDescriptor = solutionDescriptor;
+    }
 
     @Override
     public String getCatalogType() {
@@ -70,23 +93,6 @@ public class ActivityContextImpl extends ContextBase implements ActivityContext 
 
     public final void setAnonymouslyVisible(boolean anonymouslyVisible) {
         this.anonymouslyVisible = anonymouslyVisible;
-    }
-
-    private CatalogEntry  result;
-
-    @Override
-    public <T extends CatalogEntry> T getConvertedResult() {
-        return (T) result;
-    }
-
-    @Override
-    public CatalogEntry getResult() {
-        return result;
-    }
-
-    @Override
-    public void setResult(CatalogEntry catalogEntry) {
-        this.result=result;
     }
 
     private Date  timestamp;

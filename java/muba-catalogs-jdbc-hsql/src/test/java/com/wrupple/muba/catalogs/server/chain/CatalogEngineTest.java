@@ -171,7 +171,7 @@ public class CatalogEngineTest extends MubaTest {
 
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
 		action.setEntryValue(problemContract);
-        action.setFollowReferences(true);
+        //action.setFollowReferences(true);
 		excecutionContext.setServiceContract(action);
 		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);

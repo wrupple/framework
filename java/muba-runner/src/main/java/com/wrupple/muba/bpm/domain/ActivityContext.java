@@ -5,6 +5,7 @@ import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.UserContext;
 import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
+import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by japi on 11/05/17.
  */
-public interface ActivityContext extends UserContext,ContentNode,HasResult<CatalogEntry>,HasDistinguishedName {
+public interface ActivityContext extends UserContext,ContentNode,HasDistinguishedName {
     final String CATALOG = "ActivityContext";
 
     Long getTaskDescriptor();
@@ -26,4 +27,12 @@ public interface ActivityContext extends UserContext,ContentNode,HasResult<Catal
     void setExcecutionContext(ExcecutionContext context);
 
     void setTaskDescriptorValue(ProcessTaskDescriptor request);
+
+    void setSolutionDescriptor(CatalogDescriptor solutionDescriptor);
+
+    CatalogDescriptor getSolutionDescriptor();
+
+    void setSolutionVariables(List<VariableDescriptor> variables);
+
+    List<VariableDescriptor> getSolutionVariables();
 }

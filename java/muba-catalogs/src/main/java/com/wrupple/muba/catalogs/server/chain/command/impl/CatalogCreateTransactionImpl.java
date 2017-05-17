@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.chain.CatalogFactory;
@@ -31,11 +32,13 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 
 	private final CatalogActionTriggerHandler trigerer;
 	private final EntryCreators creators;
+	private final boolean follow;
 
 	@Inject
-	public CatalogCreateTransactionImpl(EntryCreators creators,CatalogActionTriggerHandler trigerer,CatalogFactory factory, String creatorsDictionary) {
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph")Boolean follow,EntryCreators creators, CatalogActionTriggerHandler trigerer, CatalogFactory factory, String creatorsDictionary) {
 		this.trigerer=trigerer;
 		this.creators=creators;
+		this.follow=follow==null?false:follow.booleanValue();
 	}
 
 	
@@ -58,12 +61,14 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		Session session = context.getCatalogManager().newSession(result);
 		
 		log.trace("[catalog/storage] {}/{}",catalog.getDistinguishedName(),createDao.getClass());
-		if(context.getFollowReferences()){
+		if(follow||context.getFollowReferences()){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 			for(FieldDescriptor field: fields){
 				if(field.isKey() && context.getCatalogManager().getPropertyValue(catalog, field, result, null, session)==null){
 					Object foreignValue = context.getCatalogManager().getPropertyForeignKeyValue(catalog, field, result, session);
 					if(foreignValue!=null){
+						//if we got to this point, force the context to follow the reference graph
+						context.setFollowReferences(true);
 						CatalogActionContext recursiveCreationContext  = context.getCatalogManager().spawn(context);
 						recursiveCreationContext.setFollowReferences(context.getFollowReferences());
 						recursiveCreationContext.setCatalog(field.getCatalog());

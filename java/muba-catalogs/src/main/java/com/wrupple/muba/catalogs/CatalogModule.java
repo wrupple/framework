@@ -145,7 +145,7 @@ public class CatalogModule extends AbstractModule {
 		bind(DateFormat.class).toInstance(new SimpleDateFormat(datePattern));
 		bind(String.class).annotatedWith(Names.named("catalog.domainField")).toInstance(CatalogDescriptor.DOMAIN_TOKEN);
 		bind(Boolean.class).annotatedWith(Names.named("catalog.createablePrimaryKeys")).toInstance(false);
-
+		bind(Boolean.class).annotatedWith(Names.named("catalog.followGraph")).toInstance(true);
 		bind(Integer.class).annotatedWith(Names.named("catalog.read.preloadCatalogGraph")).toInstance(0);
 
 		bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);
