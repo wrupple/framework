@@ -17,9 +17,9 @@
 		<module>muba-catalogs-jdbc-hsql</module>
 		<module>muba-runner</module>
 		<module>muba-runner-choco</module>
+		<module>muba-runner-async</module>
 		<module>muba-runner-human</module>
 		<module>muba-bpm</module>
-		<module>vegetate</module>
 		<module>vegetate-security</module>
 		<module>desktop</module>
 	</modules>

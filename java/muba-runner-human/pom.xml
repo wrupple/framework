@@ -13,11 +13,15 @@
 		<servlet.api>3.1.0</servlet.api>
 	</properties>
 	<dependencies>
-
-
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>muba-runner</artifactId>
+			<version>${muba.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.wrupple.muba</groupId>
+			<artifactId>muba-runner-async</artifactId>
 			<version>${muba.version}</version>
 		</dependency>
 
