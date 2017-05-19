@@ -213,10 +213,10 @@ public class SolveEquationSystem extends MubaTest {
         problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
         problem.setSentence(
                 Arrays.asList(
-                // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")",
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4"
+                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                // x + y < 5
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
                 )
         );
 

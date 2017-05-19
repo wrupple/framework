@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.7.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
+<module>
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.inject.Inject" />
+	<inherits name="com.google.gwt.place.Place" />
+	<inherits name="com.google.gwt.json.JSON" />
+	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name="com.google.gwt.xml.XML" />
+	<inherits name="com.google.gwt.i18n.I18N" />
+	<inherits name="com.google.gwt.activity.Activity" />
+	<inherits name="com.google.gwt.uibinder.UiBinder" />
+	<inherits name="com.google.gwt.json.JSON" />
+	<inherits name="com.google.gwt.editor.Editor" />
+	<inherits name="com.google.gwt.jsonp.Jsonp" />
+	<inherits name='com.google.web.bindery.requestfactory.RequestFactory' />
+
+	<inherits name="de.barop.PushState" />
+	<inherits name="org.sgx.raphael4gwt.GRaphael4GwtNoScript" />
+
+	<inherits name="com.wrupple.vegetate.Vegetate" />
+	<inherits name="com.wrupple.muba.catalogs.Catalogs" />
+	<inherits name="com.wrupple.muba.cms.Content" />
+	<inherits name="com.wrupple.muba.bpm.Process" />
+
+	<generate-with
+		class="com.wrupple.muba.desktop.rebind.ServiceDictionaryGenerator">
+		<when-type-assignable
+			class="com.wrupple.muba.desktop.client.factory.ServiceDictionary" />
+	</generate-with>
+
+	<source path="domain"></source>
+	<source path="shared"></source>
+	<source path="client"></source>
+
+</module>

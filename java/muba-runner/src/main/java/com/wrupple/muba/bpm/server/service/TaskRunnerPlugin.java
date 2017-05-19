@@ -10,7 +10,7 @@ public interface TaskRunnerPlugin extends CatalogPlugin {
 
 	Solver getSolver();
 
-	StorageManager getStorageManager();
+	/*StorageManager getStorageManager();
 
 	ProcessManager getProcessManager();
 
@@ -20,6 +20,6 @@ public interface TaskRunnerPlugin extends CatalogPlugin {
 	
 	ServiceBus getServiceBus();
 	//of the current thread?
-	Process<?, ?> getProcess();
+	Process<?, ?> getProcess();*/
 	
 }

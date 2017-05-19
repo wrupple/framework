@@ -33,12 +33,15 @@ public class SolveTaskImpl implements SolveTask {
         ActivityContext context = (ActivityContext) ctx;
         log.info("Thinking...");
         Model model = plugin.getSolver().resolveProblemContext(context);
+
         if(model.getSolver().solve()){
             log.info("At least one solution found");
-            if(log.isDebugEnabled()){
+            if(log.isTraceEnabled()){
                 model.getSolver().showSolutions();
             }
-        }else{
+        }/*else if(model.getSolver().hasReachedLimit()){
+            //System.out.println("The could not find a solution nor prove that none exists in the given limits");
+        }*/else{
             throw new IllegalStateException("No viable solution found for problem");
         }
         return CONTINUE_PROCESSING;

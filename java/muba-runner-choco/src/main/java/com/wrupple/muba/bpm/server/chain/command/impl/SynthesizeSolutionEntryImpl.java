@@ -6,6 +6,7 @@ import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.chocosolver.solver.Model;
@@ -45,16 +46,20 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
 
         List<VariableDescriptor> variableDescriptors = context.getSolutionVariables();
 
-        log.debug("solution has {} variables",variableDescriptors.size());
+        log.trace("solution has {} variables",variableDescriptors.size());
 
         SystemCatalogPlugin.Session solutionWritingSession = catalog.newSession(solution);
 
+        FieldDescriptor fieldId;
+        Object fieldValue;
         for(VariableDescriptor solutionVariable : variableDescriptors){
-            catalog.setPropertyValue(solutionDescriptor,solutionVariable.getField(),solution,solutionVariable.getValue(),solutionWritingSession);
+            fieldId = solutionVariable.getField();
+            fieldValue = solutionVariable.getValue();
+            log.debug("    {}={}",fieldId.getFieldId(),fieldValue);
+            catalog.setPropertyValue(solutionDescriptor,fieldId,solution,fieldValue,solutionWritingSession);
         }
 
         context.getExcecutionContext().setResult(solution);
-        //FIXME actually synthesize the correct catalog entry so it can be commited later
         return CONTINUE_PROCESSING;
     }
 }

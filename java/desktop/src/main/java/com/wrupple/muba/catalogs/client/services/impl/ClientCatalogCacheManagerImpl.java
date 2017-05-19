@@ -32,7 +32,6 @@ public class ClientCatalogCacheManagerImpl implements ClientCatalogCacheManager 
 		super();
 		this.provider = provider;
 		fullcaches = JavaScriptObject.createObject();
-
 	}
 
 	@Override
