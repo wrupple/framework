@@ -3,7 +3,9 @@ package com.wrupple.muba.bpm;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.wrupple.muba.bpm.server.chain.command.*;
+import com.wrupple.muba.bpm.server.chain.command.impl.AsyncHumanTaskRunnerEngine;
 import com.wrupple.muba.bpm.server.service.Solver;
+import com.wrupple.vegetate.server.chain.AsyncTaskRunnerEngine;
 
 /**
  * Created by japi on 11/05/17.
@@ -11,6 +13,7 @@ import com.wrupple.muba.bpm.server.service.Solver;
 public class HumanSolverModule extends AbstractModule{
     @Override
     protected void configure() {
+        bind(AsyncTaskRunnerEngine.class).to(AsyncHumanTaskRunnerEngine.class);
         bind(Solver.class).to(SolverImpl.class).in(Singleton.class);
 
 

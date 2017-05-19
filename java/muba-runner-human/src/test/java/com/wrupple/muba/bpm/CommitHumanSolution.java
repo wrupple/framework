@@ -21,10 +21,12 @@ import com.wrupple.muba.bpm.domain.RunnerServiceManifest;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
+import com.wrupple.muba.bpm.server.chain.command.impl.AsyncHumanTaskRunnerEngine;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.vegetate.server.chain.AsyncTaskRunnerEngine;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
@@ -143,7 +145,7 @@ public class CommitHumanSolution extends MubaTest {
         switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
 
         RunnerServiceManifest runnerServiceManifest = injector.getInstance(RunnerServiceManifest.class);
-        switchs.registerService(runnerServiceManifest, injector.getInstance(TaskRunnerEngine.class));
+        switchs.registerService(runnerServiceManifest, injector.getInstance(AsyncHumanTaskRunnerEngine.class));
         switchs.registerContractInterpret(runnerServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
     }
 
