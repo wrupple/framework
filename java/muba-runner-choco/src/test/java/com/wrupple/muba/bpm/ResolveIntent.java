@@ -63,7 +63,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 
 
-public class SolveEquationSystem extends MubaTest {
+public class ResolveIntent extends MubaTest {
 	/*
 	 * mocks
 	 */
@@ -133,7 +133,7 @@ public class SolveEquationSystem extends MubaTest {
 
     }
 
-    public SolveEquationSystem() {
+    public ResolveIntent() {
         init(new RunnerTestModule(), new ChocoRunnerTestModule(), new SingleUserModule(),new ChocoSolverModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
@@ -161,12 +161,16 @@ public class SolveEquationSystem extends MubaTest {
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 
-
+    public void optimalDriver4Hire() throws Exception {
+        //TODO best driver depending on capacity and available vehicles nearby
+    }
 /*
  * GreatestAnomalyRangePicker
  * AdjustErrorByDriverDistance
  */
-
+public void optimalDriver4Ride() throws Exception {
+    //TODO resolve a booking request to a tracking object (ActivityContext)
+}
     /**
      * <ol>
      * <li>create math problem catalog (with inheritance)</li>
