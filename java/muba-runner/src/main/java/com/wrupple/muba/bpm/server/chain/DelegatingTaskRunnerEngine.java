@@ -1,4 +1,4 @@
-package com.wrupple.muba.bpm.server.chain.command.impl;
+package com.wrupple.muba.bpm.server.chain;
 
 import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
 import com.wrupple.muba.bpm.server.chain.command.SelectSolution;

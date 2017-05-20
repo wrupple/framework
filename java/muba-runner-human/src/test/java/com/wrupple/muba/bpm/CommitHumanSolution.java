@@ -21,7 +21,6 @@ import com.wrupple.muba.bpm.domain.RunnerServiceManifest;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.impl.AsyncHumanTaskRunnerEngine;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
