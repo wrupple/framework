@@ -20,13 +20,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.wrupple.muba</groupId>
-			<artifactId>muba-runner-async</artifactId>
-			<version>${muba.version}</version>
-		</dependency>
-
-
-		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 			<version>${guice.version}</version>

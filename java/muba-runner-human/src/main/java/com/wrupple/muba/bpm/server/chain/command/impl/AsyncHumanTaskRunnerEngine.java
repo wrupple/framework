@@ -1,5 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
 import com.wrupple.muba.bpm.server.chain.command.SelectSolution;
 import com.wrupple.muba.bpm.server.chain.command.SolveTask;
 import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
@@ -14,10 +15,10 @@ import javax.inject.Singleton;
  * Created by rarl on 19/05/17.
  */
 @Singleton
-public class AsyncHumanTaskRunnerEngine extends ChainBase implements AsyncTaskRunnerEngine {
+public class DelegatingTaskRunnerEngine extends ChainBase implements TaskRunnerEngine {
 
     @Inject
-    public AsyncHumanTaskRunnerEngine(SearchEngineOptimizedDesktopWriterCommand writerCommand) {
+    public DelegatingTaskRunnerEngine(SearchEngineOptimizedDesktopWriterCommand writerCommand) {
         super(new Command[]{
                 findSolutions,
                 writerCommand,

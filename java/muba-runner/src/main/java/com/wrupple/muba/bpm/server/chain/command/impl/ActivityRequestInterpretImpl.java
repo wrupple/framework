@@ -24,16 +24,10 @@ public class ActivityRequestInterpretImpl extends ChainBase implements ActivityR
     public ActivityRequestInterpretImpl(
                                         Provider<ActivityContext> activityContextProvider,
                                         // 1. Create a Model inside plugin the context references it by dn (InitializeActivityContext)
-                                        LoadTask load,
-                                        // 2. Create variables, by default use all variables defined in task
-                                        DetermineSolutionFieldsDomain defineVariablesPossibilitySpace,
-                                        // 3. Post constraints
-                                        DefineSolutionCriteria defineProblem
+                                        LoadTask load
                                         ){
         super(new Command []{
-                load,
-                defineVariablesPossibilitySpace,
-                defineProblem
+                load
         });
 
         this.activityContextProvider=activityContextProvider;

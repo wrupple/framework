@@ -41,9 +41,8 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     protected Logger log = LoggerFactory.getLogger(DefineSolutionCriteriaImpl.class);
     @Override
     public boolean execute(Context ctx) throws Exception {
-        ExcecutionContext requestContext = (ExcecutionContext) ctx;
-        ProcessTaskDescriptor request = (ProcessTaskDescriptor) requestContext.getServiceContract();
-        ActivityContext context = requestContext.getServiceContext();
+        final ActivityContext context = (ActivityContext) ctx;
+        ProcessTaskDescriptor request = context.getTaskDescriptorValue();
 
         log.info("Resolving problem model");
         Model model = plugin.getSolver().resolveProblemContext(context);
@@ -57,7 +56,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         log.debug("posting solution constraints from task definition");
         processNextConstraint(invoker,activitySentence,model,request,context);
         log.debug("posting solution constraints from excecution context");
-        activitySentence = requestContext.getSentence().listIterator();
+        activitySentence = context.getExcecutionContext().getSentence().listIterator();
         processNextConstraint(invoker,activitySentence,model,request,context);
 
         return CONTINUE_PROCESSING;

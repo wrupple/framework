@@ -1,9 +1,7 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
-import com.wrupple.muba.bpm.server.chain.command.SelectSolution;
-import com.wrupple.muba.bpm.server.chain.command.SolveTask;
-import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
+import com.wrupple.muba.bpm.server.chain.command.*;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ChainBase;
 
@@ -17,16 +15,24 @@ import javax.inject.Singleton;
 public class TaskRunnerEngineImpl extends ChainBase implements TaskRunnerEngine {
 
     @Inject
-    public TaskRunnerEngineImpl(//4. the actual solving of the problem to the chain
+    public TaskRunnerEngineImpl(
+            // 2. Create variables,including contextual variables defined by previous task's saveToField
+            //    by default use all variables defined in task
+            DetermineSolutionFieldsDomain defineVariablesPossibilitySpace,
+            // 3. Post constraints
+            DefineSolutionCriteria defineProblem,
+            //4. the actual solving of the problem to the chain
                                 SolveTask findSolutions,
                                 //5. Minimize Error
                                 SelectSolution pickBestValue,
                                 //6. synthesize Solution entry
                                 SynthesizeSolutionEntry synthesize) {
         super(new Command []{
-                findSolutions,
-                pickBestValue,
-                synthesize}
+                        defineVariablesPossibilitySpace,
+                        defineProblem,
+                        findSolutions,
+                        pickBestValue,
+                        synthesize}
                 );
     }
 }

@@ -46,8 +46,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
 
     @Override
     public boolean execute(Context ctx) throws Exception {
-        ExcecutionContext requestContext = (ExcecutionContext) ctx;
-        final ActivityContext context = requestContext.getServiceContext();
+        final ActivityContext context = (ActivityContext) ctx;
         ProcessTaskDescriptor request = context.getTaskDescriptorValue();
         log.info("Resolving problem model");
         final Model model = plugin.getSolver().resolveProblemContext(context);
