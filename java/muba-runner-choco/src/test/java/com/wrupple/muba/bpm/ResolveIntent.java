@@ -15,10 +15,7 @@ import javax.validation.Validator;
 
 import com.wrupple.muba.ChocoRunnerTestModule;
 import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCommand;
-import com.wrupple.muba.bpm.domain.EquationSystemSolution;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.bpm.domain.RunnerServiceManifest;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
@@ -27,8 +24,6 @@ import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import org.apache.commons.chain.Command;
-import org.chocosolver.solver.Model;
-import org.chocosolver.solver.variables.IntVar;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -158,19 +153,53 @@ public class ResolveIntent extends MubaTest {
         expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
 
         excecutionContext = injector.getInstance(ExcecutionContext.class);
+        // expectations
+
+        replayAll();
+
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 
     public void optimalDriver4Hire() throws Exception {
         //TODO best driver depending on capacity and available vehicles nearby
+        ProcessTaskDescriptor problem = prepareDriverEnviroment();
+        log.info("[-post a solver request to the runner engine-]");
+        excecutionContext.setServiceContract(problem);
+        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME,
+                // x * y = 4
+                ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                // x + y < 5
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")"
+        );
+
+        excecutionContext.process();
+
+        Driver solution = excecutionContext.getConvertedResult();
+
+        assertTrue(solution!=null);
     }
-/*
- * GreatestAnomalyRangePicker
- * AdjustErrorByDriverDistance
- */
-public void optimalDriver4Ride() throws Exception {
-    //TODO resolve a booking request to a tracking object (ActivityContext)
-}
+    /*
+     * GreatestAnomalyRangePicker
+     * AdjustErrorByDriverDistance
+     */
+    public void optimalDriver4Ride() throws Exception {
+        //TODO resolve a booking intent to a tracking object (ActivityContext)
+        ProcessTaskDescriptor problem = prepareRideEnviroment();
+        log.info("[-post a solver request to the runner engine-]");
+        excecutionContext.setServiceContract(problem);
+        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME,
+                // x * y = 4
+                ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                // x + y < 5
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")"
+        );
+
+        excecutionContext.process();
+
+       ActivityContext context = excecutionContext.getServiceContext();
+
+        assertTrue(context.getUserSelectionValues()!=null);
+    }
     /**
      * <ol>
      * <li>create math problem catalog (with inheritance)</li>
@@ -182,15 +211,31 @@ public void optimalDriver4Ride() throws Exception {
      */
     @Test
     public void equationSolverTest() throws Exception {
+        ProcessTaskDescriptor problem = prepareEquationActivity();
+        log.info("[-post a solver request to the runner engine-]");
+        excecutionContext.setServiceContract(problem);
+        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME,
+                // x * y = 4
+                ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                // x + y < 5
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")"
+        );
+
+        excecutionContext.process();
+
+        EquationSystemSolution solution = excecutionContext.getConvertedResult();
+
+        assertTrue(solution.getX()==2);
+
+        assertTrue(solution.getY()==2);
+
+    }
+
+    private ProcessTaskDescriptor prepareEquationActivity() throws Exception {
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-
-        // expectations
-
-        replayAll();
 
         log.info("[-Register EquationSystemSolution catalog type-]");
 
-        //FIXME stack overflow when no parent is specified, ok when consolidated?
         CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
                 "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG,
                         ContentNode.class.getSimpleName(), -1l, null));
@@ -215,14 +260,9 @@ public void optimalDriver4Ride() throws Exception {
         problem.setName("my first problem");
         problem.setCatalog(EquationSystemSolution.CATALOG);
         problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
-        problem.setSentence(
-                Arrays.asList(
-                        // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
-                // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
-                )
-        );
+       /* problem.setSentence(
+                Arrays.asList()
+        );*/
 
         catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(problem);
@@ -237,18 +277,7 @@ public void optimalDriver4Ride() throws Exception {
         problem = catalogContext.getEntryResult();
 
         excecutionContext.reset();
-        log.info("[-post a solver request to the runner engine-]");
-        excecutionContext.setServiceContract(problem);
-        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME);
-
-        excecutionContext.process();
-
-        EquationSystemSolution solution = excecutionContext.getConvertedResult();
-
-        assertTrue(solution.getX()==2);
-
-        assertTrue(solution.getY()==2);
-
+        return problem;
     }
 
 }
