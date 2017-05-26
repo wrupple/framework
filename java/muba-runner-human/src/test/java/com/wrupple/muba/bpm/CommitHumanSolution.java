@@ -246,7 +246,6 @@ public class CommitHumanSolution extends MubaTest {
         problem = catalogContext.getEntryResult();
         excecutionContext.reset();
         return problem;
-
     }
 
 }

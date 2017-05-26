@@ -12,7 +12,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.ActivityProcess;
 import com.wrupple.muba.bpm.client.activity.process.impl.ActivityProcessImpl;
 import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.ContextualTransactionProcessState;
 import com.wrupple.muba.bpm.client.activity.process.state.InitializeActivityContext;
 import com.wrupple.muba.bpm.client.activity.process.state.MachineTask;
 import com.wrupple.muba.bpm.client.activity.process.state.ReadNextPlace;

@@ -35,4 +35,10 @@ public interface ActivityContext extends UserContext,ContentNode,HasDistinguishe
     void setSolutionVariables(List<VariableDescriptor> variables);
 
     List<VariableDescriptor> getSolutionVariables();
+
+   // public void setLayoutUnit(String s);
+
+    //public void setTransactionViewClass(String s);
+
+   // void setSaveTo(String task.getProducedField());
 }

@@ -12,11 +12,11 @@ import javax.inject.Inject;
  */
 public class PlainTextHumanSolverImpl extends ChainBase implements PlainTextHumanSolver {
     @Inject
-    public PlainTextHumanSolverImpl(UserInteractionState writerCommand) {
+    public PlainTextHumanSolverImpl(UserInteractionState userInteractionState) {
         super(new Command[]{
-                findSolutions,
-                writerCommand,
-                synthesize}
+                /*findSolutions,*/
+                userInteractionState,
+                /*synthesize*/}
         );
     }
 }
