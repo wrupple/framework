@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -81,6 +82,8 @@ public class HSQLTest extends MubaTest {
 		@Override
 		protected void configure() {
 			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
+			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
+
 			bind(Integer.class).annotatedWith(Names.named("catalog.missingTableErrorCode")).toInstance(
 					org.hsqldb.error.ErrorCode.X_42501 * -1/* 1146 in MySQL */);
 

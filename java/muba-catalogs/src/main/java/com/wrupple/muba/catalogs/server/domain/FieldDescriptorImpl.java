@@ -18,7 +18,7 @@ import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
  * @author japi
  * 
  */
-public class FieldDescriptorImpl implements CatalogEntry, FieldDescriptor {
+public class FieldDescriptorImpl implements FieldDescriptor {
 	/**
 	 * 
 	 */

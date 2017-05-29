@@ -1,6 +1,8 @@
 package com.wrupple.muba.bootstrap.domain;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.ListIterator;
@@ -99,5 +101,6 @@ public interface ExcecutionContext extends Context, HasValidations, HasLocale, L
 	public String deduceLocale(Context domainContext);
 
 	void setSentence(String... words);
+
 
 }

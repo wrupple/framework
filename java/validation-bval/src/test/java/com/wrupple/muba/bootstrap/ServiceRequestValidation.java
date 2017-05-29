@@ -3,6 +3,7 @@ package com.wrupple.muba.bootstrap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -133,6 +134,8 @@ public class ServiceRequestValidation extends MubaTest {
 			bind(Host.class).toInstance(mock(Host.class));
 			bind(UserTransaction.class).toInstance(mock(UserTransaction.class));
 			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
+			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
+
 
 		}
 

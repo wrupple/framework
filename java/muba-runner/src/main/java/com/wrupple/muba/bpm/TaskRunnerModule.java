@@ -10,11 +10,8 @@ import com.wrupple.muba.bpm.domain.impl.ActivityContextImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.domain.impl.RunnerServiceManifestImpl;
 import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
-import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.LoadTask;
-import com.wrupple.muba.bpm.server.chain.command.impl.ActivityRequestInterpretImpl;
-import com.wrupple.muba.bpm.server.chain.command.impl.LoadTaskImpl;
-import com.wrupple.muba.bpm.server.chain.command.impl.TaskRunnerEngineImpl;
+import com.wrupple.muba.bpm.server.chain.command.*;
+import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import com.wrupple.muba.bpm.server.service.impl.TaskRunnerPluginImpl;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -30,6 +27,10 @@ public class TaskRunnerModule  extends AbstractModule {
         bind(ActivityContext.class).to(ActivityContextImpl.class);
 
         bind(TaskRunnerEngine.class).to(TaskRunnerEngineImpl.class);
+
+        bind(DetermineSolutionFieldsDomain.class).to(DetermineSolutionFieldsDomainImpl.class).in(Singleton.class);
+        bind(SynthesizeSolutionEntry.class).to(SynthesizeSolutionEntryImpl.class);
+        bind(SelectSolution.class).to(SelectSolutionImpl.class);
 
         bind(LoadTask.class).to(LoadTaskImpl.class).in(Singleton.class);
         bind(ActivityRequestInterpret.class).to(ActivityRequestInterpretImpl.class).in(Singleton.class);

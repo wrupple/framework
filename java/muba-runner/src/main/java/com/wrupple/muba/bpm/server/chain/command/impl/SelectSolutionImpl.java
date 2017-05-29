@@ -4,7 +4,6 @@ import com.wrupple.muba.bpm.domain.ActivityContext;
 import com.wrupple.muba.bpm.server.chain.command.SelectSolution;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import org.apache.commons.chain.Context;
-import org.chocosolver.solver.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +27,8 @@ public class SelectSolutionImpl implements SelectSolution {
 
     @Override
     public boolean execute(Context ctx) throws Exception {
-        ActivityContext context = (ActivityContext) ctx;
-        Model model = plugin.getSolver().resolveProblemContext(context);
-        log.info("{} solution(s) have been found",model.getSolver().getSolutionCount());
-
+        log.info("Selecting best solution");
+        //ActivityContext context = (ActivityContext) ctx;
         return CONTINUE_PROCESSING;
     }
 }

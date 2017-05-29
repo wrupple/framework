@@ -1,5 +1,7 @@
 package com.wrupple.muba.bootstrap.domain;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.apache.commons.chain.CatalogFactory;
@@ -8,18 +10,22 @@ import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.bootstrap.server.chain.command.RequestInterpret;
 
+import javax.inject.Named;
+
 public interface ApplicationContext
 		/* basic implementation: LocalSystemContext */ extends Context {
 
-	// new PrintWriter(System.out)
-	public PrintWriter getOutputWriter();
+    OutputStream getOutput();
+    InputStream getInput();
+
+	PrintWriter getOutputWriter();
 
 	RootServiceManifest getRootService();
 
 	CatalogFactory getDictionaryFactory();
 	
 	//contract interpret per type? bpm?
-	public void registerContractInterpret(ServiceManifest manifest, RequestInterpret contractInterpret) ;
+	void registerContractInterpret(ServiceManifest manifest, RequestInterpret contractInterpret) ;
 	void registerService(ServiceManifest manifest,Command service);
 
 	/**
@@ -28,5 +34,5 @@ public interface ApplicationContext
 	 * @param context
 	 * @return reads properties from context, aswell as context property depen
 	 */
-	public RequestInterpret getRequestInterpret(ExcecutionContext context);
+	RequestInterpret getRequestInterpret(ExcecutionContext context);
 }

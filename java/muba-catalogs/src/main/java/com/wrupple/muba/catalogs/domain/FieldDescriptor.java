@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasDescription;
 import com.wrupple.muba.bootstrap.domain.reserved.HasFieldId;
@@ -15,7 +16,7 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
  * @author japi
  * 
  */
-public interface FieldDescriptor extends Serializable,HasFieldId,HasProperties,HasCatalogId ,HasDescription,HasConstrains{
+public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,HasCatalogId ,HasDescription,HasConstrains{
 	public static final String CATALOG_ID = "FieldDescriptor";
 
 

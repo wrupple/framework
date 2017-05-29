@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -78,6 +79,7 @@ public class CommitHumanSolution extends MubaTest {
         @Override
         protected void configure() {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
+            bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
             // this makes JDBC the default storage unit
             bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
             bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);

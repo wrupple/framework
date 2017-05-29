@@ -35,7 +35,7 @@ public class SolveTaskImpl implements SolveTask {
         Model model = plugin.getSolver().resolveProblemContext(context);
 
         if(model.getSolver().solve()){
-            log.info("At least one solution found");
+            log.info("{} solution(s) have been found",model.getSolver().getSolutionCount());
             if(log.isTraceEnabled()){
                 model.getSolver().showSolutions();
             }

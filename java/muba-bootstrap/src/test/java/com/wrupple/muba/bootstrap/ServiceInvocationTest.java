@@ -93,7 +93,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 		RootServiceManifestImpl rootService = new RootServiceManifestImpl();
 
 
-		this.application = new LocalSystemContext(rootService, System.out, CatalogFactory.getInstance());
+		this.application = new LocalSystemContext(rootService, System.out,System.in, CatalogFactory.getInstance());
 		// http://stackoverflow.com/questions/4796172/is-there-a-way-to-get-users-uid-on-linux-machine-using-java
 		session = new SessionContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
 

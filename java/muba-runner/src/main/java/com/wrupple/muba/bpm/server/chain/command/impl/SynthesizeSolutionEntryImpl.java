@@ -9,14 +9,11 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
-import org.chocosolver.solver.Model;
-import org.chocosolver.solver.variables.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,8 +38,6 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
         log.info("Synthesize solution...");
         CatalogDescriptor solutionDescriptor = context.getSolutionDescriptor();
         CatalogEntry solution = catalog.synthesize(solutionDescriptor);
-
-        Model model = plugin.getSolver().resolveProblemContext(context);
 
         List<VariableDescriptor> variableDescriptors = context.getSolutionVariables();
 

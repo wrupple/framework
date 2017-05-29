@@ -1,5 +1,6 @@
 package com.wrupple.muba.bootstrap.server.domain;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
@@ -25,16 +26,20 @@ public class LocalSystemContext extends ContextBase implements ApplicationContex
 	private static final long serialVersionUID = -7144539787781019055L;
 	private final RootServiceManifest rootService;
 	private final PrintWriter outputWriter;
-	private CatalogFactory factory;
+    private final OutputStream out;
+    private final InputStream in;
+    private CatalogFactory factory;
 	// use a registry method, this stays private please stop it!!
 	private final String DICTIONARY = RootServiceManifest.NAME + "-interpret";
 
 	@Inject
-	public LocalSystemContext(RootServiceManifest rootService, @Named("System.out") OutputStream out,
-			CatalogFactory factory) {
+	public LocalSystemContext(RootServiceManifest rootService, @Named("System.out") OutputStream out, @Named("System.in") InputStream in,
+							  CatalogFactory factory) {
 		super();
 		this.rootService = rootService;
 		this.factory = factory;
+		this.out=out;
+		this.in = in;
 		this.outputWriter = new PrintWriter(out);
 	}
 
@@ -42,7 +47,17 @@ public class LocalSystemContext extends ContextBase implements ApplicationContex
 		return rootService;
 	}
 
-	public PrintWriter getOutputWriter() {
+    @Override
+    public OutputStream getOutput() {
+        return out;
+    }
+
+    @Override
+    public InputStream getInput() {
+        return in;
+    }
+
+    public PrintWriter getOutputWriter() {
 		return outputWriter;
 	}
 
