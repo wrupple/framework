@@ -15,7 +15,7 @@ import com.wrupple.muba.cms.domain.WruppleDomainHTMLPage;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.AsynchonousHtmlWidget;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;

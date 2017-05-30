@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.user.cellview.client.Column;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.vegetate.domain.FilterCriteria;
 

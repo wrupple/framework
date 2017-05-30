@@ -41,7 +41,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.ListCel
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.MapCellProvider;
 import com.wrupple.muba.desktop.client.activity.widgets.toolbar.FilterToolbar;
 import com.wrupple.muba.desktop.client.activity.widgets.toolbar.FilterToolbarImpl.FieldFilter;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.FilterCriteriaFieldDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;

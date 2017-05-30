@@ -19,6 +19,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.ui.Widget;
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 
 public class GWTUtils {
 
@@ -1043,6 +1045,133 @@ public class GWTUtils {
 			return b.toString();
 		}
 		
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+    //               MOVED FROM FIELD CONVERSTON STRATEGY
+    ////////////////////////////////////////////////////////////////////////////
+    private native void parseSetDouble(String v, CatalogEntry jso, String fieldId) /*-{
+		jso[fieldId]=parseFloat(v);
+	}-*/;
+
+    private native void parseSetInteger(String v, CatalogEntry jso, String fieldId) /*-{
+	jso[fieldId]=parseInt(v);
+}-*/;
+
+
+	private Object userReadableValue(CatalogEntry elem, String attr, List<FilterCriteria> includeCriteria) {
+		JSONValue value = access.getObjectValue(attr, elem);
+		if (value == null) {
+			return getNullObject();
+		} else if (value.isNull() != null) {
+			return getNullObject();
+		} else if (value.isArray() != null) {
+			JsArray<JavaScriptObject> arr = value.isArray().getJavaScriptObject().cast();
+			return getArrayValue(arr, includeCriteria);
+		} else if (value.isObject() != null) {
+			JavaScriptObject jso = value.isObject().getJavaScriptObject();
+			return getJSOValue(jso, includeCriteria);
+		} else if (value.isBoolean() != null) {
+			boolean bool = value.isBoolean().booleanValue();
+			return getBoolanValue(bool, includeCriteria);
+		} else if (value.isNumber() != null) {
+			JSONNumber jsonNumber = value.isNumber();
+			return jsonNumber.toString();
+		} else {
+			try {
+				String string = value.isString().stringValue();
+				return getStringValue(string, includeCriteria);
+			} catch (Exception e) {
+				return getDefaultValue(value, includeCriteria);
+			}
+		}
+	}
+
+
+
+
+	protected Object getDefaultValue(JSONValue value, List<FilterCriteria> includeCriteria) {
+		return value.toString();
+	}
+
+	protected Object getStringValue(String string, List<FilterCriteria> includeCriteria) {
+		// TODO parse Double?
+		return string.trim();
+	}
+
+	protected Object getBoolanValue(boolean bool, List<FilterCriteria> includeCriteria) {
+		return bool;
+	}
+
+	protected Object getJSOValue(JavaScriptObject jso, List<FilterCriteria> includeCriteria) {
+		return jso;
+	}
+
+	protected Object getArrayValue(JsArray<JavaScriptObject> arr, List<FilterCriteria> includeCriteria) {
+		// FIXME use the same (more tested) mechanism as
+		// IncrementalCachingRetrivingService to test filters
+		if (includeCriteria == null) {
+			return arr;
+		} else {
+			if (arr == null) {
+				return null;
+			} else {
+				JavaScriptObject o;
+				boolean match;
+				JsArray<JavaScriptObject> regreso = JavaScriptObject.createArray().cast();
+				for (int i = 0; i < arr.length(); i++) {
+					o = arr.get(i);
+					match = matchesCriteria(o, includeCriteria);
+					if (match) {
+						// include
+						regreso.push(o);
+					}
+				}
+				return regreso;
+			}
+		}
+	}
+
+	private boolean matchesCriteria(JavaScriptObject o, List<FilterCriteria> includeCriteria) {
+		for (FilterCriteria criteria : includeCriteria) {
+			if (matches((JsFilterCriteria) criteria, o)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	// TRUE IF MATCH AGINST AT LEAST ONE CRITERIA
+	public boolean matches(JsFilterCriteria criteria, JavaScriptObject o) {
+		JsArrayMixed values = criteria.getValuesArray();
+		JsArrayString path = criteria.getPathArray();
+		if (path != null && values != null) {
+			if (values.length() > 0 && path.length() > 0) {
+				String pathing = path.get(0);
+				for (int i = 0; i < values.length(); i++) {
+					if (jsMatch(pathing, o, values, i)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	};
+
+	private native boolean jsMatch(String pathing, JavaScriptObject o, JsArrayMixed values, int i) /*-{
+		var rawValue = o[pathing];
+		var string = values[i];
+		if (string != null && rawValue != null) {
+			var equals = rawValue == string;
+			return equals;
+		}
+		return false;
+
+	}-*/;
+
+	protected Object getNullObject() {
+		return null;
 	}
 
 }

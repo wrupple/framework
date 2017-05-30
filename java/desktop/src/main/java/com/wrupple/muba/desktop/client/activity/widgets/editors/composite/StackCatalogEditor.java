@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogFieldMap;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;

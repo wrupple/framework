@@ -12,7 +12,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
 
 
 public interface CatalogEditor<V extends JavaScriptObject> extends HumanTaskProcessor<V,V>,LeafValueEditor<V>, IsWidget {
-	public void reset();
+	 void reset();
 	
 	void initialize(String catalog,CatalogAction mode,EventBus bus,ProcessContextServices contextServices,JavaScriptObject properties,JsTransactionActivityContext contextParameters);
 	
@@ -20,10 +20,8 @@ public interface CatalogEditor<V extends JavaScriptObject> extends HumanTaskProc
 	
 	String getCatalogId();
 	
-	public void setFieldValue(String fieldId, Object value) ;
-	
-	public void setFieldValue(String fieldId, JSONValue value);
+	 void setFieldValue(String fieldId, Object value) ;
 
-	public Object getFieldValue(String field);
+	 Object getFieldValue(String field);
 	
 }

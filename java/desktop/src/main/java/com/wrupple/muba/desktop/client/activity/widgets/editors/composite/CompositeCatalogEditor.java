@@ -29,10 +29,10 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delega
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.StringJSOadapter;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
-import com.wrupple.muba.desktop.client.services.logic.impl.FieldConversionStrategyImpl;
+import com.wrupple.muba.desktop.client.services.logic.impl.GWTFieldConversionStrategyImpl;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
@@ -119,7 +119,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 		}
 		for (String fieldid : fieldNames) {
 			fieldValue = getFieldValue(fieldid);
-			FieldConversionStrategyImpl.setAttribute(value, fieldid, fieldValue);
+			GWTFieldConversionStrategyImpl.setAttribute(value, fieldid, fieldValue);
 		}
 		currentEntry = value;
 		((JsCatalogEntry) currentEntry).setCatalog(getCatalog().getCatalogId());
@@ -290,14 +290,6 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 		}
 	}
 
-	@Override
-	public void setFieldValue(String fieldId, JSONValue rawValue) {
-		HasValue<Object> fieldWidget = fields.get(fieldId);
-		if (fieldWidget != null) {
-			Object value = conversionService.convertToUserReadableValue(rawValue);
-			fieldWidget.setValue(value);
-		}
-	}
 
 	@Override
 	public void initialize(String catalog, CatalogAction mode, EventBus bus, ProcessContextServices processServices, JavaScriptObject properties,

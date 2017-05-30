@@ -30,7 +30,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.column.FieldColum
 import com.wrupple.muba.desktop.client.activity.widgets.fields.column.ForeignEntryColumn;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.column.ForeignEntryColumn.JsArrayAdapterCell;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogFieldMap;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.FilterCriteriaFieldDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.TableLayoutDelegate;

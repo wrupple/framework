@@ -9,14 +9,14 @@ import com.google.gwt.core.client.JsArrayMixed;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONValue;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 import com.wrupple.vegetate.domain.FilterCriteria;
 
-public class FieldConversionStrategyImpl implements FieldConversionStrategy {
+public class GWTFieldConversionStrategyImpl implements FieldConversionStrategy {
 
 	@Override
 	public Object convertToUserReadableValue(String attr, JavaScriptObject elem, List<FilterCriteria> includeCriteria) {
@@ -87,6 +87,56 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 			GWTUtils.setAttributeJava(jso, fieldId, value);
 		}
 	}
+
+	@Override
+	public Object convertToPersistentDatabaseValue(Object value, FieldDescriptor field) {
+		int dataType = field == null ? -1 : field.getDataType();
+		if (value == null) {
+			return null;
+		} else if (value instanceof Collection) {
+			Collection<Object> collection = (Collection<Object>) value;
+			 return GWTUtils.convertToJavaScriptArray(collection.toArray());
+		} else if (value instanceof Number) {
+			Number v = (Number) value;
+			if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
+				return v.intValue();
+			} else {
+				return v.doubleValue();
+			}
+		} else if (value instanceof String) {
+			String v = (String) value;
+			v = getSendableString(v);
+			if (v == null) {
+				return null;
+			}
+			
+			try {
+				switch (dataType) {
+				case CatalogEntry.BOOLEAN_DATA_TYPE:
+					return  "1".equals(v) || Boolean.parseBoolean(v);
+				case CatalogEntry.INTEGER_DATA_TYPE:
+					if(field.isKey()){
+						return v;
+					}
+					return Integer.parseInt(v);
+				case CatalogEntry.NUMERIC_DATA_TYPE:
+					return Double.parseDouble(v);
+				default:
+					return v;
+				}
+			} catch (Exception e) {
+				return v;
+			}
+
+		} else if (value instanceof JavaScriptObject) {
+
+			return value;
+
+		} else {
+			return value;
+		}
+	}
+
 
 
 	private native void parseSetDouble(String v, JavaScriptObject jso, String fieldId) /*-{
@@ -219,72 +269,25 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 		return null;
 	}
 
-	@Override
-	public Object convertToPersistentDatabaseValue(Object value, FieldDescriptor field) {
-		int dataType = field == null ? -1 : field.getDataType();
-		if (value == null) {
-			return null;
-		} else if (value instanceof Collection) {
-			Collection<Object> collection = (Collection<Object>) value;
-			 return GWTUtils.convertToJavaScriptArray(collection.toArray());
-		} else if (value instanceof Number) {
-			Number v = (Number) value;
-			if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
-				return v.intValue();
-			} else {
-				return v.doubleValue();
-			}
-		} else if (value instanceof String) {
-			String v = (String) value;
-			v = getSendableString(v);
-			if (v == null) {
-				return null;
-			}
-			
-			try {
-				switch (dataType) {
-				case CatalogEntry.BOOLEAN_DATA_TYPE:
-					return  "1".equals(v) || Boolean.parseBoolean(v);
-				case CatalogEntry.INTEGER_DATA_TYPE:
-					if(field.isKey()){
-						return v;
-					}
-					return Integer.parseInt(v);
-				case CatalogEntry.NUMERIC_DATA_TYPE:
-					return Double.parseDouble(v);
-				default:
-					return v;
-				}
-			} catch (Exception e) {
-				return v;
-			}
+    public static void setAttribute(JavaScriptObject elem, String attr, Object systemValue) {
+        // TODO this seems excesive, allow conversion strategy to set field
+        // value?
+        if (systemValue instanceof Boolean) {
+            boolean bolVal = (Boolean) systemValue;
+            GWTUtils.setAttribute(elem, attr, bolVal);
+        } else if (systemValue instanceof Integer) {
+            int intval = (Integer) systemValue;
+            GWTUtils.setAttribute(elem, attr, intval);
+        } else if (systemValue instanceof Double) {
+            double doubleval = (Double) systemValue;
+            GWTUtils.setAttribute(elem, attr, doubleval);
+        } else if (systemValue instanceof Long) {
+            String stirngval = systemValue.toString();
+            GWTUtils.setAttribute(elem, attr, stirngval);
+        } else {
+            GWTUtils.setAttributeJava(elem, attr, systemValue);
+        }
 
-		} else if (value instanceof JavaScriptObject) {
+    }
 
-			return value;
-
-		} else {
-			return value;
-		}
-	}
-	public static void setAttribute(JavaScriptObject elem, String attr, Object systemValue) {
-		// TODO this seems excesive, allow conversion strategy to set field
-		// value?
-		if (systemValue instanceof Boolean) {
-			boolean bolVal = (Boolean) systemValue;
-			GWTUtils.setAttribute(elem, attr, bolVal);
-		} else if (systemValue instanceof Integer) {
-			int intval = (Integer) systemValue;
-			GWTUtils.setAttribute(elem, attr, intval);
-		} else if (systemValue instanceof Double) {
-			double doubleval = (Double) systemValue;
-			GWTUtils.setAttribute(elem, attr, doubleval);
-		} else if (systemValue instanceof Long) {
-			String stirngval = systemValue.toString();
-			GWTUtils.setAttribute(elem, attr, stirngval);
-		} else {
-			GWTUtils.setAttributeJava(elem, attr, systemValue);
-		}
-
-	}
 }
