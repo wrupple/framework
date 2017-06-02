@@ -24,7 +24,7 @@ import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
@@ -64,7 +64,7 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		if(follow||context.getFollowReferences()){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 			for(FieldDescriptor field: fields){
-				if(field.isKey() && context.getCatalogManager().getPropertyValue(catalog, field, result, null, session)==null){
+				if(field.isKey() && context.getCatalogManager().getPropertyValue(field, result, null, session)==null){
 					Object foreignValue = context.getCatalogManager().getPropertyForeignKeyValue(catalog, field, result, session);
 					if(foreignValue!=null){
 						//if we got to this point, force the context to follow the reference graph

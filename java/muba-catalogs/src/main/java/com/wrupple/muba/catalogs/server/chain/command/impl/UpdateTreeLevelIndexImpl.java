@@ -16,10 +16,8 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
@@ -40,15 +38,15 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 		Session session = context.getCatalogManager().newSession(newe);
 		FieldDescriptor treeIndex = catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX);
 		FieldDescriptor childrenField = catalog.getFieldDescriptor(HasChildren.FIELD);
-		context.getCatalogManager().setPropertyValue(catalog, treeIndex, newe, 0, session);
+		context.getCatalogManager().setPropertyValue(treeIndex, newe, 0, session);
 
 		log.trace("[UpdateTreeLevelIndex]");
-		List<Object> newChildren = (List<Object>) context.getCatalogManager().getPropertyValue(catalog, childrenField,
+		List<Object> newChildren = (List<Object>) context.getCatalogManager().getPropertyValue(childrenField,
 				newe, null, session);
 		List<Object> oldChildren = (List<Object>) (olde == null ? null
-				: context.getCatalogManager().getPropertyValue(catalog, childrenField, olde, null, session));
+				: context.getCatalogManager().getPropertyValue(childrenField, olde, null, session));
 
-		long childrenTreeIndex = (Long) context.getCatalogManager().getPropertyValue(catalog, treeIndex, newe, null,
+		long childrenTreeIndex = (Long) context.getCatalogManager().getPropertyValue(treeIndex, newe, null,
 				session);
 		if (newChildren != null && !newChildren.isEmpty()) {
 			if (oldChildren != null) {
@@ -65,7 +63,7 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 				updateContext.setEntry(childId);
 				updateContext.getCatalogManager().getRead().execute(updateContext);
 				child = updateContext.getEntryResult();
-				context.getCatalogManager().setPropertyValue(catalog, treeIndex, child, childrenTreeIndex, session);
+				context.getCatalogManager().setPropertyValue(treeIndex, child, childrenTreeIndex, session);
 				// FIXME update bulk
 				updateContext.setEntryValue(child);
 				updateContext.getCatalogManager().getWrite().execute(updateContext);

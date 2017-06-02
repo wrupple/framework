@@ -27,7 +27,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
 import com.wrupple.muba.catalogs.server.service.QueryReaders;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton

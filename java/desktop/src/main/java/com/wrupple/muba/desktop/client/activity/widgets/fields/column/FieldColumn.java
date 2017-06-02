@@ -22,7 +22,7 @@ public class FieldColumn extends Column<JsCatalogEntry, Object> {
 
 	@Override
 	public Object getValue(JsCatalogEntry object) {
-		Object regreso = cs.convertToUserReadableValue(id, object,includeCriteria);
+		Object regreso = cs.convertToPresentableValue(id, object,includeCriteria);
 		return regreso;
 	}
 

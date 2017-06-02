@@ -51,7 +51,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
             fieldId = solutionVariable.getField();
             fieldValue = solutionVariable.getValue();
             log.debug("    {}={}",fieldId.getFieldId(),fieldValue);
-            catalog.setPropertyValue(solutionDescriptor,fieldId,solution,fieldValue,solutionWritingSession);
+            catalog.setPropertyValue(fieldId,solution,fieldValue,solutionWritingSession);
         }
 
         context.getExcecutionContext().setResult(solution);

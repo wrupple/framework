@@ -6,7 +6,7 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.server.chain.command.UserCommand;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 /**
  * 

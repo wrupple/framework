@@ -23,7 +23,7 @@ import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> implements QueryResultHandler {
 	protected Logger log = LoggerFactory.getLogger(QueryResultHandlerImpl.class);
@@ -125,7 +125,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				field = catalog.getFieldDescriptor(delegate.getFieldNameForColumn(columnName,false));
 				if (field != null) {
 					try {
-						cms.setPropertyValue(catalog, field, (CatalogEntry) result,
+						cms.setPropertyValue(field, (CatalogEntry) result,
 								delegate.handleColumnField(rs,field, field.getDataType(), i, format), session);
 					} catch (Exception e) {
 						throw new IllegalArgumentException(e);

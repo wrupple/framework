@@ -198,7 +198,7 @@ public class BPMValueChangeListenerImpl implements TaskValueChangeListener {
 		criteria.setOperator(operator);
 		String value = rule.substring(length, rule.length());
 
-		this.conversionService.convertToPersistentDatabaseValue(value, field,
+		this.conversionService.setAsPersistentValue(value, field,
 				criteria);
 		rewriteValue(field.getFieldId(), criteria);
 		return criteria;

@@ -103,7 +103,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 		}
 		assert attr != null : "Object Attribute cannot be null!";
 
-		return strategy.convertToUserReadableValue(attr, elem, includeCriteria);
+		return strategy.convertToPresentableValue(attr, elem, includeCriteria);
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 			return null;
 		}else{
 			Object fieldValue = field.getValue();
-			fieldValue = conversionService.convertToPersistentDatabaseValue(fieldValue, fdescriptor);
+			fieldValue = conversionService.convertToPersistentValue(fieldValue, fdescriptor);
 			return fieldValue;
 		}
 	}

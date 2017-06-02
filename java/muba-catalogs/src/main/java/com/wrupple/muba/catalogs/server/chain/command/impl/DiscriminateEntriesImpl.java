@@ -20,7 +20,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
@@ -67,7 +67,7 @@ public class DiscriminateEntriesImpl implements CatalogReadTransaction {
 			if (session == null) {
 				session = context.getCatalogManager().newSession(e);
 			}
-			disciminator = (Long) context.getCatalogManager().getPropertyValue(catalog, field, e, null, session);
+			disciminator = (Long) context.getCatalogManager().getPropertyValue(field, e, null, session);
 			discriminatedMap.put(disciminator, e);
 		}
 		// IN THE SAME ORDER AS DISCRIMINATORS, this only works for long primary

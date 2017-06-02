@@ -17,7 +17,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.PublishEvents;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class PublishEventsImpl  extends LookupCommand   implements PublishEvents {

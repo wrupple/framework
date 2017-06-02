@@ -21,7 +21,7 @@ import com.wrupple.muba.catalogs.domain.CatalogTrigger;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
@@ -169,7 +169,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 				token = properties.get(fieldId);
 				if (token != null) {
 					fieldValue = context.getCatalogManager().synthethizeFieldValue(token, context);
-					context.getCatalogManager().setPropertyValue(targetCatalog, field, synthesizedEntry, fieldValue, session);
+					context.getCatalogManager().setPropertyValue(field, synthesizedEntry, fieldValue, session);
 				}
 			}
 

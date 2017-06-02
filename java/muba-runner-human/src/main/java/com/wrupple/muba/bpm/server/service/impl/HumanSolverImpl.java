@@ -41,7 +41,7 @@ public class HumanSolverImpl implements Solver {
 
     @Override
     public void assignVariableValue(VariableDescriptor variable, String userInput) {
-        Object intputValue = access.convertToPersistentDatabaseValue(userInput, variable.getField());
+        Object intputValue = access.convertToPersistentValue(userInput, variable.getField());
         ((VariableDescriptorImpl)variable).setValue(intputValue);
     }
 }

@@ -12,7 +12,7 @@ import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 public abstract class AbstractComparationCommand implements Command {
 
@@ -45,8 +45,8 @@ public abstract class AbstractComparationCommand implements Command {
 					initialValue = ((HasAccesablePropertyValues) old).getPropertyValue(field.getFieldId());
 					finalValue = ((HasAccesablePropertyValues) neew).getPropertyValue(field.getFieldId());
 				} else {
-					initialValue = accesor.getPropertyValue(catalog, field, old, null, session);
-					finalValue = accesor.getPropertyValue(catalog, field, neew, null, session);
+					initialValue = accesor.getPropertyValue(field, old, null, session);
+					finalValue = accesor.getPropertyValue(field, neew, null, session);
 				}
 
 				if (!(initialValue == null && finalValue == null)

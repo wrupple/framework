@@ -11,7 +11,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class IncreaseVersionNumberImpl implements IncreaseVersionNumber {
@@ -30,13 +30,13 @@ public class IncreaseVersionNumberImpl implements IncreaseVersionNumber {
 		CatalogEntry updated = (CatalogEntry) context.getEntryValue();
 		Session session = context.getCatalogManager().newSession((CatalogEntry) old);
 		FieldDescriptor versionField = catalog.getFieldDescriptor(Versioned.FIELD);
-		Long version = (Long) context.getCatalogManager().getPropertyValue(catalog, versionField, (CatalogEntry) old, null, session);
+		Long version = (Long) context.getCatalogManager().getPropertyValue(versionField, (CatalogEntry) old, null, session);
 		if(version==null){
 			version=0l;
 		}else{
 			version++;
 		}
-		context.getCatalogManager().setPropertyValue(catalog, versionField, (CatalogEntry) updated, version, session);
+		context.getCatalogManager().setPropertyValue(versionField, (CatalogEntry) updated, version, session);
 		return CONTINUE_PROCESSING;
 	}
 

@@ -27,7 +27,7 @@ import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 
@@ -250,7 +250,7 @@ public abstract class DataJoiner implements Command {
 			if (field.isMultiple()) {
 				Collection<?> temp;
 				for (CatalogEntry e : results) {
-					temp = (Collection<?>) cms.getPropertyValue(catalog, field, e, null, session);
+					temp = (Collection<?>) cms.getPropertyValue(field, e, null, session);
 					if (temp != null) {
 						for (Object o : temp) {
 							if (o != null) {
@@ -264,7 +264,7 @@ public abstract class DataJoiner implements Command {
 
 				Object value;
 				for (CatalogEntry e : results) {
-					value = cms.getPropertyValue(catalog, field, e, null, session);
+					value = cms.getPropertyValue(field, e, null, session);
 					if (value != null) {
 						fieldValues.add(value);
 					}
@@ -477,7 +477,7 @@ public abstract class DataJoiner implements Command {
 						log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId());
 						fieldValue = null;
 					} else {
-						fieldValue = context.getCatalogManager().getPropertyValue(catalog, field, object, localizedObject, session);
+						fieldValue = context.getCatalogManager().getPropertyValue(field, object, localizedObject, session);
 					}
 					fieldContents.add(fieldValue);
 				}

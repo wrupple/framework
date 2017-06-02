@@ -24,7 +24,7 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataWritingCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implements JDBCDataWritingCommand{
@@ -74,8 +74,8 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().getPropertyValue(descriptor, field, updatedEntry, null, session);
-				context.getCatalogManager().setPropertyValue(descriptor, field, originalEntry, fieldValue, session);
+				fieldValue = context.getCatalogManager().getPropertyValue(field, updatedEntry, null, session);
+				context.getCatalogManager().setPropertyValue(field, originalEntry, fieldValue, session);
 				if (field.isMultiple() && !field.isEphemeral()) {
 					// also update (delete and create) and create multiple
 					// fields
@@ -120,7 +120,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		params.add(id);
 
 		if (descriptor.isVersioned()) {
-			Long version = (Long) context.getCatalogManager().getPropertyValue(descriptor, descriptor.getFieldDescriptor(Versioned.FIELD),
+			Long version = (Long) context.getCatalogManager().getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
 					context.getOldValue(), null, session);
 			builder.append(" && ");
 			builder.append(Versioned.FIELD);

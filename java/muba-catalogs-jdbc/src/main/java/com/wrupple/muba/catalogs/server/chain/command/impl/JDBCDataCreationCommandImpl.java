@@ -23,7 +23,7 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataCreationCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.SQLCompatibilityDelegate;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.JDBCSingleLongKeyResultHandler;
 
 @Singleton
@@ -94,7 +94,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {
-					fieldValue = context.getCatalogManager().getPropertyValue(catalogDescriptor, field, e, null, session);
+					fieldValue = context.getCatalogManager().getPropertyValue(field, e, null, session);
 					if (paramz.size() > 0) {
 						values.append(",");
 						builder.append(",");
@@ -162,7 +162,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && field.isMultiple() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().getPropertyValue(catalogDescriptor, field, e, null, session);
+				fieldValue = context.getCatalogManager().getPropertyValue(field, e, null, session);
 				if (fieldValue != null) {
 					foreignTableName = tableNames.getTableNameForCatalogField(context, catalogDescriptor, field);
 					if (foreignTableName != null) {

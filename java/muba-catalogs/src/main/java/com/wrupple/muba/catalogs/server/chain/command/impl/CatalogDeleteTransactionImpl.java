@@ -25,7 +25,7 @@ import com.wrupple.muba.catalogs.server.chain.command.DataDeleteCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Deleters;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
@@ -65,7 +65,7 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 			log.trace("Trashing results");
 
 			for (CatalogEntry originalEntry : originalEntries) {
-				context.getCatalogManager().setPropertyValue(catalog, trashableField, originalEntry, true, session);
+				context.getCatalogManager().setPropertyValue(trashableField, originalEntry, true, session);
 				context.setEntry(originalEntry.getId());
 				context.setEntryValue(originalEntry);
 				update.execute(context);

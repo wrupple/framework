@@ -15,7 +15,7 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryAssembler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 
@@ -103,7 +103,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 							// entry to put field value in
 							newEntry = regreso.get(j);
 							value = fieldContents.get(j);
-							cms.setPropertyValue(catalog, field, newEntry, value, session);
+							cms.setPropertyValue(field, newEntry, value, session);
 						}
 					}
 				}

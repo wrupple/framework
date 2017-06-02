@@ -13,18 +13,20 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyConstraintValidator;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 
 public class CatalogKeyConstraintValidatorImpl implements CatalogKeyConstraintValidator {
 
 	private final SystemCatalogPlugin cms;
 	private final Provider<ExcecutionContext> exp;
+	private final ObjectNativeInterface nativeInterface;
 	private String foreignCatalog;
 	private boolean unique;
 
 	@Inject
-	public CatalogKeyConstraintValidatorImpl(Provider<ExcecutionContext> exp, SystemCatalogPlugin cms) {
+	public CatalogKeyConstraintValidatorImpl(Provider<ExcecutionContext> exp, SystemCatalogPlugin cms, ObjectNativeInterface nativeInterface) {
 		this.exp = exp;
-
+		this.nativeInterface=nativeInterface;
 		this.cms = cms;
 	}
 
@@ -45,7 +47,7 @@ public class CatalogKeyConstraintValidatorImpl implements CatalogKeyConstraintVa
 			read.setFilter(null);
 			read.setEntry(null);
 			read.setCatalog(foreignCatalog);
-			if (unique || value instanceof Collection) {
+			if (unique || nativeInterface.isCollection(value)) {
 				Collection<Object> colection = (Collection<Object>) value;
 				Set<Object> uniqueCollection = new HashSet<Object>();
 				for (Object p : colection) {

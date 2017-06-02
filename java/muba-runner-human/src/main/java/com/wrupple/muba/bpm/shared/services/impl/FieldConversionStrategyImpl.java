@@ -2,9 +2,11 @@ package com.wrupple.muba.bpm.shared.services.impl;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bpm.shared.services.FieldAccessStrategy;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,84 +18,86 @@ import java.util.Collection;
 @Singleton
 public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
-    private final FieldAccessStrategy access;
+    private final SystemCatalogPlugin access;
+    private final ObjectNativeInterface nativeInterface;
+
 
     @Inject
-    public FieldConversionStrategyImpl(FieldAccessStrategy access) {
+    public FieldConversionStrategyImpl(SystemCatalogPlugin access, ObjectNativeInterface nativeInterface) {
         this.access = access;
+        this.nativeInterface = nativeInterface;
     }
 
 
     @Override
-    public Object convertToUserReadableValue(String attr, CatalogEntry elem, List<FilterCriteria> includeCriteria) {
-        return access.userReadableValue(elem, attr, includeCriteria);
+    public Object convertToPresentableValue(String attr, CatalogEntry elem, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session) {
+        return access.userReadableValue(elem, attr, includeCriteria,session);
     }
 
     @Override
-    public void convertToPersistentDatabaseValue(Object value, FieldDescriptor field, CatalogEntry jso) {
-        String fieldId = field.getFieldId();
+    public void setAsPersistentValue(Object value, FieldDescriptor field, CatalogEntry jso, FieldAccessStrategy.Session session) throws ReflectiveOperationException {
+
         int dataType = field == null ? -1 : field.getDataType();
         if (value == null) {
-            access.deleteAttribute(jso, fieldId);
-        } else if (value instanceof Collection) {
-            Collection<Object> collection = (Collection<Object>) value;
-            access.setAttribute(jso, fieldId, access.convertToJavaScriptArray(collection.toArray()));
+            access.deleteAttribute(jso, field.getFieldId(),session);
+        } else if (nativeInterface.isCollection(value)) {
+            access.setPropertyValue(field,jso,nativeInterface.convertToNativeArray((Collection) value),session);
         } else if (value instanceof Number) {
             Number v = (Number) value;
             if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
-                access.setAttribute(jso, fieldId, v.intValue());
+                access.setAttribute(jso, field, v.intValue(),session);
             } else {
-                access.setAttribute(jso, fieldId, v.doubleValue());
+                access.setAttribute(jso, field, v.doubleValue(),session);
             }
         } else if (value instanceof String) {
             String v = (String) value;
             v = getSendableString(v);
             if (v == null) {
-                access.deleteAttribute(jso, fieldId);
+                access.deleteAttribute(jso, field.getFieldId(),session);
             }else{
                 if(field.isMultiple()){
-                    access.setAttribute(jso, fieldId, access.eval(v));
+                    access.setPropertyValue(field,jso,nativeInterface.eval(v),session);
                 }else{
                     try {
                         switch (dataType) {
                             case CatalogEntry.BOOLEAN_DATA_TYPE:
-                                access.setAttribute(jso, fieldId, "1".equals(v) || Boolean.parseBoolean(v));
+                                access.parseSetBoolean(jso, field, v,session);
                                 break;
                             case CatalogEntry.INTEGER_DATA_TYPE:
                                 if(field.isKey()){
-                                    //KEYS ARE ALWAYS SUPPOSED TO BE STRINGS CLIENT-SIDE
-                                    access.setAttribute(jso, fieldId, v);
+                                    //TODO distinguish client and server runtime cus KEYS ARE ALWAYS SUPPOSED TO BE STRINGS CLIENT-SIDE,
+                                    access.setPropertyValue(field,jso,v,session);
+                                    //access.setAttribute(jso, fieldId, v);
                                 }else{
-                                    access.parseSetInteger(v,jso,fieldId);
+                                    access.parseSetInteger(v,jso,field,session);
                                 }
                                 break;
                             case CatalogEntry.NUMERIC_DATA_TYPE:
-                                access.parseSetDouble(v,jso,fieldId);
+                                access.parseSetDouble(v,jso,field,session);
                                 break;
                             default:
-                                access.setAttribute(jso, fieldId, v);
+                                access.setPropertyValue(field,jso,v,session);
                         }
                     } catch (Exception e) {
-                        access.setAttribute(jso, fieldId, v);
+                        access.setPropertyValue(field,jso,v,session);
+                        //access.setAttribute(jso, fieldId, v);
                     }
                 }
             }
 
         } else {
-
-            access.setAttribute(jso, fieldId, value);
-
+            access.setPropertyValue(field,jso,value,session);
+            //access.setAttribute(jso, fieldId, value);
         }
     }
 
     @Override
-    public Object convertToPersistentDatabaseValue(Object value, FieldDescriptor field) {
+    public Object convertToPersistentValue(Object value, FieldDescriptor field) {
         int dataType = field == null ? -1 : field.getDataType();
         if (value == null) {
             return null;
-        } else if (value instanceof Collection) {
-            Collection<Object> collection = (Collection<Object>) value;
-            return access.convertToJavaScriptArray(collection.toArray());
+        } else if (nativeInterface.isCollection(value)) {
+            return nativeInterface.convertToNativeArray((Collection)value);
         } else if (value instanceof Number) {
             Number v = (Number) value;
             if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
@@ -125,10 +129,6 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
             } catch (Exception e) {
                 return v;
             }
-
-        } else if (access.isSystemObject(value)) {
-
-            return value;
 
         } else {
             return value;

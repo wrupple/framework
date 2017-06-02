@@ -119,7 +119,7 @@ public class StartEditTransaction extends AbstractStartUserTransaction {
 			
 		}-*/;
 		private void setValue(JsFieldDescriptor field, String fieldId, JsCatalogEntry entry, String rawValue) {
-			conversion.convertToPersistentDatabaseValue(rawValue, field, entry);
+			conversion.setAsPersistentValue(rawValue, field, entry);
 		}
 
 	}

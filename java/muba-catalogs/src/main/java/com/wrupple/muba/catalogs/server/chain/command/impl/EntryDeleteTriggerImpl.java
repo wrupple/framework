@@ -16,7 +16,7 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
@@ -52,7 +52,7 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 
 				trashContext.setAction(CatalogActionRequest.CREATE_ACTION);
 			}
-			trashed = (Boolean) context.getCatalogManager().getPropertyValue(catalog, field, e, null, session);
+			trashed = (Boolean) context.getCatalogManager().getPropertyValue(field, e, null, session);
 			if (trashed != null && trashed) {
 				Trash trashItem = trashp.get();
 				trashItem.setName(e.getName());

@@ -24,7 +24,7 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
@@ -131,7 +131,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 					if (session == null) {
 						session = context.getCatalogManager().newSession(r);
 					}
-					context.getCatalogManager().setPropertyValue(catalogDescriptor, field, r, fieldValues, session);
+					context.getCatalogManager().setPropertyValue(field, r, fieldValues, session);
 				}
 			}
 		}

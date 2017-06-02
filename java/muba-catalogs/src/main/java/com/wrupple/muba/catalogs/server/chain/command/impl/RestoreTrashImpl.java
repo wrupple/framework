@@ -18,7 +18,7 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
@@ -104,7 +104,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			context.setEntry(entryId);
 			context.getCatalogManager().getRead().execute(context);
 			CatalogEntry trashedEntry = context.getEntryResult();
-			context.getCatalogManager().setPropertyValue(descriptor, trashField, trashedEntry, false, session);
+			context.getCatalogManager().setPropertyValue(trashField, trashedEntry, false, session);
 			context.setEntryValue(trashedEntry);
 			context.getCatalogManager().getWrite().execute(context);
 

@@ -1099,13 +1099,6 @@ public class GWTUtils {
 		return string.trim();
 	}
 
-	protected Object getBoolanValue(boolean bool, List<FilterCriteria> includeCriteria) {
-		return bool;
-	}
-
-	protected Object getJSOValue(JavaScriptObject jso, List<FilterCriteria> includeCriteria) {
-		return jso;
-	}
 
 	protected Object getArrayValue(JsArray<JavaScriptObject> arr, List<FilterCriteria> includeCriteria) {
 		// FIXME use the same (more tested) mechanism as

@@ -19,18 +19,18 @@ import com.wrupple.vegetate.domain.FilterCriteria;
 public class GWTFieldConversionStrategyImpl implements FieldConversionStrategy {
 
 	@Override
-	public Object convertToUserReadableValue(String attr, JavaScriptObject elem, List<FilterCriteria> includeCriteria) {
+	public Object convertToPresentableValue(String attr, JavaScriptObject elem, List<FilterCriteria> includeCriteria) {
 		Object userVersion = userReadableValue(elem, attr, includeCriteria);
 		return userVersion;
 	}
 
 	@Override
-	public Object convertToUserReadableValue(JSONValue value) {
+	public Object convertToPresentableValue(JSONValue value) {
 		return userReadableValue(value, null);
 	}
 
 	@Override
-	public void convertToPersistentDatabaseValue(Object value, FieldDescriptor field, JavaScriptObject jso) {
+	public void setAsPersistentDatabaseValue(Object value, FieldDescriptor field, JavaScriptObject jso) {
 		String fieldId = field.getFieldId();
 		int dataType = field == null ? -1 : field.getDataType();
 		if (value == null) {

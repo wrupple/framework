@@ -12,7 +12,7 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTimelineEventDiscriminator {
@@ -35,8 +35,8 @@ public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTim
 		CatalogEntry node = (CatalogEntry) context.getEntryValue();
 		Session session = context.getCatalogManager().newSession(node);
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		context.getCatalogManager().setPropertyValue(catalog, getDiscriminatorField(), node, node.getId(), session);
-		context.getCatalogManager().setPropertyValue(catalog, getCatalogField(), node, catalog.getId(), session);
+		context.getCatalogManager().setPropertyValue(getDiscriminatorField(), node, node.getId(), session);
+		context.getCatalogManager().setPropertyValue(getCatalogField(), node, catalog.getId(), session);
 		return CONTINUE_PROCESSING;
 	}
 

@@ -299,7 +299,7 @@ public class CsvRecordFieldWriter implements State<FieldImportData, FieldImportD
 								 * a search criteria
 								 */
 								rawForeignValue = parameter.getRecord().get(mapping.getColumn());
-								value = conversionService.convertToPersistentDatabaseValue(rawForeignValue, fieldGroupMember);
+								value = conversionService.convertToPersistentValue(rawForeignValue, fieldGroupMember);
 								if (value == null) {
 									// ignore
 								} else {
@@ -431,13 +431,13 @@ public class CsvRecordFieldWriter implements State<FieldImportData, FieldImportD
 			if (parameter.getRawValues() == null) {
 				GWTUtils.setAttributeJava(parameter.getEntry(), field.getFieldId(), null);
 			} else {
-				conversionService.convertToPersistentDatabaseValue(parameter.getRawValues(), field, parameter.getEntry());
+				conversionService.setAsPersistentValue(parameter.getRawValues(), field, parameter.getEntry());
 			}
 		} else {
 			if (rawValue == null) {
 				GWTUtils.setAttributeJava(parameter.getEntry(), field.getFieldId(), null);
 			} else {
-				conversionService.convertToPersistentDatabaseValue(rawValue, field, parameter.getEntry());
+				conversionService.setAsPersistentValue(rawValue, field, parameter.getEntry());
 			}
 		}
 		onDone.setResultAndFinish(parameter);

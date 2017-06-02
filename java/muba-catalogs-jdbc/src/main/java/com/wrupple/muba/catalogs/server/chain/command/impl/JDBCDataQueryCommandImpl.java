@@ -28,7 +28,7 @@ import com.wrupple.muba.catalogs.server.chain.command.JDBCDataQueryCommand;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl.MultipleFieldResultsHandler;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 @Singleton
 public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
@@ -200,7 +200,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 						// statements??
 						fieldValues = runner.query(queryL, handler, o.getId());
 						log.trace("[DB results for {}] {}", o.getId(), fieldValues == null ? 0 : fieldValues.size());
-						context.getCatalogManager().setPropertyValue(catalogDescriptor, field, o, fieldValues, session);
+						context.getCatalogManager().setPropertyValue(field, o, fieldValues, session);
 					}
 				}
 

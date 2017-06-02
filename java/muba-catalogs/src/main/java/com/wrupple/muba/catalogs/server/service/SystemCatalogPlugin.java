@@ -11,36 +11,15 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 
-public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAnnotationsDictionary,CatalogKeyServices {
+public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAnnotationsDictionary,CatalogKeyServices,FieldAccessStrategy {
 	 static final String DOMAIN_METADATA = "Namespace"+CatalogDescriptor.CATALOG_ID;
-
-		static final String SOURCE_CONTEXT = "context";
 		//necesaary to explicitly point to context? something.context.old
 		static final String SOURCE_OLD = ContextEvaluationService.NAME+".old"+CatalogEntry.FOREIGN_KEY;
 
-		public interface Session {
-			void resample(CatalogEntry sample);
-		}
 
-		Session newSession(CatalogEntry sample);
-
-		Object getPropertyValue(CatalogDescriptor catalog, FieldDescriptor field, CatalogEntry entry,
-				DistributiedLocalizedEntry localizedObject, Session session) throws ReflectiveOperationException;
-
-		void setPropertyValue(CatalogDescriptor catalog, FieldDescriptor field, CatalogEntry entry, Object value,
-				Session session) throws ReflectiveOperationException;
-
-		public CatalogEntry synthesize(CatalogDescriptor catalog) throws ReflectiveOperationException;
-
-		CatalogEntry catalogCopy(CatalogDescriptor catalog, CatalogEntry entry) throws ReflectiveOperationException;
-
-		boolean isWriteableProperty(String string, CatalogEntry sample, Session session);
-
-		void setPropertyValue(CatalogDescriptor mainCatalog, String reservedField, CatalogEntry e, Object value,
-				Session session) throws Exception;
-
-		Object getAllegedParentId(CatalogEntry result, Session session);
+		Object getAllegedParentId(CatalogEntry result, FieldAccessStrategy.Session session);
 
 		/**
 		 * @param source
@@ -118,5 +97,6 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 							   Object fieldValue,CatalogEntry parent, Session session) throws Exception;
 
 		boolean isJoinableValueField(FieldDescriptor field);
+
 
 }
