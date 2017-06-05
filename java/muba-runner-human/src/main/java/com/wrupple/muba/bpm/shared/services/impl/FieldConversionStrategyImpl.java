@@ -41,7 +41,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
         if (value == null) {
             access.deleteAttribute(jso, field.getFieldId(),session);
         } else if (nativeInterface.isCollection(value)) {
-            access.setPropertyValue(field,jso,nativeInterface.convertToNativeArray((Collection) value),session);
+            access.setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value),session);
         } else if (value instanceof Number) {
             Number v = (Number) value;
             if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
@@ -97,7 +97,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
         if (value == null) {
             return null;
         } else if (nativeInterface.isCollection(value)) {
-            return nativeInterface.convertToNativeArray((Collection)value);
+            return nativeInterface.unwrapAsNativeCollection((Collection)value);
         } else if (value instanceof Number) {
             Number v = (Number) value;
             if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {

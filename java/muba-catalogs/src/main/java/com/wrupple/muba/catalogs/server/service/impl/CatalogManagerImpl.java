@@ -79,7 +79,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	private LargeStringFieldDataAccessObject lsdao;
 	private Provider<PersistentCatalogEntity> factory;
 	private final Pattern pattern;
-	private final PropertyUtilsBean bean;
 
 	///////
 
@@ -142,7 +141,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		this.lsdao = lsdao;
 		this.pattern = pattern;
 		this.nativeInterface = nativeInterface;
-		bean = new PropertyUtilsBean();
 		this.factory = ffactory;
 		//
 		this.builder = builder;
@@ -1027,69 +1025,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		}
 	}
 
-	private class FieldAccessSession implements Session {
-		boolean accesible;
 
-		@Override
-		public void resample(CatalogEntry sample) {
-			isSystemObject(sample);
-		}
 
-		// use PropertyUtilsBean (bean utils) and dump srping
-		private Object getPropertyValue2(Object bean, String property) throws IntrospectionException,
-				IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-			Class<?> beanClass = bean.getClass();
-			PropertyDescriptor propertyDescriptor = getPropertyDescriptor(beanClass, property);
-			if (propertyDescriptor == null) {
-				throw new IllegalArgumentException("No such property " + property + " for " + beanClass + " exists");
-			}
-
-			Method readMethod = propertyDescriptor.getReadMethod();
-			if (readMethod == null) {
-				throw new IllegalStateException("No getter available for property " + property + " on " + beanClass);
-			}
-			return readMethod.invoke(bean);
-		}
-
-		private PropertyDescriptor getPropertyDescriptor(Class<?> beanClass, String propertyname)
-				throws IntrospectionException {
-			PropertyDescriptor propertyDescriptor = getDescriptorFromCache(beanClass, propertyname);
-
-			if (propertyDescriptor == null) {
-				BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
-				PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-
-				for (int i = 0; i < propertyDescriptors.length; i++) {
-					PropertyDescriptor currentPropertyDescriptor = propertyDescriptors[i];
-					if (currentPropertyDescriptor.getName().equals(propertyname)) {
-						propertyDescriptor = currentPropertyDescriptor;
-					}
-
-				}
-			}
-
-			return propertyDescriptor;
-		}
-
-		private PropertyDescriptor getDescriptorFromCache(Class<?> beanClass, String propertyname) {
-			// FIXME cache (in outer class)
-			return null;
-		}
-
-		private Object getPropertyValue(CatalogEntry object, String fieldId)
-				throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-			return bean.getProperty(object, fieldId);
-		}
-
-	}
-
-	@Override
-	public Session newSession(CatalogEntry sample) {
-		FieldAccessSession session = new FieldAccessSession();
-		session.resample(sample);
-		return session;
-	}
 
 	@Override
 	public Object getPropertyValue(FieldDescriptor field, CatalogEntry object,
@@ -1123,91 +1060,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		return value;
 	}
 
-	private Object valuedoReadProperty(String fieldId, FieldAccessSession session, CatalogEntry object,
-			boolean silentFail) {
-		if (session.accesible) {
-			try {
-				return doGetAccesibleProperty(object, fieldId);
-			} catch (ClassCastException e) {
-				if (silentFail) {
-					return null;
-				}
-				try {
-					log.debug("Catalog Property Session Changed State");
-					session.accesible = false;
-					return goBeanGet(session, object, fieldId);
-				} catch (IllegalArgumentException ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				} catch (IllegalAccessException ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				} catch (InvocationTargetException ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				} catch (IntrospectionException ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				} catch (NoSuchMethodException ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				}
-			}
-
-		} else {
-			try {
-				return goBeanGet(session, object, fieldId);
-			} catch (IllegalArgumentException e) {
-				if (silentFail) {
-					return null;
-				}
-				try {
-					log.debug("Catalog Property Session Changed State");
-					session.accesible = true;
-					return doGetAccesibleProperty(object, fieldId);
-				} catch (Exception ee) {
-
-					log.debug("Access", e);
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				}
-			} catch (IllegalAccessException e) {
-				if (silentFail) {
-					return null;
-				}
-				try {
-					session.accesible = true;
-					return doGetAccesibleProperty(object, fieldId);
-				} catch (Exception ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				}
-			} catch (InvocationTargetException e) {
-				if (silentFail) {
-					return null;
-				}
-				try {
-					session.accesible = true;
-					return doGetAccesibleProperty(object, fieldId);
-				} catch (Exception ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				}
-			} catch (IntrospectionException e) {
-				if (silentFail) {
-					return null;
-				}
-				try {
-					session.accesible = true;
-					return doGetAccesibleProperty(object, fieldId);
-				} catch (Exception ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				}
-			} catch (NoSuchMethodException e) {
-				if (silentFail) {
-					return null;
-				}
-				try {
-					session.accesible = true;
-					return doGetAccesibleProperty(object, fieldId);
-				} catch (Exception ee) {
-					throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-				}
-			}
-		}
-	}
 
 	@Override
 	public void setPropertyValue(FieldDescriptor field, CatalogEntry object, Object value,
@@ -1234,16 +1086,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		entry.setPropertyValue(value, fieldId);
 	}
 
-	private Object doGetAccesibleProperty(CatalogEntry object, String fieldId) {
-		HasAccesablePropertyValues entry = (HasAccesablePropertyValues) object;
-		return entry.getPropertyValue(fieldId);
-	}
-
-	private Object goBeanGet(FieldAccessSession session, CatalogEntry object, String fieldId)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IntrospectionException,
-			NoSuchMethodException {
-		return session.getPropertyValue(object, fieldId);
-	}
 
 	private void doBeanSet(FieldAccessSession session, CatalogEntry object, String fieldId, Object value)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -1498,33 +1340,19 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
     @Override
-    public Object eval(String v) {
-        throw new RuntimeException("safe string evaluation not supported un Java");
-    }
-
-    @Override
-    public boolean isSystemObject(Object sample) {
-        if (sample == null) {
-            return true;
-        } else {
-            return sample instanceof HasAccesablePropertyValues;
-        }
-    }
-
-    @Override
     public Object userReadableValue(CatalogEntry elem, String attr, List<FilterCriteria> includeCriteria, Session session) {
-	    Object value =  valuedoReadProperty(attr, (FieldAccessSession) session,elem,false);
+	    Object value =  nativeInterface.getWrappedValue(attr, session,elem,false);
         if (value == null) {
             return null;
         } else if (nativeInterface.isCollection(value)) {
-            return getArrayValue(value, includeCriteria);
+            return nativeInterface.getUserReadableCollection(value, includeCriteria);
         } else if (nativeInterface.isBoolean(value)) {
             return value;
         } else if (nativeInterface.isNumber(value)) {
             //JSONNumber jsonNumber = value.isNumber();
             //return jsonNumber.toString();
-            return nativeInterface.numberStringRepresentation(value);
-        } else if (nativeInterface.isWrappedObject()) {
+            return nativeInterface.formatNumberValue(value);
+        } else if (nativeInterface.isWrappedObject(value)) {
 			return value;
 		} else {
             try {
@@ -1536,30 +1364,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
         }
     }
 
-    private Object getArrayValue(Object arr, List<FilterCriteria> includeCriteria) {
-        // FIXME use the same (more tested) mechanism as
-        // IncrementalCachingRetrivingService to test filters
-        if (includeCriteria == null) {
-            return arr;
-        } else {
-            if (arr == null) {
-                return null;
-            } else {
-                JavaScriptObject o;
-                boolean match;
-                JsArray<JavaScriptObject> regreso = JavaScriptObject.createArray().cast();
-                for (int i = 0; i < arr.length(); i++) {
-                    o = arr.get(i);
-                    match = matchesCriteria(o, includeCriteria);
-                    if (match) {
-                        // include
-                        regreso.push(o);
-                    }
-                }
-                return regreso;
-            }
-        }
-    }
+
 
 
 }
