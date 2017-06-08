@@ -1188,7 +1188,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
 	public Object getAllegedParentId(CatalogEntry result, Session session) {
-		return valuedoReadProperty(this.ancestorIdField, (FieldAccessSession) session, result, false);
+		return objectNativeInterface.valuedoReadProperty(this.ancestorIdField, (FieldAccessSession) session, result, false);
 	}
 
 	@Override

@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ *
+ * implemented from a mix of GWTUtils and VegetateStorageUnit and WruppleCatalogEvaluationDelegate
  * Created by rarl on 29/05/17.
  */
 public interface FieldAccessStrategy {

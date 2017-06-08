@@ -3,14 +3,15 @@ package com.wrupple.muba.catalogs.shared.service.impl;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogManagerImpl;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -30,8 +31,14 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
 
     protected static final Logger log = LoggerFactory.getLogger(JavaObjectNativeInterface.class);
+
+
+    private final Provider<FilterNativeInterface> filterer;
+    private final PropertyUtilsBean bean;
+
     @Inject
-    public JavaObjectNativeInterface() {
+    public JavaObjectNativeInterface(Provider<FilterNativeInterface> filterer) {
+        this.filterer = filterer;
         this.bean  = new PropertyUtilsBean();
     }
 
@@ -100,8 +107,6 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
 
-
-    private final PropertyUtilsBean bean;
 
 
     @Override
@@ -267,7 +272,6 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
     @Override
     public Object getUserReadableCollection(Object arro, List<FilterCriteria> includeCriteria) {
-
         if (includeCriteria == null) {
             return arro;
         } else {
@@ -280,9 +284,10 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
                 boolean match;
                 //JsArray<JavaScriptObject> regreso = JavaScriptObject.createArray().cast();
                 List<Object> regreso = new ArrayList<>(arr.size());
+                FieldAccessStrategy.Session session = new FieldAccessSession();
                 for (int i = 0; i < arr.size(); i++) {
                     o = arr.get(i);
-                    match = matchesCriteria(o, includeCriteria);
+                    match = matchesCriteria(o, includeCriteria, session);
                     if (match) {
                         // include
                         regreso.add(o);
@@ -295,9 +300,9 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
 
 
-    private boolean matchesCriteria(Object o, List<FilterCriteria> includeCriteria) {
+    private boolean matchesCriteria(Object o, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session ) {
         for (FilterCriteria criteria : includeCriteria) {
-            if (matches( criteria, o)) {
+            if (matches( criteria, o,session)) {
                 return true;
             }
         }
@@ -306,17 +311,17 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
 
     // TRUE IF MATCH AGINST AT LEAST ONE CRITERIA
-    public boolean matches(FilterCriteria criteria, Object o) {
+    private boolean matches(FilterCriteria criteria, Object o, FieldAccessStrategy.Session session) {
         //JsArrayMixed values = criteria.getValuesArray();
         List<Object> values = criteria.getValues();
         //JsArrayString path = criteria.getPathArray();
-
+        FilterNativeInterface delterDelegate = filterer.get();
         List<String> path = criteria.getPath();
         if (path != null && values != null) {
             if (values.size() > 0 && path.size() > 0) {
                 String pathing = path.get(0);
                 for (int i = 0; i < values.size(); i++) {
-                    if (jsMatch(pathing, o, values, i)) {
+                    if (delterDelegate.jsMatch(pathing, o, values, i,session)) {
                         return true;
                     }
                 }
@@ -325,26 +330,5 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
         return false;
     };
 
-    private  boolean jsMatch(String pathing, Object o, List<Object> values, int i){
-         /*-{
-		var rawValue = o[pathing];
-		var string = values[i];
-		if (string != null && rawValue != null) {
-			var equals = rawValue == string;
-			return equals;
-		}
-		return false;
 
-	}-*/;
-        // FIXME use the same (more tested) mechanism as
-        // IncrementalCachingRetrivingService to test filters
-        var rawValue = o[pathing];
-        var string = values[i];
-        if (string != null && rawValue != null) {
-            var equals = rawValue == string;
-            return equals;
-        }
-        return false;
-
-    }
 }

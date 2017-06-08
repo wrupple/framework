@@ -15,6 +15,9 @@ import java.util.List;
 
 import java.util.Collection;
 
+/**
+ * Implemented from GWTFieldConversionStrategyImpl
+ */
 @Singleton
 public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
