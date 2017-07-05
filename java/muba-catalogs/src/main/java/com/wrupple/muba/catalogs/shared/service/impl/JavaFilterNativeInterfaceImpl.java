@@ -7,12 +7,14 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
-import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
-/**
+/** Source WruppleCatalogEvaluationDelegate:matchAgainstFilters
+ * VegetateStorageUnit:getTranslatedFilterValues
  * Created by rarl on 7/06/17.
  */
 public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
@@ -36,13 +38,14 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
 		return false;
 
 	}-*/;
-        // FIXME use the same (more tested) mechanism as
-        // VegetateStorageUnitImpl to test filters
-        var rawValue = o[pathing];
-        var string = values[i];
+
+        //var rawValue = o[pathing];
+        Object rawValue = oni.getPropertyValue(o,pathing,session);
+        //var string = values[i];
+        Object string = values.get(valueIndex);
         if (string != null && rawValue != null) {
-            var equals = rawValue == string;
-            return equals;
+
+            return rawValue.equals(string);
         }
         return false;
 
@@ -77,7 +80,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
                 }
                 if (fieldDescriptor != null) {
 
-                    if (!mathAgainstCriteria(entry, criteria, fieldDescriptor)) {
+                    if (!mathAgainstCriteria(entry, criteria, fieldDescriptor,session)) {
                         // GWT.log(" FAILED ON CRITERIA  : "+new
                         // JSONObject((JavaScriptObject)criteria).toString());
                         return false;
@@ -89,7 +92,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
     }
 
 
-    private boolean mathAgainstCriteria(CatalogEntry entry, FilterCriteria criteria, FieldDescriptor fieldDescriptor) {
+    private boolean mathAgainstCriteria(CatalogEntry entry, FilterCriteria criteria, FieldDescriptor fieldDescriptor, FieldAccessStrategy.Session session) {
         String operator = criteria.getOperator();
         List<String> fieldTokens = criteria.getPath();
         List<Object> values = criteria.getValues();
@@ -101,7 +104,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
         boolean nested = fieldTokens.size() > 1 && (fieldDescriptor.isEphemeral() || fieldDescriptor.isKey());
         for (int i = 0; i < valuesSize; i++) {
             // perform or
-            match = matchRecursive(entry, fieldTokens, operator, values, 0, i, nested, mustMatchAll);
+            match = matchRecursive(entry, fieldTokens, operator, values, 0, i, nested, mustMatchAll,session);
             if (match) {
                 if (mustMatchAll) {
                     matchedAtLeastOne = true;
@@ -119,29 +122,31 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
     }
 
     private boolean matchRecursive(CatalogEntry entry, List<String> fieldTokens, String operator, List<Object> values, int pathTokenIndex,
-                                   int filterIndex, boolean nested, boolean mustMatchAll) {
+                                   int filterIndex, boolean nested, boolean mustMatchAll, FieldAccessStrategy.Session session) {
         String field = fieldTokens.get(pathTokenIndex);
 
         // is last token
         if (pathTokenIndex == (fieldTokens.size() - 1)) {
-            boolean matched = matchFinal(entry, field, operator, values, filterIndex);
+            boolean matched = matchFinal(entry, field, operator, values, filterIndex, session);
             // GWT.log(JSOHelper.getAttribute(entry, field)+" == "+new
             // JSONObject(values)+"@"+filterIndex+"  IS  "+matched);
             return matched;
         }
         int newPathTokenIndex = pathTokenIndex + 1;
-        JavaScriptObject nestedEntry = GWTUtils.getAttributeAsJavaScriptObject(entry, field);
+        //Object nestedEntry = GWTUtils.getAttributeAsJavaScriptObject(entry, field);
+        Object nestedEntry = (CatalogEntry) oni.getPropertyValue(entry,field,session);
         if (nestedEntry == null) {
             // establish a criteria for null values along the path?
             return false;
         }
-        if (GWTUtils.isArray(nestedEntry)) {
-            JsArray<JavaScriptObject> nestedArray = nestedEntry.cast();
+
+        if (nestedEntry instanceof List) {
+            List<Object> nestedArray = (List<Object>)nestedEntry;
             boolean match;
             boolean matchedAtLeastOne = false;
-            for (int i = 0; i < nestedArray.length(); i++) {
-                nestedEntry = nestedArray.get(i);
-                match = matchRecursive(nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll);
+            for (int i = 0; i < nestedArray.size(); i++) {
+                nestedEntry = (CatalogEntry) nestedArray.get(i);
+                match = matchRecursive((CatalogEntry) nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll, session);
                 if (match) {
                     if (mustMatchAll) {
                         matchedAtLeastOne = true;
@@ -156,44 +161,51 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
             }
             return matchedAtLeastOne;
         } else {
-            return matchRecursive(nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll);
+            return matchRecursive((CatalogEntry) nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll, session);
         }
     }
 
 
-    private native boolean matchFinal(JavaScriptObject entry, String field, String operator, JavaScriptObject values, int filterIndex) /*-{
-		var field;
-		var value = values[filterIndex];
-		var comparableValue = entry[field];
+    private boolean matchFinal(Object entry, String field, String operator, List<Object> values, int filterIndex, FieldAccessStrategy.Session session) {
+
+		//var value = values[filterIndex];
+        Object value = values.get(filterIndex);
+		Object comparableValue = oni.getPropertyValue(entry,field,session);
 
 		if (comparableValue == null) {
-			if ("null" == value) {
+			if ("null".equals(value)) {
 				return true;
 			} else {
 				return false;
 			}
 		} else {
 			if ("==" == operator) {
-				return comparableValue == value;
+				return comparableValue .equals( value);
 			} else if ("!=" == operator) {
 				return comparableValue != value;
 			} else if (">" == operator) {
-				return comparableValue > value;
+				//return comparableValue > value;
+                return ((Comparable)comparableValue).compareTo(value)>0;
 			} else if ("<" == operator) {
-				return comparableValue < value;
+				//return comparableValue < value;
+                return ((Comparable)comparableValue).compareTo(value)<0;
 			} else if (">=" == operator) {
-				return comparableValue >= value;
+				//return comparableValue >= value;
+                return ((Comparable)comparableValue).compareTo(value)>=0;
 			} else if ("<=" == operator) {
-				return comparableValue <= value;
-			} else if (operator == @com.wrupple.vegetate.domain.FilterData::LIKE
-					|| operator == @com.wrupple.vegetate.domain.FilterData::REGEX
-					|| operator == @com.wrupple.vegetate.domain.FilterData::STARTS
-					|| operator == @com.wrupple.vegetate.domain.FilterData::ENDS) {
+				//return comparableValue <= value;
+                return ((Comparable)comparableValue).compareTo(value)<=0;
+			} else if (operator.equals(FilterData.LIKE)
+					|| operator .equals( FilterData.REGEX)
+					|| operator .equals( FilterData.STARTS)
+					|| operator .equals( FilterData.ENDS)) {
 				//expects elements to have been translated into regular expressions
-				return value.test(comparableValue);
+				//return value.test(comparableValue);
+
+                return((Pattern)value).matcher((CharSequence) value).find();
 			}
 			return false;
 		}
-	}-*/;
+	}
 
 }

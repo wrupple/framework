@@ -18,8 +18,20 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 		//necesaary to explicitly point to context? something.context.old
 		static final String SOURCE_OLD = ContextEvaluationService.NAME+".old"+CatalogEntry.FOREIGN_KEY;
 
+    boolean isJoinableValueField(FieldDescriptor field);
 
 		Object getAllegedParentId(CatalogEntry result, FieldAccessStrategy.Session session);
+    /**
+     * @param context
+     * @param catalog
+     * @param field
+     * @param fieldValue
+     * @return id or collection of ids of created objects
+     * @throws Exception
+     */
+    void createRefereces(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
+                         Object fieldValue,CatalogEntry parent, Session session) throws Exception;
+
 
 		/**
 		 * @param source
@@ -65,12 +77,11 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 
 		String getDenormalizedFieldValue(CatalogEntry client, String channelField,Session session, CatalogActionContext context) throws Exception;
 
-		Object synthethizeFieldValue(String token, CatalogActionContext context) throws Exception;
-
-		void evalTemplate(String value, PrintWriter out, String locale, CatalogActionContext ccontext);
-
 		String getDenormalizedFieldValue(FieldDescriptor field, Session session, CatalogEntry entry,
 				CatalogDescriptor typeIfAvailable);
+
+
+	void evalTemplate(String value, PrintWriter out, String locale, CatalogActionContext ccontext);
 
 
 		CatalogActionContext spawn(CatalogActionContext parent);
@@ -85,18 +96,7 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 		
 		public  CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context);
 
-		/**
-		 * @param context
-		 * @param catalog
-		 * @param field
-		 * @param fieldValue
-		 * @return id or collection of ids of created objects
-		 * @throws Exception
-		 */
-		void createRefereces(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
-							   Object fieldValue,CatalogEntry parent, Session session) throws Exception;
 
-		boolean isJoinableValueField(FieldDescriptor field);
 
 
 }

@@ -117,13 +117,13 @@ public class CommitHumanSolution extends MubaTest {
         }
 
         @Provides
-        public UserTransaction localTransaction() {
-            return mock(UserTransaction.class);
+        public Trash trash() {
+            return mock(Trash.class);
         }
 
         @Provides
-        public Trash trash() {
-            return mock(Trash.class);
+        public UserTransaction localTransaction() {
+            return mock(UserTransaction.class);
         }
 
         @Provides
@@ -139,7 +139,7 @@ public class CommitHumanSolution extends MubaTest {
     }
 
     @Override
-    protected void registerServices(Validator v, ValidationGroupProvider g, ApplicationContext switchs) {
+    protected void registerServices(ApplicationContext switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
         switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
         switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));

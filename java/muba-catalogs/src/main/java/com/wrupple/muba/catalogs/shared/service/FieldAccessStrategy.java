@@ -20,6 +20,8 @@ public interface FieldAccessStrategy {
 
     void setAttribute(CatalogEntry jso, FieldDescriptor fieldId, double v, Session session);
 
+    Object getPropertyValue(Object o, String pathing, Session session);
+
     public interface Session {
         void resample(CatalogEntry sample);
     }
@@ -45,11 +47,13 @@ public interface FieldAccessStrategy {
 
     void deleteAttribute(CatalogEntry jso, String fieldId, FieldAccessStrategy.Session session);
 
-    Object userReadableValue(CatalogEntry elem, String attr, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session);
-
     void parseSetDouble(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session);
 
     void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session);
 
     void parseSetBoolean(CatalogEntry jso, FieldDescriptor field, String v, Session session);
+
+
+    //FIXME this function is part of a distinct superset
+    Object userReadableValue(CatalogEntry elem, String attr, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session);
 }
