@@ -134,7 +134,7 @@ public class CommitHumanSolution extends MubaTest {
     }
 
     public CommitHumanSolution() {
-        init(new RunnerTestModule(), new HumanRunnerTestModule(), new SingleUserModule()/*,new ChocoSolverModule()*/,new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
+        init(new RunnerTestModule(), new HumanRunnerTestModule(),new HumanSolverModule(), new SingleUserModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
 

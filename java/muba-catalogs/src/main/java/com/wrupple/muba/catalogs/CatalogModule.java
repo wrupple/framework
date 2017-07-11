@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.inject.Singleton;
+import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
+import com.wrupple.muba.catalogs.shared.service.impl.JavaObjectNativeInterface;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.LongConverter;
@@ -238,6 +240,7 @@ public class CatalogModule extends AbstractModule {
 
 		bind(CatalogNormalizationConstraintValidator.class).to(CatalogNormalizationConstraintValidatorImpl.class);
 		bind(CatalogActionRequestValidator.class).to(CatalogActionRequestValidatorImpl.class);
+		bind(ObjectNativeInterface.class).to(JavaObjectNativeInterface.class);
 	}
 
 	/*

@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.wrupple.vegetate</groupId>
 			<artifactId>vegetate</artifactId>
-			<version>${vegetate.version}</version>
+			<version>${muba.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>

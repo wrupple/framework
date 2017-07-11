@@ -21,7 +21,6 @@
 		<module>muba-runner-human</module>
 		<module>muba-bpm</module>
 		<module>vegetate-security</module>
-		<module>desktop</module>
 	</modules>
 
 

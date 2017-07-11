@@ -6,10 +6,10 @@
 	<artifactId>muba-runner-human</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
-	<name>User interface implementation of a task runner</name>s
+	<name>User interface implementation of a task runner</name>
 	<properties>
 		<muba.version>1.0</muba.version>
-		<guice.version>3.0</guice.version>
+		<guice.version>4.1.0</guice.version>
 	</properties>
 	<dependencies>
 		<dependency>

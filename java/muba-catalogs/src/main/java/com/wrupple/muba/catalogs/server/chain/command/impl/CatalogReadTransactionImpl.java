@@ -295,7 +295,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 				if (criteria.getEvaluate()) {
 					String operator = criteria.getOperator();
 					Object criteriaValue = context.getCatalogManager()
-							.synthethizeFieldValue((String) criteria.getValue(), context);
+							.synthethizeFieldValue(((String) criteria.getValue()).split(" "), context);
 					criteria = FilterDataUtils.createSingleFieldFilter(criteria.getPath(), criteriaValue);
 					criteria.setOperator(operator);
 				}

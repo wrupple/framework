@@ -97,6 +97,7 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 		public  CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context);
 
 
+	public Object synthethizeFieldValue(String[] split, CatalogActionContext context) throws Exception ;
 
 
 }

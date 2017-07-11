@@ -742,14 +742,14 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
             }
             List<Object> keys = createdValues.stream().map(v -> v.getId()).collect(Collectors.toList());
 
-			context.getCatalogManager().setPropertyValue(field, owner, keys, session);
+			setPropertyValue(field, owner, keys, session);
 		} else {
 			CatalogEntry value =  createEntry(context, foreignValue, field.getCatalog());
             reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
             if (isWriteableProperty(reservedField, owner, session)) {
                 setPropertyValue(reservedField, owner, value, session);
             }
-			context.getCatalogManager().setPropertyValue(field, owner, value.getId(), session);
+			setPropertyValue(field, owner, value.getId(), session);
 		}
 	}
 
@@ -1323,7 +1323,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 					out.println(template.substring(currentIndex, start));
 					rawToken = matcher.group();
 					try {
-						out.print(synthethizeFieldValue(rawToken, context));
+						out.print(synthethizeFieldValue(rawToken.split(" "), context));
 					} catch (Exception e) {
 						out.println("Error processing token : " + rawToken);
 					}
@@ -1337,6 +1337,14 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			out.println(template);
 		}
 	}
+
+	@Override
+    public Object synthethizeFieldValue(String[] split, CatalogActionContext context) throws Exception {
+        ExcecutionContext ex = context.getExcecutionContext().spawnChild();
+        ex.setSentence(split);
+        ex.process();
+        return ex.getResult();
+    }
 
     @Override
     public void deleteAttribute(CatalogEntry jso, String fieldId, Session session) throws ReflectiveOperationException {

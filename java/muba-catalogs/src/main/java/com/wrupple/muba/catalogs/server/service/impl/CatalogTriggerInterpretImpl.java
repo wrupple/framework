@@ -120,7 +120,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Session session,
 			FieldDescriptor field) throws Exception {
 		if (entryIdPointer instanceof String) {
-			return context.getCatalogManager().synthethizeFieldValue((String) entryIdPointer, context);
+			return context.getCatalogManager().synthethizeFieldValue(((String) entryIdPointer).split("\\."), context);
 		} else {
 			return entryIdPointer;
 		}
@@ -168,7 +168,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isEphemeral()) {
 				token = properties.get(fieldId);
 				if (token != null) {
-					fieldValue = context.getCatalogManager().synthethizeFieldValue(token, context);
+					fieldValue = context.getCatalogManager().synthethizeFieldValue(token.split(" "), context);
 					context.getCatalogManager().setPropertyValue(field, synthesizedEntry, fieldValue, session);
 				}
 			}

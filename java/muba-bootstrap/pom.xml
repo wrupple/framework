@@ -10,7 +10,7 @@
 	<description>Enforces development on the Chain of Responsibility pattern and allows easy creation and transactional execution of contexts </description>
 	<properties>
 		<muba.version>1.0</muba.version>
-		<guice.version>3.0</guice.version>
+		<guice.version>4.1.0</guice.version>
 	</properties>
 	<dependencies>
 

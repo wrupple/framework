@@ -12,7 +12,7 @@
 	    BPEL language, Business Analytics, Process Engine, over CMS collaboration (Notifications, BPMValueChangeListener) , Bussiness rules Knowlege base (BPMValidationTrigger)</description>
 	<properties>
 		<muba.version>1.0</muba.version>
-		<guice.version>3.0</guice.version>
+		<guice.version>4.1.0</guice.version>
 		<servlet.api>3.1.0</servlet.api>
 	</properties>
 	<dependencies>
