@@ -1,16 +1,15 @@
 package com.wrupple.muba.catalogs.shared.service;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogManagerImpl;
+import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by rarl on 1/06/17.
  */
-public interface ObjectNativeInterface {
+public interface ObjectNativeInterface extends LargeStringFieldDataAccessObject{
+
     public FieldAccessStrategy.Session newSession(CatalogEntry sample);
     //previously convertToJavascriptArray
     Object unwrapAsNativeCollection(Collection objects);
@@ -29,11 +28,13 @@ public interface ObjectNativeInterface {
 
     boolean isWrappedObject(Object value);//always false in most runtimes, not in the browser though
 
-    Object getStringValue(Object value);//trim
-
     Object getDefaultValue(Object value);
 
-    Object getUserReadableCollection(Object value, List<FilterCriteria> includeCriteria);
+    Object getWrappedValue(String fieldId, FieldAccessStrategy.Session session, CatalogEntry object, boolean silentFail);
 
-    Object getWrappedValue(String attr, FieldAccessStrategy.Session session, CatalogEntry elem, boolean b);
+    void setProperty(CatalogEntry object, String fieldId, Object value);
+
+    boolean isWriteable(CatalogEntry entry, String property);
+
+    Object getPropertyValue(CatalogEntry o, String pathing, FieldAccessStrategy.Session session);
 }

@@ -1,17 +1,15 @@
 package com.wrupple.muba.catalogs.shared.service.impl;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
-import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -19,9 +17,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by rarl on 5/06/17.
@@ -31,14 +28,14 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
 
     protected static final Logger log = LoggerFactory.getLogger(JavaObjectNativeInterface.class);
+    private final LargeStringFieldDataAccessObject delegate;
 
 
-    private final Provider<FilterNativeInterface> filterer;
     private final PropertyUtilsBean bean;
 
     @Inject
-    public JavaObjectNativeInterface(Provider<FilterNativeInterface> filterer) {
-        this.filterer = filterer;
+    public JavaObjectNativeInterface(LargeStringFieldDataAccessObject delegate) {
+        this.delegate = delegate;
         this.bean  = new PropertyUtilsBean();
     }
 
@@ -55,6 +52,16 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
         @Override
         public void resample(CatalogEntry sample) {
             isSystemObject(sample);
+        }
+
+        @Override
+        public boolean isAccesible() {
+            return accesible;
+        }
+
+        @Override
+        public void setAccesible(boolean b) {
+            this.accesible=b;
         }
 
         // use PropertyUtilsBean (bean utils) and dump srping
@@ -142,8 +149,19 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public Object getStringValue(Object value) {
-        return value.toString();
+    public Type getLargeStringClass() {
+        //unless otherwise
+        return String.class;
+    }
+
+    @Override
+    public String getStringValue(Object value) {
+        return /*ina java jre we expect Strings*/(String) value;
+    }
+
+    @Override
+    public Object processRawLongString(String s) {
+        return s;
     }
 
     @Override
@@ -153,96 +171,41 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
     @Override
     public Object getWrappedValue(String fieldId, FieldAccessStrategy.Session session, CatalogEntry object, boolean silentFail) {
-        return valuedoReadProperty(fieldId, (FieldAccessSession) session,object, silentFail);
+
+            try {
+                return ((FieldAccessSession)session).getPropertyValue(object,fieldId);
+            } catch (Exception e) {
+                if(silentFail){
+                    return null;
+                }else{
+                    throw new IllegalArgumentException(e);
+                }
+
+            }
+
+
     }
 
+    @Override
+    public void setProperty(CatalogEntry object, String fieldId, Object value) {
 
+    }
 
-    private Object valuedoReadProperty(String fieldId, FieldAccessSession session, CatalogEntry object,
-                                       boolean silentFail) {
-        if (session.accesible) {
-            try {
-                return doGetAccesibleProperty(object, fieldId);
-            } catch (ClassCastException e) {
-                if (silentFail) {
-                    return null;
-                }
-                try {
-                    log.debug("Catalog Property Session Changed State");
-                    session.accesible = false;
-                    return goBeanGet(session, object, fieldId);
-                } catch (IllegalArgumentException ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                } catch (IllegalAccessException ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                } catch (InvocationTargetException ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                } catch (IntrospectionException ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                } catch (NoSuchMethodException ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                }
-            }
+    @Override
+    public boolean isWriteable(CatalogEntry entry, String property) {
+        return false;
+    }
 
-        } else {
-            try {
-                return goBeanGet(session, object, fieldId);
-            } catch (IllegalArgumentException e) {
-                if (silentFail) {
-                    return null;
-                }
-                try {
-                    log.debug("Catalog Property Session Changed State");
-                    session.accesible = true;
-                    return doGetAccesibleProperty(object, fieldId);
-                } catch (Exception ee) {
-
-                    log.debug("Access", e);
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                }
-            } catch (IllegalAccessException e) {
-                if (silentFail) {
-                    return null;
-                }
-                try {
-                    session.accesible = true;
-                    return doGetAccesibleProperty(object, fieldId);
-                } catch (Exception ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                }
-            } catch (InvocationTargetException e) {
-                if (silentFail) {
-                    return null;
-                }
-                try {
-                    session.accesible = true;
-                    return doGetAccesibleProperty(object, fieldId);
-                } catch (Exception ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                }
-            } catch (IntrospectionException e) {
-                if (silentFail) {
-                    return null;
-                }
-                try {
-                    session.accesible = true;
-                    return doGetAccesibleProperty(object, fieldId);
-                } catch (Exception ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                }
-            } catch (NoSuchMethodException e) {
-                if (silentFail) {
-                    return null;
-                }
-                try {
-                    session.accesible = true;
-                    return doGetAccesibleProperty(object, fieldId);
-                } catch (Exception ee) {
-                    throw new IllegalArgumentException("access field " + fieldId + "@" + object.getCatalogType(), ee);
-                }
-            }
+    @Override
+    public Object getPropertyValue(CatalogEntry o, String pathing, FieldAccessStrategy.Session session) {
+        if(session.isAccesible()){
+            return ((HasAccesablePropertyValues)o).getPropertyValue(pathing);
+        }else{
+            return getWrappedValue(pathing,session,o,false);
         }
     }
+
+
     private Object goBeanGet(FieldAccessSession session, CatalogEntry object, String fieldId)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IntrospectionException,
             NoSuchMethodException {
@@ -270,65 +233,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
 
 
-    @Override
-    public Object getUserReadableCollection(Object arro, List<FilterCriteria> includeCriteria) {
-        if (includeCriteria == null) {
-            return arro;
-        } else {
-            if (arro == null) {
-                return null;
-            } else {
-                List<Object> arr = (List<Object>) arro;
-                //JavaScriptObject o;
-                Object o;
-                boolean match;
-                //JsArray<JavaScriptObject> regreso = JavaScriptObject.createArray().cast();
-                List<Object> regreso = new ArrayList<>(arr.size());
-                FieldAccessStrategy.Session session = new FieldAccessSession();
-                for (int i = 0; i < arr.size(); i++) {
-                    o = arr.get(i);
-                    match = matchesCriteria(o, includeCriteria, session);
-                    if (match) {
-                        // include
-                        regreso.add(o);
-                    }
-                }
-                return regreso;
-            }
-        }
-    }
 
-
-
-    private boolean matchesCriteria(Object o, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session ) {
-        for (FilterCriteria criteria : includeCriteria) {
-            if (matches( criteria, o,session)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    // TRUE IF MATCH AGINST AT LEAST ONE CRITERIA
-    private boolean matches(FilterCriteria criteria, Object o, FieldAccessStrategy.Session session) {
-        //JsArrayMixed values = criteria.getValuesArray();
-        List<Object> values = criteria.getValues();
-        //JsArrayString path = criteria.getPathArray();
-        FilterNativeInterface delterDelegate = filterer.get();
-        List<String> path = criteria.getPath();
-        if (path != null && values != null) {
-            if (values.size() > 0 && path.size() > 0) {
-                String pathing = path.get(0);
-                for (int i = 0; i < values.size(); i++) {
-                    if (delterDelegate.jsMatch(pathing, o, values, i,session)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    };
 
 
 }

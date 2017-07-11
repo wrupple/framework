@@ -15,4 +15,5 @@ public interface FieldConversionStrategy {
 
 	Object convertToPresentableValue(String id, CatalogEntry object, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session);
 
+	//Object getUserReadableCollection(Object value, List<FilterCriteria> includeCriteria);
 }

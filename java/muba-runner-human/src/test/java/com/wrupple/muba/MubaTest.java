@@ -35,11 +35,11 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices(injector.getInstance(Validator.class), injector.getInstance(ValidationGroupProvider.class), injector.getInstance(ApplicationContext.class));
+		registerServices(injector.getInstance(ApplicationContext.class));
 
 	}
 
-	protected abstract void registerServices(Validator v, ValidationGroupProvider g,ApplicationContext switchs);
+	protected abstract void registerServices(ApplicationContext switchs);
 
 	protected abstract void setUp() throws Exception;
 

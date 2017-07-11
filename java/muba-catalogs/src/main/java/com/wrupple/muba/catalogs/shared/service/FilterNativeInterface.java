@@ -14,6 +14,6 @@ public interface FilterNativeInterface {
 
     boolean matchAgainstFilters(CatalogEntry entry, List<FilterCriteria> filters, CatalogDescriptor descriptor, FieldAccessStrategy.Session session);
 
-    public  boolean jsMatch(String pathing, Object o, List<Object> values, int valueIndex, FieldAccessStrategy.Session session);
+    public  boolean jsMatch(String pathing, CatalogEntry o, List<Object> values, int valueIndex, FieldAccessStrategy.Session session);
 
 }

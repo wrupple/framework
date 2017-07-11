@@ -6,10 +6,12 @@ import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,17 +26,97 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
     private final SystemCatalogPlugin access;
     private final ObjectNativeInterface nativeInterface;
 
+    private final FilterNativeInterface filterer;
 
     @Inject
-    public FieldConversionStrategyImpl(SystemCatalogPlugin access, ObjectNativeInterface nativeInterface) {
+    public FieldConversionStrategyImpl(SystemCatalogPlugin access, ObjectNativeInterface nativeInterface, FilterNativeInterface filterer) {
         this.access = access;
         this.nativeInterface = nativeInterface;
+        this.filterer = filterer;
     }
+
+    public Object getUserReadableCollection(Object arro, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session) {
+        if (includeCriteria == null) {
+            return arro;
+        } else {
+            if (arro == null) {
+                return null;
+            } else {
+                List<Object> arr = (List<Object>) arro;
+                //JavaScriptObject o;
+                Object o;
+                boolean match;
+                //JsArray<JavaScriptObject> regreso = JavaScriptObject.createArray().cast();
+                List<Object> regreso = new ArrayList<>(arr.size());
+                for (int i = 0; i < arr.size(); i++) {
+                    o = arr.get(i);
+                    match = matchesCriteria(o, includeCriteria, session);
+                    if (match) {
+                        // include
+                        regreso.add(o);
+                    }
+                }
+                return regreso;
+            }
+        }
+    }
+
+
+
+
+
+    private boolean matchesCriteria(Object o, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session ) {
+        for (FilterCriteria criteria : includeCriteria) {
+            if (matches( criteria, o,session)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // TRUE IF MATCH AGINST AT LEAST ONE CRITERIA
+    private boolean matches(FilterCriteria criteria, Object o, FieldAccessStrategy.Session session) {
+        //JsArrayMixed values = criteria.getValuesArray();
+        List<Object> values = criteria.getValues();
+        //JsArrayString path = criteria.getPathArray();;
+        List<String> path = criteria.getPath();
+        if (path != null && values != null) {
+            if (values.size() > 0 && path.size() > 0) {
+                String pathing = path.get(0);
+                for (int i = 0; i < values.size(); i++) {
+                    if (filterer.jsMatch(pathing, o, values, i,session)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    };
 
 
     @Override
     public Object convertToPresentableValue(String attr, CatalogEntry elem, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session) {
-        return access.userReadableValue(elem, attr, includeCriteria,session);
+        Object value =  nativeInterface.getWrappedValue(attr, session,elem,false);
+        if (value == null) {
+            return null;
+        } else if (nativeInterface.isCollection(value)) {
+            return getUserReadableCollection(value, includeCriteria, session);
+        } else if (nativeInterface.isBoolean(value)) {
+            return value;
+        } else if (nativeInterface.isNumber(value)) {
+            //JSONNumber jsonNumber = value.isNumber();
+            //return jsonNumber.toString();
+            return nativeInterface.formatNumberValue(value);
+        } else if (nativeInterface.isWrappedObject(value)) {
+            return value;
+        } else {
+            try {
+                //String string = value.isString().stringValue();
+                return nativeInterface.getStringValue(value);
+            } catch (Exception e) {
+                return nativeInterface.getDefaultValue(value);
+            }
+        }
     }
 
     @Override
@@ -46,12 +128,17 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
         } else if (nativeInterface.isCollection(value)) {
             access.setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value),session);
         } else if (value instanceof Number) {
-            Number v = (Number) value;
+
+            // FIXME some runtimes (browser) may require to unwrap the java object
+            /*Number v = (Number) value;
             if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
-                access.setAttribute(jso, field, v.intValue(),session);
+
+                 access.setAttribute(jso, field, v.intValue(),session);
             } else {
                 access.setAttribute(jso, field, v.doubleValue(),session);
             }
+            */
+            access.setPropertyValue(field,jso,value,session);
         } else if (value instanceof String) {
             String v = (String) value;
             v = getSendableString(v);

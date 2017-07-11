@@ -19,15 +19,15 @@ import java.util.regex.Pattern;
  */
 public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
 
-    private final FieldAccessStrategy oni;
+    private final JavaObjectNativeInterface oni;
 
     @Inject
-    public JavaFilterNativeInterfaceImpl(FieldAccessStrategy oni) {
+    public JavaFilterNativeInterfaceImpl(JavaObjectNativeInterface oni) {
         this.oni = oni;
     }
 
     @Override
-    public  boolean jsMatch(String pathing, Object o, List<Object> values, int valueIndex, FieldAccessStrategy.Session session){
+    public  boolean jsMatch(String pathing, CatalogEntry o, List<Object> values, int valueIndex, FieldAccessStrategy.Session session){
          /*-{
 		var rawValue = o[pathing];
 		var string = values[i];
@@ -166,7 +166,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
     }
 
 
-    private boolean matchFinal(Object entry, String field, String operator, List<Object> values, int filterIndex, FieldAccessStrategy.Session session) {
+    private boolean matchFinal(CatalogEntry entry, String field, String operator, List<Object> values, int filterIndex, FieldAccessStrategy.Session session) {
 
 		//var value = values[filterIndex];
         Object value = values.get(filterIndex);

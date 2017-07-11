@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
@@ -76,7 +77,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	private final String TOKEN_SPLITTER;
 
 	private final String ancestorIdField;
-	private LargeStringFieldDataAccessObject lsdao;
 	private Provider<PersistentCatalogEntity> factory;
 	private final Pattern pattern;
 
@@ -134,11 +134,10 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	@Inject
 	public CatalogManagerImpl(@Named("template.token.splitter") String splitter /* "\\." */,
 							  @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
-			, @Named("catalog.ancestorKeyField") String ancestorIdField, LargeStringFieldDataAccessObject lsdao, Provider<PersistentCatalogEntity> ffactory, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, ObjectNativeInterface nativeInterface) {
+			, @Named("catalog.ancestorKeyField") String ancestorIdField, Provider<PersistentCatalogEntity> ffactory, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, ObjectNativeInterface nativeInterface) {
 		super();
 		this.ancestorIdField = ancestorIdField;
 		this.TOKEN_SPLITTER = splitter;
-		this.lsdao = lsdao;
 		this.pattern = pattern;
 		this.nativeInterface = nativeInterface;
 		this.factory = ffactory;
@@ -1026,14 +1025,16 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 
+    @Override
+    public Session newSession(CatalogEntry sample) {
+        return this.nativeInterface.newSession(sample);
+    }
 
-
-	@Override
+    @Override
 	public Object getPropertyValue(FieldDescriptor field, CatalogEntry object,
-                                   DistributiedLocalizedEntry localizedObject, Session s) throws RuntimeException {
+                                   DistributiedLocalizedEntry localizedObject, Session session) throws RuntimeException {
 		// log.trace("[READ PROPERTY] {}.{}", catalog.getDistinguishedName(),
 		// field.getFieldId());
-		FieldAccessSession session = (FieldAccessSession) s;
 		/*
 		 * if(s==null){ session = new FieldAccessSession(entry instanceof
 		 * HasAccesablePropertyValues); }
@@ -1050,9 +1051,30 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		 * TODO cache in catalog descriptor
 		 */
 		if (value == null) {
-			value = valuedoReadProperty(fieldId, session, object, false);
+			//value = valuedoReadProperty(fieldId, session, object, false);
+			if (session.isAccesible()) {
+				try {
+					value= doGetAccesibleProperty(object, fieldId);
+				} catch (ClassCastException e) {
+                    log.debug("Catalog Property Session Changed State");
+                    session.setAccesible(false);
+                    value =  nativeInterface.getWrappedValue(fieldId, session,object,true);
+				}
+
+			} else {
+				try {
+                    value =  nativeInterface.getWrappedValue(fieldId, session,object,false);
+
+                } catch (Throwable e) {
+
+                    log.debug("Catalog Property Session Changed State");
+                    session.setAccesible( true);
+                    value =  doGetAccesibleProperty(object, fieldId);
+				}
+			}
+
 			if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
-				value = lsdao.getStringValue(value);
+				value = nativeInterface.getStringValue(value);
 			}
 		}
 
@@ -1060,14 +1082,17 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		return value;
 	}
 
+    private Object doGetAccesibleProperty(CatalogEntry object, String fieldId) {
+        HasAccesablePropertyValues entry = (HasAccesablePropertyValues) object;
+        return entry.getPropertyValue(fieldId);
+    }
 
 	@Override
 	public void setPropertyValue(FieldDescriptor field, CatalogEntry object, Object value,
-                                 Session s) throws ReflectiveOperationException {
+                                 Session session) throws ReflectiveOperationException {
 		// log.trace("[WRITE PROPERTY] {}.{}", catalog.getDistinguishedName(),
 		// field.getFieldId());
 		// log.trace("[WRITE PROPERTY] value = {}", value);
-		FieldAccessSession session = (FieldAccessSession) s;
 		/*
 		 * if(s==null){ session = new FieldAccessSession(entry instanceof
 		 * HasAccesablePropertyValues); }
@@ -1075,7 +1100,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		String fieldId = field.getFieldId();
 
 		if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
-			value = lsdao.processRawLongString((String) value);
+			value = nativeInterface.processRawLongString((String) value);
 		}
 		setPropertyValue(fieldId, object, value, session);
 
@@ -1087,29 +1112,27 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 
-	private void doBeanSet(FieldAccessSession session, CatalogEntry object, String fieldId, Object value)
+	private void doBeanSet(Session session, CatalogEntry object, String fieldId, Object value)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		bean.setProperty(object, fieldId, value);
+        nativeInterface.setProperty(object, fieldId, value);
 	}
 
 	@Override
-	public boolean isWriteableProperty(String property, CatalogEntry entry, Session s) {
-		FieldAccessSession session = (FieldAccessSession) s;
-		if (session.accesible) {
+	public boolean isWriteableProperty(String property, CatalogEntry entry, Session session) {
+		if (session.isAccesible()) {
 			return true;
 		}
-		return bean.isWriteable(entry, property);
+		return nativeInterface.isWriteable(entry, property);
 	}
 
 	@Override
 	public void setPropertyValue(String fieldId, CatalogEntry object, Object value,
-                                 Session s) throws ReflectiveOperationException {
-		FieldAccessSession session = (FieldAccessSession) s;
-		if (session.accesible) {
+                                 Session session) throws ReflectiveOperationException {
+		if (session.isAccesible()) {
 			try {
 				doSetAccesibleProperty(object, fieldId, value);
 			} catch (ClassCastException e) {
-				session.accesible = false;
+				session.setAccesible( false);
 				try {
 					doBeanSet(session, object, fieldId, value);
 				} catch (IllegalAccessException ee) {
@@ -1121,11 +1144,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			}
 		} else {
 			try {
-				// TODO this shoudl not succed when a HasProperties is passed,
-				// and yet it does succedd without altering content
 				doBeanSet(session, object, fieldId, value);
 			} catch (IllegalAccessException e) {
-				session.accesible = true;
+                session.setAccesible( true);
 				try {
 					doSetAccesibleProperty(object, fieldId, value);
 				} catch (ClassCastException ee) {
@@ -1133,7 +1154,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				}
 
 			} catch (InvocationTargetException e) {
-				session.accesible = true;
+                session.setAccesible( true);
 				try {
 					doSetAccesibleProperty(object, fieldId, value);
 				} catch (ClassCastException ee) {
@@ -1188,7 +1209,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
 	public Object getAllegedParentId(CatalogEntry result, Session session) {
-		return objectNativeInterface.valuedoReadProperty(this.ancestorIdField, (FieldAccessSession) session, result, false);
+		//return objectNativeInterface.valuedoReadProperty(this.ancestorIdField, session, result, false);
+        return nativeInterface.getWrappedValue(this.ancestorIdField,session,result,false);
 	}
 
 	@Override
@@ -1250,10 +1272,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	@Override
 	public Object getPropertyForeignKeyValue(CatalogDescriptor catalogDescriptor, FieldDescriptor field, CatalogEntry e,
 			Session session) {
-		return valuedoReadProperty(
+		/*return valuedoReadProperty(
 				field.getFieldId()
 						+ (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY),
-				(FieldAccessSession) session, e, true);
+				(FieldAccessSession) session, e, true);*/
+		return nativeInterface.getWrappedValue(field.getFieldId()
+                + (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY),session,e,true);
 	}
 
 	@Override
@@ -1314,57 +1338,25 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		}
 	}
 
-	@Override
-	public Object synthethizeFieldValue(String token, CatalogActionContext context) throws Exception {
-		String[] tokens = token.split(TOKEN_SPLITTER);
-		ExcecutionContext excecutionContext = context.getExcecutionContext();
-
-		ExcecutionContext childContext = excecutionContext.spawnChild();
-		childContext.setSentence(tokens);
-		childContext.setServiceContract(context);
-
-		childContext.process();
-
-		// TODO validating only the sentence would be useful cuz we wouldnt have
-		// to waste resources on creating a useless child context, see
-		// ExcecutionCOntext.hashCode
-
-		if (childContext.getConstraintViolations() == null || childContext.getConstraintViolations().isEmpty()) {
-			log.debug("Processing token {}, ", token);
-			return childContext.getResult();
-		} else {
-			log.warn("Unable to process token {}, ", token);
-			return token;
-		}
-
-	}
-
     @Override
-    public Object userReadableValue(CatalogEntry elem, String attr, List<FilterCriteria> includeCriteria, Session session) {
-	    Object value =  nativeInterface.getWrappedValue(attr, session,elem,false);
-        if (value == null) {
-            return null;
-        } else if (nativeInterface.isCollection(value)) {
-            return nativeInterface.getUserReadableCollection(value, includeCriteria);
-        } else if (nativeInterface.isBoolean(value)) {
-            return value;
-        } else if (nativeInterface.isNumber(value)) {
-            //JSONNumber jsonNumber = value.isNumber();
-            //return jsonNumber.toString();
-            return nativeInterface.formatNumberValue(value);
-        } else if (nativeInterface.isWrappedObject(value)) {
-			return value;
-		} else {
-            try {
-                //String string = value.isString().stringValue();
-                return nativeInterface.getStringValue(value);
-            } catch (Exception e) {
-                return nativeInterface.getDefaultValue(value);
-            }
-        }
+    public void deleteAttribute(CatalogEntry jso, String fieldId, Session session) throws ReflectiveOperationException {
+		setPropertyValue(fieldId,jso,null,session);
     }
 
+    @Override
+    public void parseSetDouble(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session) throws ReflectiveOperationException {
+		setPropertyValue(fieldId,jso,Double.parseDouble(rawValue),session);
+    }
 
+    @Override
+    public void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session) throws ReflectiveOperationException {
+		setPropertyValue(fieldId,jso,Integer.parseInt(rawValue),session);
+    }
+
+    @Override
+    public void parseSetBoolean(CatalogEntry jso, FieldDescriptor fieldId, String rawValue, Session session) throws ReflectiveOperationException {
+		setPropertyValue(fieldId,jso,null==null?false:Boolean.parseBoolean(rawValue),session);
+    }
 
 
 }
