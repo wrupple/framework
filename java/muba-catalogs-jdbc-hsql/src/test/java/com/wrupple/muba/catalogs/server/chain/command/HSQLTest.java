@@ -51,7 +51,6 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandIm
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingCommandImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogDescriptorBuilderImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.impl.UserCatalogPluginImpl;

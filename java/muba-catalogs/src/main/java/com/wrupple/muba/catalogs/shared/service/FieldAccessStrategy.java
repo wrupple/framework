@@ -1,13 +1,9 @@
 package com.wrupple.muba.catalogs.shared.service;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -30,6 +26,9 @@ public interface FieldAccessStrategy {
     Session newSession(CatalogEntry sample);
 
     Object getPropertyValue(FieldDescriptor field, CatalogEntry entry,
+                            DistributiedLocalizedEntry localizedObject, Session session) throws ReflectiveOperationException;
+
+    Object getPropertyValue(String field, CatalogEntry entry,
                             DistributiedLocalizedEntry localizedObject, Session session) throws ReflectiveOperationException;
 
     void setPropertyValue(FieldDescriptor field, CatalogEntry entry, Object value,

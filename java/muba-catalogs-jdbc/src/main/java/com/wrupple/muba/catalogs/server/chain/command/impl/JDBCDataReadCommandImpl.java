@@ -129,9 +129,9 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 					log.trace("[DB secondary read] {}  id={}", builder.toString(), id);
 					fieldValues = runner.query(builder.toString(), handler, id);
 					if (session == null) {
-						session = context.getCatalogManager().newSession(r);
+						session = context.getCatalogManager().access().newSession(r);
 					}
-					context.getCatalogManager().setPropertyValue(field, r, fieldValues, session);
+					context.getCatalogManager().access().setPropertyValue(field, r, fieldValues, session);
 				}
 			}
 		}

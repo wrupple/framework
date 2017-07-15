@@ -1,15 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.Context;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -17,8 +7,16 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.Context;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin {
@@ -36,8 +34,8 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 			return CONTINUE_PROCESSING;
 		}
 		List<CatalogEntry> result = context.getResults();
-		Session session = context.getCatalogManager().newSession(result.get(0));
-		CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
+        Session session = context.getCatalogManager().access().newSession(result.get(0));
+        CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
 				(String) context.getCatalog(), context, session);
 		FilterData filter = context.getFilter();
 		if (filter != null) {

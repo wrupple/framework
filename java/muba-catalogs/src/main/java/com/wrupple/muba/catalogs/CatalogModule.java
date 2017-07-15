@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.inject.Singleton;
+import com.wrupple.muba.catalogs.server.service.impl.*;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.impl.JavaObjectNativeInterface;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -105,21 +107,6 @@ import com.wrupple.muba.catalogs.server.service.QueryReaders;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.Writers;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogActionRequestValidatorImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogDescriptorBuilderImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogKeyConstraintValidatorImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogManagerImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogNormalizationConstraintValidatorImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogTriggerInterpretImpl;
-import com.wrupple.muba.catalogs.server.service.impl.DeletersImpl;
-import com.wrupple.muba.catalogs.server.service.impl.EntryCreatorsImpl;
-import com.wrupple.muba.catalogs.server.service.impl.LargeStringFieldDataAccessObjectImpl;
-import com.wrupple.muba.catalogs.server.service.impl.NamespaceContextImpl;
-import com.wrupple.muba.catalogs.server.service.impl.PrimaryKeyReadersImpl;
-import com.wrupple.muba.catalogs.server.service.impl.QueryReadersImpl;
-import com.wrupple.muba.catalogs.server.service.impl.UserCatalogPluginImpl;
-import com.wrupple.muba.catalogs.server.service.impl.WritersImpl;
 
 /**
  * @author japi
@@ -240,7 +227,12 @@ public class CatalogModule extends AbstractModule {
 
 		bind(CatalogNormalizationConstraintValidator.class).to(CatalogNormalizationConstraintValidatorImpl.class);
 		bind(CatalogActionRequestValidator.class).to(CatalogActionRequestValidatorImpl.class);
+
+		/*
+		Runtime
+		 */
 		bind(ObjectNativeInterface.class).to(JavaObjectNativeInterface.class);
+		bind(FieldAccessStrategy.class).to(JavaFieldAccessStrategy.class);
 	}
 
 	/*

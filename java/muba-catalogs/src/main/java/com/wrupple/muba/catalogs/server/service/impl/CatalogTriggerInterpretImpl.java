@@ -1,40 +1,35 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.validation.ConstraintViolation;
-
+import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.TransactionHistory;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
+import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.TransactionHistory;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.CatalogTrigger;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
-import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.validation.ConstraintViolation;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private static final Logger log = LoggerFactory.getLogger(CatalogTriggerInterpretImpl.class);
 
-	private final CatalogServiceManifest manifest;
+	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
 
 	@Inject
-	public CatalogTriggerInterpretImpl(CatalogServiceManifest manifest, 
+	public CatalogTriggerInterpretImpl(Provider<CatalogServiceManifest> manifestP,
 			CatalogDeserializationService deserializer) {
 		super();
-		this.manifest = manifest;
+		this.manifestP = manifestP;
 		this.deserializer = deserializer;
 	}
 
@@ -72,8 +67,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			}
 
 			if (entryIdPointer != null) {
-				Session session = context.getCatalogManager().newSession((CatalogEntry) context.getEntryValue());
-				entryIdPointer = synthethizeKeyValue(entryIdPointer, context, session,
+                Session session = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
+                entryIdPointer = synthethizeKeyValue(entryIdPointer, context, session,
 						targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()));
 				context.setEntry(entryIdPointer);
 			}
@@ -82,7 +77,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 				if (rollback) {
 					try {
 						if (context.getExcecutionContext().getSession().hasPermissionsToProcessContext(context,
-								manifest)) {
+								manifestP.get())) {
 
 							log.debug("[EXCECUTING TRIGGER {}] CONTEXT= {} ", command, context);
 							command.execute(context);
@@ -156,12 +151,12 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		context.setCatalog(targetCatalog.getDistinguishedName());
 
-		Session session = context.getCatalogManager().newSession(synthesizedEntry);
-		Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
+        Session session = context.getCatalogManager().access().newSession(synthesizedEntry);
+        Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
 		String fieldId;
 		String token;
 		Object fieldValue;
-		Session lowSession = context.getCatalogManager().newSession((CatalogEntry) context.getEntryValue());
+        Session lowSession = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
 
 		for (FieldDescriptor field : fields) {
 			fieldId = field.getFieldId();
@@ -169,8 +164,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 				token = properties.get(fieldId);
 				if (token != null) {
 					fieldValue = context.getCatalogManager().synthethizeFieldValue(token.split(" "), context);
-					context.getCatalogManager().setPropertyValue(field, synthesizedEntry, fieldValue, session);
-				}
+                    context.getCatalogManager().access().setPropertyValue(field, synthesizedEntry, fieldValue, session);
+                }
 			}
 
 		}

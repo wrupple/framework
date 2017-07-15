@@ -1,8 +1,5 @@
 package com.wrupple.muba.catalogs.server.service;
 
-import java.io.PrintWriter;
-import java.util.List;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ContextEvaluationService;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
@@ -12,15 +9,21 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
-public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAnnotationsDictionary,CatalogKeyServices,FieldAccessStrategy {
-	 static final String DOMAIN_METADATA = "Namespace"+CatalogDescriptor.CATALOG_ID;
+import java.io.PrintWriter;
+import java.util.List;
+
+public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager, JSRAnnotationsDictionary, CatalogKeyServices {
+    static final String DOMAIN_METADATA = "Namespace"+CatalogDescriptor.CATALOG_ID;
 		//necesaary to explicitly point to context? something.context.old
 		static final String SOURCE_OLD = ContextEvaluationService.NAME+".old"+CatalogEntry.FOREIGN_KEY;
 
+    FieldAccessStrategy access();
+
     boolean isJoinableValueField(FieldDescriptor field);
 
-		Object getAllegedParentId(CatalogEntry result, FieldAccessStrategy.Session session);
+    Object getAllegedParentId(CatalogEntry result, Session session) throws ReflectiveOperationException;
     /**
      * @param context
      * @param catalog
@@ -48,7 +51,7 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 		 * @throws Exception
 		 */
 		public CatalogEntry synthesizeCatalogObject(CatalogEntry source, CatalogDescriptor catalog,
-				boolean excludeInherited, Session session, CatalogActionContext context) throws Exception;
+                                                    boolean excludeInherited, Session session, CatalogActionContext context) throws Exception;
 
 		CatalogEntry readEntry(CatalogDescriptor catalogId, Object parentId, CatalogActionContext readParentEntry)
 				throws Exception;
@@ -60,7 +63,7 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 				CatalogDescriptor catalog, CatalogActionContext context) throws Exception;
 
 		void addPropertyValues(CatalogEntry source, CatalogEntry target, CatalogDescriptor catalog,
-				boolean excludeInherited, Session session, DistributiedLocalizedEntry localizedObject) throws Exception;
+                               boolean excludeInherited, Session session, DistributiedLocalizedEntry localizedObject) throws Exception;
 
 		void processChild(CatalogEntry childEntity, CatalogDescriptor parentCatalogId, Object parentEntityId,
 				CatalogActionContext readContext, CatalogDescriptor catalog, Session session) throws Exception;
@@ -73,12 +76,12 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager,JSRAn
 		 * @return a catalog entry or a collection of catalog entries
 		 */
 		Object getPropertyForeignKeyValue(CatalogDescriptor catalogDescriptor, FieldDescriptor field, CatalogEntry e,
-				Session session);
+                                          Session session) throws ReflectiveOperationException;
 
 		String getDenormalizedFieldValue(CatalogEntry client, String channelField,Session session, CatalogActionContext context) throws Exception;
 
 		String getDenormalizedFieldValue(FieldDescriptor field, Session session, CatalogEntry entry,
-				CatalogDescriptor typeIfAvailable);
+                                         CatalogDescriptor typeIfAvailable) throws ReflectiveOperationException;
 
 
 	void evalTemplate(String value, PrintWriter out, String locale, CatalogActionContext ccontext);

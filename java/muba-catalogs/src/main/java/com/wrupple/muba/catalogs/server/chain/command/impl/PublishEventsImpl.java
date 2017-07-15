@@ -1,16 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.CatalogFactory;
-import org.apache.commons.chain.Context;
-import org.apache.commons.chain.generic.LookupCommand;
-
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -18,6 +7,15 @@ import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.PublishEvents;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.CatalogFactory;
+import org.apache.commons.chain.Context;
+import org.apache.commons.chain.generic.LookupCommand;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 @Singleton
 public class PublishEventsImpl  extends LookupCommand   implements PublishEvents {
@@ -67,8 +65,8 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 
 				// push to online clients
 				concernedClients = getConcernedClients(data, context);
-				Session session = context.getCatalogManager().newSession(null);
-				if (concernedClients != null) {
+                Session session = context.getCatalogManager().access().newSession(null);
+                if (concernedClients != null) {
 					publishImplicitEvents(data, concernedClients,context,session);
 				}
 

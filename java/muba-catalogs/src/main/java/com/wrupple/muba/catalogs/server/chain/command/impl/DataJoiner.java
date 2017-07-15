@@ -1,35 +1,21 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.chain.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.util.*;
 
 public abstract class DataJoiner implements Command {
 
@@ -250,8 +236,8 @@ public abstract class DataJoiner implements Command {
 			if (field.isMultiple()) {
 				Collection<?> temp;
 				for (CatalogEntry e : results) {
-					temp = (Collection<?>) cms.getPropertyValue(field, e, null, session);
-					if (temp != null) {
+                    temp = (Collection<?>) cms.access().getPropertyValue(field, e, null, session);
+                    if (temp != null) {
 						for (Object o : temp) {
 							if (o != null) {
 								fieldValues.add(o);
@@ -264,8 +250,8 @@ public abstract class DataJoiner implements Command {
 
 				Object value;
 				for (CatalogEntry e : results) {
-					value = cms.getPropertyValue(field, e, null, session);
-					if (value != null) {
+                    value = cms.access().getPropertyValue(field, e, null, session);
+                    if (value != null) {
 						fieldValues.add(value);
 					}
 				}
@@ -477,8 +463,8 @@ public abstract class DataJoiner implements Command {
 						log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId());
 						fieldValue = null;
 					} else {
-						fieldValue = context.getCatalogManager().getPropertyValue(field, object, localizedObject, session);
-					}
+                        fieldValue = context.getCatalogManager().access().getPropertyValue(field, object, localizedObject, session);
+                    }
 					fieldContents.add(fieldValue);
 				}
 

@@ -1,13 +1,5 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionResult;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
@@ -16,6 +8,9 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryAssembler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+
+import javax.inject.Inject;
+import java.util.*;
 
 public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 
@@ -81,8 +76,8 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 			size = fieldContents.size();
 			regreso = new ArrayList<T>(size);
 			for (int i = 0; i < size; i++) {
-				newEntry = (T) cms.synthesize(catalog);
-				regreso.add(newEntry);
+                newEntry = (T) cms.access().synthesize(catalog);
+                regreso.add(newEntry);
 			}
 			break;
 		}
@@ -91,8 +86,8 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 		FieldDescriptor field;
 		if (newEntry != null) {
 			// at least one entry got created (logically)
-			Session session = cms.newSession(newEntry);
-			for (String fieldId : containedFields) {
+            Session session = cms.access().newSession(newEntry);
+            for (String fieldId : containedFields) {
 				field = catalog.getFieldDescriptor(fieldId);
 				if (field != null) {
 					// field contents
@@ -103,8 +98,8 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 							// entry to put field value in
 							newEntry = regreso.get(j);
 							value = fieldContents.get(j);
-							cms.setPropertyValue(field, newEntry, value, session);
-						}
+                            cms.access().setPropertyValue(field, newEntry, value, session);
+                        }
 					}
 				}
 

@@ -1,17 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterCriteria;
 import com.wrupple.muba.bootstrap.domain.FilterData;
@@ -19,7 +7,6 @@ import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
 import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
@@ -27,8 +14,18 @@ import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
 import com.wrupple.muba.catalogs.server.service.QueryReaders;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.Command;
+import org.apache.commons.chain.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.Collections;
+import java.util.List;
 
 @Singleton
 public class CatalogReadTransactionImpl implements CatalogReadTransaction {
@@ -83,8 +80,8 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 
 		Object targetEntryId = context.getEntry();
-		Session session = context.getCatalogManager().newSession(null);
-		if (targetEntryId == null) {
+        Session session = context.getCatalogManager().access().newSession(null);
+        if (targetEntryId == null) {
 			FilterData filter = context.getFilter();
 			if (filter == null) {
 				log.trace("[ASSEMBLE CATALOG DESCRIPTOR]");

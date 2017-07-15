@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +30,6 @@ import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
 import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
 import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;

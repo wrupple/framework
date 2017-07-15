@@ -1,25 +1,19 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.NotSupportedException;
-
-import org.apache.commons.chain.Context;
-
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterData;
+import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bootstrap.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import org.apache.commons.chain.Context;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.transaction.NotSupportedException;
+import java.util.Collection;
+import java.util.List;
 
 @Singleton
 public final class CatalogRequestInterpretImpl implements CatalogRequestInterpret {
@@ -114,8 +108,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 					// do nothing
 				} else {
 					catalogDescriptor = context.getCatalogDescriptor();
-					context.getCatalogManager().synthesize(catalogDescriptor);
-					throw new NotSupportedException("implementar deserialización ya estaa hecha en algun lado");
+                    context.getCatalogManager().access().synthesize(catalogDescriptor);
+                    throw new NotSupportedException("implementar deserialización ya estaa hecha en algun lado");
 				}
 			}
 

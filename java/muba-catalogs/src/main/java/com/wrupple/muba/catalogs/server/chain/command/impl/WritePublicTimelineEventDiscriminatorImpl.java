@@ -1,18 +1,17 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 @Singleton
 public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTimelineEventDiscriminator {
@@ -33,11 +32,11 @@ public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTim
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogEntry node = (CatalogEntry) context.getEntryValue();
-		Session session = context.getCatalogManager().newSession(node);
-		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		context.getCatalogManager().setPropertyValue(getDiscriminatorField(), node, node.getId(), session);
-		context.getCatalogManager().setPropertyValue(getCatalogField(), node, catalog.getId(), session);
-		return CONTINUE_PROCESSING;
+        Session session = context.getCatalogManager().access().newSession(node);
+        CatalogDescriptor catalog = context.getCatalogDescriptor();
+        context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), session);
+        context.getCatalogManager().access().setPropertyValue(getCatalogField(), node, catalog.getId(), session);
+        return CONTINUE_PROCESSING;
 	}
 
 	@Override

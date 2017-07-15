@@ -1,17 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.CatalogFactory;
-import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
@@ -25,6 +13,16 @@ import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.CatalogFactory;
+import org.apache.commons.chain.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.util.Collection;
+import java.util.Collections;
 
 @Singleton
 public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
@@ -58,13 +56,13 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		CatalogDescriptor catalog=context.getCatalogDescriptor();
 		DataCreationCommand createDao = (DataCreationCommand) creators.getCommand(String.valueOf(catalog.getStorage()));
 
-		Session session = context.getCatalogManager().newSession(result);
+		Session session = context.getCatalogManager().access().newSession(result);
 		
 		log.trace("[catalog/storage] {}/{}",catalog.getDistinguishedName(),createDao.getClass());
 		if(follow||context.getFollowReferences()){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 			for(FieldDescriptor field: fields){
-				if(field.isKey() && context.getCatalogManager().getPropertyValue(field, result, null, session)==null){
+				if (field.isKey() && context.getCatalogManager().access().getPropertyValue(field, result, null, session) == null) {
 					Object foreignValue = context.getCatalogManager().getPropertyForeignKeyValue(catalog, field, result, session);
 					if(foreignValue!=null){
 						//if we got to this point, force the context to follow the reference graph

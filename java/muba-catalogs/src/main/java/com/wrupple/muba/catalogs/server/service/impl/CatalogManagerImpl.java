@@ -1,9 +1,35 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
+import com.google.inject.Inject;
+import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.bootstrap.domain.reserved.*;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
+import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionContextImpl;
+import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
+import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
+import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.chain.CatalogFactory;
+import org.apache.commons.chain.Command;
+import org.apache.commons.chain.impl.CatalogBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -15,60 +41,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
-import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.chain.CatalogFactory;
-import org.apache.commons.chain.Command;
-import org.apache.commons.chain.impl.CatalogBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasChildren;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
-import com.wrupple.muba.bootstrap.domain.reserved.Versioned;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadUrlHandlerTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.FieldDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
-import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
-import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
-import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
-import com.wrupple.muba.catalogs.server.chain.command.TrashDeleteTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
-import com.wrupple.muba.catalogs.server.chain.command.WriteAuditTrails;
-import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionContextImpl;
-import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
-import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
-import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
-import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-
 @Singleton
 public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlugin {
 
@@ -77,7 +49,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	private final String TOKEN_SPLITTER;
 
 	private final String ancestorIdField;
-	private Provider<PersistentCatalogEntity> factory;
 	private final Pattern pattern;
 
 	///////
@@ -107,9 +78,13 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	private final Provider<CatalogDescriptor> revisionP;
 	private final CatalogDescriptorBuilder builder;
 	/*
-	 * Indexing
+     *Evaluation
 	 */
-	private final CatalogActionTriggerImpl treeIndex;
+    private final FieldAccessStrategy access;
+    /*
+     * Indexing
+     */
+    private final CatalogActionTriggerImpl treeIndex;
 	private final CatalogActionTrigger timelineDiscriminator;
 	/*
 	 * versioning
@@ -129,22 +104,19 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	private WritePublicTimelineEventDiscriminator inheritanceHandler;
 
-	private final ObjectNativeInterface nativeInterface;
 
 	@Inject
 	public CatalogManagerImpl(@Named("template.token.splitter") String splitter /* "\\." */,
-							  @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
-			, @Named("catalog.ancestorKeyField") String ancestorIdField, Provider<PersistentCatalogEntity> ffactory, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, ObjectNativeInterface nativeInterface) {
-		super();
+                              @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
+            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, FieldAccessStrategy access) {
+        super();
 		this.ancestorIdField = ancestorIdField;
 		this.TOKEN_SPLITTER = splitter;
 		this.pattern = pattern;
-		this.nativeInterface = nativeInterface;
-		this.factory = ffactory;
-		//
 		this.builder = builder;
-		versionTrigger = new CatalogActionTriggerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
-				null);
+        this.access = access;
+        versionTrigger = new CatalogActionTriggerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
+                null);
 		versionTrigger.setFailSilence(true);
 		versionTrigger.setStopOnFail(true);
 
@@ -737,20 +709,20 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			}
 
             reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
-            if (isWriteableProperty(reservedField, owner, session)) {
-               setPropertyValue(reservedField, owner, createdValues, session);
+            if (access.isWriteableProperty(reservedField, owner, session)) {
+                access.setPropertyValue(reservedField, owner, createdValues, session);
             }
             List<Object> keys = createdValues.stream().map(v -> v.getId()).collect(Collectors.toList());
 
-			setPropertyValue(field, owner, keys, session);
-		} else {
+            access.setPropertyValue(field, owner, keys, session);
+        } else {
 			CatalogEntry value =  createEntry(context, foreignValue, field.getCatalog());
             reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
-            if (isWriteableProperty(reservedField, owner, session)) {
-                setPropertyValue(reservedField, owner, value, session);
+            if (access.isWriteableProperty(reservedField, owner, session)) {
+                access.setPropertyValue(reservedField, owner, value, session);
             }
-			setPropertyValue(field, owner, value.getId(), session);
-		}
+            access.setPropertyValue(field, owner, value.getId(), session);
+        }
 	}
 
 	private CatalogEntry createEntry(CatalogActionContext context, Object foreignValue, String catalog) throws Exception {
@@ -973,8 +945,13 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		}
 	}
 
-	public boolean isJoinableValueField(FieldDescriptor field) {
-		return (field.getCatalog() != null && (field.isEphemeral() || field.isKey() && !isFileField(field)));
+    @Override
+    public FieldAccessStrategy access() {
+        return this.access;
+    }
+
+    public boolean isJoinableValueField(FieldDescriptor field) {
+        return (field.getCatalog() != null && (field.isEphemeral() || field.isKey() && !isFileField(field)));
 	}
 
 	public boolean isFileField(FieldDescriptor field) {
@@ -983,187 +960,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				&& (catalog.equals(PersistentImageMetadata.CATALOG) || catalog.equals(WrupleSVGDocument.CATALOG)
 						|| catalog.equals(WruppleFileMetadata.CATALOG) || catalog.equals(WruppleAudioMetadata.CATALOG)
 						|| catalog.equals(WruppleVideoMetadata.CATALOG)));
-	}
-
-	/*
-	 * EVALUATION
-	 */
-
-	@Override
-	public CatalogEntry catalogCopy(CatalogDescriptor catalog, CatalogEntry entry) throws ReflectiveOperationException {
-		CatalogEntry copy = synthesize(catalog);
-
-		Collection<FieldDescriptor> fields = catalog.getFieldsValues();
-
-		Session session = newSession(copy);
-
-		Object value;
-		for (FieldDescriptor field : fields) {
-			if (field.isKey() && field.getFieldId().equals(catalog.getKeyField())) {
-
-			} else {
-				value = getPropertyValue(field, entry, null, session);
-				setPropertyValue(field, copy, value, session);
-			}
-		}
-
-		return copy;
-	}
-
-	@Override
-	public CatalogEntry synthesize(CatalogDescriptor catalog) throws IllegalAccessException, InstantiationException {
-		if (catalog.getClazz() == null || PersistentCatalogEntity.class.equals(catalog.getClazz())) {
-
-			PersistentCatalogEntity target = factory.get();
-			target.initCatalog(catalog);
-			return target;
-		} else {
-			Class<?> clazz = catalog.getClazz();
-			CatalogEntry target = (CatalogEntry) clazz.newInstance();
-			return target;
-		}
-	}
-
-
-    @Override
-    public Session newSession(CatalogEntry sample) {
-        return this.nativeInterface.newSession(sample);
-    }
-
-    @Override
-	public Object getPropertyValue(FieldDescriptor field, CatalogEntry object,
-                                   DistributiedLocalizedEntry localizedObject, Session session) throws RuntimeException {
-		// log.trace("[READ PROPERTY] {}.{}", catalog.getDistinguishedName(),
-		// field.getFieldId());
-		/*
-		 * if(s==null){ session = new FieldAccessSession(entry instanceof
-		 * HasAccesablePropertyValues); }
-		 */
-		String fieldId = field.getFieldId();
-		Object value = null;
-
-		if (localizedObject != null && field.isLocalized()) {
-			// support non-string values
-			value = localizedObject.getLocalizedFieldValue(fieldId);
-		}
-
-		/*
-		 * TODO cache in catalog descriptor
-		 */
-		if (value == null) {
-			//value = valuedoReadProperty(fieldId, session, object, false);
-			if (session.isAccesible()) {
-				try {
-					value= doGetAccesibleProperty(object, fieldId);
-				} catch (ClassCastException e) {
-                    log.debug("Catalog Property Session Changed State");
-                    session.setAccesible(false);
-                    value =  nativeInterface.getWrappedValue(fieldId, session,object,true);
-				}
-
-			} else {
-				try {
-                    value =  nativeInterface.getWrappedValue(fieldId, session,object,false);
-
-                } catch (Throwable e) {
-
-                    log.debug("Catalog Property Session Changed State");
-                    session.setAccesible( true);
-                    value =  doGetAccesibleProperty(object, fieldId);
-				}
-			}
-
-			if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
-				value = nativeInterface.getStringValue(value);
-			}
-		}
-
-		// log.trace("[READ PROPERTY] value = {}", value);
-		return value;
-	}
-
-    private Object doGetAccesibleProperty(CatalogEntry object, String fieldId) {
-        HasAccesablePropertyValues entry = (HasAccesablePropertyValues) object;
-        return entry.getPropertyValue(fieldId);
-    }
-
-	@Override
-	public void setPropertyValue(FieldDescriptor field, CatalogEntry object, Object value,
-                                 Session session) throws ReflectiveOperationException {
-		// log.trace("[WRITE PROPERTY] {}.{}", catalog.getDistinguishedName(),
-		// field.getFieldId());
-		// log.trace("[WRITE PROPERTY] value = {}", value);
-		/*
-		 * if(s==null){ session = new FieldAccessSession(entry instanceof
-		 * HasAccesablePropertyValues); }
-		 */
-		String fieldId = field.getFieldId();
-
-		if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
-			value = nativeInterface.processRawLongString((String) value);
-		}
-		setPropertyValue(fieldId, object, value, session);
-
-	}
-
-	private void doSetAccesibleProperty(CatalogEntry object, String fieldId, Object value) {
-		HasAccesablePropertyValues entry = (HasAccesablePropertyValues) object;
-		entry.setPropertyValue(value, fieldId);
-	}
-
-
-	private void doBeanSet(Session session, CatalogEntry object, String fieldId, Object value)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        nativeInterface.setProperty(object, fieldId, value);
-	}
-
-	@Override
-	public boolean isWriteableProperty(String property, CatalogEntry entry, Session session) {
-		if (session.isAccesible()) {
-			return true;
-		}
-		return nativeInterface.isWriteable(entry, property);
-	}
-
-	@Override
-	public void setPropertyValue(String fieldId, CatalogEntry object, Object value,
-                                 Session session) throws ReflectiveOperationException {
-		if (session.isAccesible()) {
-			try {
-				doSetAccesibleProperty(object, fieldId, value);
-			} catch (ClassCastException e) {
-				session.setAccesible( false);
-				try {
-					doBeanSet(session, object, fieldId, value);
-				} catch (IllegalAccessException ee) {
-					throw new IllegalArgumentException("access field " + fieldId, ee);
-				} catch (InvocationTargetException ee) {
-					throw new IllegalArgumentException("access field " + fieldId, ee);
-				}
-
-			}
-		} else {
-			try {
-				doBeanSet(session, object, fieldId, value);
-			} catch (IllegalAccessException e) {
-                session.setAccesible( true);
-				try {
-					doSetAccesibleProperty(object, fieldId, value);
-				} catch (ClassCastException ee) {
-					throw new IllegalArgumentException("access field " + fieldId, ee);
-				}
-
-			} catch (InvocationTargetException e) {
-                session.setAccesible( true);
-				try {
-					doSetAccesibleProperty(object, fieldId, value);
-				} catch (ClassCastException ee) {
-					throw new IllegalArgumentException("access field " + fieldId, ee);
-				}
-
-			}
-
-		}
 	}
 
 
@@ -1175,7 +971,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	public CatalogEntry synthesizeCatalogObject(CatalogEntry source, CatalogDescriptor catalog,
 			boolean excludeInherited, Session session, CatalogActionContext context) throws Exception {
 		context.getNamespaceContext().setNamespace(context);
-		CatalogEntry target = synthesize(catalog);
+        CatalogEntry target = access.synthesize(catalog);
 
 		addPropertyValues(source, target, catalog, excludeInherited, session,
 				(DistributiedLocalizedEntry) (source instanceof DistributiedLocalizedEntry ? source : null));
@@ -1198,20 +994,20 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				// ignore id fields
 				if (!(CatalogEntry.ID_FIELD.equals(fieldId))) {
 
-					value = getPropertyValue(field, source, localizedObject, session);
-					if (value != null) {
-						setPropertyValue(field, target, value, session);
-					}
+                    value = access.getPropertyValue(field, source, localizedObject, session);
+                    if (value != null) {
+                        access.setPropertyValue(field, target, value, session);
+                    }
 				}
 			}
 		}
 	}
 
 	@Override
-	public Object getAllegedParentId(CatalogEntry result, Session session) {
-		//return objectNativeInterface.valuedoReadProperty(this.ancestorIdField, session, result, false);
-        return nativeInterface.getWrappedValue(this.ancestorIdField,session,result,false);
-	}
+    public Object getAllegedParentId(CatalogEntry result, Session session) throws ReflectiveOperationException {
+        //return objectNativeInterface.valuedoReadProperty(this.ancestorIdField, session, result, false);
+        return access.getPropertyValue(ancestorIdField, result, null, session);
+    }
 
 	@Override
 	public void addInheritedValuesToChild(CatalogEntry parentEntity, CatalogEntry regreso, Session session,
@@ -1219,8 +1015,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		Collection<FieldDescriptor> fields = childCatalog.getFieldsValues();
 		for (FieldDescriptor field : fields) {
 			if (field.isInherited()) {
-				setPropertyValue(field, regreso, getPropertyValue(
-						/*
+                access.setPropertyValue(field, regreso, access.getPropertyValue(
+                        /*
 									 * actually belongs to a totally different
 									 * catalog, bus this implementation diesnt
 									 * really care so no need to FIXME ?
@@ -1250,8 +1046,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	public CatalogEntry synthesizeChildEntity(Object parentEntityId, CatalogEntry o, Session session,
 			CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
 		CatalogEntry childEntity = synthesizeCatalogObject(o, catalog, true, session, context);
-		setPropertyValue(this.ancestorIdField, childEntity, parentEntityId, session);
-		return childEntity;
+        access.setPropertyValue(this.ancestorIdField, childEntity, parentEntityId, session);
+        return childEntity;
 	}
 
 	@Override
@@ -1271,14 +1067,15 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
 	public Object getPropertyForeignKeyValue(CatalogDescriptor catalogDescriptor, FieldDescriptor field, CatalogEntry e,
-			Session session) {
-		/*return valuedoReadProperty(
+                                             Session session) throws ReflectiveOperationException {
+        /*return valuedoReadProperty(
 				field.getFieldId()
 						+ (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY),
 				(FieldAccessSession) session, e, true);*/
-		return nativeInterface.getWrappedValue(field.getFieldId()
-                + (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY),session,e,true);
-	}
+        return access.getPropertyValue(
+                field.getFieldId()
+                        + (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY), e, null, session);
+    }
 
 	@Override
 	public String getDenormalizedFieldValue(CatalogEntry client, String fieldId, Session session,
@@ -1295,11 +1092,11 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
 	public String getDenormalizedFieldValue(FieldDescriptor field, Session session, CatalogEntry client,
-			CatalogDescriptor type) {
-		if (field.getDefaultValueOptions() != null && !field.getDefaultValueOptions().isEmpty()
+                                            CatalogDescriptor type) throws ReflectiveOperationException {
+        if (field.getDefaultValueOptions() != null && !field.getDefaultValueOptions().isEmpty()
 				&& field.getDataType() == CatalogEntry.INTEGER_DATA_TYPE) {
-			Integer index = (Integer) getPropertyValue(field, client, null, session);
-			if (index != null) {
+            Integer index = (Integer) access.getPropertyValue(field, client, null, session);
+            if (index != null) {
 				return field.getDefaultValueOptions().get(index.intValue());
 			}
 		}
@@ -1346,25 +1143,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
         return ex.getResult();
     }
 
-    @Override
-    public void deleteAttribute(CatalogEntry jso, String fieldId, Session session) throws ReflectiveOperationException {
-		setPropertyValue(fieldId,jso,null,session);
-    }
 
-    @Override
-    public void parseSetDouble(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session) throws ReflectiveOperationException {
-		setPropertyValue(fieldId,jso,Double.parseDouble(rawValue),session);
-    }
-
-    @Override
-    public void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session) throws ReflectiveOperationException {
-		setPropertyValue(fieldId,jso,Integer.parseInt(rawValue),session);
-    }
-
-    @Override
-    public void parseSetBoolean(CatalogEntry jso, FieldDescriptor fieldId, String rawValue, Session session) throws ReflectiveOperationException {
-		setPropertyValue(fieldId,jso,null==null?false:Boolean.parseBoolean(rawValue),session);
-    }
 
 
 }

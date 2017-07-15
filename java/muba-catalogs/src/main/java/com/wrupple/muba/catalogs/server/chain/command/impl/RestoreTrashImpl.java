@@ -1,14 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
@@ -18,8 +9,15 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.List;
 
 @Singleton
 public class RestoreTrashImpl implements RestoreTrash {
@@ -37,8 +35,8 @@ public class RestoreTrashImpl implements RestoreTrash {
 		if (e == null) {
 			log.warn("[RESTORE ALL TRASH ITEMS]");
 
-			Session session = context.getCatalogManager().newSession(null);
-			FilterData all = FilterDataUtils.newFilterData();
+            Session session = context.getCatalogManager().access().newSession(null);
+            FilterData all = FilterDataUtils.newFilterData();
 			all.setConstrained(false);
 			all.addOrdering(new FilterDataOrderingImpl(HasCatalogId.CATALOG_FIELD, false));
 
@@ -75,8 +73,8 @@ public class RestoreTrashImpl implements RestoreTrash {
 			String catalogId = e.getCatalog();
 			CatalogDescriptor descriptor = context.getCatalogManager().getDescriptorForName(catalogId, context);
 			FieldDescriptor trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
-			Session session = context.getCatalogManager().newSession(null);
-			context.setFilter(null);
+            Session session = context.getCatalogManager().access().newSession(null);
+            context.setFilter(null);
 			undelete(e, context, descriptor, trashField, session);
 
 			// DUMP TRASH
@@ -104,8 +102,8 @@ public class RestoreTrashImpl implements RestoreTrash {
 			context.setEntry(entryId);
 			context.getCatalogManager().getRead().execute(context);
 			CatalogEntry trashedEntry = context.getEntryResult();
-			context.getCatalogManager().setPropertyValue(trashField, trashedEntry, false, session);
-			context.setEntryValue(trashedEntry);
+            context.getCatalogManager().access().setPropertyValue(trashField, trashedEntry, false, session);
+            context.setEntryValue(trashedEntry);
 			context.getCatalogManager().getWrite().execute(context);
 
 		}

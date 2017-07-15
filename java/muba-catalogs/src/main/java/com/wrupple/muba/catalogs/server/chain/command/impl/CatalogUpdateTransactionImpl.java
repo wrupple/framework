@@ -1,12 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -16,8 +9,14 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import com.wrupple.muba.catalogs.server.service.Writers;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import org.apache.commons.chain.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
@@ -54,8 +53,8 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 		CatalogDescriptor parentCatalog = null;
 		Object parentEntityId = null;
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
-			session = context.getCatalogManager().newSession(originalEntry);
-			// we are certain this catalog has a parent, otherwise this DAO
+            session = context.getCatalogManager().access().newSession(originalEntry);
+            // we are certain this catalog has a parent, otherwise this DAO
 			// would
 			// not be called
 			CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
