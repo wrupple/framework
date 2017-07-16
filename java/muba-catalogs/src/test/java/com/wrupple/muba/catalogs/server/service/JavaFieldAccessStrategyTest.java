@@ -154,6 +154,8 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
         FieldAccessStrategy.Session session = access.newSession(bean);
 
+        assertTrue(access.isWriteableProperty("number",bean,session));
+
         access.setPropertyValue("number",bean,7,session);
 
         Integer value = (Integer) access.getPropertyValue("number",bean,null,session);

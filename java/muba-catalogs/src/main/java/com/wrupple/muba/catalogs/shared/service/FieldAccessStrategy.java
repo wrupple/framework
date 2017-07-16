@@ -13,8 +13,6 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 public interface FieldAccessStrategy {
 
 
-
-
     public interface Session {
         void resample(CatalogEntry sample);
 
@@ -37,6 +35,9 @@ public interface FieldAccessStrategy {
     public CatalogEntry synthesize(CatalogDescriptor catalog) throws ReflectiveOperationException;
 
     CatalogEntry catalogCopy(CatalogDescriptor catalog, CatalogEntry entry) throws ReflectiveOperationException;
+
+
+    boolean isReadableProperty(String foreignKeyValuePropertyName, CatalogEntry e, Session session);
 
     boolean isWriteableProperty(String string, CatalogEntry sample, Session session);
 

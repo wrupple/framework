@@ -187,13 +187,13 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public void setProperty(CatalogEntry object, String fieldId, Object value) {
-
+    public void setProperty(CatalogEntry object, String fieldId, Object value, FieldAccessStrategy.Session session) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        bean.setProperty(object,fieldId,value);
     }
 
     @Override
     public boolean isWriteable(CatalogEntry entry, String property) {
-        return false;
+        return bean.isWriteable(entry,property);
     }
 
     @Override
@@ -203,6 +203,11 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
         }else{
             return getWrappedValue(pathing,session,o,false);
         }
+    }
+
+    @Override
+    public boolean isReadable(String foreignKeyValuePropertyName, CatalogEntry e) {
+        return bean.isReadable(e,foreignKeyValuePropertyName);
     }
 
 

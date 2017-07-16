@@ -71,7 +71,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		CatalogEntry e = (CatalogEntry) context.getEntryValue();
 		e.setDomain((Long) context.getDomain());
 		log.trace("[Will create Entry] {} in domain {}", e,e.getDomain());
-		Session session = context.getCatalogManager().newSession(e);
+		Session session = context.getCatalogManager().access().newSession(e);
 		Object id = null;
 
 		Collection<FieldDescriptor> fields = catalogDescriptor.getFieldsValues();
@@ -94,7 +94,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {
-					fieldValue = context.getCatalogManager().getPropertyValue(field, e, null, session);
+					fieldValue = context.getCatalogManager().access().getPropertyValue(field, e, null, session);
 					if (paramz.size() > 0) {
 						values.append(",");
 						builder.append(",");
@@ -162,7 +162,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && field.isMultiple() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().getPropertyValue(field, e, null, session);
+				fieldValue = context.getCatalogManager().access().getPropertyValue(field, e, null, session);
 				if (fieldValue != null) {
 					foreignTableName = tableNames.getTableNameForCatalogField(context, catalogDescriptor, field);
 					if (foreignTableName != null) {

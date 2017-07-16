@@ -112,7 +112,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				throw new IllegalArgumentException("cannot instantiate " + type);
 			}
 			if (session == null) {
-				session = cms.newSession((CatalogEntry) result);
+				session = cms.access().newSession((CatalogEntry) result);
 			}
 			FieldDescriptor field;
 			for (int i = 1; i <= cols; i++) {
@@ -125,7 +125,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				field = catalog.getFieldDescriptor(delegate.getFieldNameForColumn(columnName,false));
 				if (field != null) {
 					try {
-						cms.setPropertyValue(field, (CatalogEntry) result,
+						cms.access().setPropertyValue(field, (CatalogEntry) result,
 								delegate.handleColumnField(rs,field, field.getDataType(), i, format), session);
 					} catch (Exception e) {
 						throw new IllegalArgumentException(e);

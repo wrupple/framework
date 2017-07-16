@@ -1068,14 +1068,20 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	@Override
 	public Object getPropertyForeignKeyValue(CatalogDescriptor catalogDescriptor, FieldDescriptor field, CatalogEntry e,
                                              Session session) throws ReflectiveOperationException {
-        /*return valuedoReadProperty(
+        String foreignKeyValuePropertyName = field.getFieldId()
+                + (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY);
+		//check if property exists
+        if(access.isReadableProperty(foreignKeyValuePropertyName,e,session)){
+           /*return valuedoReadProperty(
 				field.getFieldId()
 						+ (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY),
 				(FieldAccessSession) session, e, true);*/
-        return access.getPropertyValue(
-                field.getFieldId()
-                        + (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY), e, null, session);
-    }
+            return access.getPropertyValue(foreignKeyValuePropertyName, e, null, session);
+        }else{
+            return null;
+
+        }
+	}
 
 	@Override
 	public String getDenormalizedFieldValue(CatalogEntry client, String fieldId, Session session,

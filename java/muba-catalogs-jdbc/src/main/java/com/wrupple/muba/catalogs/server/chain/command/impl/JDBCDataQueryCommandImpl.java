@@ -193,14 +193,14 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 					for (CatalogEntry o : results) {
 						if (session == null) {
-							session = context.getCatalogManager().newSession(o);
+							session = context.getCatalogManager().access().newSession(o);
 						}
 						log.trace("[DB secondary query for] {} ", o.getId());
 						// FIXME this is terrible, at lest use prepared
 						// statements??
 						fieldValues = runner.query(queryL, handler, o.getId());
 						log.trace("[DB results for {}] {}", o.getId(), fieldValues == null ? 0 : fieldValues.size());
-						context.getCatalogManager().setPropertyValue(field, o, fieldValues, session);
+						context.getCatalogManager().access().setPropertyValue(field, o, fieldValues, session);
 					}
 				}
 

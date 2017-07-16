@@ -61,6 +61,16 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     }
 
     @Override
+    public boolean isReadableProperty(String foreignKeyValuePropertyName, CatalogEntry e, Session session) {
+        if(session.isAccesible()){
+            return true;
+        }else{
+            return this.nativeInterface.isReadable(foreignKeyValuePropertyName,e);
+        }
+
+    }
+
+    @Override
     public CatalogEntry synthesize(CatalogDescriptor catalog) throws IllegalAccessException, InstantiationException {
         if (catalog.getClazz() == null || PersistentCatalogEntity.class.equals(catalog.getClazz())) {
 
@@ -172,7 +182,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
     private void doBeanSet(Session session, CatalogEntry object, String fieldId, Object value)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        nativeInterface.setProperty(object, fieldId, value);
+        nativeInterface.setProperty(object, fieldId, value,session);
     }
 
     @Override
@@ -203,15 +213,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
         } else {
             try {
                 doBeanSet(session, object, fieldId, value);
-            } catch (IllegalAccessException e) {
-                session.setAccesible(true);
-                try {
-                    doSetAccesibleProperty(object, fieldId, value);
-                } catch (ClassCastException ee) {
-                    throw new IllegalArgumentException("access field " + fieldId, ee);
-                }
-
-            } catch (InvocationTargetException e) {
+            } catch (Exception e) {
                 session.setAccesible(true);
                 try {
                     doSetAccesibleProperty(object, fieldId, value);

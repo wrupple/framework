@@ -51,10 +51,10 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		CatalogEntry originalEntry = context.getCatalogManager().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
+		CatalogEntry originalEntry = context.getCatalogManager().access().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
 
 		CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
-		Session session = context.getCatalogManager().newSession(originalEntry);
+		Session session = context.getCatalogManager().access().newSession(originalEntry);
 
 		updatedEntry.setDomain((Long) originalEntry.getDomain());
 		Object id = context.getEntry();
@@ -74,8 +74,8 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().getPropertyValue(field, updatedEntry, null, session);
-				context.getCatalogManager().setPropertyValue(field, originalEntry, fieldValue, session);
+				fieldValue = context.getCatalogManager().access().getPropertyValue(field, updatedEntry, null, session);
+				context.getCatalogManager().access().setPropertyValue(field, originalEntry, fieldValue, session);
 				if (field.isMultiple() && !field.isEphemeral()) {
 					// also update (delete and create) and create multiple
 					// fields
@@ -120,7 +120,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		params.add(id);
 
 		if (descriptor.isVersioned()) {
-			Long version = (Long) context.getCatalogManager().getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
+			Long version = (Long) context.getCatalogManager().access().getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
 					context.getOldValue(), null, session);
 			builder.append(" && ");
 			builder.append(Versioned.FIELD);

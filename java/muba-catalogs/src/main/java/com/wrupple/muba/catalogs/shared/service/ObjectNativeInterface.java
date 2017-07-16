@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.shared.service;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
@@ -32,9 +33,11 @@ public interface ObjectNativeInterface extends LargeStringFieldDataAccessObject{
 
     Object getWrappedValue(String fieldId, FieldAccessStrategy.Session session, CatalogEntry object, boolean silentFail);
 
-    void setProperty(CatalogEntry object, String fieldId, Object value);
+    void setProperty(CatalogEntry object, String fieldId, Object value, FieldAccessStrategy.Session session) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     boolean isWriteable(CatalogEntry entry, String property);
 
     Object getPropertyValue(CatalogEntry o, String pathing, FieldAccessStrategy.Session session);
+
+    boolean isReadable(String foreignKeyValuePropertyName, CatalogEntry e);
 }
