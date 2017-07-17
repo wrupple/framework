@@ -13,7 +13,8 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        log.info("Defining solution criteria");
+        log.info("no interface to provide human runner with solution criteria");
+        //unless theres a universal way to post criteria to the human this is as far as we go as to the definition of the problem
         return CONTINUE_PROCESSING;
     }
 }

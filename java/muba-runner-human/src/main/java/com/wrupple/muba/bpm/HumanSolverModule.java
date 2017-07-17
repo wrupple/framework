@@ -7,6 +7,8 @@ import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.impl.HumanSolverImpl;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.impl.FieldConversionStrategyImpl;
 
 /**
  * Created by japi on 11/05/17.
@@ -20,6 +22,10 @@ public class HumanSolverModule extends AbstractModule{
         bind(SolveTask.class).to(UserInteractionState.class);
 
         bind(UserInteractionState.class).to(PlainTextUserInteractionState.class);
+
+        bind(FieldConversionStrategy.class).to(FieldConversionStrategyImpl.class);
+
+        bind(DefineSolutionCriteria.class).to(DefineSolutionCriteriaImpl.class);
 
     }
 }

@@ -10,10 +10,13 @@ import java.util.regex.Pattern;
 import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
+import com.wrupple.muba.catalogs.shared.service.impl.JavaFilterNativeInterfaceImpl;
 import com.wrupple.muba.catalogs.shared.service.impl.JavaObjectNativeInterface;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.BooleanConverter;
 import org.apache.commons.beanutils.converters.LongConverter;
 import org.apache.commons.chain.CatalogFactory;
 
@@ -233,6 +236,7 @@ public class CatalogModule extends AbstractModule {
 		 */
 		bind(ObjectNativeInterface.class).to(JavaObjectNativeInterface.class);
 		bind(FieldAccessStrategy.class).to(JavaFieldAccessStrategy.class);
+		bind(FilterNativeInterface.class).to(JavaFilterNativeInterfaceImpl.class);
 	}
 
 	/*

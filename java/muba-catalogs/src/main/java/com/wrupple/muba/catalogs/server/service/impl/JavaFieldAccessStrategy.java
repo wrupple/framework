@@ -200,6 +200,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             try {
                 doSetAccesibleProperty(object, fieldId, value);
             } catch (ClassCastException e) {
+                log.error("reading field",e);
                 session.setAccesible(false);
                 try {
                     doBeanSet(session, object, fieldId, value);
@@ -215,6 +216,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
                 doBeanSet(session, object, fieldId, value);
             } catch (Exception e) {
                 session.setAccesible(true);
+                log.error("reading field",e);
                 try {
                     doSetAccesibleProperty(object, fieldId, value);
                 } catch (ClassCastException ee) {

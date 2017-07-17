@@ -42,12 +42,12 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
             if (arro == null) {
                 return null;
             } else {
-                List<Object> arr = (List<Object>) arro;
+                List<CatalogEntry> arr = (List<CatalogEntry>) arro;
                 //JavaScriptObject o;
-                Object o;
+                CatalogEntry o;
                 boolean match;
                 //JsArray<JavaScriptObject> regreso = JavaScriptObject.createArray().cast();
-                List<Object> regreso = new ArrayList<>(arr.size());
+                List<CatalogEntry> regreso = new ArrayList<>(arr.size());
                 for (int i = 0; i < arr.size(); i++) {
                     o = arr.get(i);
                     match = matchesCriteria(o, includeCriteria, session);
@@ -65,7 +65,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
 
 
-    private boolean matchesCriteria(Object o, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session ) {
+    private boolean matchesCriteria(CatalogEntry o, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session ) {
         for (FilterCriteria criteria : includeCriteria) {
             if (matches( criteria, o,session)) {
                 return true;
@@ -75,7 +75,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
     }
 
     // TRUE IF MATCH AGINST AT LEAST ONE CRITERIA
-    private boolean matches(FilterCriteria criteria, Object o, FieldAccessStrategy.Session session) {
+    private boolean matches(FilterCriteria criteria, CatalogEntry o, FieldAccessStrategy.Session session) {
         //JsArrayMixed values = criteria.getValuesArray();
         List<Object> values = criteria.getValues();
         //JsArrayString path = criteria.getPathArray();;
@@ -124,9 +124,9 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
         int dataType = field == null ? -1 : field.getDataType();
         if (value == null) {
-            access.deleteAttribute(jso, field.getFieldId(),session);
+            access.access().deleteAttribute(jso, field.getFieldId(),session);
         } else if (nativeInterface.isCollection(value)) {
-            access.setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value),session);
+            access.access().setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value),session);
         } else if (value instanceof Number) {
 
             // FIXME some runtimes (browser) may require to unwrap the java object
@@ -138,45 +138,45 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
                 access.setAttribute(jso, field, v.doubleValue(),session);
             }
             */
-            access.setPropertyValue(field,jso,value,session);
+            access.access().setPropertyValue(field,jso,value,session);
         } else if (value instanceof String) {
             String v = (String) value;
             v = getSendableString(v);
             if (v == null) {
-                access.deleteAttribute(jso, field.getFieldId(),session);
+                access.access().deleteAttribute(jso, field.getFieldId(),session);
             }else{
                 if(field.isMultiple()){
-                    access.setPropertyValue(field,jso,nativeInterface.eval(v),session);
+                    access.access().setPropertyValue(field,jso,nativeInterface.eval(v),session);
                 }else{
                     try {
                         switch (dataType) {
                             case CatalogEntry.BOOLEAN_DATA_TYPE:
-                                access.parseSetBoolean(jso, field, v,session);
+                                access.access().parseSetBoolean(jso, field, v,session);
                                 break;
                             case CatalogEntry.INTEGER_DATA_TYPE:
                                 if(field.isKey()){
                                     //TODO distinguish client and server runtime cus KEYS ARE ALWAYS SUPPOSED TO BE STRINGS CLIENT-SIDE,
-                                    access.setPropertyValue(field,jso,v,session);
+                                    access.access().setPropertyValue(field,jso,v,session);
                                     //access.setAttribute(jso, fieldId, v);
                                 }else{
-                                    access.parseSetInteger(v,jso,field,session);
+                                    access.access().parseSetInteger(v,jso,field,session);
                                 }
                                 break;
                             case CatalogEntry.NUMERIC_DATA_TYPE:
-                                access.parseSetDouble(v,jso,field,session);
+                                access.access().parseSetDouble(v,jso,field,session);
                                 break;
                             default:
-                                access.setPropertyValue(field,jso,v,session);
+                                access.access().setPropertyValue(field,jso,v,session);
                         }
                     } catch (Exception e) {
-                        access.setPropertyValue(field,jso,v,session);
+                        access.access().setPropertyValue(field,jso,v,session);
                         //access.setAttribute(jso, fieldId, v);
                     }
                 }
             }
 
         } else {
-            access.setPropertyValue(field,jso,value,session);
+            access.access().setPropertyValue(field,jso,value,session);
             //access.setAttribute(jso, fieldId, value);
         }
     }
@@ -198,7 +198,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
         } else if (value instanceof String) {
             String v = (String) value;
             v = getSendableString(v);
-            if (v == null) {
+            if (v == null&&CatalogEntry.BOOLEAN_DATA_TYPE!=dataType) {
                 return null;
             }
 
@@ -213,6 +213,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
                         return Integer.parseInt(v);
                     case CatalogEntry.NUMERIC_DATA_TYPE:
                         return Double.parseDouble(v);
+                        //FIXME attempt to parse a date with system date parser
                     default:
                         return v;
                 }
