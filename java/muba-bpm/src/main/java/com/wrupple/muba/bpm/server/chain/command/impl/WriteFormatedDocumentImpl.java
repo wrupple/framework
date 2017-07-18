@@ -32,7 +32,7 @@ public class WriteFormatedDocumentImpl implements WriteFormatedDocument {
 		CatalogActionContext ccontext = (CatalogActionContext) c;
 		List<Document> list = ccontext.getResults();
 		if (list != null && !list.isEmpty()) {
-			PrintWriter out = ccontext.getExcecutionContext().getScopedWriter(ccontext);
+			PrintWriter out = ccontext.getRuntimeContext().getScopedWriter(ccontext);
 			String value;
 			for (Document sheet : list) {
 				value = sheet.getValue();

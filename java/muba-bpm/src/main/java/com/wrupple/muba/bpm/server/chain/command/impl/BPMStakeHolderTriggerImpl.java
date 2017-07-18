@@ -35,7 +35,7 @@ public class BPMStakeHolderTriggerImpl implements BPMStakeHolderTrigger {
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		CatalogEntry old = context.getOldValue();
-		long actualStakeHolder = context.getExcecutionContext().getSession().getStakeHolderPrincipal(Long.class);
+		long actualStakeHolder = context.getRuntimeContext().getSession().getStakeHolderPrincipal(Long.class);
 		if(actualStakeHolder==CatalogEntry.PUBLIC_ID && ! anonStakeHolder){
 			throw new KnownExceptionImpl("User Identity Unknown", KnownException.USER_UNKNOWN, null);
 		}
@@ -45,7 +45,7 @@ public class BPMStakeHolderTriggerImpl implements BPMStakeHolderTrigger {
 		FieldDescriptor field = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
 		Session session=accessor.newSession(old);
 		Long stakeHolder= (Long) accessor.getPropertyValue(catalog, field, old, null, session);
-		if(stakeHolder==null || !context.getExcecutionContext().getSession().hasPermission(CHANGE_STAKEHOLDER+":"+catalog.getDistinguishedName())){
+		if(stakeHolder==null || !context.getRuntimeContext().getSession().hasPermission(CHANGE_STAKEHOLDER+":"+catalog.getDistinguishedName())){
 			System.err.println("[set stakeHolder]"+actualStakeHolder);
 			accessor.setPropertyValue(catalog, field, (CatalogEntry) old, actualStakeHolder, accessor.newSession((CatalogEntry) old));
 		}

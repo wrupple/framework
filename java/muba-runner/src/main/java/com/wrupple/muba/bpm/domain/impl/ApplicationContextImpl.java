@@ -117,7 +117,7 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     private RuntimeContext excecutionContex;
 
     @Override
-    public RuntimeContext getExcecutionContext() {
+    public RuntimeContext getRuntimeContext() {
         return excecutionContex;
     }
 

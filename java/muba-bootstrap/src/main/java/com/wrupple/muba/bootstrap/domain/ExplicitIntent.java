@@ -8,4 +8,10 @@ public interface ExplicitIntent extends HasCatalogId{
 	 * @return the proccess explicitly selected to handle this intent
 	 */
 	Object getHandle();
+
+	/**
+	 * worker session to recover
+	 * @return
+	 */
+	Object getContext();
 }

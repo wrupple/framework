@@ -55,7 +55,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
             catalog.access().setPropertyValue(fieldId,solution,fieldValue,solutionWritingSession);
         }
 
-        context.getExcecutionContext().setResult(solution);
+        context.getRuntimeContext().setResult(solution);
         return CONTINUE_PROCESSING;
     }
 }

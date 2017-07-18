@@ -2,18 +2,14 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.TransactionHistory;
-import com.wrupple.muba.bootstrap.domain.UserContext;
+import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.bootstrap.domain.ServiceContext;
 import com.wrupple.muba.bootstrap.domain.reserved.HasParent;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public interface CatalogActionContext
-		extends UserContext, HasParent<CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
+		extends ServiceContext, HasParent<CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
 
 	final String CATALOG = "CatalogActionContext";
 	

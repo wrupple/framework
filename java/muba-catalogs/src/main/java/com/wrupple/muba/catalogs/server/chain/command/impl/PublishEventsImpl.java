@@ -43,7 +43,7 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 
 		// UPDATE CLIENT'S ACTIVITY STATUS
 
-		CatalogPeer client = (CatalogPeer) context.getExcecutionContext().getSession().getPeerValue();
+		CatalogPeer client = (CatalogPeer) context.getRuntimeContext().getSession().getPeerValue();
 
 		// String remembermeToken = peer.getPublicKey();
 

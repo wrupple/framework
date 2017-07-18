@@ -27,7 +27,7 @@ public class BPMValidationTriggerImpl extends AbstractComparationCommand impleme
 		CatalogEntry old = context.getOldValue();
 		String permission = serviceManifest.buildServiceRequestUri(':', context.getDomain(), catalog.getDistinguishedName(), old.getIdAsString(), field.getFieldId(),
 				codedFinalValue, codedInitialValue);
-		if (!(context.getExcecutionContext().getSession().hasPermission(permission))) {
+		if (!(context.getRuntimeContext().getSession().hasPermission(permission))) {
 			throw new SecurityException("[BPM] state violation: " + permission);
 		}		
 	}

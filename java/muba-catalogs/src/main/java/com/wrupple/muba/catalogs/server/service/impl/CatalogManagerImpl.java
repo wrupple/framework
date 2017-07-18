@@ -196,7 +196,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
 	public CatalogActionContext spawn(CatalogActionContext parent) {
-		return makeContext(parent.getExcecutionContext(), parent);
+		return makeContext(parent.getRuntimeContext(), parent);
 	}
 
 	@Override
@@ -1143,7 +1143,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
     public Object synthethizeFieldValue(String[] split, CatalogActionContext context) throws Exception {
-        RuntimeContext ex = context.getExcecutionContext().spawnChild();
+        RuntimeContext ex = context.getRuntimeContext().spawnChild();
         ex.setSentence(split);
         ex.process();
         return ex.getResult();

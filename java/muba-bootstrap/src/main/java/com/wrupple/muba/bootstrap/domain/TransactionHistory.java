@@ -15,17 +15,17 @@ import com.wrupple.muba.bootstrap.server.chain.command.UserCommand;
  */
 public interface TransactionHistory extends UserTransaction {
 
-	<T extends CatalogEntry> void didRead(UserContext context, List<T> r, UserCommand dao);
+	<T extends CatalogEntry> void didRead(ServiceContext context, List<T> r, UserCommand dao);
 
-	public <T extends CatalogEntry> void didRead(UserContext context, T r, UserCommand dao);
+	public <T extends CatalogEntry> void didRead(ServiceContext context, T r, UserCommand dao);
 
-	public <T extends CatalogEntry> void didCreate(UserContext context, CatalogEntry regreso,
+	public <T extends CatalogEntry> void didCreate(ServiceContext context, CatalogEntry regreso,
 			UserCommand createDao);
 
-	public <T extends CatalogEntry> void didUpdate(UserContext context, T original, T outDatedEntry,
+	public <T extends CatalogEntry> void didUpdate(ServiceContext context, T original, T outDatedEntry,
 			UserCommand dao);
 	
-	public <T extends CatalogEntry> void didDelete(UserContext context, T r, UserCommand dao);
+	public <T extends CatalogEntry> void didDelete(ServiceContext context, T r, UserCommand dao);
 	
 	public void didMetadataRead(ContractDescriptor regreso) ;
 

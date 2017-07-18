@@ -47,7 +47,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		if (trigger.isRunAsStakeHolder()) {
 			stakeHolder = (Long) trigger.getStakeHolder();
 
-			context.getExcecutionContext().getSession().setStakeHolder(stakeHolder);
+			context.getRuntimeContext().getSession().setStakeHolder(stakeHolder);
 		}
 		String targetCatalogId = trigger.getCatalog();
 		context.setCatalog(targetCatalogId);
@@ -76,12 +76,12 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 				if (rollback) {
 					try {
-						if (context.getExcecutionContext().getSession().hasPermissionsToProcessContext(context,
+						if (context.getRuntimeContext().getSession().hasPermissionsToProcessContext(context,
 								manifestP.get())) {
 
 							log.debug("[EXCECUTING TRIGGER {}] CONTEXT= {} ", command, context);
 							command.execute(context);
-							Set<ConstraintViolation<?>> aggregate = context.getExcecutionContext().getConstraintViolations();
+							Set<ConstraintViolation<?>> aggregate = context.getRuntimeContext().getConstraintViolations();
 							if (aggregate != null && !aggregate.isEmpty()) {
 								log.error("Constraint validations encountered");
 								throw new IllegalArgumentException("Constraint validations encountered");
@@ -93,7 +93,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 						if (rollback) {
 							throw e;
 						} else {
-							context.getExcecutionContext()
+							context.getRuntimeContext()
 									.addWarning("Trigger failed silently : " + e.getLocalizedMessage());
 						}
 					}
@@ -106,7 +106,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		} finally {
 			if (stakeHolder != null) {
-				context.getExcecutionContext().getSession().releaseAuthority();
+				context.getRuntimeContext().getSession().releaseAuthority();
 			}
 
 		}

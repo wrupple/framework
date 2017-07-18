@@ -22,7 +22,7 @@ public class GenericResponseWriterImpl implements Command {
 	@Override
 	public boolean execute(Context context) throws Exception {
 		Object parameter = context.get(contextParameter);
-		PrintWriter out = ((CatalogActionContext) context).getExcecutionContext().getScopedWriter(context);
+		PrintWriter out = ((CatalogActionContext) context).getRuntimeContext().getScopedWriter(context);
 		om.writeValue(out, parameter);
 		return CONTINUE_PROCESSING;
 	}

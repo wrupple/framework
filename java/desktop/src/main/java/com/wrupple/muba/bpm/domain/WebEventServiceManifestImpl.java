@@ -55,7 +55,7 @@ public class WebEventServiceManifestImpl extends CatalogServiceManifestImpl impl
 				throw new IllegalArgumentException("invalid webhook");
 			}
 
-			HttpServletRequest req = requestContext.getServletContext().getExcecutionContext();
+			HttpServletRequest req = requestContext.getServletContext().getRuntimeContext();
 			if (serializedContext == null) {
 				throw new NullPointerException("event with no payload");
 

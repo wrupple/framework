@@ -112,7 +112,7 @@ public class CatalogActionTriggerHandlerImpl implements CatalogActionTriggerHand
 				} catch (Exception e) {
 
 					log.error("[TRIGGER FAIL]", e);
-					context.getExcecutionContext().addWarning("Trigger failed " + trigger.getName());
+					context.getRuntimeContext().addWarning("Trigger failed " + trigger.getName());
 
 					if (trigger.isStopOnFail()) {
 						return PROCESSING_COMPLETE;

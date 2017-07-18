@@ -99,7 +99,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			} else {
 				List<Object> keys = keyCriteria.getValues();
 				if (keys == null) {
-					context.getExcecutionContext().addWarning("malformed criteria");
+					context.getRuntimeContext().addWarning("malformed criteria");
 				} else {
 
 					if (filter.getCursor() == null) {

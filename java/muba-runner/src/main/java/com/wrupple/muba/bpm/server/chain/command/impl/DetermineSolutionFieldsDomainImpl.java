@@ -43,7 +43,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         final Solver solver = plugin.getSolver();
         log.debug("Resolving Solution Type");
         String solutionType =(String) request.getCatalog();
-        CatalogActionContext catalogContext= catalogPlugin.spawn(context.getExcecutionContext());
+        CatalogActionContext catalogContext= catalogPlugin.spawn(context.getRuntimeContext());
         CatalogDescriptor solutionDescriptor = catalogPlugin.getDescriptorForName(solutionType,catalogContext);
         context.setSolutionDescriptor(solutionDescriptor);
 

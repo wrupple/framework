@@ -9,7 +9,7 @@ public interface ServiceContext extends Context {
 
 
 
-    public RuntimeContext getExcecutionContext();
+    public RuntimeContext getRuntimeContext();
 
     //void setCallback(/*chain so anyone can add his own callback*/Chain callback);
 }

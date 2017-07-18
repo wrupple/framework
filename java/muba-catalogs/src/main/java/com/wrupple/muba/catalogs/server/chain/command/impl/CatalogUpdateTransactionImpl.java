@@ -88,7 +88,7 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 		}
 		CatalogEntry ress = context.getEntryResult();
 		context.getTransactionHistory().didUpdate(context,ress , context.getOldValue(), dao);
-		trigerer.postprocess(context, context.getExcecutionContext().getCaughtException());
+		trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
 		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 		if (cache != null) {
 			cache.update(context, catalog.getDistinguishedName(), context.getOldValue(), ress);

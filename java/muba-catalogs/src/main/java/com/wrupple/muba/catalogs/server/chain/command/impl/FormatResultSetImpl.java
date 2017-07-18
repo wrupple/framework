@@ -44,8 +44,8 @@ public class FormatResultSetImpl implements FormatResultSet {
 
 		String action = (String) c.get(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
 
-		List<String> warnings = context.getExcecutionContext().resetWarnings();
-		Set<ConstraintViolation<?>> constraintViolations = context.getExcecutionContext().getConstraintViolations();
+		List<String> warnings = context.getRuntimeContext().resetWarnings();
+		Set<ConstraintViolation<?>> constraintViolations = context.getRuntimeContext().getConstraintViolations();
 		List<CatalogColumnResultSet> responseList = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 
@@ -68,7 +68,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 		}
 
 		long responseTimestamp = System.currentTimeMillis();
-		PrintWriter out = context.getExcecutionContext().getScopedWriter(context);
+		PrintWriter out = context.getRuntimeContext().getScopedWriter(context);
 		encodePrimaryKeys(responseList);
 		if (responseList == null || responseList.isEmpty()) {
 			warnings.add(EMPTY_RESPONSE);
@@ -79,7 +79,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 		LengthReportingWriter wrapper = new LengthReportingWriter(out);
 		mapper.writeValue(wrapper, responseContract);
 		long length = wrapper.getLength();
-		context.getExcecutionContext().setTotalResponseSize(length);
+		context.getRuntimeContext().setTotalResponseSize(length);
 		return CONTINUE_PROCESSING;
 	}
 

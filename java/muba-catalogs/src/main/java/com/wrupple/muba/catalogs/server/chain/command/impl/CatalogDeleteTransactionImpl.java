@@ -113,7 +113,7 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 			}
 
 			// performAfterDelete
-			trigerer.postprocess(context, context.getExcecutionContext().getCaughtException());
+			trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
 
 		}
 

@@ -1,13 +1,14 @@
 package com.wrupple.muba.bootstrap.server.chain.command;
 
+import com.wrupple.muba.bootstrap.domain.ServiceContext;
 import org.apache.commons.chain.Command;
 
-import com.wrupple.muba.bootstrap.domain.UserContext;
+import com.wrupple.muba.bootstrap.domain.ServiceContext;
 
 public interface UserCommand extends Command {
 	
 	// is async?
 
-	void undo(UserContext context) throws Exception;
+	void undo(ServiceContext context) throws Exception;
 	
 }

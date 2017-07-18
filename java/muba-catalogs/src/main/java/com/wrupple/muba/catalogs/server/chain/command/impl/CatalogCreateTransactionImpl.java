@@ -107,7 +107,7 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		context.getRootAncestor().addBroadcastable(event);
 		
 		
-		trigerer.postprocess(context, context.getExcecutionContext().getCaughtException());
+		trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
 		context.setResults(Collections.singletonList(regreso));
 		log.trace("[END] created: {}", regreso);
 		return CONTINUE_PROCESSING;

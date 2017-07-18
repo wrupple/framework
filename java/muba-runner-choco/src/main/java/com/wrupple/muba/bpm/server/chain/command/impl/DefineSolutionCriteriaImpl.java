@@ -48,7 +48,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         log.debug("posting solution constraints from task definition");
         processNextConstraint(invoker,activitySentence,model,request,context);
         log.debug("posting solution constraints from excecution context");
-        activitySentence = context.getExcecutionContext().getSentence().listIterator();
+        activitySentence = context.getRuntimeContext().getSentence().listIterator();
         processNextConstraint(invoker,activitySentence,model,request,context);
 
         return CONTINUE_PROCESSING;
