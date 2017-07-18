@@ -28,7 +28,7 @@ import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.HumanActivityContextServices;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskProcessRequest;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.domain.overlay.JsonVegetateResponse;
 import com.wrupple.vegetate.client.services.ProcessVegetateChannel;
 import com.wrupple.vegetate.client.services.StorageManager;
@@ -152,7 +152,7 @@ public class SequentialProcessManager implements ProcessManager {
 	}
 
 	@Override
-	public void getCurrentTaskOutput(ProcessContextServices context, JsTransactionActivityContext state, StateTransition<JavaScriptObject> callback) {
+	public void getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) {
 		if (context.getNestedTaskPresenter() == null) {
 			if (bpm == null) {
 

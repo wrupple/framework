@@ -12,7 +12,7 @@ import com.wrupple.muba.desktop.client.factory.dictionary.TransactionPanelMap;
 import com.wrupple.muba.desktop.client.services.logic.TaskValueChangeListener;
 import com.wrupple.muba.desktop.client.services.presentation.ToolbarAssemblyDelegate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ReadingState extends AbstractUserInteractionState {
 	private final ContentManagementSystem cms;
@@ -24,7 +24,7 @@ public class ReadingState extends AbstractUserInteractionState {
 	}
 
 	@Override
-	protected HumanTaskProcessor<?,?> buildUserInteractionInterface(String catalog, JavaScriptObject properties, JsTransactionActivityContext parameter,
+	protected HumanTaskProcessor<?,?> buildUserInteractionInterface(String catalog, JavaScriptObject properties, JsTransactionApplicationContext parameter,
 			EventBus eventBus, ProcessContextServices ctx) {
 		ContentManager<JsCatalogEntry> contentManager = cms.getContentManager(catalog);
 		 HumanTaskProcessor<JsCatalogEntry,?> transactionView = contentManager.getReadTransaction(parameter, properties, eventBus, ctx);

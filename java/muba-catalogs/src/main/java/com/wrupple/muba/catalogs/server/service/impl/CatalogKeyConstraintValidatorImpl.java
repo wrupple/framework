@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyConstraintValidator;
@@ -18,13 +18,13 @@ import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 public class CatalogKeyConstraintValidatorImpl implements CatalogKeyConstraintValidator {
 
 	private final SystemCatalogPlugin cms;
-	private final Provider<ExcecutionContext> exp;
+	private final Provider<RuntimeContext> exp;
 	private final ObjectNativeInterface nativeInterface;
 	private String foreignCatalog;
 	private boolean unique;
 
 	@Inject
-	public CatalogKeyConstraintValidatorImpl(Provider<ExcecutionContext> exp, SystemCatalogPlugin cms, ObjectNativeInterface nativeInterface) {
+	public CatalogKeyConstraintValidatorImpl(Provider<RuntimeContext> exp, SystemCatalogPlugin cms, ObjectNativeInterface nativeInterface) {
 		this.exp = exp;
 		this.nativeInterface=nativeInterface;
 		this.cms = cms;

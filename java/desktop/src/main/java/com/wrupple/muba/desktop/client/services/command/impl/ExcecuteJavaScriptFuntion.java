@@ -11,12 +11,12 @@ import com.wrupple.muba.desktop.client.services.command.CommandService;
 import com.wrupple.muba.desktop.client.services.command.ContextServicesNativeApiBuilder;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ExcecuteJavaScriptFuntion extends ContextServicesNativeApiBuilder implements CommandService {
 
-	private StateTransition<JsTransactionActivityContext> onDone;
-	private JsTransactionActivityContext contextParameters;
+	private StateTransition<JsTransactionApplicationContext> onDone;
+	private JsTransactionApplicationContext contextParameters;
 	private String functionName;
 
 	/*
@@ -35,7 +35,7 @@ public class ExcecuteJavaScriptFuntion extends ContextServicesNativeApiBuilder i
 
 	@Override
 	public void prepare(String command, JavaScriptObject properties, EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters, StateTransition<JsTransactionActivityContext> callback) {
+                        JsTransactionApplicationContext processParameters, StateTransition<JsTransactionApplicationContext> callback) {
 		this.onDone = callback;
 		this.services = processContext;
 		this.contextParameters = processParameters;

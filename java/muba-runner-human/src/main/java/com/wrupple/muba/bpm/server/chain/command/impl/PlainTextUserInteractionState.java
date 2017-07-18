@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.UserInteractionState;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
@@ -33,7 +33,7 @@ public class PlainTextUserInteractionState implements UserInteractionState {
     @Override
     public boolean execute(Context ctx) throws Exception {
             //SearchEngineOptimizedDesktopWriterCommand
-        ActivityContext context = (ActivityContext) ctx;
+        ApplicationContext context = (ApplicationContext) ctx;
         List<VariableDescriptor> variables = context.getSolutionVariables();
         PrintWriter out = context.getExcecutionContext().getApplication().getOutputWriter();
         InputStream input = context.getExcecutionContext().getApplication().getInput();

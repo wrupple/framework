@@ -1,10 +1,9 @@
 package com.wrupple.vegetate.server.domain;
 
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import org.apache.commons.chain.web.servlet.ServletWebContext;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-
-public interface RequestScopedContext extends ExcecutionContext {
+public interface RequestScopedContext extends RuntimeContext {
 	final String SERVICE_FIELD = "service";
 	
 	ServletWebContext getServletContext();

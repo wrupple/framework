@@ -8,22 +8,22 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
 import com.wrupple.muba.bootstrap.server.chain.command.impl.ContextSwitchCommandImpl;
 
 public class ServiceInvocationThread extends Thread {
 	private static final Logger log = LoggerFactory.getLogger(ContextSwitchCommandImpl.class);
 
-	private final ExcecutionContext requestContext;
+	private final RuntimeContext requestContext;
 	private final ContextSwitchCommand command;
 	private  final boolean rollbackOnViolations;
 	
 	
-	public ServiceInvocationThread(ExcecutionContext context, ContextSwitchCommand command,@Named("rollbackOnViolations") Boolean rollbackOnViolations) {
+	public ServiceInvocationThread(RuntimeContext context, ContextSwitchCommand command, @Named("rollbackOnViolations") Boolean rollbackOnViolations) {
 		super();
 		this.command = command;
 		this.requestContext = context;

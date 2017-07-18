@@ -18,7 +18,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.templates.C
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class CurrencyValueCellProvider implements CatalogFormFieldProvider {
 
@@ -32,7 +32,7 @@ public class CurrencyValueCellProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<? extends Object> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		return new CurrencyValueCell(cms, bus, contextServices, contextParameters, d, mode);
 	}

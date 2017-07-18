@@ -2,7 +2,7 @@ package com.wrupple.muba.desktop.client.activity.widgets;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public interface TaskPresenter extends AcceptsOneWidget{
 	/**
@@ -24,9 +24,9 @@ public interface TaskPresenter extends AcceptsOneWidget{
 	void setTaskContent(ContentPanel panel);
 	
 
-	void setUserInteractionTaskCallback(StateTransition<JsTransactionActivityContext> onDone);
+	void setUserInteractionTaskCallback(StateTransition<JsTransactionApplicationContext> onDone);
 
-	StateTransition<JsTransactionActivityContext> getUserInteractionTaskCallback();
+	StateTransition<JsTransactionApplicationContext> getUserInteractionTaskCallback();
 
 	void setUserContentClass(String processUserAreaClass);
 

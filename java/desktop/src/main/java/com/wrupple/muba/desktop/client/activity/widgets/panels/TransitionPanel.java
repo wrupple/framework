@@ -22,7 +22,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.PanelAnimator;
 import com.wrupple.muba.desktop.client.services.presentation.impl.PanelTransition;
 import com.wrupple.muba.desktop.client.services.presentation.impl.PanelTransition.Orientation;
 import com.wrupple.muba.desktop.client.services.presentation.impl.SimplePanelAnimator;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class TransitionPanel extends ResizeComposite implements TaskPresenter {
 
@@ -98,7 +98,7 @@ public class TransitionPanel extends ResizeComposite implements TaskPresenter {
 	
 	private ContentPanel userContent;
 
-	private StateTransition<JsTransactionActivityContext> userInteractionTaskCallback;
+	private StateTransition<JsTransactionApplicationContext> userInteractionTaskCallback;
 
 	private StateTransition<Void> modalKiller;
 	
@@ -305,12 +305,12 @@ public class TransitionPanel extends ResizeComposite implements TaskPresenter {
 	}
 
 	@Override
-	public void setUserInteractionTaskCallback(StateTransition<JsTransactionActivityContext> onDone) {
+	public void setUserInteractionTaskCallback(StateTransition<JsTransactionApplicationContext> onDone) {
 		this.userInteractionTaskCallback=onDone;
 	}
 
 	@Override
-	public StateTransition<JsTransactionActivityContext> getUserInteractionTaskCallback() {
+	public StateTransition<JsTransactionApplicationContext> getUserInteractionTaskCallback() {
 		return userInteractionTaskCallback;
 	}
 

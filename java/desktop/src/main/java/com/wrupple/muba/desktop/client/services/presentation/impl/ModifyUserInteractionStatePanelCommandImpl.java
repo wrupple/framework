@@ -9,7 +9,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
 import com.wrupple.muba.desktop.client.services.presentation.ModifyUserInteractionStatePanelCommand;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ModifyUserInteractionStatePanelCommandImpl implements ModifyUserInteractionStatePanelCommand{
 	ContentPanel panel;
@@ -17,12 +17,12 @@ public class ModifyUserInteractionStatePanelCommandImpl implements ModifyUserInt
 	PanelTransformationConfig config;
 	private ProcessContextServices contextServices;
 	private EventBus eventBus;
-	private JsTransactionActivityContext contextParamenters;
+	private JsTransactionApplicationContext contextParamenters;
 	
 	@Override
 	public void prepare(String command, JavaScriptObject properties,
-			EventBus eventBus, ProcessContextServices processContext,JsTransactionActivityContext contextParameters,
-			StateTransition<JsTransactionActivityContext> callback) {
+			EventBus eventBus, ProcessContextServices processContext,JsTransactionApplicationContext contextParameters,
+			StateTransition<JsTransactionApplicationContext> callback) {
 		this.panel = processContext.getNestedTaskPresenter().getTaskContent();
 		this.transaction =  processContext.getNestedTaskPresenter().getTaskContent().getMainTaskProcessor();
 		config = properties.cast();

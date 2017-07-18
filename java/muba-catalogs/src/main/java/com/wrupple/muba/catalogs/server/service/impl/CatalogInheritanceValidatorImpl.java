@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.annotations.InheritanceTree;
@@ -16,10 +16,10 @@ import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogInheritanceValidatorImpl implements CatalogInheritanceValidator {
 	private final SystemCatalogPlugin dictionary;
-	private final Provider<ExcecutionContext> exp;
+	private final Provider<RuntimeContext> exp;
 
 	@Inject
-	public CatalogInheritanceValidatorImpl(Provider<ExcecutionContext> exp, SystemCatalogPlugin cms) {
+	public CatalogInheritanceValidatorImpl(Provider<RuntimeContext> exp, SystemCatalogPlugin cms) {
 		super();
 		this.exp = exp;
 		this.dictionary = cms;
@@ -36,7 +36,7 @@ public class CatalogInheritanceValidatorImpl implements CatalogInheritanceValida
 		} else {
 			// checks parent hierarchu for duplicates, and cycles and such
 			Long currentParentKey = (Long) v;
-			ExcecutionContext exc = exp.get();
+			RuntimeContext exc = exp.get();
 			// TODO what domain to use for this context? Catalog Action Request
 			// has the requested domain, but we cannot aaccess it although
 			// numeric ids are supposed to trascend domains anymay

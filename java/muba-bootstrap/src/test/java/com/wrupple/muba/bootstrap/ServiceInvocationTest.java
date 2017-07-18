@@ -14,12 +14,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.wrupple.muba.BootstrapTest;
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
+import com.wrupple.muba.bootstrap.domain.SystemContext;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
 import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
 import com.wrupple.muba.bootstrap.domain.ContractDescriptorImpl;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.Person;
 import com.wrupple.muba.bootstrap.domain.RootServiceManifestImpl;
@@ -28,13 +28,13 @@ import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
 import com.wrupple.muba.bootstrap.server.chain.command.impl.ContextSwitchCommandImpl;
-import com.wrupple.muba.bootstrap.server.domain.ExcecutionContextImpl;
+import com.wrupple.muba.bootstrap.server.domain.RuntimeContextImpl;
 import com.wrupple.muba.bootstrap.server.domain.LocalSystemContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
 
 public class ServiceInvocationTest extends BootstrapTest {
 
-	private ApplicationContext application;
+	private SystemContext application;
 
 	protected ContractDescriptor operationContract = new ContractDescriptorImpl(
 			Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), CatalogEntryImpl.class);
@@ -49,7 +49,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
 			log.trace("default OPERANDS {},{}", first, second);
-			((ExcecutionContext) context).setResult(operation(Integer.parseInt(first), Integer.parseInt(second)));
+			((RuntimeContext) context).setResult(operation(Integer.parseInt(first), Integer.parseInt(second)));
 			return CONTINUE_PROCESSING;
 
 		}
@@ -65,11 +65,11 @@ public class ServiceInvocationTest extends BootstrapTest {
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
 			// is there an operation named like this?
-			if (excecutionContext.getApplication().getRootService().getVersions(second) != null) {
+			if (runtimeContext.getApplication().getRootService().getVersions(second) != null) {
 				log.trace("delegating to {}, to find the second term", second);
 
-				excecutionContext.setNextWordIndex(excecutionContext.nextIndex() - 1);
-				excecutionContext.process();
+				runtimeContext.setNextWordIndex(runtimeContext.nextIndex() - 1);
+				runtimeContext.process();
 
 				log.trace("RESUMING WITH OPERANDS {},{}", first, ((HasResult) context).getConvertedResult());
 				((HasResult) context).setResult(
@@ -136,16 +136,16 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 	@Before
 	public void prepare() {
-		excecutionContext = new ExcecutionContextImpl(cwtich, application, session, null, null);
+		runtimeContext = new RuntimeContextImpl(cwtich, application, session, null, null);
 	}
 
 	@Test
 	public void defaultVersion() throws Exception {
 		log.trace("[-defaultVersion-]");
 		String[] tokenValues = new String[] { ADDITION, "1", "2" };
-		excecutionContext.setSentence(tokenValues);
-		excecutionContext.process();
-		Integer result = excecutionContext.getConvertedResult();
+		runtimeContext.setSentence(tokenValues);
+		runtimeContext.process();
+		Integer result = runtimeContext.getConvertedResult();
 		assertNotNull(result);
 		assertEquals(result.intValue(), 3);
 	}
@@ -155,8 +155,8 @@ public class ServiceInvocationTest extends BootstrapTest {
 		log.trace("[-conflict-] insufficient and/or malformed arguments were provided,should fail");
 		// conflicting input data with version, fails
 
-		excecutionContext.setSentence(ADDITION, "1.0", "1");
-		excecutionContext.process();
+		runtimeContext.setSentence(ADDITION, "1.0", "1");
+		runtimeContext.process();
 		// check rollback?
 	}
 
@@ -164,8 +164,8 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void invalidService() throws Exception {
 		log.trace("[-invalidService-]");
 
-		excecutionContext.setSentence("invalidService", "input");
-		excecutionContext.process();
+		runtimeContext.setSentence("invalidService", "input");
+		runtimeContext.process();
 
 		fail("No exception thrown when creating invalid service context");
 	}
@@ -173,8 +173,8 @@ public class ServiceInvocationTest extends BootstrapTest {
 	@Test(expected = NumberFormatException.class)
 	public void invalidInput() throws Exception {
 		log.trace("[-invalidInput-]");
-		excecutionContext.setSentence(ADDITION, "one", "1.5");
-		excecutionContext.process();
+		runtimeContext.setSentence(ADDITION, "one", "1.5");
+		runtimeContext.process();
 
 		fail("No exception thrown when processing invalid context");
 
@@ -184,9 +184,9 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void specificVersion() throws Exception {
 		log.trace("[-specificVersion-]");
 
-		excecutionContext.setSentence(ADDITION, UPGRADED_VERSION, "1", "1.5");
-		excecutionContext.process();
-		Double result = excecutionContext.getConvertedResult();
+		runtimeContext.setSentence(ADDITION, UPGRADED_VERSION, "1", "1.5");
+		runtimeContext.process();
+		Double result = runtimeContext.getConvertedResult();
 		assertNotNull(result);
 		assertEquals(result.doubleValue(), 2.5, 0);
 	}
@@ -195,8 +195,8 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void invalidVersion() throws Exception {
 		log.trace("[-invalidVersion-]");
 
-		excecutionContext.setSentence(ADDITION, "1..0", "2", "1.5");
-		excecutionContext.process();
+		runtimeContext.setSentence(ADDITION, "1..0", "2", "1.5");
+		runtimeContext.process();
 
 	}
 

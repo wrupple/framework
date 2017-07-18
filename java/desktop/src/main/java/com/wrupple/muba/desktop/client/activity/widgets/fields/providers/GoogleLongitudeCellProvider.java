@@ -16,13 +16,13 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.SimpleTextC
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.GoogleLatitudeCellProvider.CreateMap;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.GoogleLatitudeCellProvider.Output;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.GoogleLatitudeCellProvider.Selection;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class GoogleLongitudeCellProvider implements LongitudeCellProvider {
 
 	@Override
-	public Cell<? extends Object> createCell(EventBus bus, final ProcessContextServices contextServices, JsTransactionActivityContext contextParameters,
+	public Cell<? extends Object> createCell(EventBus bus, final ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		if (CatalogAction.READ == mode) {
 			return new TextCell();

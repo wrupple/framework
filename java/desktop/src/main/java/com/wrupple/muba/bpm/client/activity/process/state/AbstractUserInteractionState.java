@@ -21,12 +21,8 @@ import com.wrupple.muba.desktop.client.services.logic.TaskValueChangeListener;
 import com.wrupple.muba.desktop.client.services.presentation.ToolbarAssemblyDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
-import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogEntry;
 
@@ -39,10 +35,10 @@ import com.wrupple.vegetate.domain.CatalogEntry;
 public abstract class AbstractUserInteractionState implements UserInteractionState {
 
 	class AutoSelectionCallback extends DataCallback {
-		StateTransition<JsTransactionActivityContext> onDone;
-		private JsTransactionActivityContext parameter;
+		StateTransition<JsTransactionApplicationContext> onDone;
+		private JsTransactionApplicationContext parameter;
 
-		public AutoSelectionCallback(JsTransactionActivityContext parameter, StateTransition<JsTransactionActivityContext> onDone) {
+		public AutoSelectionCallback(JsTransactionApplicationContext parameter, StateTransition<JsTransactionApplicationContext> onDone) {
 			super();
 			this.parameter = parameter;
 			this.onDone = onDone;
@@ -95,7 +91,7 @@ public abstract class AbstractUserInteractionState implements UserInteractionSta
 	}
 
 	@Override
-	public void start(JsTransactionActivityContext parameter, StateTransition<JsTransactionActivityContext> onDone, EventBus eventBus) {
+	public void start(JsTransactionApplicationContext parameter, StateTransition<JsTransactionApplicationContext> onDone, EventBus eventBus) {
 
 		context.getProcessManager().setCurrentTask(taskDescriptor.getId());
 		String catalog = taskDescriptor.getCatalogId();
@@ -214,10 +210,10 @@ public abstract class AbstractUserInteractionState implements UserInteractionSta
 	}
 
 	protected abstract HumanTaskProcessor<?, ?> buildUserInteractionInterface(String catalog, JavaScriptObject properties,
-			JsTransactionActivityContext parameter, EventBus eventBus, ProcessContextServices ctx);
+                                                                              JsTransactionApplicationContext parameter, EventBus eventBus, ProcessContextServices ctx);
 
 	protected <T extends JavaScriptObject> void afterUIAssembled(String catalog, JsApplicationItem applicationItem, HumanTaskProcessor<T, ?> transactionView,
-			ProcessContextServices context, EventBus eventBus, JsTransactionActivityContext parameter, JsFilterData filterData) {
+                                                                 ProcessContextServices context, EventBus eventBus, JsTransactionApplicationContext parameter, JsFilterData filterData) {
 		T taskValue = (T) parameter.getUserOutput();
 		if (taskValue != null) {
 			transactionView.setValue(taskValue);
@@ -230,7 +226,7 @@ public abstract class AbstractUserInteractionState implements UserInteractionSta
 															return savedRawKeys.split(",");
 															}-*/;
 
-	private ContentPanel getContentPanel(JavaScriptObject properties, EventBus eventBus, JsTransactionActivityContext parameter) {
+	private ContentPanel getContentPanel(JavaScriptObject properties, EventBus eventBus, JsTransactionApplicationContext parameter) {
 		ContentPanel panel;
 		if (this.taskDescriptor.isKeepOutputFeature()) {
 			panel = context.getActivityOutputFeature().getRootTaskPresenter().getTaskContent();

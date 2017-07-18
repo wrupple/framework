@@ -11,7 +11,7 @@ import com.wrupple.muba.cms.domain.WruppleDomainHTMLPage;
 import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.domain.overlay.JsWruppleDomainHTMLPage;
 import com.wrupple.vegetate.client.services.StorageManager;
 
@@ -63,9 +63,9 @@ public class HTMLToolbar extends WruppleActivityToolbarBase {
 
 	@Override
 	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor,
-			JsProcessTaskDescriptor parameter,
-			JsTransactionActivityContext contextParameters, EventBus bus,
-			ProcessContextServices contextServices) {
+                           JsProcessTaskDescriptor parameter,
+                           JsTransactionApplicationContext contextParameters, EventBus bus,
+                           ProcessContextServices contextServices) {
 		super.initialize(toolbarDescriptor, parameter, contextParameters, bus, contextServices);
 		
 		StorageManager sm = contextServices.getStorageManager();

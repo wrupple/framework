@@ -1,20 +1,14 @@
 package com.wrupple.muba.bpm.domain;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.UserContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
-import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 
 import java.util.List;
 
-/**
- * Created by japi on 11/05/17.
- */
-public interface ActivityContext extends UserContext,ContentNode,HasDistinguishedName {
-    final String CATALOG = "ActivityContext";
+public interface ApplicationState extends HasDistinguishedName,ContentNode {
 
     Long getTaskDescriptor();
 
@@ -24,7 +18,7 @@ public interface ActivityContext extends UserContext,ContentNode,HasDistinguishe
 
     public boolean isCanceled();
 
-    void setExcecutionContext(ExcecutionContext context);
+    void setExcecutionContext(RuntimeContext context);
 
     void setTaskDescriptorValue(ProcessTaskDescriptor request);
 
@@ -36,9 +30,9 @@ public interface ActivityContext extends UserContext,ContentNode,HasDistinguishe
 
     List<VariableDescriptor> getSolutionVariables();
 
-   // public void setLayoutUnit(String s);
+    // public void setLayoutUnit(String s);
 
     //public void setTransactionViewClass(String s);
 
-   // void setSaveTo(String task.getProducedField());
+    // void setSaveTo(String task.getProducedField());
 }

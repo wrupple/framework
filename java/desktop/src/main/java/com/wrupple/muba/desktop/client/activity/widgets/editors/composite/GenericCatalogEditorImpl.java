@@ -31,7 +31,7 @@ import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
@@ -134,7 +134,7 @@ public class GenericCatalogEditorImpl extends CompositeCatalogEditor<JsCatalogEn
 
 	@Override
 	public void initialize(String catalog, CatalogAction mode, EventBus bus, ProcessContextServices processServices, JavaScriptObject properties,
-			JsTransactionActivityContext contextProcessParameters) {
+			JsTransactionApplicationContext contextProcessParameters) {
 		super.initialize(catalog, mode, bus, processServices, properties, contextProcessParameters);
 		container.setWidget(table);
 	}

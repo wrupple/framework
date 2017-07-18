@@ -9,13 +9,13 @@ import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delegates.AbstractValueRelationEditor.RelationshipDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public interface GenericFieldFactory {
 
-	public HasValue<Object> getOrCreateField(JavaScriptObject fieldProperties,CatalogAction mode,EventBus bus, ProcessContextServices contextServices, RelationshipDelegate delegate,JsTransactionActivityContext contextParameters,String host,  String domain, JsCatalogEntry currentEntry, FieldDescriptor field);
+	public HasValue<Object> getOrCreateField(JavaScriptObject fieldProperties, CatalogAction mode, EventBus bus, ProcessContextServices contextServices, RelationshipDelegate delegate, JsTransactionApplicationContext contextParameters, String host, String domain, JsCatalogEntry currentEntry, FieldDescriptor field);
 
 	public HasValue<String> getParentSelectionField(String resolvedHost,
 			String resolvedDomain, String catalogParentId, StorageManager catalogService,ContentManager<JsCatalogEntry> parentCatalogManager, ProcessContextServices processServices, CatalogEditor<? extends JavaScriptObject> editor);

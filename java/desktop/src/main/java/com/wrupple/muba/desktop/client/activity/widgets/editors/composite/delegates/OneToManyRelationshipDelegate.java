@@ -17,11 +17,8 @@ import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 import com.wrupple.vegetate.domain.FilterCriteria;
@@ -98,7 +95,7 @@ public class OneToManyRelationshipDelegate
 
 	}
 
-	class SelectionCallback extends DataCallback<JsTransactionActivityContext> {
+	class SelectionCallback extends DataCallback<JsTransactionApplicationContext> {
 		JsFilterData previousValue;
 		private StateTransition<JsFilterData> callback;
 
@@ -182,12 +179,12 @@ public class OneToManyRelationshipDelegate
 		String catalog = descriptor.getForeignCatalogName();
 		String title = descriptor.getName();
 		ContentManager<JsCatalogEntry> manager = cms.getContentManager(catalog);
-		StateTransition<JsTransactionActivityContext> selectionCallback = new SelectionCallback(
+		StateTransition<JsTransactionApplicationContext> selectionCallback = new SelectionCallback(
 				currentValue, callback);
 		
-		JsTransactionActivityContext input = JavaScriptObject.createObject().cast();
+		JsTransactionApplicationContext input = JavaScriptObject.createObject().cast();
 		
-		com.wrupple.muba.bpm.client.services.Process<JsTransactionActivityContext,JsTransactionActivityContext> process =manager.getSelectionProcess(contextServices, true,true);
+		com.wrupple.muba.bpm.client.services.Process<JsTransactionApplicationContext,JsTransactionApplicationContext> process =manager.getSelectionProcess(contextServices, true,true);
 		contextServices.getProcessManager().processSwitch(process, title, input, selectionCallback, contextServices);		
 	}
 

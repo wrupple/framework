@@ -39,7 +39,7 @@ import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
@@ -55,7 +55,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 	private String catalogParentId;
 	protected ProcessContextServices processServices;
 	protected JavaScriptObject properties;
-	protected JsTransactionActivityContext contextProcessParameters;
+	protected JsTransactionApplicationContext contextProcessParameters;
 	private FieldChangeHandler collectFieldChangeEvents;
 	private boolean collectFieldValuesFromPlace;
 	
@@ -84,7 +84,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 	@Override
 	protected void onAfterReconfigure(PanelTransformationConfig properties,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		
 	}
 
@@ -92,7 +92,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 	@Override
 	protected void onBeforeRecofigure(PanelTransformationConfig properties,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		this.catalogService = contextServices.getStorageManager();
 		this.dm=contextServices.getDesktopManager();
 	}
@@ -293,7 +293,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 
 	@Override
 	public void initialize(String catalog, CatalogAction mode, EventBus bus, ProcessContextServices processServices, JavaScriptObject properties,
-			JsTransactionActivityContext contextProcessParameters) {
+			JsTransactionApplicationContext contextProcessParameters) {
 		setCatalogid(catalog);
 		this.mode = mode;
 		this.bus = bus;

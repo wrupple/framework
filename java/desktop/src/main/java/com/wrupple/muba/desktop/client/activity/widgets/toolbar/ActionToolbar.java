@@ -35,14 +35,8 @@ import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
-import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
-import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
-import com.wrupple.muba.desktop.domain.overlay.JsWruppleActivityAction;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 
 /**
@@ -55,12 +49,12 @@ public class ActionToolbar extends ResizeComposite implements Toolbar {
 
 	class ActionsLoadedCallback extends DataCallback<List<JsWruppleActivityAction>> {
 
-		final JsTransactionActivityContext ctx;
+		final JsTransactionApplicationContext ctx;
 		final ProcessContextServices services;
 		final EventBus bus;
 		final JsProcessTaskDescriptor toolbarDescriptor;
 
-		public ActionsLoadedCallback(ProcessContextServices services, JsTransactionActivityContext ctx, JsProcessTaskDescriptor toolbarDescriptor, EventBus bus) {
+		public ActionsLoadedCallback(ProcessContextServices services, JsTransactionApplicationContext ctx, JsProcessTaskDescriptor toolbarDescriptor, EventBus bus) {
 			super();
 			this.services = services;
 			this.bus = bus;
@@ -90,7 +84,7 @@ public class ActionToolbar extends ResizeComposite implements Toolbar {
 	}
 
 	private ProcessContextServices context;
-	private JsTransactionActivityContext contextParameters;
+	private JsTransactionApplicationContext contextParameters;
 	private JsArray<JsCatalogEntry> actions;
 	private CatalogEntryBrowserMap browserMap;
 	private SimpleLayoutPanel main;
@@ -196,7 +190,7 @@ public class ActionToolbar extends ResizeComposite implements Toolbar {
 						final JsWruppleActivityAction action = selected.cast();
 						JavaScriptObject actionProperties = action.getPropertiesObject();
 						String actionCommand = action.getCommand();
-						StateTransition<JsTransactionActivityContext> unblockcallback = new DataCallback<JsTransactionActivityContext>() {
+						StateTransition<JsTransactionApplicationContext> unblockcallback = new DataCallback<JsTransactionApplicationContext>() {
 							@Override
 							public void execute() {
 								selectionModel.setSelected(selected, false);
@@ -223,7 +217,7 @@ public class ActionToolbar extends ResizeComposite implements Toolbar {
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 
 	}
 
@@ -244,7 +238,7 @@ public class ActionToolbar extends ResizeComposite implements Toolbar {
 	}
 
 	@Override
-	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 			EventBus bus, ProcessContextServices contextServices) {
 		this.context = contextServices;
 		this.contextParameters = contextParameters;

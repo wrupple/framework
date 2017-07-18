@@ -41,7 +41,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.domain.overlay.TableHeaderData;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.vegetate.client.services.StorageManager;
@@ -68,12 +68,12 @@ public class GenericTableLayoutDelegate implements TableLayoutDelegate {
 		AbstractCellTable<JsCatalogEntry> display;
 		EventBus bus;
 		ProcessContextServices contextServices;
-		JsTransactionActivityContext contextParameters;
+		JsTransactionApplicationContext contextParameters;
 		JavaScriptObject browserDescriptor;
 		private IndexedContentTable table;
 
 		public EphemeralColumnCallback(IndexedContentTable table, FieldDescriptor localCatalogField, JsCatalogKey entry, CatalogDescriptor catalog,
-				AbstractCellTable<JsCatalogEntry> display, EventBus bus, ProcessContextServices contextServices, JsTransactionActivityContext contextParameters,
+				AbstractCellTable<JsCatalogEntry> display, EventBus bus, ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters,
 				JavaScriptObject browserDescriptor) {
 			super();
 			this.localCatalogField = localCatalogField;
@@ -125,8 +125,8 @@ public class GenericTableLayoutDelegate implements TableLayoutDelegate {
 
 	@Override
 	public void initialize(String host, String domain, CatalogDescriptor catalog,
-			Collection<FieldDescriptor> summaries, JsArray<JsCatalogEntry> selections, AbstractCellTable<JsCatalogEntry> display, EventBus bus,
-			ProcessContextServices contextServices, JsTransactionActivityContext contextParameters, JavaScriptObject browserDescriptor, final IndexedContentTable table) {
+                           Collection<FieldDescriptor> summaries, JsArray<JsCatalogEntry> selections, AbstractCellTable<JsCatalogEntry> display, EventBus bus,
+                           ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters, JavaScriptObject browserDescriptor, final IndexedContentTable table) {
 
 		table.addValueChangeHandler(new ValueChangeHandler<JsFilterData>() {
 			@Override
@@ -195,7 +195,7 @@ public class GenericTableLayoutDelegate implements TableLayoutDelegate {
 	}
 
 	private void addColumn(String alias, AbstractCellTable<JsCatalogEntry> display, FieldDescriptor field, CatalogDescriptor catalog,
-			List<FilterCriteria> includeCriteria, EventBus bus, ProcessContextServices contextServices, JsTransactionActivityContext contextParameters,
+			List<FilterCriteria> includeCriteria, EventBus bus, ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, IndexedContentTable table) {
 
 		Header<?> header;
@@ -267,7 +267,7 @@ public class GenericTableLayoutDelegate implements TableLayoutDelegate {
 
 	@Override
 	public void initialize(String[] customColumnIds, AggregateDataTable<JsCatalogEntry> table, EventBus bus, ProcessContextServices services,
-			JsTransactionActivityContext ctxt, JavaScriptObject properties) {
+                           JsTransactionApplicationContext ctxt, JavaScriptObject properties) {
 		String customColumnWidget;
 		String customColumnPath;
 		Cell<Object> cell;

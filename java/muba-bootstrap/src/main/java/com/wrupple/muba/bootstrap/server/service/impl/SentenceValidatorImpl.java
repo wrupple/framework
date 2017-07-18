@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.inject.Singleton;
 import javax.validation.ConstraintValidatorContext;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.domain.RootServiceManifest;
 import com.wrupple.muba.bootstrap.domain.ServiceManifest;
 import com.wrupple.muba.bootstrap.domain.annotations.Sentence;
@@ -20,7 +20,7 @@ public class SentenceValidatorImpl implements SentenceValidator {
 	}
 
 	@Override
-	public boolean isValid(ExcecutionContext requestContext, ConstraintValidatorContext context) {
+	public boolean isValid(RuntimeContext requestContext, ConstraintValidatorContext context) {
 		if (requestContext.hasNext()) {
 			int currentWord = requestContext.nextIndex();
 			// dont move  iterator while validating

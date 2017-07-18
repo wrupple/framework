@@ -13,7 +13,7 @@ import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsNotification;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 
@@ -41,7 +41,7 @@ public class NextPlaceImpl implements NextPlace {
 
 	@Override
 	public void prepare(String command, JavaScriptObject properties, EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters, StateTransition<DesktopPlace> callback) {
+                        JsTransactionApplicationContext processParameters, StateTransition<DesktopPlace> callback) {
 		this.properties = properties;
 		this.output = StandardActivityCommand.getUserOutputEntry(processParameters.getUserOutput());
 		this.context = processContext;

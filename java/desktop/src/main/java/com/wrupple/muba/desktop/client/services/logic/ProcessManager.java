@@ -7,7 +7,7 @@ import com.wrupple.muba.bpm.client.activity.ActivityProcess;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public interface ProcessManager {
 
@@ -15,7 +15,7 @@ public interface ProcessManager {
 
 	void contextSwitch(ActivityProcess activityState, JsApplicationItem applicationItem, AcceptsOneWidget container, EventBus bus);
 
-	void getCurrentTaskOutput(ProcessContextServices context,JsTransactionActivityContext state,StateTransition<JavaScriptObject> callback);
+	void getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback);
 
 	void setCurrentProcess(String id);
 	

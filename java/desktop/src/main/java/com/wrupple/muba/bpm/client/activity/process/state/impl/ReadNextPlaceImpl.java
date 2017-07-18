@@ -11,7 +11,7 @@ import com.wrupple.muba.desktop.client.factory.dictionary.OutputHandlerMap;
 import com.wrupple.muba.desktop.client.services.logic.ServiceBus;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ReadNextPlaceImpl implements ReadNextPlace {
 
@@ -29,7 +29,7 @@ public class ReadNextPlaceImpl implements ReadNextPlace {
 
 	@Override
 	public void start(JavaScriptObject prm, StateTransition<DesktopPlace> onDone, EventBus bus) {
-		JsTransactionActivityContext parameter = prm.cast();
+		JsTransactionApplicationContext parameter = prm.cast();
 		String outputHandler = applicationItem.getOutputHandler();
 		if (outputHandler == null) {
 			outputHandler = outputmap.getDefault();

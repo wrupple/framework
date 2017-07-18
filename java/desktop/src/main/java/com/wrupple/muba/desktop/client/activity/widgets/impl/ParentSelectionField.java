@@ -20,7 +20,7 @@ import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -30,14 +30,14 @@ public class ParentSelectionField extends Composite implements HasValue<String> 
 
 		@Override
 		public void onClick(ClickEvent event) {
-			Process<JsTransactionActivityContext, JsTransactionActivityContext> process = cms.getSelectionProcess(processServices, false, false);
-			JsTransactionActivityContext input = JsTransactionActivityContext.createObject().cast();
+			Process<JsTransactionApplicationContext, JsTransactionApplicationContext> process = cms.getSelectionProcess(processServices, false, false);
+			JsTransactionApplicationContext input = JsTransactionApplicationContext.createObject().cast();
 			processServices.getProcessManager().processSwitch(process, catalogId, input, new SelectionCallback(), processServices);
 		}
 		
 	}
 	
-	class SelectionCallback extends DataCallback<JsTransactionActivityContext>{
+	class SelectionCallback extends DataCallback<JsTransactionApplicationContext>{
 
 		@Override
 		public void execute() {

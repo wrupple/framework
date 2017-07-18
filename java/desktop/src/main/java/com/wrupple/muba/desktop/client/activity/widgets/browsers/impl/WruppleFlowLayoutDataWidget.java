@@ -24,7 +24,7 @@ import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldPro
 import com.wrupple.muba.desktop.client.services.presentation.ContentStyleDelegate;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class WruppleFlowLayoutDataWidget extends AbstractContentBrowser implements ContentBrowser {
 
@@ -124,7 +124,7 @@ public class WruppleFlowLayoutDataWidget extends AbstractContentBrowser implemen
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 		super.applyAlterations(properties, contextServices, eventBus, contextParamenters);
 		// TODO what alteretaion can be applied?
 	}

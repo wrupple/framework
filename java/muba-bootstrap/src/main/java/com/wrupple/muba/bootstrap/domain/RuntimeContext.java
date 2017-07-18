@@ -1,8 +1,6 @@
 package com.wrupple.muba.bootstrap.domain;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.ListIterator;
@@ -15,15 +13,15 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasLocale;
 import com.wrupple.muba.bootstrap.domain.reserved.HasParent;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 
-public interface ExcecutionContext extends Context, HasValidations, HasLocale, ListIterator<String>, CatalogKey,
-		HasParent<ExcecutionContext>, HasResult<Object> {
+public interface RuntimeContext extends Context, HasValidations, HasLocale, ListIterator<String>, CatalogKey,
+		HasParent<RuntimeContext>, HasResult<Object> {
 
 	final int Unauthorized = 401;
 	final int PaymentRequired = 402;
 
 	String FORMAT = "format";
 
-	ApplicationContext getApplication();
+	SystemContext getApplication();
 
 	SessionContext getSession();
 

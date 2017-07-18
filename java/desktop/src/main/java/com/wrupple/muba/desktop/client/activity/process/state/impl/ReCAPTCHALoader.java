@@ -5,16 +5,16 @@ import com.google.gwt.core.client.ScriptInjector.FromUrl;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.ExternalAPILoader;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ReCAPTCHALoader implements ExternalAPILoader {
 
 	static boolean loaded = false;
-	static JsTransactionActivityContext a;
-	static StateTransition<JsTransactionActivityContext> b;
+	static JsTransactionApplicationContext a;
+	static StateTransition<JsTransactionApplicationContext> b;
 
 	@Override
-	public void start(final JsTransactionActivityContext parameter, final StateTransition<JsTransactionActivityContext> onDone, EventBus bus) {
+	public void start(final JsTransactionApplicationContext parameter, final StateTransition<JsTransactionApplicationContext> onDone, EventBus bus) {
 		init();
 		if (!loaded) {
 			a = parameter;

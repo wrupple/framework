@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
 import com.wrupple.muba.bpm.server.service.Solver;
@@ -25,17 +25,17 @@ public class HumanSolverImpl implements Solver {
 
 
     @Override
-    public <T> T resolveProblemContext(ActivityContext context) {
+    public <T> T resolveProblemContext(ApplicationContext context) {
         return (T) context;
     }
 
     @Override
-    public boolean isEligible(FieldDescriptor field, ActivityContext context) {
+    public boolean isEligible(FieldDescriptor field, ApplicationContext context) {
         return field.isWriteable();
     }
 
     @Override
-    public VariableDescriptor createVariable(FieldDescriptor field, ActivityContext context) {
+    public VariableDescriptor createVariable(FieldDescriptor field, ApplicationContext context) {
         return new VariableDescriptorImpl(field);
     }
 

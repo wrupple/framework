@@ -5,7 +5,6 @@ import java.util.List;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.TransactionHistory;
 import com.wrupple.muba.bootstrap.domain.UserContext;

@@ -8,10 +8,10 @@ import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 
-public class StartSelectTransaction extends AbstractStartUserTransaction{
+        public class StartSelectTransaction extends AbstractStartUserTransaction{
 
 	@Inject
 	public StartSelectTransaction(CatalogPlaceInterpret placeInterpret) {
@@ -20,8 +20,8 @@ public class StartSelectTransaction extends AbstractStartUserTransaction{
 	
 	
 	@Override
-	public void start(JsTransactionActivityContext context,
-			StateTransition<JsTransactionActivityContext> onDone, EventBus bus) {
+	public void start(JsTransactionApplicationContext context,
+                      StateTransition<JsTransactionApplicationContext> onDone, EventBus bus) {
 		super.start(context, onDone, bus);
 		JsFilterData filterData = context.getFilterData();
 		if (filterData == null) {

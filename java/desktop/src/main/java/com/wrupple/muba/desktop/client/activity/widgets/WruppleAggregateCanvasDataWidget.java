@@ -18,7 +18,7 @@ import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class WruppleAggregateCanvasDataWidget extends AbstractContentBrowser
 		implements ContentBrowser {
@@ -34,7 +34,7 @@ public class WruppleAggregateCanvasDataWidget extends AbstractContentBrowser
 	
 	@Override
 	public void setRuntimeParams(String catalog, JavaScriptObject properties,
-			EventBus bus, JsTransactionActivityContext contextParameters,
+			EventBus bus, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices) {
 		setCumulative("true");
 		super.setRuntimeParams(catalog, properties, bus, contextParameters, contextServices);
@@ -86,7 +86,7 @@ public class WruppleAggregateCanvasDataWidget extends AbstractContentBrowser
 
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 		super.applyAlterations(properties, contextServices, eventBus, contextParamenters);
 		// TODO what alteretaion can be applied?
 	}

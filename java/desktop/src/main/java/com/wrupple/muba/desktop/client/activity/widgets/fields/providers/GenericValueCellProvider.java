@@ -11,7 +11,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.GenericValu
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class GenericValueCellProvider implements CatalogFormFieldProvider {
 
@@ -28,7 +28,7 @@ public class GenericValueCellProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<JsCatalogEntry> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		return new GenericValueCell(cms, bus, contextServices, contextParameters, d, mode, msgs);
 	}

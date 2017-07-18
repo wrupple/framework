@@ -12,7 +12,7 @@ import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.desktop.client.activity.process.state.ContentLoadingState;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.GenericKeyCell;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class GenericKeyCellProvider implements CatalogFormFieldProvider {
 
@@ -30,7 +30,7 @@ public class GenericKeyCellProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<String> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		return new GenericKeyCell(bus, contextServices, contextParameters, d, mode, cms, contentLoadingState);
 	}

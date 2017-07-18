@@ -25,10 +25,10 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
+import com.wrupple.muba.bootstrap.domain.SystemContext;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.domain.Person;
 import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
@@ -127,7 +127,7 @@ public class CatalogEngineTest extends MubaTest {
 	}
 
 	@Override
-	protected void registerServices(Validator v, ValidationGroupProvider g, ApplicationContext switchs) {
+	protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
 		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
 		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
@@ -140,7 +140,7 @@ public class CatalogEngineTest extends MubaTest {
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
 
-		excecutionContext = injector.getInstance(ExcecutionContext.class);
+		runtimeContext = injector.getInstance(RuntimeContext.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}
 
@@ -172,13 +172,13 @@ public class CatalogEngineTest extends MubaTest {
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
 		action.setEntryValue(problemContract);
         //action.setFollowReferences(true);
-		excecutionContext.setServiceContract(action);
-		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setServiceContract(action);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 		// locale is set in catalog
-		excecutionContext.process();
+		runtimeContext.process();
 
-		CatalogActionContext catalogContext = excecutionContext.getServiceContext();
+		CatalogActionContext catalogContext = runtimeContext.getServiceContext();
 
 		problemContract = catalogContext.getEntryResult();
 		assertTrue(problemContract.getId() != null);
@@ -190,13 +190,13 @@ public class CatalogEngineTest extends MubaTest {
 
 		log.trace("[-see changes in catalog list-]");
 
-		excecutionContext.reset();
+		runtimeContext.reset();
 
-		excecutionContext.setServiceContract(null);
-		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setServiceContract(null);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, CatalogActionRequest.READ_ACTION);
-		excecutionContext.process();
-		catalogContext = excecutionContext.getServiceContext();
+		runtimeContext.process();
+		catalogContext = runtimeContext.getServiceContext();
 		assertTrue(catalogContext.getResults() != null);
 		assertTrue(!catalogContext.getResults().isEmpty());
 		boolean contained = false;
@@ -210,7 +210,7 @@ public class CatalogEngineTest extends MubaTest {
 
 		assertTrue(contained);
 		log.trace("[-see registered catalog Descriptor-]");
-		excecutionContext.reset();
+		runtimeContext.reset();
 
         catalogContext.setCatalog(MathProblem.class.getSimpleName());
         problemContract = catalogContext.getCatalogDescriptor();
@@ -224,34 +224,34 @@ public class CatalogEngineTest extends MubaTest {
 
 
 		log.debug("-create math problem entry-");
-		excecutionContext.reset();
+		runtimeContext.reset();
 		MathProblem problem = new MathProblem();
 		problem.setName(MathProblem.class.getSimpleName());
 		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
-		excecutionContext.setServiceContract(contract);
-		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setServiceContract(contract);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(),
 				CatalogActionRequest.CREATE_ACTION);
 
-		excecutionContext.process();
+		runtimeContext.process();
 
-		problem = ((CatalogActionContext) excecutionContext.getServiceContext()).getEntryResult();
+		problem = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
 		assertTrue(problem.getId() != null);
 		assertTrue(problem.getTimestamp() != null);
 
 		log.debug("-check if child was created-");
-		excecutionContext.reset();
+		runtimeContext.reset();
 
 		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, ContentNode.CATALOG,
 				CatalogActionRequest.READ_ACTION, null, null, null, FilterDataUtils.newFilterData());
-		excecutionContext.setServiceContract(contract);
-		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setServiceContract(contract);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, ContentNode.CATALOG, CatalogActionRequest.READ_ACTION);
 
-		excecutionContext.process();
+		runtimeContext.process();
 
-		catalogContext = excecutionContext.getServiceContext();
+		catalogContext = runtimeContext.getServiceContext();
 
 		assertTrue(catalogContext.getResults() != null);
 		assertTrue(catalogContext.getResults().size() == 1);

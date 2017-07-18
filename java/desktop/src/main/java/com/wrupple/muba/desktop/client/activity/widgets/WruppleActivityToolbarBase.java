@@ -14,7 +14,7 @@ import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetImpl<JavaScriptObject,JavaScriptObject>
 		implements Toolbar {
@@ -38,7 +38,7 @@ public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetI
 	protected String type;
 	protected ProcessContextServices contextServices;
 	protected EventBus eventBus;
-	protected JsTransactionActivityContext contextParameters;
+	protected JsTransactionApplicationContext contextParameters;
 	
 	public WruppleActivityToolbarBase(ToolbarMap toolbarMap) {
 		super(toolbarMap);
@@ -52,9 +52,9 @@ public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetI
 	
 	@Override
 	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor,
-			JsProcessTaskDescriptor parameter,
-			JsTransactionActivityContext contextParameters, EventBus bus,
-			ProcessContextServices contextServices) {
+                           JsProcessTaskDescriptor parameter,
+                           JsTransactionApplicationContext contextParameters, EventBus bus,
+                           ProcessContextServices contextServices) {
 		this.contextServices=contextServices;
 		this.eventBus=bus;
 		this.contextParameters=contextParameters;
@@ -65,7 +65,7 @@ public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetI
 	@Override
 	protected void onAfterReconfigure(PanelTransformationConfig properties,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		if(properties.getFireReset()){
 			ResizeEvent.fire(this, 0, 0);
 		}
@@ -75,7 +75,7 @@ public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetI
 	@Override
 	protected void onBeforeRecofigure(PanelTransformationConfig properties,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		properties.setType(type);
 	}
 	

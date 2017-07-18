@@ -8,13 +8,13 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.widget.HumanTaskProcessor;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 
 public interface CatalogEditor<V extends JavaScriptObject> extends HumanTaskProcessor<V,V>,LeafValueEditor<V>, IsWidget {
 	 void reset();
 	
-	void initialize(String catalog,CatalogAction mode,EventBus bus,ProcessContextServices contextServices,JavaScriptObject properties,JsTransactionActivityContext contextParameters);
+	void initialize(String catalog,CatalogAction mode,EventBus bus,ProcessContextServices contextServices,JavaScriptObject properties,JsTransactionApplicationContext contextParameters);
 	
 	CatalogAction getMode();
 	

@@ -1,8 +1,8 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by japi on 11/05/17.
  */
-public class ActivityContextImpl extends ContextBase implements ActivityContext {
+public class ApplicationContextImpl extends ContextBase implements ApplicationContext {
 
     private Long id,image;
     private String  name;
@@ -51,7 +51,7 @@ public class ActivityContextImpl extends ContextBase implements ActivityContext 
 
     @Override
     public String getCatalogType() {
-        return ActivityContext.CATALOG;
+        return ApplicationContext.CATALOG;
     }
 
     public final Long getId() {
@@ -114,10 +114,10 @@ public class ActivityContextImpl extends ContextBase implements ActivityContext 
         return distinguishedName;
     }
 
-    private ExcecutionContext excecutionContex;
+    private RuntimeContext excecutionContex;
 
     @Override
-    public ExcecutionContext getExcecutionContext() {
+    public RuntimeContext getExcecutionContext() {
         return excecutionContex;
     }
 
@@ -142,7 +142,7 @@ public class ActivityContextImpl extends ContextBase implements ActivityContext 
     }
 
     @Override
-    public void setExcecutionContext(ExcecutionContext context) {
+    public void setExcecutionContext(RuntimeContext context) {
         this.excecutionContex=context;
     }
 

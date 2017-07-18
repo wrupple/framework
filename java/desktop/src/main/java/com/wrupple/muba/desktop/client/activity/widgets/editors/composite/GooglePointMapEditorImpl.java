@@ -31,7 +31,7 @@ import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -209,7 +209,7 @@ public class GooglePointMapEditorImpl extends
 	@Override
 	public void initialize(String catalog, CatalogAction mode, EventBus bus,
 			ProcessContextServices contextServices, JavaScriptObject properties,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		this.catalogId = catalog;
 		this.mode = mode;
 		this.services = contextServices;
@@ -289,14 +289,14 @@ public class GooglePointMapEditorImpl extends
 	@Override
 	protected void onAfterReconfigure(PanelTransformationConfig properties2,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		
 	}
 
 	@Override
 	protected void onBeforeRecofigure(PanelTransformationConfig properties2,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		
 	}
 }

@@ -1,6 +1,5 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.ActivityContext;
 import com.wrupple.muba.bpm.server.chain.command.SelectSolution;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import org.apache.commons.chain.Context;
@@ -28,7 +27,7 @@ public class SelectSolutionImpl implements SelectSolution {
     @Override
     public boolean execute(Context ctx) throws Exception {
         log.info("Selecting best solution");
-        //ActivityContext context = (ActivityContext) ctx;
+        //ApplicationContext context = (ApplicationContext) ctx;
         return CONTINUE_PROCESSING;
     }
 }

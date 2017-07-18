@@ -15,11 +15,11 @@ import javax.inject.Provider;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.SystemContext;
 import com.wrupple.muba.bootstrap.domain.ServiceManifest;
 import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.domain.annotations.Sentence;
@@ -28,10 +28,10 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
 
 @Sentence
-public class ExcecutionContextImpl extends ContextBase implements ExcecutionContext {
+public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	@Override
 	public String toString() {
-		return "ExcecutionContextImpl [serviceContract=" + serviceContract + ", sentence=" + sentence + ", nextIndex="
+		return "RuntimeContextImpl [serviceContract=" + serviceContract + ", sentence=" + sentence + ", nextIndex="
 				+ nextIndex + "]";
 	}
 
@@ -48,7 +48,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 
 	private Context serviceContext;
 	private final SessionContext session;
-	private final ApplicationContext application;
+	private final SystemContext application;
 
 	private String locale, format, callbackFunction, id;
 	private boolean scopedWriting;
@@ -56,14 +56,14 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	private Exception caughtException;
 	private UserTransaction transaction;
 	private final Provider<UserTransaction> transactionProvider;
-	private final ExcecutionContext parent;
+	private final RuntimeContext parent;
 	private Object result;
 	private long totalResponseSize;
 	private Set<ConstraintViolation<?>> constraintViolations;
 	private ListIterator<String> wordIterator;
 
-	public ExcecutionContextImpl(ContextSwitchCommand process, ApplicationContext appication, SessionContext session,
-			Provider<UserTransaction> transactionProvider, ExcecutionContext parent) {
+	public RuntimeContextImpl(ContextSwitchCommand process, SystemContext appication, SessionContext session,
+							  Provider<UserTransaction> transactionProvider, RuntimeContext parent) {
 		super();
 		this.process = process;
 		this.application = appication;
@@ -73,8 +73,8 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	}
 
 	@Inject
-	public ExcecutionContextImpl(ContextSwitchCommand process, ApplicationContext appication, SessionContext session,
-			Provider<UserTransaction> transactionProvider) {
+	public RuntimeContextImpl(ContextSwitchCommand process, SystemContext appication, SessionContext session,
+							  Provider<UserTransaction> transactionProvider) {
 		this(process, appication, session, transactionProvider, null);
 	}
 
@@ -292,7 +292,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 
 	@Override
 	public String getCatalogType() {
-		return "ExcecutionContext";
+		return "RuntimeContext";
 	}
 
 	@Override
@@ -341,11 +341,11 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	}
 
 	@Override
-	public ExcecutionContext getParent() {
+	public RuntimeContext getParent() {
 		return parent;
 	}
 
-	public ApplicationContext getApplication() {
+	public SystemContext getApplication() {
 		return application;
 	}
 
@@ -370,8 +370,8 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 	}
 
 	@Override
-	public ExcecutionContext spawnChild() {
-		return new ExcecutionContextImpl(process, getApplication(), getSession(), transactionProvider, this);
+	public RuntimeContext spawnChild() {
+		return new RuntimeContextImpl(process, getApplication(), getSession(), transactionProvider, this);
 	}
 
 	@Override
@@ -467,7 +467,7 @@ public class ExcecutionContextImpl extends ContextBase implements ExcecutionCont
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExcecutionContextImpl other = (ExcecutionContextImpl) obj;
+		RuntimeContextImpl other = (RuntimeContextImpl) obj;
 		if (application == null) {
 			if (other.application != null)
 				return false;

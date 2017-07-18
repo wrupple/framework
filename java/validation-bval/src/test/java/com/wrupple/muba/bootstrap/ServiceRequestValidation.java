@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
+import com.wrupple.muba.bootstrap.domain.*;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
@@ -23,17 +24,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
-import com.wrupple.muba.bootstrap.domain.ContractDescriptorImpl;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.Host;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.ProblemRequest;
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
-import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
-import com.wrupple.muba.bootstrap.domain.SessionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
 import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
@@ -52,7 +43,7 @@ public class ServiceRequestValidation extends MubaTest {
 		init(new MockModule(), new ValidationModule(), new BootstrapModule());
 	}
 	
-	protected void registerServices(Validator v, ValidationGroupProvider g,ApplicationContext switchs) {
+	protected void registerServices(Validator v, ValidationGroupProvider g,SystemContext switchs) {
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });
 		ContractDescriptor operationContract = new ContractDescriptorImpl(
 				Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), ProblemRequest.class);
@@ -91,7 +82,7 @@ public class ServiceRequestValidation extends MubaTest {
 	@Before
 	@Override
 	public void setUp() throws Exception {
-		excecutionContext = injector.getInstance(ExcecutionContext.class);
+		runtimeContext = injector.getInstance(RuntimeContext.class);
 	}
 
 	@Test
@@ -100,10 +91,10 @@ public class ServiceRequestValidation extends MubaTest {
 		log.trace("[-nesting-]");
 
 		// version 1.1, nesting return double (1 + ( 1.1*(1+1) ) )
-		excecutionContext.setSentence(ADDITION, UPGRADED_VERSION, "1", MULTIPLICATION, "1.1", ADDITION,
+		runtimeContext.setSentence(ADDITION, UPGRADED_VERSION, "1", MULTIPLICATION, "1.1", ADDITION,
 				UPGRADED_VERSION, "1", "1");
-		excecutionContext.process();
-		Double result = excecutionContext.getConvertedResult();
+		runtimeContext.process();
+		Double result = runtimeContext.getConvertedResult();
 		assertNotNull(result);
 		assertEquals(result.doubleValue(), 3.2, 0);
 	}
@@ -115,14 +106,14 @@ public class ServiceRequestValidation extends MubaTest {
 		// a service contract must be provided for request interpret to invoke
 		// validation
 		ProblemRequest problemRequest = new ProblemRequest();
-		excecutionContext.setServiceContract(problemRequest);
+		runtimeContext.setServiceContract(problemRequest);
 		// version 1.1, nesting return double (1 + ( 1.1*(1+1) ) )
-		excecutionContext.setSentence(ADDITION, UPGRADED_VERSION, "1", MULTIPLICATION, "1.1", ADDITION,
+		runtimeContext.setSentence(ADDITION, UPGRADED_VERSION, "1", MULTIPLICATION, "1.1", ADDITION,
 				UPGRADED_VERSION, "1", "malformedToken");
-		excecutionContext.process();
-		assertEquals(9, excecutionContext.nextIndex());
+		runtimeContext.process();
+		assertEquals(9, runtimeContext.nextIndex());
 		//some error must be thrown or validation constraint shown when the application has no servicesregistered
-		assertNotNull(excecutionContext.getConstraintViolations());
+		assertNotNull(runtimeContext.getConstraintViolations());
 	}
 
 	class MockModule extends AbstractModule {
@@ -154,7 +145,7 @@ public class ServiceRequestValidation extends MubaTest {
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
 			log.debug("Excecuting on {},{}", first, second);
-			Map<String, ServiceManifest> versions = excecutionContext.getApplication().getRootService()
+			Map<String, ServiceManifest> versions = runtimeContext.getApplication().getRootService()
 					.getVersions(second);
 			// is there an operation named like this?
 			if (versions == null) {
@@ -165,8 +156,8 @@ public class ServiceRequestValidation extends MubaTest {
 			} else {
 				log.trace("will invoke nested service {}", second);
 
-				excecutionContext.setNextWordIndex(excecutionContext.nextIndex() - 1);
-				if (Command.CONTINUE_PROCESSING == excecutionContext.process()) {
+				runtimeContext.setNextWordIndex(runtimeContext.nextIndex() - 1);
+				if (Command.CONTINUE_PROCESSING == runtimeContext.process()) {
 					log.trace("RESUMING WITH OPERANDS {},{}", first, ((HasResult) context).getConvertedResult());
 					((HasResult) context).setResult(operation(Double.parseDouble(first),
 							(Double) ((HasResult) context).getConvertedResult()));
@@ -192,7 +183,7 @@ public class ServiceRequestValidation extends MubaTest {
 			String second = (String) context.get(SECOND_OPERAND_NAME);
 
 			log.trace("default OPERANDS {},{}", first, second);
-			((ExcecutionContext) context).setResult(operation(Integer.parseInt(first), Integer.parseInt(second)));
+			((RuntimeContext) context).setResult(operation(Integer.parseInt(first), Integer.parseInt(second)));
 			return CONTINUE_PROCESSING;
 
 		}

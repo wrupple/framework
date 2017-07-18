@@ -11,7 +11,7 @@ import com.wrupple.muba.desktop.client.services.command.InterruptActivity;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsNotification;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 
 public class InterruptActivityImpl  implements InterruptActivity {
@@ -19,7 +19,7 @@ public class InterruptActivityImpl  implements InterruptActivity {
 	
 	private JavaScriptObject properties;
 	private ProcessContextServices processContext;
-	private JsTransactionActivityContext contextParameters;
+	private JsTransactionApplicationContext contextParameters;
 	private String[] targetActivity;
 	
 	@Inject
@@ -28,7 +28,7 @@ public class InterruptActivityImpl  implements InterruptActivity {
 
 	@Override
 	public void prepare(String command, JavaScriptObject properties, EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext contextParameters, StateTransition<JsTransactionActivityContext> callback) {
+                        JsTransactionApplicationContext contextParameters, StateTransition<JsTransactionApplicationContext> callback) {
 		this.properties=properties;
 		this.contextParameters=contextParameters;
 		this.processContext=processContext;

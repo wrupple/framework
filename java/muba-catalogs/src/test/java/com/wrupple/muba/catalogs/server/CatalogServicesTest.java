@@ -6,15 +6,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
-import javax.validation.Validator;
 
+import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.catalogs.CatalogTestModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
@@ -22,26 +20,17 @@ import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
-import com.wrupple.muba.bootstrap.domain.SessionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 public class CatalogServicesTest extends MubaTest {
 	/*
@@ -139,7 +128,7 @@ public class CatalogServicesTest extends MubaTest {
 	}
 
 	@Override
-	protected void registerServices( ApplicationContext switchs) {
+	protected void registerServices( SystemContext switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
 		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
 		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
@@ -152,7 +141,7 @@ public class CatalogServicesTest extends MubaTest {
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
 
-		excecutionContext = injector.getInstance(ExcecutionContext.class);
+		runtimeContext = injector.getInstance(RuntimeContext.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}
 

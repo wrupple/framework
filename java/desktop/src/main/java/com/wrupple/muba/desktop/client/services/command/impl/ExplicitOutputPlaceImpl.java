@@ -15,7 +15,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsNotification;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -127,7 +127,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 
 	@Override
 	public void prepare(String command, JavaScriptObject appItemProperties, EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters, StateTransition<DesktopPlace> callback) {
+                        JsTransactionApplicationContext processParameters, StateTransition<DesktopPlace> callback) {
 		if (activity == null) {
 			String[] commandTokens = command.split(" ");
 			if (commandTokens.length > 1) {

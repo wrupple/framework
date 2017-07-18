@@ -13,7 +13,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.RichTextEditor;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.RichTextCell;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class RichTextFieldProvider implements CatalogFormFieldProvider {
 
@@ -30,7 +30,7 @@ public class RichTextFieldProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<String> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode)  {
 		Cell<String> regreso;
 		

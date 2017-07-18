@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.DetermineSolutionFieldsDomain;
@@ -37,7 +37,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
 
     @Override
     public boolean execute(Context ctx) throws Exception {
-        final ActivityContext context = (ActivityContext) ctx;
+        final ApplicationContext context = (ApplicationContext) ctx;
         ProcessTaskDescriptor request = context.getTaskDescriptorValue();
 
         final Solver solver = plugin.getSolver();

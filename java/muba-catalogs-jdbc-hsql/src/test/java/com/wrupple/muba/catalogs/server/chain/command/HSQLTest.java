@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
+import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.catalogs.server.service.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,13 +24,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.Host;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.SessionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
 import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
@@ -66,7 +61,7 @@ public class HSQLTest extends MubaTest {
 	
 
 	@Override
-	protected void registerServices(Validator v, ValidationGroupProvider g, ApplicationContext switchs) {
+	protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
 		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
 		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));		
@@ -144,7 +139,7 @@ public class HSQLTest extends MubaTest {
 
 	@Before
 	public void setUp() throws Exception {
-		ExcecutionContext excecution = injector.getInstance(ExcecutionContext.class);
+		RuntimeContext excecution = injector.getInstance(RuntimeContext.class);
 		SystemCatalogPlugin manager = injector.getInstance(SystemCatalogPlugin.class);
 		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 		context = manager.spawn(excecution);

@@ -10,9 +10,7 @@ import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.bootstrap.server.chain.command.RequestInterpret;
 
-import javax.inject.Named;
-
-public interface ApplicationContext
+public interface SystemContext
 		/* basic implementation: LocalSystemContext */ extends Context {
 
     OutputStream getOutput();
@@ -34,5 +32,5 @@ public interface ApplicationContext
 	 * @param context
 	 * @return reads properties from context, aswell as context property depen
 	 */
-	RequestInterpret getRequestInterpret(ExcecutionContext context);
+	RequestInterpret getRequestInterpret(RuntimeContext context);
 }

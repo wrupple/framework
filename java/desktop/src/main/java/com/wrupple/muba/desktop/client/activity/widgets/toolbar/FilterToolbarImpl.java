@@ -35,11 +35,8 @@ import com.wrupple.muba.desktop.client.services.logic.ServiceBus;
 import com.wrupple.muba.desktop.client.services.logic.URLFilterDataSerializationService;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.ModelTransformationConfig;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -211,7 +208,7 @@ public class FilterToolbarImpl extends WruppleActivityToolbarBase implements Fil
 		ModelTransformationConfig commandProperties = ModelTransformationConfig.createObject().cast();
 		commandProperties.setSourceData(newValue);
 		commandProperties.setTarget(modelAlterationTarget);
-		StateTransition<JsTransactionActivityContext> callback = DataCallback.nullCallback();
+		StateTransition<JsTransactionApplicationContext> callback = DataCallback.nullCallback();
 		serviceBus.excecuteCommand(ModifyUserInteractionStateModelCommand.COMMAND, commandProperties, eventBus, contextServices, contextParameters, callback);
 
 		String unencodedString;
@@ -280,7 +277,7 @@ public class FilterToolbarImpl extends WruppleActivityToolbarBase implements Fil
 	}-*/;
 
 	@Override
-	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 			EventBus bus, ProcessContextServices contextServices) {
 		super.initialize(toolbarDescriptor, parameter, contextParameters, bus, contextServices);
 		this.catalogId = parameter.getCatalogId();

@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
-import javax.validation.Validator;
 
 import com.wrupple.muba.HumanRunnerTestModule;
 import com.wrupple.muba.bootstrap.domain.*;
@@ -37,7 +36,6 @@ import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bootstrap.BootstrapModule;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -139,7 +137,7 @@ public class CommitHumanSolution extends MubaTest {
     }
 
     @Override
-    protected void registerServices(ApplicationContext switchs) {
+    protected void registerServices(SystemContext switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
         switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
         switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
@@ -157,7 +155,7 @@ public class CommitHumanSolution extends MubaTest {
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
 
-        excecutionContext = injector.getInstance(ExcecutionContext.class);
+        runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 
@@ -181,12 +179,12 @@ public class CommitHumanSolution extends MubaTest {
 
         log.info("[-post a solver request to the runner engine-]");
 
-        excecutionContext.setServiceContract(prepareEquationSolverTask());
-        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME);
+        runtimeContext.setServiceContract(prepareEquationSolverTask());
+        runtimeContext.setSentence(RunnerServiceManifest.SERVICE_NAME);
 
-        excecutionContext.process();
+        runtimeContext.process();
 
-        EquationSystemSolution solution = excecutionContext.getConvertedResult();
+        EquationSystemSolution solution = runtimeContext.getConvertedResult();
         //human solution was successfully retrived
         assertTrue(solution!=null);
 
@@ -209,17 +207,17 @@ public class CommitHumanSolution extends MubaTest {
         CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(solutionContract);
 
-        excecutionContext.setServiceContract(catalogRequest);
-        excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setServiceContract(catalogRequest);
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
                 CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 
-        excecutionContext.process();
+        runtimeContext.process();
 
-        CatalogActionContext catalogContext = excecutionContext.getServiceContext();
+        CatalogActionContext catalogContext = runtimeContext.getServiceContext();
 
         solutionContract = catalogContext.getEntryResult();
 
-        excecutionContext.reset();
+        runtimeContext.reset();
         log.info("[-create a task with problem constraints-]");
         ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
         problem.setDistinguishedName("my first problem");
@@ -238,15 +236,15 @@ public class CommitHumanSolution extends MubaTest {
         catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(problem);
 
-        excecutionContext.setServiceContract(catalogRequest);
-        excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setServiceContract(catalogRequest);
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
                 CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
-        excecutionContext.process();
-        catalogContext = excecutionContext.getServiceContext();
+        runtimeContext.process();
+        catalogContext = runtimeContext.getServiceContext();
 
         problem = catalogContext.getEntryResult();
-        excecutionContext.reset();
+        runtimeContext.reset();
         return problem;
     }
 

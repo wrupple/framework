@@ -1,16 +1,11 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.JavaNativeInterfaceContext;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCommand;
 import com.wrupple.muba.bootstrap.server.chain.command.SentenceNativeInterface;
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.Constraint;
@@ -19,10 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Stream;
 
 /**
  * Created by rarl on 11/05/17.
@@ -41,7 +33,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     protected Logger log = LoggerFactory.getLogger(DefineSolutionCriteriaImpl.class);
     @Override
     public boolean execute(Context ctx) throws Exception {
-        final ActivityContext context = (ActivityContext) ctx;
+        final ApplicationContext context = (ApplicationContext) ctx;
         ProcessTaskDescriptor request = context.getTaskDescriptorValue();
 
         log.info("Resolving problem model");
@@ -62,7 +54,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         return CONTINUE_PROCESSING;
     }
 
-    private void processNextConstraint(JavaNativeInterfaceContext invokerContext,ListIterator<String> sentence, Model model, ProcessTaskDescriptor request, ActivityContext context) throws Exception {
+    private void processNextConstraint(JavaNativeInterfaceContext invokerContext,ListIterator<String> sentence, Model model, ProcessTaskDescriptor request, ApplicationContext context) throws Exception {
         if(sentence.hasNext()){
             String next = sentence.next();
             if(ProcessTaskDescriptor.CONSTRAINT.equals(next)){

@@ -7,7 +7,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.StarRatingCell;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class StarRatingCellProvider implements CatalogFormFieldProvider {
@@ -15,7 +15,7 @@ public class StarRatingCellProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<Integer> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d,
 			CatalogAction mode) {
 		return new StarRatingCell();

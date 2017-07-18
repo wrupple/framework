@@ -6,11 +6,11 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public interface OutputHandler extends ScheduledCommand{
 
 	public void prepare(String command, JavaScriptObject properties,
-			EventBus eventBus, ProcessContextServices processContext,JsTransactionActivityContext processParameters,
+			EventBus eventBus, ProcessContextServices processContext,JsTransactionApplicationContext processParameters,
 			StateTransition<DesktopPlace> callback);
 }

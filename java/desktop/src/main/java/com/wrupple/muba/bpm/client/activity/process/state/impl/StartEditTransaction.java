@@ -16,16 +16,16 @@ import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
 
 public class StartEditTransaction extends AbstractStartUserTransaction {
 	static class EntryReadingCallback extends DataCallback<JsCatalogEntry> {
-		StateTransition<JsTransactionActivityContext> onDone;
-		JsTransactionActivityContext parameter;
+		StateTransition<JsTransactionApplicationContext> onDone;
+		JsTransactionApplicationContext parameter;
 
-		public EntryReadingCallback(JsTransactionActivityContext parameter, StateTransition<JsTransactionActivityContext> onDone) {
+		public EntryReadingCallback(JsTransactionApplicationContext parameter, StateTransition<JsTransactionApplicationContext> onDone) {
 			super();
 			this.parameter = parameter;
 			this.onDone = onDone;
@@ -46,10 +46,10 @@ public class StartEditTransaction extends AbstractStartUserTransaction {
 	 * @author japi
 	 *
 	 */
-	class URLParsingCallback extends DataCallback<JsTransactionActivityContext> {
-		StateTransition<JsTransactionActivityContext> onDone;
+	class URLParsingCallback extends DataCallback<JsTransactionApplicationContext> {
+		StateTransition<JsTransactionApplicationContext> onDone;
 
-		public URLParsingCallback(StateTransition<JsTransactionActivityContext> onDone) {
+		public URLParsingCallback(StateTransition<JsTransactionApplicationContext> onDone) {
 			super();
 			this.onDone = onDone;
 		}
@@ -57,7 +57,7 @@ public class StartEditTransaction extends AbstractStartUserTransaction {
 		@Override
 		public void execute() {
 			onDone.setResult(result);
-			final JsTransactionActivityContext context = result;
+			final JsTransactionApplicationContext context = result;
 			final JsCatalogEntry entry = result.getUserOutput();
 			
 			contextServices.getStorageManager().loadCatalogDescriptor(contextServices.getDesktopManager().getCurrentActivityHost(), contextServices.getDesktopManager().getCurrentActivityDomain(), taskDescriptor.getCatalogId(), new DataCallback<CatalogDescriptor>() {
@@ -103,7 +103,7 @@ public class StartEditTransaction extends AbstractStartUserTransaction {
 
 		}
 		private native void setValue(String fieldId,
-				String contextParameter, JsTransactionActivityContext result, JsCatalogEntry entry) /*-{
+                                     String contextParameter, JsTransactionApplicationContext result, JsCatalogEntry entry) /*-{
 			
 			var tokens = contextParameter.split(".");
 			
@@ -133,9 +133,9 @@ public class StartEditTransaction extends AbstractStartUserTransaction {
 	}
 
 	@Override
-	public void start(JsTransactionActivityContext context, StateTransition<JsTransactionActivityContext> wrapped, EventBus bus) {
+	public void start(JsTransactionApplicationContext context, StateTransition<JsTransactionApplicationContext> wrapped, EventBus bus) {
 
-		StateTransition<JsTransactionActivityContext> onDone = new URLParsingCallback(wrapped);
+		StateTransition<JsTransactionApplicationContext> onDone = new URLParsingCallback(wrapped);
 		String targetEntryId = placeInterpret.getCurrentPlaceEntry((DesktopPlace)contextServices.getPlaceController().getWhere());
 		
 		context.setTargetEntryId(targetEntryId);

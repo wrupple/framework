@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.server.service;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ContextEvaluationService;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -89,7 +89,7 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager, JSRA
 
 		CatalogActionContext spawn(CatalogActionContext parent);
 		
-		CatalogActionContext spawn(ExcecutionContext system);
+		CatalogActionContext spawn(RuntimeContext system);
 		
 
 

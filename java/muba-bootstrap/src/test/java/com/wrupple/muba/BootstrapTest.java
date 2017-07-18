@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
 
 public class BootstrapTest extends EasyMockSupport {
@@ -30,7 +30,7 @@ public class BootstrapTest extends EasyMockSupport {
 	// @Mock
 	protected SessionContextImpl session;
 
-	protected ExcecutionContext excecutionContext;
+	protected RuntimeContext runtimeContext;
 
 	// @TestSubject protected RootServiceManifest muba;
 

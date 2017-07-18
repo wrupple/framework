@@ -64,7 +64,7 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 		try {
 			history.rollback();
 		} catch (Exception e) {
-			// context.getExcecutionContext().getSession().getRequestContext().addWarning("unable to
+			// context.getRuntimeContext().getSession().getRequestContext().addWarning("unable to
 			// completely rollback catalog action");
 		}
 

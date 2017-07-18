@@ -14,14 +14,14 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.CatalogBase;
 import org.apache.commons.chain.impl.ContextBase;
 
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.SystemContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.domain.RootServiceManifest;
 import com.wrupple.muba.bootstrap.domain.ServiceManifest;
 import com.wrupple.muba.bootstrap.server.chain.command.RequestInterpret;
 
 @Singleton
-public class LocalSystemContext extends ContextBase implements ApplicationContext {
+public class LocalSystemContext extends ContextBase implements SystemContext {
 
 	private static final long serialVersionUID = -7144539787781019055L;
 	private final RootServiceManifest rootService;
@@ -103,7 +103,7 @@ public class LocalSystemContext extends ContextBase implements ApplicationContex
 	}
 
 	@Override
-	public RequestInterpret getRequestInterpret(ExcecutionContext req) {
+	public RequestInterpret getRequestInterpret(RuntimeContext req) {
 		return (RequestInterpret) getDictionaryFactory().getCatalog(DICTIONARY).getCommand(req.getServiceManifest().getServiceId());
 	}
 }

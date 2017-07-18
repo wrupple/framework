@@ -44,11 +44,8 @@ import com.wrupple.muba.desktop.client.activity.widgets.toolbar.FilterToolbarImp
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.FilterCriteriaFieldDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -150,8 +147,8 @@ public class FieldFilterInteractionToken extends Composite implements FieldFilte
 		public void onClick(ClickEvent event) {
 			String foreignCatalog = fieldDescriptor.getForeignCatalogName();
 			ContentManager<JsCatalogEntry> cm = cms.getContentManager(foreignCatalog);
-			Process<JsTransactionActivityContext, JsTransactionActivityContext> selectionProcess = cm.getSelectionProcess(contextServices, false, false);
-			JsTransactionActivityContext input = JsTransactionActivityContext.createObject().cast();
+			Process<JsTransactionApplicationContext, JsTransactionApplicationContext> selectionProcess = cm.getSelectionProcess(contextServices, false, false);
+			JsTransactionApplicationContext input = JsTransactionApplicationContext.createObject().cast();
 			contextServices.getProcessManager()
 					.processSwitch(selectionProcess, foreignCatalog, input, new ForeignSelectionCompletedCallback(), contextServices);
 		}
@@ -167,7 +164,7 @@ public class FieldFilterInteractionToken extends Composite implements FieldFilte
 
 	}
 
-	class ForeignSelectionCompletedCallback extends DataCallback<JsTransactionActivityContext> {
+	class ForeignSelectionCompletedCallback extends DataCallback<JsTransactionApplicationContext> {
 
 		@Override
 		public void execute() {

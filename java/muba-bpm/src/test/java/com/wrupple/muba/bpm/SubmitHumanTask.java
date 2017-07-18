@@ -16,11 +16,10 @@ import org.junit.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.bootstrap.BootstrapModule;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.ParentServiceManifest;
 import com.wrupple.muba.bootstrap.domain.Person;
@@ -145,7 +144,7 @@ public class SubmitHumanTask extends MubaTest {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockValidator.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		excecutionContext = injector.getInstance(ExcecutionContext.class);
+		runtimeContext = injector.getInstance(RuntimeContext.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}
 	/*
@@ -190,16 +189,16 @@ public class SubmitHumanTask extends MubaTest {
 		catalogRequest.setEntryValue(process);
 		catalogRequest.setAction(CatalogActionRequest.CREATE_ACTION);
 		catalogRequest.setCatalog(process.getCatalogType());
-		excecutionContext.setServiceContract(catalogRequest);
-		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME);
+		runtimeContext.setServiceContract(catalogRequest);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME);
 
-		excecutionContext.process();
+		runtimeContext.process();
 
-		ccontext = excecutionContext.getServiceContext();
+		ccontext = runtimeContext.getServiceContext();
 
 		process = ccontext.getResult();
 
-		excecutionContext.reset();
+		runtimeContext.reset();
 
 		log.trace("[-create process excecution context (tracking) by submitting multiple selection-]");
 		/*
@@ -224,11 +223,11 @@ public class SubmitHumanTask extends MubaTest {
 		 * PublishEventsImpl should really be BPM's problem
 		 * 
 		 */
-		excecutionContext.reset();
+		runtimeContext.reset();
 		BusinessEvent submit;
-		excecutionContext.setServiceContract(submit);
-		excecutionContext.setSentence(rootActivity, synthesizeTrackingObject);
-		HumanActivityTracking tracking = excecutionContext.getServiceContext();
+		runtimeContext.setServiceContract(submit);
+		runtimeContext.setSentence(rootActivity, synthesizeTrackingObject);
+		HumanActivityTracking tracking = runtimeContext.getServiceContext();
 
 		assertTrue(tracking.getPropertyvalue(task.getProducedField()) != null);
 
@@ -248,13 +247,13 @@ public class SubmitHumanTask extends MubaTest {
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
 		action.setEntryValue(problemContract);
 
-		excecutionContext.setServiceContract(action);
-		excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setServiceContract(action);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 
-		excecutionContext.process();
+		runtimeContext.process();
 
-		excecutionContext.reset();
+		runtimeContext.reset();
 	}
 
 	CatalogDataAccessObject<ProcessTaskDescriptor> taskDao = context.getDataStoreManager().getOrAssembleDataSource(

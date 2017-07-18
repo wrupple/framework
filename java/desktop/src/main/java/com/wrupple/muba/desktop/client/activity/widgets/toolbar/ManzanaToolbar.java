@@ -24,7 +24,7 @@ import com.wrupple.muba.desktop.client.event.EntryUpdatedEvent;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ManzanaToolbar extends Composite implements Toolbar{
 	public static final String CONTROL_STYLE_NAME = "view-control";
@@ -122,7 +122,7 @@ public class ManzanaToolbar extends Composite implements Toolbar{
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 		
 	}
 
@@ -137,7 +137,7 @@ public class ManzanaToolbar extends Composite implements Toolbar{
 	}
 
 	@Override
-	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 			EventBus bus, ProcessContextServices contextServices) {
 		
 	}

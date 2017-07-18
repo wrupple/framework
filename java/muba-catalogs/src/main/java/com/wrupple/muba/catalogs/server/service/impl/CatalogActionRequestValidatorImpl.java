@@ -10,16 +10,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
+import com.wrupple.muba.bootstrap.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogKey;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bootstrap.server.service.ContextAwareValidator;
 import com.wrupple.muba.bootstrap.server.service.PropertyValidationContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -37,7 +32,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	protected static final Logger log = LoggerFactory.getLogger(CatalogActionRequestValidatorImpl.class);
 
 	private final SystemCatalogPlugin dictionary;
-	private final Provider<ExcecutionContext> exp;
+	private final Provider<RuntimeContext> exp;
 	private final ContextAwareValidator delegate;
 	/*
 	 * secondary services
@@ -46,7 +41,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final LargeStringFieldDataAccessObject lsdao;
 
 	@Inject
-	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<ExcecutionContext> exp,
+	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<RuntimeContext> exp,
 			SystemCatalogPlugin cms, LargeStringFieldDataAccessObject lsdao) {
 		this.lsdao = lsdao;
 		this.exp = exp;
@@ -207,7 +202,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, String domain) {
 		if (descriptor == null) {
 
-			ExcecutionContext system = this.exp.get();
+			RuntimeContext system = this.exp.get();
 			CatalogActionContext context = dictionary.spawn(system);
 			try {
 				context.setNamespace(domain);

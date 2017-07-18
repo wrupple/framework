@@ -6,7 +6,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.impl.ActivityContextImpl;
+import com.wrupple.muba.bpm.domain.impl.ApplicationContextImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.domain.impl.RunnerServiceManifestImpl;
 import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
@@ -15,7 +15,6 @@ import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import com.wrupple.muba.bpm.server.service.impl.TaskRunnerPluginImpl;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 
 /**
@@ -24,7 +23,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 public class TaskRunnerModule  extends AbstractModule {
     @Override
     protected void configure() {
-        bind(ActivityContext.class).to(ActivityContextImpl.class);
+        bind(ApplicationContext.class).to(ApplicationContextImpl.class);
 
         bind(TaskRunnerEngine.class).to(TaskRunnerEngineImpl.class);
 

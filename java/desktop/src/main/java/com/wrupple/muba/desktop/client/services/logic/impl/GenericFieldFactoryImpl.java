@@ -34,7 +34,7 @@ import com.wrupple.muba.desktop.client.services.presentation.ForeignRelationWidg
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.impl.MultipleSelectionModel;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
@@ -66,7 +66,7 @@ public class GenericFieldFactoryImpl implements GenericFieldFactory {
 
 	@Override
 	public HasValue<Object> getOrCreateField(JavaScriptObject fieldProperties, CatalogAction mode, EventBus bus, ProcessContextServices contextServices, RelationshipDelegate delegate,
-			JsTransactionActivityContext contextParameters, String host, String domain, JsCatalogEntry currentEntry, FieldDescriptor field) {
+                                             JsTransactionApplicationContext contextParameters, String host, String domain, JsCatalogEntry currentEntry, FieldDescriptor field) {
 		Cell cell = null;
 		String fieldId = field.getFieldId();
 		String widget = GWTUtils.getAttribute(fieldProperties, "widget");
@@ -124,9 +124,9 @@ public class GenericFieldFactoryImpl implements GenericFieldFactory {
 		return new ParentSelectionField(host,domain,catalogParentId, catalogService, parentCatalogManager, processServices, editor, message);
 	}
 
-	private AbstractValueRelationEditor<?> assembleDataField(String host, String domain,Cell<JsCatalogEntry> cell, RelationshipDelegate delegate, EventBus bus,
-			ProcessContextServices contextServices, JsTransactionActivityContext contextParameters, FieldDescriptor field, JavaScriptObject fieldProperties, CatalogAction mode,
-			JsCatalogEntry entry) {
+	private AbstractValueRelationEditor<?> assembleDataField(String host, String domain, Cell<JsCatalogEntry> cell, RelationshipDelegate delegate, EventBus bus,
+                                                             ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters, FieldDescriptor field, JavaScriptObject fieldProperties, CatalogAction mode,
+                                                             JsCatalogEntry entry) {
 		HasData<JsCatalogEntry> dataWidget;
 		String foreignCatalog = field.getForeignCatalogName();
 		GenericDataProvider dataProvider = dinamicDataProviderProvider.get();

@@ -8,7 +8,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.services.command.GoToCommand;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class GoToCommandImpl implements GoToCommand {
 
@@ -29,7 +29,7 @@ public class GoToCommandImpl implements GoToCommand {
 	@Override
 	public void prepare(String command, JavaScriptObject activityContext,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
+			JsTransactionApplicationContext processParameters,
 			StateTransition<DesktopPlace> callback) {
 		this.userOutput=processParameters.getUserOutput().cast();
 		this.callback = (StateTransition<DesktopPlace>) callback;

@@ -2,13 +2,13 @@ package com.wrupple.muba.desktop.domain.overlay;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 
-public final class JsTransactionActivityContext extends JavaScriptObject implements ActivityContext
+public final class JsTransactionApplicationContext extends JavaScriptObject implements ApplicationContext
 {
 
-	protected JsTransactionActivityContext() {
+	protected JsTransactionApplicationContext() {
 		super();
 	}
 

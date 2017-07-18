@@ -34,7 +34,7 @@ import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogEntry;
 
 public class SelectionTask extends AbstractUserInteractionState {
@@ -62,7 +62,7 @@ public class SelectionTask extends AbstractUserInteractionState {
 	}
 
 	@Override
-	protected HumanTaskProcessor<?, ?> buildUserInteractionInterface(String catalog, final JavaScriptObject properties, JsTransactionActivityContext parameter,
+	protected HumanTaskProcessor<?, ?> buildUserInteractionInterface(String catalog, final JavaScriptObject properties, JsTransactionApplicationContext parameter,
 			EventBus eventBus, ProcessContextServices ctx) {
 		ContentManager<JsCatalogEntry> contentManager = cms.getContentManager(catalog);
 		ContentBrowser transactionView = (ContentBrowser) contentManager.getSelectTransaction(parameter, properties, eventBus, ctx);
@@ -117,7 +117,7 @@ public class SelectionTask extends AbstractUserInteractionState {
 	}
 
 	protected <T extends JavaScriptObject> void afterUIAssembled(String catalog, JsApplicationItem applicationItem, HumanTaskProcessor<T, ?> transactionView,
-			ProcessContextServices context, EventBus eventBus, JsTransactionActivityContext parameter, JsFilterData filterData) {
+                                                                 ProcessContextServices context, EventBus eventBus, JsTransactionApplicationContext parameter, JsFilterData filterData) {
 		if (!disableBrowserInit) {
 			T initialValue = null;
 			boolean navigationflag = taskDescriptor.getCurrentPlaceNavigationFlag();

@@ -20,7 +20,7 @@ import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldPro
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider {
 
@@ -36,7 +36,7 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 	@Override
 	public Cell<? extends Object> createCell(EventBus bus,
 			final ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		if (CatalogAction.READ == mode) {
 			return new TextCell();
@@ -49,7 +49,7 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 				
 				@Override
 				public Process<String, String> get() {
-					Process<JsTransactionActivityContext, JsTransactionActivityContext> catalogSelectionProcess = cms
+					Process<JsTransactionApplicationContext, JsTransactionApplicationContext> catalogSelectionProcess = cms
 							.getContentManager("PersistentCatalogDescriptor")
 							.getSelectionProcess(contextServices, false, false);
 
@@ -70,13 +70,13 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 	}
 
 	public static class NullStep implements
-			State<String, JsTransactionActivityContext> {
+			State<String, JsTransactionApplicationContext> {
 
 		@Override
 		public void start(String parameter,
-				StateTransition<JsTransactionActivityContext> onDone,
+				StateTransition<JsTransactionApplicationContext> onDone,
 				EventBus bus) {
-			JsTransactionActivityContext regreso = JsTransactionActivityContext
+			JsTransactionApplicationContext regreso = JsTransactionApplicationContext
 					.createObject().cast();
 			onDone.setResultAndFinish(regreso);
 		}
@@ -85,7 +85,7 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 
 	public class Selection
 			implements
-			State.ContextAware<JsTransactionActivityContext, JsTransactionActivityContext> {
+			State.ContextAware<JsTransactionApplicationContext, JsTransactionApplicationContext> {
 
 		private ProcessContextServices contextServices;
 		private Process<String, String> nestedProcess;
@@ -100,8 +100,8 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 		}
 
 		@Override
-		public void start(JsTransactionActivityContext parameter,
-				StateTransition<JsTransactionActivityContext> onDone,
+		public void start(JsTransactionApplicationContext parameter,
+				StateTransition<JsTransactionApplicationContext> onDone,
 				EventBus bus) {
 			JsArray<JsCatalogEntry> selectedCatalogArray = parameter
 					.getUserOutputAsCatalogEntryArray();
@@ -111,7 +111,7 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 					numericCatalogId);
 			String catalogName = GWTUtils.getAttribute(selectedCatalog,
 					"catalogId");
-			Process<JsTransactionActivityContext, JsTransactionActivityContext> selectionProcess = cms
+			Process<JsTransactionApplicationContext, JsTransactionApplicationContext> selectionProcess = cms
 					.getContentManager(catalogName).getSelectionProcess(contextServices,
 							false, false);
 			nestedProcess.addAll(selectionProcess);
@@ -128,7 +128,7 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 
 	}
 
-	public static class Output implements State<JsTransactionActivityContext, String> {
+	public static class Output implements State<JsTransactionApplicationContext, String> {
 
 		private String whatToOutput;
 		private final ProcessContextServices contextServices;
@@ -139,7 +139,7 @@ public class CatalogIdAndEntryIdCellProvider implements CatalogFormFieldProvider
 		}
 
 		@Override
-		public void start(JsTransactionActivityContext parameter,
+		public void start(JsTransactionApplicationContext parameter,
 				StateTransition<String> onDone, EventBus bus) {
 			CatalogEditor<?> eventForm = (CatalogEditor<?>) contextServices.getNestedTaskPresenter().getTaskContent().getMainTaskProcessor();
 

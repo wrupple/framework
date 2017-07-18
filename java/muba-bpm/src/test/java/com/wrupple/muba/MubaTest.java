@@ -10,7 +10,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.wrupple.muba.bootstrap.domain.Bootstrap;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 
 public abstract class MubaTest extends EasyMockSupport {
 
@@ -27,7 +27,7 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	protected Injector injector;
 
-	protected ExcecutionContext excecutionContext;
+	protected RuntimeContext runtimeContext;
 
 
 

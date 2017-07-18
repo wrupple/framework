@@ -25,7 +25,7 @@ import com.wrupple.muba.desktop.client.services.presentation.TableLayoutDelegate
 import com.wrupple.muba.desktop.client.services.presentation.impl.CellTableFilterAndSortDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -40,10 +40,10 @@ public class IndexedContentTable extends AbstractContentBrowser implements Conte
 		private JsArray<JsCatalogEntry> selections;
 		private EventBus bus;
 		private ProcessContextServices contextServices;
-		private JsTransactionActivityContext contextParameters;
+		private JsTransactionApplicationContext contextParameters;
 		private IndexedContentTable table;
 
-		public InitializeTableBrowser(EventBus bus, ProcessContextServices contextServices, JsTransactionActivityContext contextParameters,
+		public InitializeTableBrowser(EventBus bus, ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters,
 				AbstractCellTable<JsCatalogEntry> display, JavaScriptObject properties, JsArray<JsCatalogEntry> selections, IndexedContentTable table) {
 			super();
 			this.bus = bus;
@@ -89,7 +89,7 @@ public class IndexedContentTable extends AbstractContentBrowser implements Conte
 	}
 
 	@Override
-	public void setRuntimeParams(String catalog, JavaScriptObject properties, EventBus bus, JsTransactionActivityContext contextParameters,
+	public void setRuntimeParams(String catalog, JavaScriptObject properties, EventBus bus, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices) {
 
 		AbstractCellTable<JsCatalogEntry> cellTable = getUnderlyingTable();

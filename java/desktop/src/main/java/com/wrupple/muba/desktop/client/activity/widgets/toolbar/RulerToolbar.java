@@ -17,7 +17,7 @@ import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class RulerToolbar extends WruppleActivityToolbarBase implements Toolbar {
 
@@ -39,7 +39,7 @@ public class RulerToolbar extends WruppleActivityToolbarBase implements Toolbar 
 	}
 
 	@Override
-	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 			EventBus bus, ProcessContextServices contextServices) {
 		super.initialize(toolbarDescriptor, parameter, contextParameters, bus, contextServices);
 		DockToolbarProperties p = toolbarDescriptor.getPropertiesObject().cast();
@@ -61,7 +61,7 @@ public class RulerToolbar extends WruppleActivityToolbarBase implements Toolbar 
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 		super.applyAlterations(properties, contextServices, eventBus, contextParamenters);
 		draw();
 	}

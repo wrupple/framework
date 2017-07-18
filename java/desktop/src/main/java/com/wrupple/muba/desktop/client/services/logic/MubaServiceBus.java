@@ -13,7 +13,7 @@ import com.wrupple.muba.desktop.client.factory.dictionary.ServiceMap;
 import com.wrupple.muba.desktop.client.services.command.CommandService;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class MubaServiceBus implements ServiceBus {
 
@@ -33,8 +33,8 @@ public class MubaServiceBus implements ServiceBus {
 	@Override
 	public void excecuteCommand(String command, JavaScriptObject properties,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
-			StateTransition<JsTransactionActivityContext> callback) {
+			JsTransactionApplicationContext processParameters,
+			StateTransition<JsTransactionApplicationContext> callback) {
 
 		
 		
@@ -50,15 +50,15 @@ public class MubaServiceBus implements ServiceBus {
 
 	public void excecuteCommand( CommandService service, JavaScriptObject properties,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
-			StateTransition<JsTransactionActivityContext> callback) {
+			JsTransactionApplicationContext processParameters,
+			StateTransition<JsTransactionApplicationContext> callback) {
 		excecuteCommand(null,service, properties, eventBus, processContext, processParameters, callback);
 	}
 	
 	private void excecuteCommand(String command, CommandService service, JavaScriptObject properties,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
-			StateTransition<JsTransactionActivityContext> callback) {
+			JsTransactionApplicationContext processParameters,
+			StateTransition<JsTransactionApplicationContext> callback) {
 
 		
 		if (callback == null) {
@@ -72,7 +72,7 @@ public class MubaServiceBus implements ServiceBus {
 	@Override
 	public void parseOutput(String rawCommand, JavaScriptObject properties,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
+			JsTransactionApplicationContext processParameters,
 			StateTransition<DesktopPlace> callback) {
 
 		String command = rawCommand;

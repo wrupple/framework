@@ -30,14 +30,14 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 	}
 
 	@Override
-	public Context materializeBlankContext(ExcecutionContext parent) {
+	public Context materializeBlankContext(RuntimeContext parent) {
 		return cms.spawn(parent);
 	}
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
 
-		ExcecutionContext requestContext = (ExcecutionContext) ctx;
+		RuntimeContext requestContext = (RuntimeContext) ctx;
 		CatalogActionRequest request = (CatalogActionRequest) requestContext.getServiceContract();
 		CatalogActionContext context = requestContext.getServiceContext();
 

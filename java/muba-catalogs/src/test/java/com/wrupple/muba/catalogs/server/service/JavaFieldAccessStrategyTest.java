@@ -132,7 +132,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
 
-        excecutionContext = injector.getInstance(ExcecutionContext.class);
+        runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");*/
     }
 

@@ -1,12 +1,8 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.server.chain.command.SentenceNativeInterface;
-import com.wrupple.muba.bpm.domain.ActivityContext;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.SolveTask;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.chocosolver.solver.Model;
 import org.slf4j.Logger;
@@ -30,7 +26,7 @@ public class SolveTaskImpl implements SolveTask {
     }
     @Override
     public boolean execute(Context ctx) throws Exception {
-        ActivityContext context = (ActivityContext) ctx;
+        ApplicationContext context = (ApplicationContext) ctx;
         log.info("Thinking...");
         Model model = plugin.getSolver().resolveProblemContext(context);
 

@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
 import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
@@ -35,7 +35,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
 
     @Override
     public boolean execute(Context ctx) throws Exception {
-        ActivityContext context = (ActivityContext) ctx;
+        ApplicationContext context = (ApplicationContext) ctx;
         log.info("Synthesize solution...");
         CatalogDescriptor solutionDescriptor = context.getSolutionDescriptor();
         CatalogEntry solution = catalog.access().synthesize(solutionDescriptor);

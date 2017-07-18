@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -17,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
 import com.wrupple.muba.bootstrap.domain.RootServiceManifest;
 import com.wrupple.muba.bootstrap.domain.ServiceManifest;
 import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
@@ -47,7 +47,7 @@ public class ContextSwitchCommandImpl implements ContextSwitchCommand {
 
 	@Override
 	public boolean execute(Context context) throws Exception {
-		ExcecutionContext requestContext = (ExcecutionContext) context;
+		RuntimeContext requestContext = (RuntimeContext) context;
 		Set<ConstraintViolation<?>> violations = null;
 		Object contract = requestContext.getServiceContract();
 		String key, value;
@@ -144,7 +144,7 @@ public class ContextSwitchCommandImpl implements ContextSwitchCommand {
 		}
 	}
 
-	private boolean incorporateContract(ExcecutionContext requestContext) throws Exception {
+	private boolean incorporateContract(RuntimeContext requestContext) throws Exception {
 
 		List<String> tokens = requestContext.getServiceManifest().getGrammar();
 		RequestInterpret explicitInterpret = requestContext.getApplication().getRequestInterpret(requestContext);
@@ -202,7 +202,7 @@ public class ContextSwitchCommandImpl implements ContextSwitchCommand {
 		return CONTINUE_PROCESSING;
 	}
 
-	private Context materializeContext(ExcecutionContext requestContext, RequestInterpret explicitInterpret) {
+	private Context materializeContext(RuntimeContext requestContext, RequestInterpret explicitInterpret) {
 		Context context = requestContext.getServiceContext();
 
 		if (context == null) {
@@ -218,7 +218,7 @@ public class ContextSwitchCommandImpl implements ContextSwitchCommand {
 		return context;
 	}
 
-	private ServiceManifest getChildServiceManifest(String service, ExcecutionContext requestContext) {
+	private ServiceManifest getChildServiceManifest(String service, RuntimeContext requestContext) {
 		RootServiceManifest rootService = requestContext.getApplication().getRootService();
 		if (rootService == null) {
 			throw new IllegalStateException("No root service has been configured");

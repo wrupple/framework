@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bpm.domain.ActivityContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
 import com.wrupple.muba.bpm.server.service.Solver;
@@ -13,7 +13,6 @@ import org.chocosolver.solver.variables.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.transaction.NotSupportedException;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -27,7 +26,7 @@ public class SolverImpl implements Solver {
     protected Logger log = LoggerFactory.getLogger(SolverImpl.class);
 
     @Override
-    public <T> T resolveProblemContext(ActivityContext context) {
+    public <T> T resolveProblemContext(ApplicationContext context) {
         log.info("Resolving problem model");
         Model model = (Model) context.get(MODEL_KEY);
         if(model==null){
@@ -38,7 +37,7 @@ public class SolverImpl implements Solver {
     }
 
     @Override
-    public boolean isEligible(FieldDescriptor field,ActivityContext context) {
+    public boolean isEligible(FieldDescriptor field,ApplicationContext context) {
         //only integer fields with constraints or defined domains are eligible
         boolean eligibility = field.getDataType()== CatalogEntry.INTEGER_DATA_TYPE && ((field.getDefaultValueOptions()!=null && !field.getDefaultValueOptions().isEmpty())
                 || (field.getConstraintsValues()!=null && !field.getConstraintsValues().isEmpty()));
@@ -51,7 +50,7 @@ public class SolverImpl implements Solver {
     }
 
     @Override
-    public VariableDescriptor createVariable(FieldDescriptor field,ActivityContext context) {
+    public VariableDescriptor createVariable(FieldDescriptor field,ApplicationContext context) {
         return new VariableDescriptorImpl(makeIntegerVariable(field,resolveProblemContext( context)),field);
     }
 
@@ -123,7 +122,7 @@ public class SolverImpl implements Solver {
         return regreso;
     }
 
-    private Model createSolverModel(ActivityContext context) {
+    private Model createSolverModel(ApplicationContext context) {
         Model model = new Model(context.getDistinguishedName());
         return model;
     }

@@ -15,15 +15,15 @@ import com.wrupple.muba.desktop.client.services.command.ContextServicesNativeApi
 import com.wrupple.muba.desktop.client.services.logic.ModifyUserInteractionStateModelCommand;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
 import com.wrupple.muba.desktop.domain.ModelTransformationConfig;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ModifyUserInteractionStateModelCommandImpl extends ContextServicesNativeApiBuilder implements ModifyUserInteractionStateModelCommand {
 
 	class ModelAlterationCallback extends DataCallback<JavaScriptObject> {
 		TakesValue dataTarget;
-		private JsTransactionActivityContext contextParameters;
+		private JsTransactionApplicationContext contextParameters;
 
-		public ModelAlterationCallback(TakesValue dataTarget, JsTransactionActivityContext contextParameters) {
+		public ModelAlterationCallback(TakesValue dataTarget, JsTransactionApplicationContext contextParameters) {
 			super();
 			this.dataTarget = dataTarget;
 			this.contextParameters = contextParameters;
@@ -45,13 +45,13 @@ public class ModifyUserInteractionStateModelCommandImpl extends ContextServicesN
 	TaskPresenter panel;
 
 	ModelTransformationConfig config;
-	private StateTransition<JsTransactionActivityContext> callback;
-	private JsTransactionActivityContext contextParameters;
+	private StateTransition<JsTransactionApplicationContext> callback;
+	private JsTransactionApplicationContext contextParameters;
 	private String functionName;
 
 	@Override
 	public void prepare(String command, JavaScriptObject properties, EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext contextParameters, StateTransition<JsTransactionActivityContext> callback) {
+                        JsTransactionApplicationContext contextParameters, StateTransition<JsTransactionApplicationContext> callback) {
 		this.panel = processContext.getNestedTaskPresenter();
 		config = properties.cast();
 		services = processContext;

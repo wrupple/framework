@@ -200,13 +200,13 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 	@Override
-	public CatalogActionContext spawn(ExcecutionContext system) {
+	public CatalogActionContext spawn(RuntimeContext system) {
 		return makeContext(system, null);
 	}
 
-	private CatalogActionContext makeContext(ExcecutionContext excecutionContext, CatalogActionContext parent) {
+	private CatalogActionContext makeContext(RuntimeContext runtimeContext, CatalogActionContext parent) {
 		CatalogActionContext regreso = new CatalogActionContextImpl(this,
-				parent == null ? domainContextProvider.get() : parent.getNamespaceContext(), excecutionContext, parent);
+				parent == null ? domainContextProvider.get() : parent.getNamespaceContext(), runtimeContext, parent);
 		log.debug("[SPAWN ] {}", regreso);
 		regreso.put(WriteAuditTrails.CONTEXT_START, System.currentTimeMillis());
 		return regreso;
@@ -1143,7 +1143,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
     public Object synthethizeFieldValue(String[] split, CatalogActionContext context) throws Exception {
-        ExcecutionContext ex = context.getExcecutionContext().spawnChild();
+        RuntimeContext ex = context.getExcecutionContext().spawnChild();
         ex.setSentence(split);
         ex.process();
         return ex.getResult();

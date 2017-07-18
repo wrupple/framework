@@ -23,13 +23,13 @@ import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.impl.GoogleIndexedPointMapWidget;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.SimpleTextCell;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class GoogleLatitudeCellProvider implements LatitudeCellProvider {
 
 	@Override
-	public Cell<? extends Object> createCell(EventBus bus, final ProcessContextServices contextServices, JsTransactionActivityContext contextParameters,
+	public Cell<? extends Object> createCell(EventBus bus, final ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 
 		if (CatalogAction.READ == mode) {

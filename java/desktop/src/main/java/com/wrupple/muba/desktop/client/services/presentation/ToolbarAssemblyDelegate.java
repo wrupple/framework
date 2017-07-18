@@ -7,12 +7,12 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public interface ToolbarAssemblyDelegate {
 	
 	void assebleToolbars(ContentPanel transactionView,
-			TakesValue<?> mainTransaction, JsProcessTaskDescriptor parameter,JavaScriptObject taskDescriptorProps, JsTransactionActivityContext activityContext, EventBus bus,
-			ProcessContextServices context, JsApplicationItem currentPlace);
+                         TakesValue<?> mainTransaction, JsProcessTaskDescriptor parameter, JavaScriptObject taskDescriptorProps, JsTransactionApplicationContext activityContext, EventBus bus,
+                         ProcessContextServices context, JsApplicationItem currentPlace);
 	
 }

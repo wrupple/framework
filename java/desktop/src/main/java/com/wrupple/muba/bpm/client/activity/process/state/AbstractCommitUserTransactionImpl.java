@@ -7,16 +7,16 @@ import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class AbstractCommitUserTransactionImpl implements CommitUserTransaction {
 
 	protected static class EntryUpdateCallback extends DataCallback<JsCatalogEntry> {
 
-		JsTransactionActivityContext context;
-		StateTransition<JsTransactionActivityContext> onDone;
+		JsTransactionApplicationContext context;
+		StateTransition<JsTransactionApplicationContext> onDone;
 
-		public EntryUpdateCallback(JsTransactionActivityContext context, StateTransition<JsTransactionActivityContext> onDone) {
+		public EntryUpdateCallback(JsTransactionApplicationContext context, StateTransition<JsTransactionApplicationContext> onDone) {
 			super();
 			this.context = context;
 			this.onDone = onDone;
@@ -39,7 +39,7 @@ public class AbstractCommitUserTransactionImpl implements CommitUserTransaction 
 	private String saveTo;
 
 	@Override
-	public void start(JsTransactionActivityContext contextP, StateTransition<JsTransactionActivityContext> onDone, EventBus bus) {
+	public void start(JsTransactionApplicationContext contextP, StateTransition<JsTransactionApplicationContext> onDone, EventBus bus) {
 		JsCatalogEntry userOutput = contextP.getUserOutput();
 		if (saveTo != null) {
 			// TODO certain saveTo fields are reserved, like those in CatalogAction
