@@ -8,7 +8,7 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
  * Created by rarl on 11/05/17.
  */
 public interface Solver {
-    <T> T resolveProblemContext(ApplicationContext context);
+    <T> T resolveSolverModel(ApplicationContext context);
 
     boolean isEligible(FieldDescriptor field,ApplicationContext context);
 

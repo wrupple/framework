@@ -4,7 +4,7 @@ import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
 import com.wrupple.muba.bpm.domain.WruppleActivityAction;
 import com.wrupple.muba.bpm.server.service.Solver;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by rarl on 10/05/17.
  */
-public class TaskRunnerPluginImpl implements TaskRunnerPlugin {
+public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
 
     private final Provider<CatalogDescriptor> taskDescP;
     private final Provider<CatalogDescriptor> actionDescP;
@@ -27,9 +27,9 @@ public class TaskRunnerPluginImpl implements TaskRunnerPlugin {
     private final Solver solver;
 
     @Inject
-    public TaskRunnerPluginImpl(	Solver solver,		@Named(ProcessTaskDescriptor.CATALOG) Provider<CatalogDescriptor> taskDescP,
-                                            @Named(TaskToolbarDescriptor.CATALOG) Provider<CatalogDescriptor> toolbarDescP,
-                                            @Named(WruppleActivityAction.CATALOG) Provider<CatalogDescriptor> actionDescP) {
+    public SolverCatalogPluginImpl(Solver solver, @Named(ProcessTaskDescriptor.CATALOG) Provider<CatalogDescriptor> taskDescP,
+                                   @Named(TaskToolbarDescriptor.CATALOG) Provider<CatalogDescriptor> toolbarDescP,
+                                   @Named(WruppleActivityAction.CATALOG) Provider<CatalogDescriptor> actionDescP) {
         this.taskDescP = taskDescP;
         this.actionDescP = actionDescP;
         this.toolbarDescP = toolbarDescP;

@@ -39,4 +39,7 @@ public interface ProcessTaskDescriptor extends CatalogEntry,HasCatalogId,HasDist
 	
 	List<String> getUrlTokens();
 
+    void setDistinguishedName(String driverPick);
+
+	void setTransactionType(String selectCommand);
 }

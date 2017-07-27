@@ -14,13 +14,13 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
-import com.wrupple.muba.ChocoRunnerTestModule;
+import com.wrupple.muba.ChocoSolverTestModule;
 import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.bpm.domain.RunnerServiceManifest;
+import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
-import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
+import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
@@ -60,7 +60,10 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingComman
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 
-
+/*
+ * GreatestAnomalyRangePicker
+ * AdjustErrorByDriverDistance
+ */
 public class SolveEquationSystem extends MubaTest {
 	/*
 	 * mocks
@@ -133,7 +136,7 @@ public class SolveEquationSystem extends MubaTest {
     }
 
     public SolveEquationSystem() {
-        init(new RunnerTestModule(), new ChocoRunnerTestModule(), new SingleUserModule(),new ChocoSolverModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
+        init(new RunnerTestModule(), new ChocoSolverTestModule(), new SingleUserModule(),new ChocoSolverModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
 
@@ -143,9 +146,9 @@ public class SolveEquationSystem extends MubaTest {
         switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
         switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
 
-        RunnerServiceManifest runnerServiceManifest = injector.getInstance(RunnerServiceManifest.class);
-        switchs.registerService(runnerServiceManifest, injector.getInstance(TaskRunnerEngine.class));
-        switchs.registerContractInterpret(runnerServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
+        SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
+        switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class));
+        switchs.registerContractInterpret(solverServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
     }
 
 
@@ -206,8 +209,8 @@ public class SolveEquationSystem extends MubaTest {
         runtimeContext.reset();
         log.info("[-create a task with problem constraints-]");
         ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
-        problem.setDistinguishedName("my first problem");
-        problem.setName("my first problem");
+        problem.setDistinguishedName("equation system");
+        problem.setName("equation system");
         problem.setCatalog(EquationSystemSolution.CATALOG);
         problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
         problem.setSentence(
@@ -234,7 +237,7 @@ public class SolveEquationSystem extends MubaTest {
         runtimeContext.reset();
         log.info("[-post a solver request to the runner engine-]");
         runtimeContext.setServiceContract(problem);
-        runtimeContext.setSentence(RunnerServiceManifest.SERVICE_NAME);
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
 
         runtimeContext.process();
 

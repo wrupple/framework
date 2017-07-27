@@ -26,7 +26,7 @@ public class SolverImpl implements Solver {
     protected Logger log = LoggerFactory.getLogger(SolverImpl.class);
 
     @Override
-    public <T> T resolveProblemContext(ApplicationContext context) {
+    public <T> T resolveSolverModel(ApplicationContext context) {
         log.info("Resolving problem model");
         Model model = (Model) context.get(MODEL_KEY);
         if(model==null){
@@ -51,7 +51,7 @@ public class SolverImpl implements Solver {
 
     @Override
     public VariableDescriptor createVariable(FieldDescriptor field,ApplicationContext context) {
-        return new VariableDescriptorImpl(makeIntegerVariable(field,resolveProblemContext( context)),field);
+        return new VariableDescriptorImpl(makeIntegerVariable(field, resolveSolverModel( context)),field);
     }
 
     @Override

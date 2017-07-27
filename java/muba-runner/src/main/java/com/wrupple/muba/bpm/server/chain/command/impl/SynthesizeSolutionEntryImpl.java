@@ -4,7 +4,7 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
@@ -24,11 +24,11 @@ import java.util.List;
 public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
     protected Logger log = LoggerFactory.getLogger(SynthesizeSolutionEntryImpl.class);
 
-    private final TaskRunnerPlugin plugin;
+    private final SolverCatalogPlugin plugin;
     private final SystemCatalogPlugin catalog;
 
     @Inject
-    public SynthesizeSolutionEntryImpl(TaskRunnerPlugin plugin,SystemCatalogPlugin catalog) {
+    public SynthesizeSolutionEntryImpl(SolverCatalogPlugin plugin, SystemCatalogPlugin catalog) {
         this.plugin = plugin;
         this.catalog=catalog;
     }

@@ -3,32 +3,31 @@ package com.wrupple.muba.bpm.domain;
 import java.util.List;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
 import com.wrupple.muba.bootstrap.domain.reserved.HasChildrenValues;
+import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
+import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
+import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 
-public interface ApplicationItem extends ActivityDescriptor,CatalogEntry,HasChildrenValues<Long,ApplicationItem>{
+public interface ApplicationItem extends CatalogEntry,HasProperties,HasStakeHolder,HasDistinguishedName,ImplicitIntent,HasChildrenValues<Long,ApplicationItem>{
 	
-	public  final String CATALOG = "DesktopPlace";
+	public  final String CATALOG = "ApplicationItem";
 
-	public List<Long> getRequiredScripts();
-	
-	public List<Long> getRequiredStyleSheets();
-	
-	public String getApplicationDomain();
-	
-	public void appendChild(int index,ApplicationItem item);
-	
-	public void appendChild(ApplicationItem item);
-	
-	public void appendChildren(List<ApplicationItem> newChildren);
 
-	public void setId(Long l);
+    public String getOutputHandler();
 
-	public void setStaticImageUrl(String string);
+    public void setOutputHandler(String string);
 
-	public void setProperties(List<String> asList);
+    //TODO input is deermined by service contract and first task's type, output by last task's type, maybe have an ephemeral field with these catalog id's
 
-	public String getDescription();
+    List<Long> getProcess();
 
-	public  String getHost();
+    <T extends ProcessTaskDescriptor> List<T> getProcessValue();
+
+    public List<Long> getRequiredElements();
+
+	public Long getPeer();
+
+    public String getDescription();
 
 }

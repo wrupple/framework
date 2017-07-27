@@ -15,11 +15,12 @@ import javax.transaction.UserTransaction;
 
 import com.wrupple.muba.HumanRunnerTestModule;
 import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.bpm.domain.RunnerServiceManifest;
+import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
-import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
+import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
@@ -132,7 +133,7 @@ public class CommitHumanSolution extends MubaTest {
     }
 
     public CommitHumanSolution() {
-        init(new RunnerTestModule(), new HumanRunnerTestModule(),new HumanSolverModule(), new SingleUserModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
+        init(new RunnerTestModule(), new HumanRunnerTestModule(),new HumanSolverModule(), new SingleUserModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
 
@@ -142,9 +143,9 @@ public class CommitHumanSolution extends MubaTest {
         switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
         switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
 
-        RunnerServiceManifest runnerServiceManifest = injector.getInstance(RunnerServiceManifest.class);
-        switchs.registerService(runnerServiceManifest, injector.getInstance(TaskRunnerEngine.class));
-        switchs.registerContractInterpret(runnerServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
+        SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
+        switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class));
+        switchs.registerContractInterpret(solverServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
     }
 
 
@@ -179,14 +180,20 @@ public class CommitHumanSolution extends MubaTest {
 
         log.info("[-post a solver request to the runner engine-]");
 
+        Long nextTaskId;
+
         runtimeContext.setServiceContract(prepareEquationSolverTask());
-        runtimeContext.setSentence(RunnerServiceManifest.SERVICE_NAME);
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
 
         runtimeContext.process();
 
         EquationSystemSolution solution = runtimeContext.getConvertedResult();
         //human solution was successfully retrived
         assertTrue(solution!=null);
+
+        ApplicationContext serviceContext = runtimeContext.getServiceContext();
+
+        serviceContext.getTaskValue().getId().equals(nextTaskId);
 
     }
 

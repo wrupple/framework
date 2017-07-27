@@ -5,7 +5,7 @@ import com.wrupple.muba.bootstrap.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.Constraint;
@@ -21,11 +21,11 @@ import java.util.ListIterator;
  */
 public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
-    private final TaskRunnerPlugin plugin;
+    private final SolverCatalogPlugin plugin;
     private final SentenceNativeInterface nativeInterface;
 
     @Inject
-    public DefineSolutionCriteriaImpl(TaskRunnerPlugin plugin,SentenceNativeInterface nativeInterface) {
+    public DefineSolutionCriteriaImpl(SolverCatalogPlugin plugin, SentenceNativeInterface nativeInterface) {
         this.plugin = plugin;
         this.nativeInterface=nativeInterface;
     }
@@ -37,7 +37,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         ProcessTaskDescriptor request = context.getTaskDescriptorValue();
 
         log.info("Resolving problem model");
-        Model model = plugin.getSolver().resolveProblemContext(context);
+        Model model = plugin.getSolver().resolveSolverModel(context);
 
         ListIterator<String> activitySentence = request.getSentence().listIterator();
         JavaNativeInterfaceContext invoker = new JavaNativeInterfaceContext(model,activitySentence);

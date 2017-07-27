@@ -3,7 +3,7 @@ package com.wrupple.muba;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;
@@ -19,16 +19,12 @@ import java.sql.SQLException;
 /**
  * Created by rarl on 10/05/17.
  */
-public class ChocoRunnerTestModule  extends AbstractModule {
-
-
+public class ChocoSolverTestModule extends AbstractModule {
 
     @Override
     protected void configure() {
         bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
     }
-
-
 
     @Provides
     @Inject
@@ -40,7 +36,6 @@ public class ChocoRunnerTestModule  extends AbstractModule {
     @Singleton
     @Inject
     public DataSource dataSource() throws SQLException {
-
 		/*
 		 * Alternative
 		 * http://www.exampit.com/blog/javahunter/9-8-2016-Connection-
@@ -54,18 +49,13 @@ public class ChocoRunnerTestModule  extends AbstractModule {
         return ds;
     }
 
-
-
-
     @Provides
     @Inject
     @Singleton
     @Named("catalog.plugins")
-    public Object plugins(TaskRunnerPlugin /* domain driven */ runner, UserCatalogPlugin /* domain driven */ user) {
+    public Object plugins(SolverCatalogPlugin /* domain driven */ runner, UserCatalogPlugin /* domain driven */ user) {
         CatalogPlugin[] plugins = new CatalogPlugin[] { user,runner };
         return plugins;
     }
-
-
 
 }

@@ -5,7 +5,7 @@ import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.DetermineSolutionFieldsDomain;
 import com.wrupple.muba.bpm.server.service.Solver;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
@@ -26,11 +26,11 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
 
     protected Logger log = LoggerFactory.getLogger(DetermineSolutionFieldsDomainImpl.class);
 
-    private final TaskRunnerPlugin plugin;
+    private final SolverCatalogPlugin plugin;
     private final SystemCatalogPlugin catalogPlugin;
 
     @Inject
-    public DetermineSolutionFieldsDomainImpl(TaskRunnerPlugin plugin,SystemCatalogPlugin catalogPlugin) {
+    public DetermineSolutionFieldsDomainImpl(SolverCatalogPlugin plugin, SystemCatalogPlugin catalogPlugin) {
         this.plugin = plugin;
         this.catalogPlugin=catalogPlugin;
     }

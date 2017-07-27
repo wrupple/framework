@@ -25,7 +25,7 @@ public class HumanSolverImpl implements Solver {
 
 
     @Override
-    public <T> T resolveProblemContext(ApplicationContext context) {
+    public <T> T resolveSolverModel(ApplicationContext context) {
         return (T) context;
     }
 

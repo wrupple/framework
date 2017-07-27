@@ -2,49 +2,48 @@ package com.wrupple.muba.bpm;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
+import javax.validation.Validator;
 
+import com.wrupple.muba.MockRunnerModule;
+import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.bpm.domain.EquationSystemSolution;
+import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.SolverServiceManifest;
+import com.wrupple.muba.bpm.server.chain.SolverEngine;
+import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
+import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bootstrap.domain.Host;
-import com.wrupple.muba.bootstrap.domain.ParentServiceManifest;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.SessionContext;
-import com.wrupple.muba.bootstrap.server.chain.command.ValidateContext;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bpm.domain.BusinessEvent;
-import com.wrupple.muba.bpm.domain.HumanActivityTracking;
-import com.wrupple.muba.bpm.domain.ProcessDescriptor;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.bpm.domain.impl.ProcessDescriptorImpl;
+import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
-import com.wrupple.muba.catalogs.JDBCHSQLTestModule;
 import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
-import com.wrupple.muba.catalogs.domain.MathProblem;
-import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadUrlHandlerTransaction;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
 import com.wrupple.muba.catalogs.server.chain.command.DataDeleteCommand;
 import com.wrupple.muba.catalogs.server.chain.command.DataQueryCommand;
@@ -57,28 +56,29 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataDeleteCommand
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataQueryCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingCommandImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 
-public class SubmitHumanTask extends MubaTest {
 
-	private static final String DOMAIN_A = "1", DOMAIN_B = "2";
+public class ExplicitApplicationInvocationTest extends MubaTest {
 	/*
 	 * mocks
 	 */
-
-	protected ValidateContext mockValidator;
 
 	protected WriteOutput mockWriter;
 
 	protected WriteAuditTrails mockLogger;
 
-	class BPMTestModule extends AbstractModule {
+	protected CatalogPeer peerValue;
+
+	protected EventSuscriptionChain chainMock;
+
+	class PrivateModule extends AbstractModule {
 
 		@Override
 		protected void configure() {
-
+			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
+			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 			// this makes JDBC the default storage unit
 			bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
 			bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
@@ -87,13 +87,13 @@ public class SubmitHumanTask extends MubaTest {
 			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
 
 			// mocks
-			mockValidator = mock(ValidateContext.class);
 			mockWriter = mock(WriteOutput.class);
 			mockLogger = mock(WriteAuditTrails.class);
+			peerValue = mock(CatalogPeer.class);
+			chainMock = mock(EventSuscriptionChain.class);
 			bind(WriteAuditTrails.class).toInstance(mockLogger);
 			bind(WriteOutput.class).toInstance(mockWriter);
-			bind(ValidateContext.class).toInstance(mockValidator);
-
+			bind(EventSuscriptionChain.class).toInstance(chainMock);
 			/*
 			 * COMMANDS
 			 */
@@ -101,7 +101,6 @@ public class SubmitHumanTask extends MubaTest {
 			bind(CatalogFileUploadTransaction.class).toInstance(mock(CatalogFileUploadTransaction.class));
 			bind(CatalogFileUploadUrlHandlerTransaction.class)
 					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
-			// TODO cms test isMasked FieldDescriptor
 
 		}
 
@@ -111,8 +110,8 @@ public class SubmitHumanTask extends MubaTest {
 		public SessionContext sessionContext(@Named("host") String peer) {
 			long stakeHolder = 1;
 			Person stakeHolderValue = mock(Person.class);
-			Host peerValue = mock(Host.class);
-			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, true);
+
+			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
 		}
 
 		@Provides
@@ -132,18 +131,30 @@ public class SubmitHumanTask extends MubaTest {
 
 	}
 
-	public SubmitHumanTask() {
-		init(new BPMTestModule(), new JDBCModule(),
-				new JDBCHSQLTestModule(/* // this is what makes it purr */), new HSQLDBModule(), new SingleUserModule(),
-				new CatalogModule(), new BootstrapModule());
+	public ExplicitApplicationInvocationTest() {
+		init(new PrivateModule(), new BPMTestModule(), new SingleUserModule(),new ChocoSolverModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
+				new ValidationModule(), new CatalogModule(), new BootstrapModule());
 	}
 
 	@Override
+	protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
+		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
+		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
+		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
+
+		SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
+		switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class));
+		switchs.registerContractInterpret(solverServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
+	}
+
+
 	@Before
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+		expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(mockValidator.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+		expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+
 		runtimeContext = injector.getInstance(RuntimeContext.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}
@@ -254,7 +265,7 @@ public class SubmitHumanTask extends MubaTest {
 		runtimeContext.process();
 
 		runtimeContext.reset();
-	}
+	}*/
 
 	CatalogDataAccessObject<ProcessTaskDescriptor> taskDao = context.getDataStoreManager().getOrAssembleDataSource(
 			ProcessTaskDescriptor.CATALOG, context.getCatalogContext(), ProcessTaskDescriptor.class);

@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.server.chain.command.SelectSolution;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +17,10 @@ public class SelectSolutionImpl implements SelectSolution {
 
     protected Logger log = LoggerFactory.getLogger(SelectSolutionImpl.class);
 
-    private final TaskRunnerPlugin plugin;
+    private final SolverCatalogPlugin plugin;
 
     @Inject
-    public SelectSolutionImpl(TaskRunnerPlugin plugin) {
+    public SelectSolutionImpl(SolverCatalogPlugin plugin) {
         this.plugin = plugin;
     }
 

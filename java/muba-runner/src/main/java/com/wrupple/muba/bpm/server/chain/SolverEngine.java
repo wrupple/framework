@@ -5,5 +5,5 @@ import org.apache.commons.chain.Command;
 /**
  * Created by japi on 10/05/17.
  */
-public interface TaskRunnerEngine extends Command {
+public interface SolverEngine extends Command {
 }

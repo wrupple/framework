@@ -2,7 +2,7 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.SolveTask;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.chocosolver.solver.Model;
 import org.slf4j.Logger;
@@ -18,17 +18,17 @@ import javax.inject.Singleton;
 public class SolveTaskImpl implements SolveTask {
     protected Logger log = LoggerFactory.getLogger(SolveTaskImpl.class);
 
-    private final TaskRunnerPlugin plugin;
+    private final SolverCatalogPlugin plugin;
 
     @Inject
-    public SolveTaskImpl(TaskRunnerPlugin plugin) {
+    public SolveTaskImpl(SolverCatalogPlugin plugin) {
         this.plugin = plugin;
     }
     @Override
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
         log.info("Thinking...");
-        Model model = plugin.getSolver().resolveProblemContext(context);
+        Model model = plugin.getSolver().resolveSolverModel(context);
 
         if(model.getSolver().solve()){
             log.info("{} solution(s) have been found",model.getSolver().getSolutionCount());

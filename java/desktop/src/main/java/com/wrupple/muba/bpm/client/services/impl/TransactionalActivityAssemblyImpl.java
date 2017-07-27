@@ -20,7 +20,6 @@ import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.TransactionAssembler;
 import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
-import com.wrupple.muba.bpm.domain.ProcessDescriptor;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.domain.TaskToolbarDescriptor;

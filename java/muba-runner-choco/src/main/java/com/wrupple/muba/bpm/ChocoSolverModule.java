@@ -11,6 +11,7 @@ import com.wrupple.muba.bpm.server.service.impl.SolverImpl;
  * Created by japi on 11/05/17.
  */
 public class ChocoSolverModule extends AbstractModule{
+
     @Override
     protected void configure() {
         bind(Solver.class).to(SolverImpl.class).in(Singleton.class);

@@ -17,11 +17,7 @@ import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.bpm.domain.ExplicitEventSuscription;
 import com.wrupple.muba.bpm.domain.Notification;
-import com.wrupple.muba.bpm.domain.ProcessDescriptor;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
 import com.wrupple.muba.bpm.domain.VegetateAuthenticationToken;
-import com.wrupple.muba.bpm.domain.WruppleActivityAction;
 import com.wrupple.muba.bpm.domain.WruppleDomainHTMLPage;
 import com.wrupple.muba.bpm.domain.WruppleDomainJavascript;
 import com.wrupple.muba.bpm.domain.WruppleDomainStyleSheet;
@@ -39,7 +35,6 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.WrupleSVGDocument;
 import com.wrupple.muba.catalogs.server.chain.command.WriteFormatedDocument;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 
 /**

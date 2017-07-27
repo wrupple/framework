@@ -3,7 +3,7 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.UserInteractionState;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
+import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import org.apache.commons.chain.Context;
@@ -23,10 +23,10 @@ import java.util.List;
 @Singleton
 public class PlainTextUserInteractionState implements UserInteractionState {
 
-    private final TaskRunnerPlugin plugin;
+    private final SolverCatalogPlugin plugin;
 
     @Inject
-    public PlainTextUserInteractionState(TaskRunnerPlugin plugin) {
+    public PlainTextUserInteractionState(SolverCatalogPlugin plugin) {
         this.plugin = plugin;
     }
 

@@ -7,7 +7,7 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasCommand;
 /**
  * Created by japi on 10/05/17.
  */
-public interface RunnerServiceManifest extends ServiceManifest {
+public interface SolverServiceManifest extends ServiceManifest {
     final String SERVICE_NAME = HasCommand.COMMAND_FIELD;
 
 }
