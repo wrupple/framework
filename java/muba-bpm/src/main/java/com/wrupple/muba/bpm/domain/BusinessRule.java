@@ -3,6 +3,7 @@ package com.wrupple.muba.bpm.domain;
 import java.util.List;
 
 import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
+import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogKey;
 import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.domain.ContentNode;
@@ -10,7 +11,7 @@ import com.wrupple.muba.catalogs.domain.ContentNode;
 /*
  * as a business rule, user are granted or denied permission to change value from a specific initial value
  */
-public interface BusinessRule extends ContentNode, HasStakeHolder,HasCatalogId,HasEntryId {
+public interface BusinessRule extends ContentNode, HasStakeHolder,HasCatalogKey{
 
 	String CATALOG = "BusinessRule";
 	

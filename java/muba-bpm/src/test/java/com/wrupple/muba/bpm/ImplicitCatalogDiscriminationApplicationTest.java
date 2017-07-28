@@ -125,6 +125,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         //this tells bpm to use this application to resolve bookings
         item.setCatalog(bookingDescriptor.getDistinguishedName());
         item.setOutputCatalog(bookingDescriptor.getDistinguishedName());
+        item.setOutputField("booking");
 
         action = new CatalogActionRequestImpl();
         action.setFollowReferences(true);
@@ -142,9 +143,72 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
         runtimeContext.reset();
 
-        log.trace("[-Ask BPM what application item to use to resolve a booking-]");
+        log.trace("[-Create a Booking-]");
 
-        TODO
+        Booking booking = new Booking();
+        booking.setLocation(7);
+        booking.setName("test");
+
+        action = new CatalogActionRequestImpl();
+        action.setFollowReferences(true);
+        action.setEntryValue(booking);
+
+        runtimeContext.setServiceContract(action);
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
+
+        runtimeContext.process();
+
+        booking = catalogContext.getEntryResult();
+
+        runtimeContext.reset();
+
+        log.trace("[-create a pool of resources to resolve the booking-]");
+
+        Driver driver;
+        for(int i = 0 ; i < 10 ; i++){
+            driver = new Driver();
+            //thus, best driver will have a location of 6, or 8 because 7 will not be available
+            driver.setLocation(i);
+            driver.setAvailable(i%2==0);
+
+            action.setEntryValue(driver);
+
+            runtimeContext.setServiceContract(action);
+            runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+                    CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
+
+            runtimeContext.process();
+
+            runtimeContext.reset();
+        }
+
+        log.trace("[-Ask BPM what application item to use to handle this booking-]");
+
+        //or CatalogIntent?
+        ProcessRequest request ;
+        request.setCatalog(Booking.class.getSimpleName());
+        request.setEntry(booking.getId());
+
+        runtimeContext.setServiceContract(request);
+        runtimeContext.setSentence(IntentResolver,expectedOutputType,optionalIntputType);
+
+        runtimeContext.process();
+
+        item = catalogContext.getEntryResult();
+
+        runtimeContext.reset();
+
+        log.trace("[-Handle Booking-]");
+
+        runtimeContext.setServiceContract(applicationStateContract);
+        runtimeContext.setSentence(ActivityService,activityId);
+
+        runtimeContext.process();
+
+        booking = catalogContext.getEntryResult();
+        assertTrue(booking.getDriverValue()!=null);
+        assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);
 
     }
 

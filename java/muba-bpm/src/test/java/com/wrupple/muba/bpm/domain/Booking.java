@@ -28,4 +28,20 @@ public class Booking extends CatalogEntryImpl {
     public void setLocation(int location) {
         this.location = location;
     }
+
+    public Long getDriver() {
+        return driver;
+    }
+
+    public void setDriver(Long driver) {
+        this.driver = driver;
+    }
+
+    public Driver getDriverValue() {
+        return driverValue;
+    }
+
+    public void setDriverValue(Driver driverValue) {
+        this.driverValue = driverValue;
+    }
 }

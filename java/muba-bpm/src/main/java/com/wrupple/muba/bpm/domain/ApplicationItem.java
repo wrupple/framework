@@ -4,16 +4,20 @@ import java.util.List;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
-import com.wrupple.muba.bootstrap.domain.reserved.HasChildrenValues;
-import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.bootstrap.domain.reserved.*;
 
-public interface ApplicationItem extends CatalogEntry,HasProperties,HasStakeHolder,HasDistinguishedName,ImplicitIntent,HasChildrenValues<Long,ApplicationItem>{
+/**
+ *
+ */
+public interface ApplicationItem extends CatalogEntry,HasProperties,HasStakeHolder,HasOutput,HasDistinguishedName,ImplicitIntent,HasChildrenValues<Long,ApplicationItem>{
 	
 	public  final String CATALOG = "ApplicationItem";
 
-
+    /**
+     * usually sets a reference to the output of the application item on the output field and picks the next application item to invoke
+     *
+     * @return
+     */
     public String getOutputHandler();
 
     public void setOutputHandler(String string);
@@ -29,5 +33,7 @@ public interface ApplicationItem extends CatalogEntry,HasProperties,HasStakeHold
 	public Long getPeer();
 
     public String getDescription();
+
+    String getExitActivity();
 
 }

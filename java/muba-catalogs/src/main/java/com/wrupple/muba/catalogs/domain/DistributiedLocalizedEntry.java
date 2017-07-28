@@ -1,12 +1,9 @@
 package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasLocale;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
+import com.wrupple.muba.bootstrap.domain.reserved.*;
 
-public interface DistributiedLocalizedEntry extends CatalogEntry, HasLocale,HasCatalogId,HasEntryId ,HasProperties{
+public interface DistributiedLocalizedEntry extends CatalogEntry, HasLocale,HasCatalogKey,HasProperties{
 
 	
 	String CATALOG = "DistributedCatalog";
