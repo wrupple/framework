@@ -51,6 +51,7 @@ public class ServiceRequestValidation extends MubaTest {
 		ServiceManifest addInt = new ServiceManifestImpl(ADDITION, DEFAULT_VERSION, operationContract, grammar);
 		ServiceManifest addDouble = new ServiceManifestImpl(ADDITION, UPGRADED_VERSION, operationContract, grammar);
 
+
 		switchs.registerService(multiply, new UpdatedVersionService() {
 
 			@Override

@@ -13,14 +13,8 @@ import com.wrupple.muba.bootstrap.domain.Person;
 import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bootstrap.server.service.CatalogManager;
 import com.wrupple.muba.bootstrap.server.service.ContentManagementSystem;
-import com.wrupple.muba.bpm.domain.BPMPeer;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.BusinessEvent;
-import com.wrupple.muba.bpm.domain.ExplicitEventSuscription;
-import com.wrupple.muba.bpm.domain.Notification;
-import com.wrupple.muba.bpm.domain.VegetateAuthenticationToken;
-import com.wrupple.muba.bpm.domain.WruppleDomainHTMLPage;
-import com.wrupple.muba.bpm.domain.WruppleDomainJavascript;
-import com.wrupple.muba.bpm.domain.WruppleDomainStyleSheet;
 import com.wrupple.muba.bpm.server.chain.command.BPMStakeHolderTrigger;
 import com.wrupple.muba.bpm.server.chain.command.BPMValidationTrigger;
 import com.wrupple.muba.bpm.server.chain.command.BPMValueChangeListener;
@@ -68,7 +62,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	private final int SECURE_STORAGE;
 
 
-	private final Provider<CatalogDescriptor> processDescriptorProvider;
 	private Provider<CatalogDescriptor> notificationProvider;
 	private Provider<CatalogDescriptor> clientProvider;
 
@@ -81,7 +74,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			BPMValidationTrigger validationTrigger, BPMStakeHolderTrigger stakeHolderTrigger,
 			CatalogManager transactions,
 			@Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
-			@Named(ProcessDescriptor.CATALOG) Provider<CatalogDescriptor> processDescriptorProvider,
 			@Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
 			@Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
 			@Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
@@ -109,7 +101,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 	@Override
 	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) {
-		if (ProcessDescriptor.CATALOG.equals(catalogId)) {
+		if (ApplicationItem.CATALOG.equals(catalogId)) {
 			return processDescriptorProvider.get();
 		} else if (Notification.CATALOG.equals(catalogId)) {
 			return notificationProvider.get();

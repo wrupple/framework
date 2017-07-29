@@ -4,6 +4,9 @@ import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 
 public interface ImplicitIntent extends CatalogEntry,HasCatalogId {
 
-	String getOutputCatalog();
+    String CATALOG = "ImplicitIntent" ;
+    String OUTOUT_CATALOG="outputCatalog";
+
+    String getOutputCatalog();
 	
 }

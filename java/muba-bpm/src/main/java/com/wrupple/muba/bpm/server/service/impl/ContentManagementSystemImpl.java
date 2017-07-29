@@ -8,14 +8,14 @@ import org.apache.commons.chain.CatalogFactory;
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
 import com.wrupple.muba.bootstrap.server.service.ContentManagementSystem;
 import com.wrupple.muba.bootstrap.server.service.impl.Dictionary;
-import com.wrupple.muba.bpm.server.chain.ContentManager;
+import com.wrupple.muba.bpm.server.chain.FormatManager;
 
 @Singleton
 public class ContentManagementSystemImpl extends Dictionary implements ContentManagementSystem {
 
 
 	@Inject
-	public ContentManagementSystemImpl(CatalogFactory factory,ContentManager defaultOne) {
+	public ContentManagementSystemImpl(CatalogFactory factory,FormatManager defaultOne) {
 		super(defaultOne);
 		factory.addCatalog(CatalogActionRequest.CATALOG_FIELD, this);
 	}

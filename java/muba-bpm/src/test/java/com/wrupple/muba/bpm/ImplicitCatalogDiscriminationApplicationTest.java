@@ -9,8 +9,10 @@ import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
+import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
+import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
@@ -41,13 +43,11 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
     @Override
     protected void registerServices(SystemContext switchs) {
-        CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-        switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
-        switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
+        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
 
-        SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
-        switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class));
-        switchs.registerContractInterpret(solverServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
+        switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
+
+        switchs.registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
     }
 
     @Before
@@ -186,23 +186,21 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         log.trace("[-Ask BPM what application item to use to handle this booking-]");
 
         //or CatalogIntent?
-        ProcessRequest request ;
-        request.setCatalog(Booking.class.getSimpleName());
-        request.setEntry(booking.getId());
+        ImplicitIntent request ;
 
-        runtimeContext.setServiceContract(request);
-        runtimeContext.setSentence(IntentResolver,expectedOutputType,optionalIntputType);
+        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,Booking.class.getSimpleName(),Booking.class.getSimpleName());
 
         runtimeContext.process();
 
+        //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
         item = catalogContext.getEntryResult();
 
         runtimeContext.reset();
 
         log.trace("[-Handle Booking-]");
 
-        runtimeContext.setServiceContract(applicationStateContract);
-        runtimeContext.setSentence(ActivityService,activityId);
+        runtimeContext.setServiceContract(applicationState);
+        runtimeContext.setSentence(ActivityService,/*activityId*/item.getId().toString());
 
         runtimeContext.process();
 

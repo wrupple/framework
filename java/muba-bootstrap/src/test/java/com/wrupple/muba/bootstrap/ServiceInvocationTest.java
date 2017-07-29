@@ -177,7 +177,6 @@ public class ServiceInvocationTest extends BootstrapTest {
 		runtimeContext.process();
 
 		fail("No exception thrown when processing invalid context");
-
 	}
 
 	@Test
@@ -197,7 +196,6 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 		runtimeContext.setSentence(ADDITION, "1..0", "2", "1.5");
 		runtimeContext.process();
-
 	}
 
 }

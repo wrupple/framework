@@ -216,9 +216,7 @@ public class SolveEquationSystem extends MubaTest {
         problem.setSentence(
                 Arrays.asList(
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
-                // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
+                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4"
                 )
         );
 
@@ -237,7 +235,10 @@ public class SolveEquationSystem extends MubaTest {
         runtimeContext.reset();
         log.info("[-post a solver request to the runner engine-]");
         runtimeContext.setServiceContract(problem);
-        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
+        //TODO maybe CONSTRAINT is a child of solver
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,
+                // x + y < 5
+                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")");
 
         runtimeContext.process();
 

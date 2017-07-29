@@ -57,6 +57,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     private void processNextConstraint(JavaNativeInterfaceContext invokerContext,ListIterator<String> sentence, Model model, ProcessTaskDescriptor request, ApplicationContext context) throws Exception {
         if(sentence.hasNext()){
             String next = sentence.next();
+            //TODO USE CHILD SERVICES LIKE ServiceRequestValidation
             if(ProcessTaskDescriptor.CONSTRAINT.equals(next)){
                 invokerContext.sentenceIterator=sentence;
                 nativeInterface.execute(invokerContext);
@@ -69,7 +70,6 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         }else{
             log.debug("all tokens have been used");
         }
-
     }
 
     private void postConstraint(JavaNativeInterfaceContext invokerContext) {

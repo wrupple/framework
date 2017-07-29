@@ -23,8 +23,7 @@ public interface SystemContext
 	CatalogFactory getDictionaryFactory();
 	
 	//contract interpret per type? bpm?
-	void registerContractInterpret(ServiceManifest manifest, RequestInterpret contractInterpret) ;
-	void registerService(ServiceManifest manifest,Command service);
+	void registerService(ServiceManifest manifest,Command service, RequestInterpret contractInterpret);
 
 	/**
 	 * this is very much like widgetters/lookupcommands

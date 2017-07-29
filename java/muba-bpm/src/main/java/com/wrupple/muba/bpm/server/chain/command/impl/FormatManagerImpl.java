@@ -9,20 +9,20 @@ import org.apache.commons.chain.Context;
 import org.apache.commons.chain.generic.LookupCommand;
 
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bpm.server.chain.ContentManager;
+import com.wrupple.muba.bpm.server.chain.FormatManager;
 import com.wrupple.muba.catalogs.server.chain.command.FormatResultSet;
 
 @Singleton
-public class ContentManagerImpl extends LookupCommand implements ContentManager {
+public class FormatManagerImpl extends LookupCommand implements FormatManager {
 
 	private final FormatResultSet defaultFormat;
 
 	@Inject
-	public ContentManagerImpl(CatalogFactory factory, FormatResultSet defaultFormat) {
+	public FormatManagerImpl(CatalogFactory factory, FormatResultSet defaultFormat) {
 		super(factory);
 		this.defaultFormat = defaultFormat;
 		super.setNameKey(CatalogActionRequest.FORMAT_PARAMETER);
-		super.setCatalogName(CatalogActionRequest.FORMAT_PARAMETER /*ContentFormatDictionary*/);
+		super.setCatalogName(CatalogActionRequest.FORMAT_PARAMETER /*FormatDictionary*/);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class ContentManagerImpl extends LookupCommand implements ContentManager 
 		if (format == null) {
 			return defaultFormat.execute(c);
 		} else {
-			/*ideally ContentFormatDictionary should pick commands by regex, return null as fallback*/
+			/*ideally FormatDictionary should pick commands by regex, return null as fallback*/
 			Command command = super.getCatalogFactory().getCatalog(super.getCatalogName()).getCommand(format);
 			if (command == null) {
 				return defaultFormat.execute(c);
