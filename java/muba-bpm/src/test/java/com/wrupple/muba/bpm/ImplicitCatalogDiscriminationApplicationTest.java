@@ -9,9 +9,13 @@ import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
+import com.wrupple.muba.bpm.server.chain.BusinessEngine;
+import com.wrupple.muba.bpm.server.chain.IntentReceiverEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
+import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
+import com.wrupple.muba.bpm.server.chain.command.IntentReceiverRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
@@ -44,6 +48,10 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
     @Override
     protected void registerServices(SystemContext switchs) {
         switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
+
+        switchs.registerService(injector.getInstance(IntentReceiverServiceManifest.class), injector.getInstance(IntentReceiverEngine.class), injector.getInstance(IntentReceiverRequestInterpret.class));
+
+        switchs.registerService(injector.getInstance(BusinessServiceManifest.class), injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
 
         switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 
@@ -158,7 +166,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
                 CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
-
+        catalogContext = runtimeContext.getServiceContext();
         booking = catalogContext.getEntryResult();
 
         runtimeContext.reset();
@@ -193,18 +201,61 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         runtimeContext.process();
 
         //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
-        item = catalogContext.getEntryResult();
+        item = runtimeContext.getConvertedResult();
 
         runtimeContext.reset();
 
-        log.trace("[-Handle Booking-]");
+        log.trace("[-Create Booking Handling Application Context-]");
 
-        runtimeContext.setServiceContract(applicationState);
-        runtimeContext.setSentence(ActivityService,/*activityId*/item.getId().toString());
+        //BOOKING IS SAVED AS entry value (result) on the initial application state
+        runtimeContext.setServiceContract(booking);
+        runtimeContext.setSentence(IntentReceiverServiceManifest.SERVICE_NAME,/*activityId*/item.getId().toString());
 
         runtimeContext.process();
 
-        booking = catalogContext.getEntryResult();
+        //a new activity state
+        ApplicationState activityState = runtimeContext.getConvertedResult();
+        runtimeContext.reset();
+
+        log.info("[-alter activity state (context) by invoking automatic solver on it]");
+        log.trace("post a solver request to the runner engine");
+        runtimeContext.setServiceContract(activityState);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,BusinessServiceManifest.SOLVE);
+
+        runtimeContext.process();
+            //TODO maybe solution of a selection task is Filter Data
+        activityState = runtimeContext.getConvertedResult();
+        driver = (Driver) activityState.getUserSelectionValues().get(0);
+        runtimeContext.reset();
+
+        log.info("post solution of first task to the runner engine");
+        //the best available driver
+        runtimeContext.setServiceContract(activityState);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
+
+        runtimeContext.process();
+
+        activityState = runtimeContext.getConvertedResult();
+        runtimeContext.reset();
+
+        log.info("manually solving the second task");
+
+        //set solution of second task in activity state
+        booking.setDriverValue(driver);
+        activityState.setEntryValue(booking);
+
+        log.info("post solution of first task to the runner engine");
+
+        runtimeContext.setServiceContract(activityState);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
+
+        runtimeContext.process();
+
+        activityState = runtimeContext.getConvertedResult();
+        runtimeContext.reset();
+
+        booking = (Booking) activityState.getEntryValue();
+        assertTrue(booking.getStakeHolder()!=null);
         assertTrue(booking.getDriverValue()!=null);
         assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);
 

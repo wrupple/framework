@@ -1,13 +1,15 @@
 package com.wrupple.muba.bpm.domain;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
+import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.bpm.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
 
 /**
  * Created by japi on 25/07/17.
  */
-public class Booking extends CatalogEntryImpl {
+public class Booking extends ManagedObjectImpl {
 
     private int location;
     @CatalogKey(foreignCatalog = Driver.CATALOG)

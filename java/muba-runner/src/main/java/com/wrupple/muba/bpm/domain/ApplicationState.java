@@ -19,6 +19,8 @@ import java.util.List;
  */
 public interface ApplicationState extends HasDistinguishedName,ContentNode,HasEntryId,HasParent<ApplicationState>,HasChildren<ApplicationState> {
 
+     String CATALOG = "ApplicationState";
+
     public FilterData getFilterData();
 
     Long getTaskDescriptor();
@@ -40,6 +42,8 @@ public interface ApplicationState extends HasDistinguishedName,ContentNode,HasEn
     void setSolutionVariables(List<VariableDescriptor> variables);
 
     List<VariableDescriptor> getSolutionVariables();
+
+    void setEntryValue(CatalogEntry booking);
 
     // public void setLayoutUnit(String s);
 
