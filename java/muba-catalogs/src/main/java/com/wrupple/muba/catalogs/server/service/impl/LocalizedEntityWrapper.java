@@ -107,6 +107,10 @@ public class LocalizedEntityWrapper implements DistributiedLocalizedEntry {
 	public void setEntry(Object id) {
 	}
 
+	public CatalogEntry getEntryValue() {
+		return entity;
+	}
+
 	@Override
 	public List<String> getProperties() {
 		return entity.getProperties();

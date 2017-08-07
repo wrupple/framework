@@ -50,7 +50,7 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		if(result ==null){
 			throw new NullPointerException("no entry in context");
 		}
-		context.setAction(CatalogActionRequest.CREATE_ACTION);
+		context.setName(CatalogActionRequest.CREATE_ACTION);
 		trigerer.execute(context);
 		
 		CatalogDescriptor catalog=context.getCatalogDescriptor();

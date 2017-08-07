@@ -51,7 +51,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	private Object entryValue, entry;
 	private FilterDataImpl filter;
 	@NotNull
-	private String action, catalog;
+	private String name, catalog;
 	// dont change the name of this variable see RequestTokenizer
 	private long totalRequestSize;
 	/*
@@ -80,7 +80,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 			setEntry(parentValue.getEntry());
 			setEntryValue(parentValue.getEntryValue());
 			setCatalog((String) parentValue.getCatalog());
-			setAction(parentValue.getAction());
+			setAction(parentValue.getName());
 			setFilter(parentValue.getFilter());
             setFollowReferences(parentValue.getFollowReferences());
 			setDomain((Long) parentValue.getDomain());
@@ -184,11 +184,11 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public String getAction() {
-		return action;
+		return getName();
 	}
 
 	public void setAction(String action) {
-		this.action = action;
+		setName(action);
 	}
 
 	@Override
@@ -236,7 +236,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	@Override
 	public String toString() {
-		return "[catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + action + ", format=" + getFormat()
+		return "[catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + name + ", format=" + getFormat()
 				+ ", entry=" + entry + ", catalog=" + catalog + ", domain=" + getDomain() + "]";
 	}
 
@@ -345,12 +345,12 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	@Override
 	public void setName(String name) {
-
+this.name=name;
 	}
 
 	@Override
 	public String getName() {
-		return String.valueOf(id);
+		return name;
 	}
 
 	@Override

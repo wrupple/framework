@@ -9,7 +9,7 @@ import com.wrupple.muba.bootstrap.domain.ServiceContext;
 public interface ApplicationContext extends ApplicationState,ServiceContext {
     final String CATALOG = "ApplicationContext";
 
-    StorageManager getStorageManager();
+   /* StorageManager getStorageManager();
 
 	ProcessManager getProcessManager();
 
@@ -19,7 +19,7 @@ public interface ApplicationContext extends ApplicationState,ServiceContext {
 
 	ServiceBus getServiceBus();
 
-	Process<?, ?> getProcess();
+	Process<?, ?> getProcess();*/
 
 	int getTaskIndex();
 

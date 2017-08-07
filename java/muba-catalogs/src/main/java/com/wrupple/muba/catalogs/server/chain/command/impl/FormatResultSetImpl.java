@@ -42,7 +42,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 
-		String action = (String) c.get(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
+		String action = (String) c.get(CatalogActionRequest.NAME_FIELD);
 
 		List<String> warnings = context.getRuntimeContext().resetWarnings();
 		Set<ConstraintViolation<?>> constraintViolations = context.getRuntimeContext().getConstraintViolations();

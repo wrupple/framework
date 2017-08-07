@@ -20,7 +20,7 @@ public class CatalogServiceManifestImpl extends ServiceManifestImpl implements C
 	public CatalogServiceManifestImpl(@Named(CatalogActionRequest.CATALOG) CatalogDescriptor descriptor) {
 		super(SERVICE_NAME, "1.0", descriptor, Arrays.asList(new String[] {
 				CatalogDescriptor.DOMAIN_TOKEN , CatalogActionRequest.LOCALE_FIELD,
-				CatalogActionRequest.CATALOG_FIELD, CatalogActionRequest.CATALOG_ACTION_PARAMETER,
+				CatalogActionRequest.CATALOG_FIELD, CatalogActionRequest.NAME_FIELD,
 				CatalogActionRequest.ENTRY_ID_FIELD, CatalogActionRequest.FORMAT_PARAMETER }));
 	}
 

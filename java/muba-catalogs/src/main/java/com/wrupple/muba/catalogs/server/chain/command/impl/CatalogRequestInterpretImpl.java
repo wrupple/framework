@@ -60,7 +60,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 					context.setEntry(cms.decodePrimaryKeyToken(value));
 				} else if (CatalogActionRequest.CATALOG_FIELD.equals(key)) {
 					if (CatalogActionRequest.READ_ACTION.equals(value)) {
-						context.setAction(CatalogActionRequest.READ_ACTION);
+						context.setName(CatalogActionRequest.READ_ACTION);
 					} else {
 						context.setCatalog(value);
 					}
@@ -82,10 +82,10 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 			 */
 			String pressumedCatalogId = (String) request.getCatalog();
 			if (CatalogActionRequest.READ_ACTION.equals(pressumedCatalogId)) {
-				context.setAction(CatalogActionRequest.READ_ACTION);
+				context.setName(CatalogActionRequest.READ_ACTION);
 				pressumedCatalogId = null;
 			} else {
-				context.setAction(request.getAction());
+				context.setName(request.getName());
 			}
 			context.setCatalog(pressumedCatalogId);
 

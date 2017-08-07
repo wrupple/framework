@@ -22,7 +22,7 @@ public final class WriteOutputImpl extends LookupCommand  implements WriteOutput
 	@Inject
 	public WriteOutputImpl(CatalogFactory commandDictionatyFactory) {
 		super(commandDictionatyFactory);
-		//this invokes ContentManagementSystem
+		//this invokes FormatDictionary
 		super.setCatalogName(CatalogActionRequest.CATALOG_FIELD);
 		super.setNameKey(CatalogActionRequest.CATALOG_FIELD);
 	}

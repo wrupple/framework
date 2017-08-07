@@ -16,6 +16,7 @@ import javax.validation.Validator;
 
 import com.wrupple.muba.ChocoSolverTestModule;
 import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.bootstrap.server.service.ImplicitIntentHandlerDictionary;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
@@ -26,6 +27,7 @@ import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
@@ -129,6 +131,11 @@ public class SolveEquationSystem extends MubaTest {
         }
 
         @Provides
+        public ImplicitIntentHandlerDictionary implicitIntentHandlerDictionary() {
+            return mock(ImplicitIntentHandlerDictionary.class);
+        }
+
+        @Provides
         public CatalogDeserializationService catalogDeserializationService() {
             return mock(CatalogDeserializationService.class);
         }
@@ -143,12 +150,11 @@ public class SolveEquationSystem extends MubaTest {
     @Override
     protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-        switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
-        switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
+        switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
+
 
         SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
-        switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class));
-        switchs.registerContractInterpret(solverServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
+        switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class),injector.getInstance(ActivityRequestInterpret.class));
     }
 
 
@@ -189,10 +195,9 @@ public class SolveEquationSystem extends MubaTest {
         log.info("[-Register EquationSystemSolution catalog type-]");
 
         //FIXME stack overflow when no parent is specified, ok when consolidated?
-        CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
+        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
                 "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG,
                         ContentNode.class.getSimpleName(), -1l, null));
-
         CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(solutionContract);
 
@@ -216,7 +221,9 @@ public class SolveEquationSystem extends MubaTest {
         problem.setSentence(
                 Arrays.asList(
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4"
+                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                        // x + y < 5
+                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
                 )
         );
 
@@ -236,9 +243,9 @@ public class SolveEquationSystem extends MubaTest {
         log.info("[-post a solver request to the runner engine-]");
         runtimeContext.setServiceContract(problem);
         //TODO maybe CONSTRAINT is a child of solver
-        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,
-                // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")");
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME/*, FIXME allow constrains to be posted in service request sentence
+                        // x + y < 5
+                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"*/);
 
         runtimeContext.process();
 

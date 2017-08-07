@@ -171,7 +171,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
         runtimeContext.reset();
 
-        log.trace("[-create a pool of resources to resolve the booking-]");
+        log.trace("[-create a pool of drivers to resolve the booking-]");
 
         Driver driver;
         for(int i = 0 ; i < 10 ; i++){

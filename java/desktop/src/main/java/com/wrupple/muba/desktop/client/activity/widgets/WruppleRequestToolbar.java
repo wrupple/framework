@@ -28,15 +28,19 @@ import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.VegetateUserException;
 
+import javax.inject.Named;
+
 public class WruppleRequestToolbar extends Composite implements RequestToolbar {
 
 	FlowPanel main;
 	private StorageManager sm;
+	private int unknownUserError;
 
 	@Inject
-	public WruppleRequestToolbar(StorageManager sm) {
+	public WruppleRequestToolbar(StorageManager sm, @Named("com.wrupple.errors.unknownUser") Integer unknownUser) {
 		super();
 		this.sm = sm;
+		this.unknownUserError=unknownUser;
 		main = new FlowPanel();
 		initWidget(main);
 		main.addStyleName("wrupple-request-toolbar");
@@ -68,7 +72,7 @@ public class WruppleRequestToolbar extends Composite implements RequestToolbar {
 	public void onRequestFailed(VegetateRequestFailureEvent e) {
 		int errorCode = e.getExceptionOverlay() == null ? 0 : e.getExceptionOverlay().getErrorCode();
 		int requestId = e.getRequestNumber();
-		if (errorCode ==VegetateUserException.USER_UNKNOWN) {
+		if (errorCode ==unknownUser) {
 			//FIXME Toolbar should not hable exceptions, but let others catch the failure events
 		} else {
 			String exceptionMessage = getExceptionMessage(e);

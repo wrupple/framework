@@ -139,7 +139,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		context.setDomain(domain);
 		context.setCatalog(targetCatalogId);
-		context.setAction(targetAction);
+		context.setName(targetAction);
 		context.setEntry(entryIdPointer);
 		context.setEntryValue(seed);
 		log.trace("[CONFIGURE TRIGGER {} ] {} ", trigger, context);

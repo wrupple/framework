@@ -48,7 +48,7 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
                 session = context.getCatalogManager().access().newSession(e);
                 trashContext = context.getCatalogManager().spawn(context);
 
-				trashContext.setAction(CatalogActionRequest.CREATE_ACTION);
+				trashContext.setName(CatalogActionRequest.CREATE_ACTION);
 			}
             trashed = (Boolean) context.getCatalogManager().access().getPropertyValue(field, e, null, session);
             if (trashed != null && trashed) {

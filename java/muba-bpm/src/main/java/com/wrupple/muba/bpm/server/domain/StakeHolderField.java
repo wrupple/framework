@@ -4,7 +4,7 @@ import com.wrupple.muba.bootstrap.domain.Person;
 import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
 
-public class StakeHolderFiled extends FieldDescriptorImpl {
+public class StakeHolderField extends FieldDescriptorImpl {
 
 	private static final long serialVersionUID = -2836119157443551044L;
 /*
@@ -13,7 +13,7 @@ public class StakeHolderFiled extends FieldDescriptorImpl {
 		
  */
 	
-	public StakeHolderFiled() {
+	public StakeHolderField() {
 		makeKey(HasStakeHolder.STAKE_HOLDER_FIELD, "Stake Holder", Person.CATALOG, false);
 		setWriteable(false);
 	}

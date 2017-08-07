@@ -1,4 +1,4 @@
-package com.wrupple.muba.bpm.server.domain;
+package com.wrupple.muba.desktop.server.domain;
 
 import java.util.List;
 

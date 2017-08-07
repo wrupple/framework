@@ -17,7 +17,7 @@ import java.util.List;
  * The reference to this contract is found in the runtineContext
  *
  */
-public interface ApplicationState extends HasDistinguishedName,ContentNode,HasEntryId,HasParent<ApplicationState>,HasChildren<ApplicationState> {
+public interface ApplicationState extends HasDistinguishedName,ContentNode,HasEntryId,HasParent<Long>,HasChildren<Long> {
 
      String CATALOG = "ApplicationState";
 

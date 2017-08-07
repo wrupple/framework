@@ -11,15 +11,13 @@ import org.apache.commons.chain.Context;
  */
 public class IntentResolverEngineImpl implements IntentResolverEngine {
 
-    BusinessPlugin bpm;
+
     @Override
     public boolean execute(Context ctx) throws Exception {
         IntentResolverContext context = (IntentResolverContext) ctx;
         ImplicitIntent contract = (ImplicitIntent) context.getRuntimeContext().getServiceContract();
-        String inputType = (String) contract.getCatalog();
-        String outputType =  contract.getOutputCatalog();
 
-        context.getRuntimeContext().setResult(bpm.resolveApplicatioItem(inputType,outputType));
+        context.getRuntimeContext().setResult(context.getRuntimeContext().getApplication().getIntentInterpret().resolveIntent(contract,context.getRuntimeContext()));
 
 
         return CONTINUE_PROCESSING;

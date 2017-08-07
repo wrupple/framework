@@ -1,8 +1,8 @@
 package com.wrupple.muba.desktop.client.services.logic.impl;
 
+import javax.inject.Named;
 import javax.inject.Provider;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.inject.Inject;
 import com.wrupple.muba.bpm.client.activity.ActivityProcess;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
@@ -16,16 +16,17 @@ import com.wrupple.muba.desktop.client.event.VegetateRequestSuccessEvent;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.vegetate.client.services.StorageManager;
-import com.wrupple.vegetate.domain.VegetateUserException;
 
 public final class ActivityVegetateEventHandler extends DataCallback<ActivityProcess> implements VegetateEventHandler{
 	private final Provider<DesktopAuthenticationProcess> processProvider;
 	private final CatalogUserInterfaceMessages msgs;
+    private final int unknownUser;
 
-	@Inject
-	public ActivityVegetateEventHandler(Provider<DesktopAuthenticationProcess> processProvider,CatalogUserInterfaceMessages msgs) {
+    @Inject
+	public ActivityVegetateEventHandler(Provider<DesktopAuthenticationProcess> processProvider, CatalogUserInterfaceMessages msgs, @Named("com.wrupple.errors.unknownUser") Integer unknownUser) {
 		super();
 		this.msgs=msgs;
+		this.unknownUser=unknownUser;
 		this.processProvider = processProvider;
 	}
 
@@ -48,12 +49,11 @@ public final class ActivityVegetateEventHandler extends DataCallback<ActivityPro
 	}
 
 	private boolean handleException(int errorCode, VegetateRequestFailureEvent e) {
-		switch (errorCode) {
-		case VegetateUserException.USER_UNKNOWN:
-			return switchAuthenticationProcess(e);
-		default:
-			return false;
-		}
+        if(errorCode==unknownUser){
+            return switchAuthenticationProcess(e);
+        }else{
+            return false;
+        }
 	}
 
 	private boolean switchAuthenticationProcess(final VegetateRequestFailureEvent e) {

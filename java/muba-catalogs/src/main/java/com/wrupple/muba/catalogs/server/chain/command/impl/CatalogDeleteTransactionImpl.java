@@ -70,7 +70,7 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 			DataDeleteCommand dao = (DataDeleteCommand) deleters.getCommand(String.valueOf(catalog.getStorage()));
 
 			context.setOldValues(originalEntries);
-			context.setAction(CatalogActionRequest.DELETE_ACTION);
+			context.setName(CatalogActionRequest.DELETE_ACTION);
 			// performBeforeDelete
 			trigerer.execute(context);
 

@@ -53,17 +53,17 @@ public class CatalogActionTriggerHandlerImpl implements CatalogActionTriggerHand
 				r = CONTINUE_PROCESSING;
 				switch (action) {
 				case 0:// Create
-					if (CatalogActionRequest.CREATE_ACTION.equals(context.getAction())) {
+					if (CatalogActionRequest.CREATE_ACTION.equals(context.getName())) {
 						r = excecuteTrigger(trigger, context, advise);
 					}
 					break;
 				case 1:// Update
-					if (CatalogActionRequest.WRITE_ACTION.equals(context.getAction())) {
+					if (CatalogActionRequest.WRITE_ACTION.equals(context.getName())) {
 						r = excecuteTrigger(trigger, context, advise);
 					}
 					break;
 				case 2:// Delete
-					if (CatalogActionRequest.DELETE_ACTION.equals(context.getAction())) {
+					if (CatalogActionRequest.DELETE_ACTION.equals(context.getName())) {
 						r = excecuteTrigger(trigger, context, advise);
 					}
 					break;

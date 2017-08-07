@@ -86,5 +86,4 @@ public class RootServiceManifestImpl extends ServiceManifestImpl implements Root
 		vvv.add(manifest);
 	}
 
-
 }

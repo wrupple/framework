@@ -142,7 +142,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		defaultVersioningTriggerproperties
 				.add("value=" + SystemCatalogPlugin.SOURCE_OLD + "." + CatalogActionTrigger.SERIALIZED);
 
-		factory.addCatalog(CatalogActionRequest.CATALOG_ACTION_PARAMETER, this);
+		factory.addCatalog(CatalogActionRequest.NAME_FIELD, this);
 		addCommand(CatalogDescriptorUpdateTrigger.class.getSimpleName(), invalidate);
 		addCommand(FieldDescriptorUpdateTrigger.class.getSimpleName(), invalidateAll);
 		addCommand(EntryDeleteTrigger.class.getSimpleName(), trash);
@@ -1033,7 +1033,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			throws Exception {
 		readParentEntry.setCatalogDescriptor(catalogId);
 		readParentEntry.setEntry(parentId);
-		readParentEntry.setAction(CatalogActionRequest.READ_ACTION);
+		readParentEntry.setName(CatalogActionRequest.READ_ACTION);
 		readParentEntry.setEntryValue(null);
 		readParentEntry.setFilter(null);
 

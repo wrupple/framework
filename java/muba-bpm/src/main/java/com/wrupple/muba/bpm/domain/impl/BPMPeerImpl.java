@@ -7,20 +7,20 @@ import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.catalogs.domain.Location;
 
-public class BPMPeerImpl implements BPMPeer {
-	private String agent,catalogUrlBase,bPUrlBase,host,image,name,id,publicKey,privateKey;
+public class BPMPeerImpl extends ManagedObjectImpl implements BPMPeer {
+	private String agent,catalogUrlBase,bPUrlBase,host,publicKey,privateKey;
 	int channel,stakeHolderIndex;
-	Long domain,stakeHolder;
 	Integer subscriptionStatus;
-	Date expirationDate,presence,timestamp;
+	Date expirationDate,presence;
 	Location lastLocation;
 	boolean suscribed;
+	private List<String> events;
 
 	private static final long serialVersionUID = 8676652236470279026L;
 
 	
 
-	public int getStakeHolderIndex() {
+	public Integer getStakeHolderIndex() {
 		return stakeHolderIndex;
 	}
 
@@ -52,15 +52,6 @@ public class BPMPeerImpl implements BPMPeer {
 		this.suscribed = suscribed;
 	}
 
-	@Override
-	public boolean isAnonymouslyVisible() {
-		return false;
-	}
-
-	@Override
-	public void setAnonymouslyVisible(boolean p) {
-
-	}
 
 	public String getAgent() {
 		return agent;
@@ -95,30 +86,6 @@ public class BPMPeerImpl implements BPMPeer {
 		this.host = host;
 	}
 
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getPublicKey() {
 		return publicKey;
 	}
@@ -135,28 +102,12 @@ public class BPMPeerImpl implements BPMPeer {
 		this.privateKey = privateKey;
 	}
 
-	public int getChannel() {
+	public Integer getChannel() {
 		return channel;
 	}
 
-	public void setChannel(int channel) {
+	public void setChannel(Integer channel) {
 		this.channel = channel;
-	}
-
-	public Long getDomain() {
-		return domain;
-	}
-
-	public void setDomain(Long domain) {
-		this.domain = domain;
-	}
-
-	public Long getStakeHolder() {
-		return stakeHolder;
-	}
-
-	public void setStakeHolder(Long stakeHolder) {
-		this.stakeHolder = stakeHolder;
 	}
 
 	public Integer getSubscriptionStatus() {
@@ -183,36 +134,11 @@ public class BPMPeerImpl implements BPMPeer {
 		this.presence = presence;
 	}
 
-	public Date getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
-
-
-	@Override
-	public String getIdAsString() {
-		return getId();
-	}
-
-	@Override
-	public void setIdAsString(String id) {
-		setId(id);
-	}
-
-	@Override
-	public void setStakeHolder(long stakeHolder) {
-		this.stakeHolder=stakeHolder;
-	}
-private List<String> events;
 	@Override
 	public boolean isSuscribed(String eventName) {
 		return events!=null && events.contains(eventName);
 	}
 
-	@Override
 	public void setSubscriptionStatus(int s) {
 		this.subscriptionStatus=s;
 	}
@@ -236,12 +162,6 @@ private List<String> events;
 
 	public void setEvents(List<String> events) {
 		this.events = events;
-	}
-
-	@Override
-	public void setDomain(long domain) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

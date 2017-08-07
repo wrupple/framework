@@ -12,9 +12,8 @@ import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.Person;
 import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bootstrap.server.service.CatalogManager;
-import com.wrupple.muba.bootstrap.server.service.ContentManagementSystem;
+import com.wrupple.muba.bootstrap.server.service.FormatDictionary;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.bpm.server.chain.command.BPMStakeHolderTrigger;
 import com.wrupple.muba.bpm.server.chain.command.BPMValidationTrigger;
 import com.wrupple.muba.bpm.server.chain.command.BPMValueChangeListener;
@@ -29,7 +28,6 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.WrupleSVGDocument;
 import com.wrupple.muba.catalogs.server.chain.command.WriteFormatedDocument;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 
 /**
  * Deals with
@@ -60,57 +58,53 @@ import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 public class BusinessPluginImpl implements BusinessPlugin {
 
 	private final int SECURE_STORAGE;
+    private final Provider<CatalogDescriptor> appItem;
 
 
-	private Provider<CatalogDescriptor> notificationProvider;
-	private Provider<CatalogDescriptor> clientProvider;
+    private final Provider<CatalogDescriptor> notificationProvider;
+	private final Provider<CatalogDescriptor> clientProvider;
 
-	private Provider<CatalogDescriptor> authTokenDescriptor;
-	private final Provider<CatalogDescriptor> event;
+	private final Provider<CatalogDescriptor> authTokenDescriptor;
 
 	@Inject
-	public BusinessPluginImpl(CatalogManager databasePlugin, WriteFormatedDocument documentWriter, ContentManagementSystem cms, CatalogEvaluationDelegate synthesizer,
-			@Named(BusinessEvent.CATALOG) Provider<CatalogDescriptor> event, BPMValueChangeListener changeListener,
-			BPMValidationTrigger validationTrigger, BPMStakeHolderTrigger stakeHolderTrigger,
-			CatalogManager transactions,
-			@Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
-			@Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
-			@Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
-			@Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
-
-		this.event = event;
+	public BusinessPluginImpl(CatalogManager databasePlugin, WriteFormatedDocument documentWriter, FormatDictionary cms, BPMValueChangeListener changeListener,
+							  BPMValidationTrigger validationTrigger, BPMStakeHolderTrigger stakeHolderTrigger,
+							  CatalogManager transactions,
+							  @Named(ApplicationItem.CATALOG) Provider<CatalogDescriptor> appItem,
+							  @Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
+							  @Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
+							  @Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
+							  @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
 		this.SECURE_STORAGE = secureStorageIndex;
 
 		cms.addCommand(WruppleDomainHTMLPage.CATALOG, documentWriter);
 		cms.addCommand(WruppleDomainJavascript.CATALOG, documentWriter);
 		cms.addCommand(WruppleDomainStyleSheet.CATALOG, documentWriter);
 		cms.addCommand(WrupleSVGDocument.CATALOG, documentWriter);
-		this.processDescriptorProvider = processDescriptorProvider;
 		this.notificationProvider = notificationProvider;
 		this.clientProvider = clientProvider;
 		this.authTokenDescriptor = authTokenDescriptor;
+		this.appItem=appItem;
 		transactions.addCommand(BPMValidationTrigger.class.getSimpleName(), validationTrigger);
 		transactions.addCommand(BPMValueChangeListener.class.getSimpleName(), changeListener);
 		transactions.addCommand(BPMStakeHolderTrigger.class.getSimpleName(), stakeHolderTrigger);
 	}
 
 	@Override
-	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws Exception {
+	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context)  {
 		return null;
 	}
 
 	@Override
 	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) {
 		if (ApplicationItem.CATALOG.equals(catalogId)) {
-			return processDescriptorProvider.get();
+			return appItem.get();
 		} else if (Notification.CATALOG.equals(catalogId)) {
 			return notificationProvider.get();
 		} else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
 			return clientProvider.get();
 		} else if (VegetateAuthenticationToken.CATALOG.equals(catalogId)) {
 			return authTokenDescriptor.get();
-		} else if (BusinessEvent.CATALOG.equals(catalogId)) {
-			return event.get();
 		}
 		return null;
 	}
@@ -120,7 +114,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 		names.add(new CatalogIdentificationImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
 				"/static/img/notification.png"));
 		names.add(new CatalogIdentificationImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
-		names.add(new CatalogIdentificationImpl(ProcessDescriptor.CATALOG, "Process", "/static/img/process.png"));
+		names.add(new CatalogIdentificationImpl(ApplicationItem.CATALOG, "Process", "/static/img/process.png"));
 		names.add(new CatalogIdentificationImpl(Notification.CATALOG, Notification.CATALOG,
 				"/static/img/notification.png"));
 		// organization catalog as visible?
@@ -189,7 +183,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 			// FIXME writing (or reading require signed authentication)
 
-			// see that triggers are linked to the a.i.
 
 		}
 
@@ -199,7 +192,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	public ValidationExpression[] getValidations() {
 		return null;
 	}
-
 
 }
 

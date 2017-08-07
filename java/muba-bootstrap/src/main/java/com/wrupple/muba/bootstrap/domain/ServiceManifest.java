@@ -18,7 +18,7 @@ public interface ServiceManifest extends HasDistinguishedName,  HasChildrenValue
 	String getServiceId();
 
 	/**
-	 * Note: all services that wish to conform to  security shuold declare it's first token to be CatalogDescripto.DOMAIN_TOKEN
+	 * Note: all services that wish to conform to  security should declare it's first token to be CatalogDescripto.DOMAIN_TOKEN
 	 * 
 	 * @return
 	 */

@@ -8,6 +8,6 @@ public interface HasEntryId {
 	Object getEntry();
 	void setEntry(Object id);
 
-	CatalogEntry getEntryValue();
+	//Object getEntryValue();
 
 }

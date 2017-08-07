@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ApplicationItemImpl extends CatalogEntryImpl implements ApplicationItem {
 
-    private String distinguishedName,outputHandler,description,outputCatalog,catalog;
+    private String distinguishedName,outputHandler,description,outputCatalog,catalog, exitActivity, outputField;
     private List<String> properties;
     private List<Long> process,requiredElements,children;
     private List<ProcessTaskDescriptor> processValue;
@@ -151,5 +151,24 @@ public class ApplicationItemImpl extends CatalogEntryImpl implements Application
     @Override
     public String getCatalogType() {
         return CATALOG;
+    }
+
+    @Override
+    public String getExitActivity() {
+        return exitActivity;
+    }
+
+    public void setExitActivity(String exitActivity) {
+        this.exitActivity = exitActivity;
+    }
+
+    @Override
+    public String getOutputField() {
+        return outputField;
+    }
+
+    @Override
+    public void setOutputField(String outputField) {
+        this.outputField = outputField;
     }
 }

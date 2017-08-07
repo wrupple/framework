@@ -111,10 +111,11 @@ public class ContextSwitchCommandImpl implements ContextSwitchCommand {
 				violations = (Set) validator.validate(contract, groups);
 				requestContext.setConstraintViolations(violations);
 				if (!(violations == null || violations.isEmpty())) {
-					log.warn("contract violates restrictions");
-					if (log.isTraceEnabled()) {
+					log.error("contract violates restrictions");
+					if (log.isDebugEnabled()) {
 						for (ConstraintViolation<?> v : violations) {
-							log.trace("{}", v.getMessage());
+							log.debug(v.getLeafBean().toString());
+							log.debug("\t{} : {}",v.getPropertyPath(),v.getMessage());
 						}
 					}
 					return PROCESSING_COMPLETE;

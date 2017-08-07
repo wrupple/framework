@@ -6,31 +6,15 @@ public interface CatalogActionRequest extends HasLocale,CatalogChangeEvent{
 
 	final String CATALOG = "CatalogAction";
 
-	public final String CATALOG_ACTION_PARAMETER = "action";
-
 	public final String FORMAT_PARAMETER = "format"; 
 
 	public final String FILTER_DATA_PARAMETER = "filter";
-
-
-	/*
-	 * ACTIONS
-	 */
-	public final String DELETE_ACTION = "delete";
-
-	public final String WRITE_ACTION = "write";
-
-	public final String READ_ACTION = "read";
-
-	public final String CREATE_ACTION = "new";
 
 	public final String PUBLISH_ACTION = "publish";
 
 	public final String UPLOAD_ACTION = "upload";
 
 	public final String UPLOAD_URL = "url";
-
-	String getAction();
 	
 	String getFormat();
 
@@ -44,4 +28,6 @@ public interface CatalogActionRequest extends HasLocale,CatalogChangeEvent{
 
 
     void setFollowReferences(boolean followReferences);
+
+
 }

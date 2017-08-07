@@ -16,8 +16,8 @@ public class CommitCatalogActionImpl extends LookupCommand implements CommitCata
 	@Inject
 	public CommitCatalogActionImpl(CatalogFactory factory) {
 		super(factory);
-		super.setCatalogName(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
-		super.setNameKey(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
+		super.setCatalogName(CatalogActionRequest.NAME_FIELD);
+		super.setNameKey(CatalogActionRequest.NAME_FIELD);
 	}
 
 

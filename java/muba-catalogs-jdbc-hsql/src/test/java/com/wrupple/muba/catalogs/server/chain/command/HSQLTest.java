@@ -63,8 +63,7 @@ public class HSQLTest extends MubaTest {
 	@Override
 	protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
-		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));		
+		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 	}
 
 	/*

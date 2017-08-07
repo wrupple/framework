@@ -23,6 +23,4 @@ public interface RootServiceManifest extends ServiceManifest {
 
 	void register(ServiceManifest manifest);
 
-
-
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
@@ -16,17 +17,13 @@ import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 public abstract class AbstractComparationCommand implements Command {
 
-	protected final SystemCatalogPlugin accesor;
 
-	public AbstractComparationCommand(SystemCatalogPlugin accesor) {
-		super();
-		this.accesor = accesor;
-	}
 
 	@Override
 	public final boolean execute(Context c) throws Exception {
 		CatalogActionContext context = ((CatalogActionContext) c);
 
+		FieldAccessStrategy accesor = context.getCatalogManager().access();
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		CatalogEntry old = context.getOldValue();
 		CatalogEntry neew = (CatalogEntry) context.getEntryValue();
@@ -67,7 +64,7 @@ public abstract class AbstractComparationCommand implements Command {
 						codedFinalValue = finalValue == null ? null : String.valueOf(finalValue);
 						codedInitialValue = initialValue == null ? null : String.valueOf(initialValue);
 					}
-					compare(codedFinalValue, codedInitialValue, initialValue, finalValue, field, context);
+					compare(codedFinalValue, codedInitialValue, initialValue, finalValue, field,catalog, context);
 				}
 			}
 		}
@@ -76,6 +73,6 @@ public abstract class AbstractComparationCommand implements Command {
 	}
 
 	protected abstract void compare(String codedFinalValue, String codedInitialValue, Object initialValue,
-			Object finalValue, FieldDescriptor field, CatalogActionContext context) throws Exception;
+			Object finalValue, FieldDescriptor field,CatalogDescriptor catalog, CatalogActionContext context) throws Exception;
 
 }

@@ -41,8 +41,6 @@ public interface CatalogActionContext
 
 	public void addResuls(List<CatalogEntry> result);
 
-	public void setAction(String readAction);
-
 	public void setFilter(FilterData fd);
 
 	/**

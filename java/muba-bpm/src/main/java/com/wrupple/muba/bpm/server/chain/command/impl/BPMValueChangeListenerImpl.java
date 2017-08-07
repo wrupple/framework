@@ -19,7 +19,6 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
@@ -30,13 +29,13 @@ public class BPMValueChangeListenerImpl extends AbstractComparationCommand imple
 	private final CatalogTriggerInterpret interpret;
 
 	@Inject
-	public BPMValueChangeListenerImpl(CatalogEvaluationDelegate accesor, CatalogTriggerInterpret interpret) {
-		super(accesor);
+	public BPMValueChangeListenerImpl(CatalogTriggerInterpret interpret) {
+		super();
 		this.interpret = interpret;
 	}
 
 	@Override
-	protected void compare(String codedFinalValue, String codedInitialValue, Object initialValue, Object finalValue, FieldDescriptor field,
+	protected void compare(String codedFinalValue, String codedInitialValue, Object initialValue, Object finalValue, FieldDescriptor field,CatalogDescriptor catalog,
 			CatalogActionContext context) throws Exception {
 
 		if ((initialValue == null && finalValue != null)
@@ -49,7 +48,7 @@ public class BPMValueChangeListenerImpl extends AbstractComparationCommand imple
 			if (changeTriggers == null) {
 				CatalogActionContext spawned = context.getCatalogManager().spawn(context);
 				FilterData filterData = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,
-						context.getCatalog());
+						(String)context.getCatalog());
 				filterData.setConstrained(false);
 				filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getFieldId()));
 				spawned.setFilter(filterData);

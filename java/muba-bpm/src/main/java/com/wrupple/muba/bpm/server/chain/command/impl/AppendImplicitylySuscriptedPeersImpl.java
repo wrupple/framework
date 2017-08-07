@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
@@ -24,20 +25,12 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
-import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
 public class AppendImplicitylySuscriptedPeersImpl implements AppendImplicitylySuscriptedPeers {
 
-	private final CatalogEvaluationDelegate accessor;
-	
-	@Inject
-	public AppendImplicitylySuscriptedPeersImpl(CatalogEvaluationDelegate access) {
-		super();
-		this.accessor = access;
-	}
+
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
@@ -45,13 +38,13 @@ public class AppendImplicitylySuscriptedPeersImpl implements AppendImplicitylySu
 		Collection<CatalogPeer> concernedClients = (Collection<CatalogPeer>) context
 				.get(EventSuscriptionChain.CONCERNED_CLIENTS);
 		CatalogChangeEvent event = (CatalogChangeEvent) context.get(EventSuscriptionChain.CURRENT_EVENT);
-		CatalogEntry entry = (CatalogEntry) event.getEntryValue();
+		CatalogEntry entry = event.getEntryValue();
 		CatalogDescriptor descriptor = context.getCatalogManager().getDescriptorForName((String)event.getCatalog(), context);
 
 		Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
-
+		FieldAccessStrategy accessor = context.getCatalogManager().access();
 		Set<Long> concernedPeople = null;
-		Session session = accessor.newSession(entry);
+		FieldAccessStrategy.Session session = accessor.newSession(entry);
 		for (FieldDescriptor field : fields) {
 			if (Person.CATALOG.equals(field.getCatalog())) {
 				// TODO user may choose not to notify people listed in a
@@ -61,7 +54,7 @@ public class AppendImplicitylySuscriptedPeersImpl implements AppendImplicitylySu
 				if (concernedPeople == null) {
 					concernedPeople = new HashSet<Long>(3);
 				}
-				addFieldValuesToConcernedPeopleList(entry, descriptor, field, concernedPeople, session);
+				addFieldValuesToConcernedPeopleList(entry, descriptor, field, concernedPeople, session, accessor);
 			}
 		}
 
@@ -81,14 +74,14 @@ public class AppendImplicitylySuscriptedPeersImpl implements AppendImplicitylySu
 	}
 
 	private void addFieldValuesToConcernedPeopleList(CatalogEntry entry, CatalogDescriptor descriptor,
-			FieldDescriptor field, Set<Long> concernedPeople, Session session) {
+			FieldDescriptor field, Set<Long> concernedPeople, FieldAccessStrategy.Session session, FieldAccessStrategy accessor) throws ReflectiveOperationException {
 		boolean accesable = HasAccesablePropertyValues.class.isAssignableFrom(entry.getClass());
 		if (field.isMultiple()) {
 			List<Long> value;
 			if (accesable) {
 				value = (List<Long>) ((HasAccesablePropertyValues) entry).getPropertyValue(field.getFieldId());
 			} else {
-				value = (List<Long>) accessor.getPropertyValue(descriptor, field, entry, null, session);
+				value = (List<Long>) accessor.getPropertyValue(field,entry,null,session);
 			}
 			if (value != null) {
 				concernedPeople.addAll(value);
@@ -98,7 +91,7 @@ public class AppendImplicitylySuscriptedPeersImpl implements AppendImplicitylySu
 			if (accesable) {
 				value = (Long) ((HasAccesablePropertyValues) entry).getPropertyValue(field.getFieldId());
 			} else {
-				value = (Long) accessor.getPropertyValue(descriptor, field, entry, null, session);
+				value = (Long) accessor.getPropertyValue( field, entry, null, session);
 			}
 			if (value != null) {
 				concernedPeople.add(value);

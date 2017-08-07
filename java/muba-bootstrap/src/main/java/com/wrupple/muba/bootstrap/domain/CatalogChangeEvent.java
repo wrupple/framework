@@ -12,6 +12,14 @@ public interface CatalogChangeEvent extends CatalogIntent{
 
 	String CATALOG = "CatalogChangeEvent";
 
-	Object getEntryValue();
+    public final String DELETE_ACTION = "delete";
+
+    public final String WRITE_ACTION = "write";
+
+    public final String READ_ACTION = "read";
+
+    public final String CREATE_ACTION = "new";
+
+    Object getEntryValue();
 
 }

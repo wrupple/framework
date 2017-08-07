@@ -1,12 +1,15 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
+import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import org.apache.commons.chain.impl.ContextBase;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -25,9 +28,14 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     private ProcessTaskDescriptor taskDescriptorValue;
     private boolean canceled;
     private List userSelectionValues;
-    private Long taskDescriptor;
+    private List<Long> children;
+    private Long taskDescriptor,entry;
+    private CatalogEntry entryValue;
+    private Long parent;
+    private int taskIndex;
     private CatalogDescriptor solutionDescriptor;
     private List<VariableDescriptor> solutionVariables;
+    private FilterData filterData;
 
     @Override
     public List<VariableDescriptor> getSolutionVariables() {
@@ -150,5 +158,64 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     public void setTaskDescriptorValue(ProcessTaskDescriptor taskDescriptorValue) {
         this.taskDescriptorValue=taskDescriptorValue;
 
+    }
+
+    @Override
+    public int getTaskIndex() {
+        return taskIndex;
+    }
+
+    public void setTaskIndex(int taskIndex) {
+        this.taskIndex = taskIndex;
+    }
+
+    @Override
+    public List<Long> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Long> children) {
+        this.children = children;
+    }
+
+    @Override
+    public Long getParent() {
+        return parent;
+    }
+
+    @Override
+    public Long spawnChild() {
+        throw new IllegalArgumentException("process switching has not been implemented");
+    }
+
+    public void setParent(Long parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public Long getEntry() {
+        return entry;
+    }
+
+    public void setEntry(Object entry) {
+        this.entry = (Long) entry;
+    }
+
+    public CatalogEntry getEntryValue() {
+        return entryValue;
+    }
+
+    @Override
+    public void setEntryValue(CatalogEntry entryValue) {
+        this.entryValue = entryValue;
+    }
+
+    @Override
+    public FilterData getFilterData() {
+        return filterData;
+    }
+
+    public void setFilterData(FilterData filterData) {
+        this.filterData = filterData;
     }
 }

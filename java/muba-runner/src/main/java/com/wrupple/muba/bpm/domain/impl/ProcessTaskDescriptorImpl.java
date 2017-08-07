@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 
 public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
 	private static final long serialVersionUID = 7957074775049623796L;
-	private String catalog,distinguishedName,transactionType,producedField;
+	private String catalog,distinguishedName,transactionType,outputField;
 	private List<String> properties,sentence;
 	//@CatalogKey(foreignCatalog = WruppleActivityAction.CATALOG)
 	private List<Long> userActions;
@@ -101,15 +101,6 @@ public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
     }
 
     @Override
-    public String getProducedField() {
-        return producedField;
-    }
-
-    public void setProducedField(String producedField) {
-        this.producedField = producedField;
-    }
-
-    @Override
     public List<String> getProperties() {
         return properties;
     }
@@ -163,5 +154,15 @@ public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
     @Override
     public String getCatalogType() {
         return CATALOG;
+    }
+
+    @Override
+    public String getOutputField() {
+        return outputField;
+    }
+
+    @Override
+    public void setOutputField(String outputField) {
+        this.outputField = outputField;
     }
 }

@@ -44,7 +44,7 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 		context.setOldValue(originalEntry);
 
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		context.setAction(CatalogActionRequest.WRITE_ACTION);
+		context.setName(CatalogActionRequest.WRITE_ACTION);
 		trigerer.execute(context);
 
 		DataWritingCommand dao = (DataWritingCommand) writers.getCommand(String.valueOf(catalog.getStorage()));

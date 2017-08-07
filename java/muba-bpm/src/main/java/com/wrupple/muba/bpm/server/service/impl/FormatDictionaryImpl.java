@@ -6,16 +6,16 @@ import javax.inject.Singleton;
 import org.apache.commons.chain.CatalogFactory;
 
 import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.server.service.ContentManagementSystem;
+import com.wrupple.muba.bootstrap.server.service.FormatDictionary;
 import com.wrupple.muba.bootstrap.server.service.impl.Dictionary;
 import com.wrupple.muba.bpm.server.chain.FormatManager;
 
 @Singleton
-public class ContentManagementSystemImpl extends Dictionary implements ContentManagementSystem {
+public class FormatDictionaryImpl extends Dictionary implements FormatDictionary {
 
 
 	@Inject
-	public ContentManagementSystemImpl(CatalogFactory factory,FormatManager defaultOne) {
+	public FormatDictionaryImpl(CatalogFactory factory, FormatManager defaultOne) {
 		super(defaultOne);
 		factory.addCatalog(CatalogActionRequest.CATALOG_FIELD, this);
 	}

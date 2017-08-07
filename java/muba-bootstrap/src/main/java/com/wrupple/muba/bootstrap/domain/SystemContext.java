@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import com.wrupple.muba.bootstrap.server.service.ImplicitIntentHandlerDictionary;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -25,6 +26,8 @@ public interface SystemContext
 	//contract interpret per type? bpm?
 	void registerService(ServiceManifest manifest,Command service, RequestInterpret contractInterpret);
 
+	void registerService(ServiceManifest manifest, Command service);
+
 	/**
 	 * this is very much like widgetters/lookupcommands
 	 * 
@@ -32,4 +35,7 @@ public interface SystemContext
 	 * @return reads properties from context, aswell as context property depen
 	 */
 	RequestInterpret getRequestInterpret(RuntimeContext context);
+
+    ImplicitIntentHandlerDictionary getIntentInterpret();
+
 }

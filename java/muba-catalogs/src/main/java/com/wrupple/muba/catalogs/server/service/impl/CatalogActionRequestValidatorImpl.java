@@ -62,7 +62,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		boolean report = true;
 		log.debug("[VALIDATE CATALOG ACTION REQUEST]");
 
-		String action = req.getAction();
+		String action = req.getName();
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();
 		String catalog = (String) req.getCatalog();
 		String domain = (String) req.getDomain();
