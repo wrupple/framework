@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import com.wrupple.muba.bootstrap.server.service.ImplicitIntentHandlerDictionary;
+import com.wrupple.muba.bootstrap.server.service.EventBus;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -36,6 +36,6 @@ public interface SystemContext
 	 */
 	RequestInterpret getRequestInterpret(RuntimeContext context);
 
-    ImplicitIntentHandlerDictionary getIntentInterpret();
+    EventBus getIntentInterpret();
 
 }

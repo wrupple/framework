@@ -41,7 +41,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
 
     public ImplicitCatalogDiscriminationApplicationTest() {
-        init( new BPMTestModule(), new SingleUserModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
+        init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
 

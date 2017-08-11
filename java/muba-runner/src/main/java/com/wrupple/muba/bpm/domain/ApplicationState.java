@@ -45,6 +45,8 @@ public interface ApplicationState extends HasDistinguishedName,ContentNode,HasEn
 
     void setEntryValue(CatalogEntry booking);
 
+    CatalogEntry getEntryValue();
+
     // public void setLayoutUnit(String s);
 
     //public void setTransactionViewClass(String s);

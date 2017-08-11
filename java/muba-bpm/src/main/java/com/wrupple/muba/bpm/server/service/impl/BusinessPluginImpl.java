@@ -28,6 +28,7 @@ import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.WrupleSVGDocument;
 import com.wrupple.muba.catalogs.server.chain.command.WriteFormatedDocument;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 /**
  * Deals with
@@ -56,8 +57,6 @@ import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
  */
 @Singleton
 public class BusinessPluginImpl implements BusinessPlugin {
-
-	private final int SECURE_STORAGE;
     private final Provider<CatalogDescriptor> appItem;
 
 
@@ -67,9 +66,8 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	private final Provider<CatalogDescriptor> authTokenDescriptor;
 
 	@Inject
-	public BusinessPluginImpl(CatalogManager databasePlugin, WriteFormatedDocument documentWriter, FormatDictionary cms, BPMValueChangeListener changeListener,
+	public BusinessPluginImpl(SystemCatalogPlugin databasePlugin, WriteFormatedDocument documentWriter, FormatDictionary cms, BPMValueChangeListener changeListener,
 							  BPMValidationTrigger validationTrigger, BPMStakeHolderTrigger stakeHolderTrigger,
-							  CatalogManager transactions,
 							  @Named(ApplicationItem.CATALOG) Provider<CatalogDescriptor> appItem,
 							  @Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
 							  @Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
@@ -85,9 +83,9 @@ public class BusinessPluginImpl implements BusinessPlugin {
 		this.clientProvider = clientProvider;
 		this.authTokenDescriptor = authTokenDescriptor;
 		this.appItem=appItem;
-		transactions.addCommand(BPMValidationTrigger.class.getSimpleName(), validationTrigger);
-		transactions.addCommand(BPMValueChangeListener.class.getSimpleName(), changeListener);
-		transactions.addCommand(BPMStakeHolderTrigger.class.getSimpleName(), stakeHolderTrigger);
+		databasePlugin.addCommand(BPMValidationTrigger.class.getSimpleName(), validationTrigger);
+		databasePlugin.addCommand(BPMValueChangeListener.class.getSimpleName(), changeListener);
+		databasePlugin.addCommand(BPMStakeHolderTrigger.class.getSimpleName(), stakeHolderTrigger);
 	}
 
 	@Override

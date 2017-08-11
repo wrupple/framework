@@ -2,8 +2,6 @@ package com.wrupple.muba.bootstrap.server.chain.command.impl;
 
 import com.wrupple.muba.bootstrap.domain.JavaNativeInterfaceContext;
 import com.wrupple.muba.bootstrap.server.chain.command.SentenceNativeInterface;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;

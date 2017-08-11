@@ -3,14 +3,14 @@ package com.wrupple.muba.bpm.domain.impl;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.RuntimeContext;
+import com.wrupple.muba.bootstrap.server.service.EventBus;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import org.apache.commons.chain.impl.ContextBase;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +19,8 @@ import java.util.List;
  * Created by japi on 11/05/17.
  */
 public class ApplicationContextImpl extends ContextBase implements ApplicationContext {
+
+    private final EventBus eventBus;
 
     private Long id,image;
     private String  name;
@@ -36,6 +38,11 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     private CatalogDescriptor solutionDescriptor;
     private List<VariableDescriptor> solutionVariables;
     private FilterData filterData;
+
+    @Inject
+    public ApplicationContextImpl(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
     @Override
     public List<VariableDescriptor> getSolutionVariables() {
@@ -158,6 +165,11 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     public void setTaskDescriptorValue(ProcessTaskDescriptor taskDescriptorValue) {
         this.taskDescriptorValue=taskDescriptorValue;
 
+    }
+
+    @Override
+    public EventBus getServiceBus() {
+        return eventBus;
     }
 
     @Override

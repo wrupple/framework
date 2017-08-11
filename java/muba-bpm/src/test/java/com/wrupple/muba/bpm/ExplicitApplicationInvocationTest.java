@@ -14,9 +14,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
-import com.wrupple.muba.MockRunnerModule;
 import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
@@ -61,103 +59,16 @@ import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 
 
 public class ExplicitApplicationInvocationTest extends MubaTest {
-	/*
-	 * mocks
-	 */
+	@Override
+	protected void registerServices(SystemContext switchs) {
 
-	protected WriteOutput mockWriter;
-
-	protected WriteAuditTrails mockLogger;
-
-	protected CatalogPeer peerValue;
-
-	protected EventSuscriptionChain chainMock;
-
-	class PrivateModule extends AbstractModule {
-
-		@Override
-		protected void configure() {
-			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
-			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-			// this makes JDBC the default storage unit
-			bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
-			bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
-			bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
-			bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
-			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
-
-			// mocks
-			mockWriter = mock(WriteOutput.class);
-			mockLogger = mock(WriteAuditTrails.class);
-			peerValue = mock(CatalogPeer.class);
-			chainMock = mock(EventSuscriptionChain.class);
-			bind(WriteAuditTrails.class).toInstance(mockLogger);
-			bind(WriteOutput.class).toInstance(mockWriter);
-			bind(EventSuscriptionChain.class).toInstance(chainMock);
-			/*
-			 * COMMANDS
-			 */
-
-			bind(CatalogFileUploadTransaction.class).toInstance(mock(CatalogFileUploadTransaction.class));
-			bind(CatalogFileUploadUrlHandlerTransaction.class)
-					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
-
-		}
-
-		@Provides
-		@Inject
-		@Singleton
-		public SessionContext sessionContext(@Named("host") String peer) {
-			long stakeHolder = 1;
-			Person stakeHolderValue = mock(Person.class);
-
-			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
-		}
-
-		@Provides
-		public UserTransaction localTransaction() {
-			return mock(UserTransaction.class);
-		}
-
-		@Provides
-		public Trash trash() {
-			return mock(Trash.class);
-		}
-
-		@Provides
-		public CatalogDeserializationService catalogDeserializationService() {
-			return mock(CatalogDeserializationService.class);
-		}
-
-	}
-
-	public ExplicitApplicationInvocationTest() {
-		init(new PrivateModule(), new BPMTestModule(), new SingleUserModule(),new ChocoSolverModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
-				new ValidationModule(), new CatalogModule(), new BootstrapModule());
 	}
 
 	@Override
-	protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
-		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
-		switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
+	protected void setUp() throws Exception {
 
-		SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
-		switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class));
-		switchs.registerContractInterpret(solverServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
 	}
 
-
-	@Before
-	public void setUp() throws Exception {
-		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
-
-		runtimeContext = injector.getInstance(RuntimeContext.class);
-		log.trace("NEW TEST EXCECUTION CONTEXT READY");
-	}
 	/*
 	 * DesktopEngineImpl DesktopBuilderContext DesktopRequestReader
 	 * SearchEngineOptimizedDesktopWriterCommandImpl FormWriterImpl
@@ -175,7 +86,7 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 	 * (task.getProducedField())
 	 * 
 	 * @throws Exception
-	 */
+
 	@Test
 	public void submitBookingData() throws Exception {
 
@@ -212,28 +123,28 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 		runtimeContext.reset();
 
 		log.trace("[-create process excecution context (tracking) by submitting multiple selection-]");
-		/*
-		 * save to field Business event as something that changes the state of a
-		 * process or task within a process, always return the tracking id/value
-		 * 
-		 * submit, select (including select an action), modify model, modify
-		 * Widget?
-		 */
+
+		 // save to field Business event as something that changes the state of a
+		 // process or task within a process, always return the tracking id/value
+
+		  //submit, select (including select an action), modify model, modify
+		  //Widget?
+		 //
 		log.trace("[-finish process by submitting catalog Entry context-]");
 
 		log.trace("[-handle user output (create notification)-]");
 		// Catalogs:
 		// taxi,Persona(Pasajero),TripBooking,PaymentSource(PendingAproval)
 		// muba.exec("startTrip/",{Booking});
-		/*//TODO trying to create a booking constrain violates empty payment source and switches to payment source selection process
-		 * TODO Creation of a tracking object requires stakeHolder and so a
-		 * process switch is attempted and failed and then a context muba.switch to
-		 * login is performed register bpm service manifest as SEO aware in the
-		 * tree//service manager ( dictionary like CatalogManager) to serve as
-		 * first order tree token processor the "who is concerned" part of
-		 * PublishEventsImpl should really be BPM's problem
-		 * 
-		 */
+		//TODO trying to create a booking constrain violates empty payment source and switches to payment source selection process
+	//TODO Creation of a tracking object requires stakeHolder and so a
+	// process switch is attempted and failed and then a context muba.switch to
+	// login is performed register bpm service manifest as SEO aware in the
+	// tree//service manager ( dictionary like CatalogManager) to serve as
+	//first order tree token processor the "who is concerned" part of
+	//PublishEventsImpl should really be BPM's problem
+	//
+	//
 		runtimeContext.reset();
 		BusinessEvent submit;
 		runtimeContext.setServiceContract(submit);
@@ -247,9 +158,9 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 		// expectations
 
 		replayAll();
-		/*
-		 * read task defined tokens
-		 */
+	//
+	//read task defined tokens
+	//
 		// is own parent or duplicated fields
 		CatalogDescriptor problemContract = builder.fromClass(MathProblem.class, MathProblem.class.getSimpleName(),
 				"Math Problem", 0, builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG,
@@ -265,7 +176,7 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 		runtimeContext.process();
 
 		runtimeContext.reset();
-	}*/
+	}
 
 	CatalogDataAccessObject<ProcessTaskDescriptor> taskDao = context.getDataStoreManager().getOrAssembleDataSource(
 			ProcessTaskDescriptor.CATALOG, context.getCatalogContext(), ProcessTaskDescriptor.class);
@@ -293,7 +204,7 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 	 * perform redirects filling out apropiate url tokens (at least entry and
 	 * ?catalog? according to task configuration if necesary
 	 */
-
+/*
 	if(CatalogActionRequest.READ_ACTION.equals(transactionType))
 	{
 		// assume a selection is submitted
@@ -317,5 +228,5 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 	{
 		throw new IllegalArgumentException("unsupported ");
 	}
-
+*/
 }

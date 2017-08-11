@@ -31,7 +31,7 @@ public class BPMValidationTriggerImpl extends AbstractComparationCommand impleme
         fieldValueChange.setName(field.getFieldId());
         fieldValueChange.setOldValue(codedInitialValue);
         fieldValueChange.setValue(codedFinalValue);
-		String[] sentence = context.getRuntimeContext().getApplication().getContractSentence(fieldValueChange);
+		String[] sentence = context.getRuntimeContext().getApplication().getIntentInterpret().resolveContractSentence(fieldValueChange);
 
 		//REQUEST FOR PERMISSION CHANGING VALUE OF A FIELD
 		String permission= StringUtils.join(sentence,':');

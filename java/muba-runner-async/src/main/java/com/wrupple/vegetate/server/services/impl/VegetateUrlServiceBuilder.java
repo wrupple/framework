@@ -64,6 +64,7 @@ public class VegetateUrlServiceBuilder {
 	}
 
 	private String buildPath(Object object,PrintWriter writer) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IllegalAccessError, IOException {
+		//FIXME Now use resolveContractSentence
 		if (manifest == null) {
 			manifest = getServiceManifest();
 		}

@@ -81,9 +81,10 @@ public class RootServiceManifestImpl extends ServiceManifestImpl implements Root
 		List<ServiceManifest> vvv = getChildrenValues();
 		if(vvv==null){
 			vvv = new ArrayList<ServiceManifest>();
-			setChildrenValues(vvv);
 		}
 		vvv.add(manifest);
+		//TODO wildly inefficient
+		setChildrenValues(vvv);
 	}
 
 }

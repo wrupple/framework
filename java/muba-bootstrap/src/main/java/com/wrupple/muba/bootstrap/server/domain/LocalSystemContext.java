@@ -3,14 +3,13 @@ package com.wrupple.muba.bootstrap.server.domain;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.server.service.ImplicitIntentHandlerDictionary;
+import com.wrupple.muba.bootstrap.server.service.EventBus;
 import org.apache.commons.chain.Catalog;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
@@ -30,11 +29,11 @@ public class LocalSystemContext extends ContextBase implements SystemContext {
     private CatalogFactory factory;
 	// use a registry method, this stays private please stop it!!
 	private final String DICTIONARY = RootServiceManifest.NAME + "-interpret";
-	private final ImplicitIntentHandlerDictionary intentInterpret;
+	private final EventBus intentInterpret;
 
 	@Inject
 	public LocalSystemContext(RootServiceManifest rootService, @Named("System.out") OutputStream out, @Named("System.in") InputStream in,
-                              CatalogFactory factory, ImplicitIntentHandlerDictionary intentInterpret) {
+                              CatalogFactory factory, EventBus intentInterpret) {
 		super();
 		this.rootService = rootService;
 		this.factory = factory;
@@ -115,7 +114,7 @@ public class LocalSystemContext extends ContextBase implements SystemContext {
 	}
 
     @Override
-    public ImplicitIntentHandlerDictionary getIntentInterpret() {
+    public EventBus getIntentInterpret() {
         return intentInterpret;
     }
 }

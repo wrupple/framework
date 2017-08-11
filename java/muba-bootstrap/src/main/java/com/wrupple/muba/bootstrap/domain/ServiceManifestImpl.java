@@ -8,27 +8,28 @@ import java.util.Set;
 public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceManifest {
 	private static final long serialVersionUID = -2346526516336493001L;
 	private String distinguishedName, versionDistinguishedName;
-	private ContractDescriptor contractDescriptorValue;
+	private ContractDescriptor catalogValue;
 	private List<String> grammar;
 	private List<Long> children;
 	private List<ServiceManifest> childrenValues;
 	private List<String> childrenPaths;
+    private ServiceManifest parentValue;
 
-	public ServiceManifestImpl() {
+    public ServiceManifestImpl() {
 		super();
 	}
 
-	public ServiceManifestImpl(String distinguishedName, ContractDescriptor contractDescriptorValue,
+	public ServiceManifestImpl(String distinguishedName, ContractDescriptor catalogValue,
 			List<String> grammar) {
 		super();
 		this.distinguishedName = distinguishedName;
-		this.contractDescriptorValue = contractDescriptorValue;
+		this.catalogValue = catalogValue;
 		this.grammar = grammar;
 	}
 
 	public ServiceManifestImpl(String distinguishedName, String versionDistinguishedName,
-			ContractDescriptor contractDescriptorValue, List<String> grammar) {
-		this(distinguishedName, contractDescriptorValue, grammar);
+							   ContractDescriptor catalogValue, List<String> grammar) {
+		this(distinguishedName, catalogValue, grammar);
 		this.versionDistinguishedName = versionDistinguishedName;
 	}
 
@@ -52,7 +53,9 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 			childrenPaths = null;
 		}else{
 			Set<String >childarenPaths = new HashSet<String>(childrenValues.size());
+            children = new ArrayList<>(childrenValues.size());
 			for(ServiceManifest s : childrenValues){
+                s.setParentValue(this);
 				childarenPaths.add(s.getDistinguishedName());
 			}
 			childrenPaths = new ArrayList<>(childarenPaths);
@@ -77,12 +80,17 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 	}
 
 	@Override
-	public final ContractDescriptor getContractDescriptorValue() {
-		return contractDescriptorValue;
+	public final ContractDescriptor getCatalogValue() {
+		return catalogValue;
 	}
 
-	public void setContractDescriptor(ContractDescriptor contractDescriptor) {
-		this.contractDescriptorValue = contractDescriptor;
+    @Override
+    public void setParentValue(ServiceManifest serviceManifest) {
+        this.parentValue=serviceManifest;
+    }
+
+    public void setContractDescriptor(ContractDescriptor contractDescriptor) {
+		this.catalogValue = contractDescriptor;
 	}
 
 	@Override
@@ -111,4 +119,28 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 		this.childrenPaths = childrenPaths;
 	}
 
+	@Override
+	public String getCatalog() {
+		return getCatalogValue().getDistinguishedName();
+	}
+
+	@Override
+	public void setCatalog(String catalog) {
+		throw new IllegalStateException();
+	}
+
+    @Override
+    public ServiceManifest getParentValue() {
+        return parentValue;
+    }
+
+    @Override
+    public Long getParent() {
+        return (Long) getParentValue().getId();
+    }
+
+    @Override
+    public Long spawnChild() {
+        throw new UnsupportedOperationException();
+    }
 }

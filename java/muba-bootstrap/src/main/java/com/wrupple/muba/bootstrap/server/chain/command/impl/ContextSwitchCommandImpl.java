@@ -171,7 +171,7 @@ public class ContextSwitchCommandImpl implements ContextSwitchCommand {
 			}
 			
 			if(contract != null){
-				ContractDescriptor descriptor = requestContext.getServiceManifest().getContractDescriptorValue();
+				ContractDescriptor descriptor = requestContext.getServiceManifest().getCatalogValue();
 				if (descriptor != null) {
 					Collection<String> fields = descriptor.getFieldsIds();
 					Object v;

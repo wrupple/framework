@@ -4,6 +4,7 @@ import com.google.inject.*;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
+import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.domain.Trash;
@@ -132,8 +133,8 @@ public abstract class MubaTest extends EasyMockSupport {
 		@javax.inject.Inject
 		@javax.inject.Singleton
 		@Named("catalog.plugins")
-		public Object plugins(SolverCatalogPlugin /* domain driven */ runner, UserCatalogPlugin /* domain driven */ user) {
-			CatalogPlugin[] plugins = new CatalogPlugin[] { user,runner,bpm /applicationitem/ };
+		public Object plugins(BusinessPlugin bpm, SolverCatalogPlugin /* domain driven */ runner, UserCatalogPlugin /* domain driven */ user) {
+			CatalogPlugin[] plugins = new CatalogPlugin[] { runner,bpm ,user};
 			return plugins;
 		}
 

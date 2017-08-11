@@ -7,7 +7,7 @@
 	<!-- "id" of the service map should be equeal to the property that invokes 
 		it (the property obviously has another value) -->
 	<service id="outputHandlers" creator="outputHandlers" /> <!--ApplicationItem ReadNextPlaceImpl -->
-	<service id="commands" creator="commands" /> <!-- ServiceBus -->
+	<service id="commands" creator="commands" /> <EventBuseBus -->
 	<service id="transactionType" creator="transactionType" /> <!-- ProcessTaskDescriptor TransactionalActivityAssembly -->
 	<service id="editors" creator="editors" /> <!--taskDescriptor.properties.widget CMS -->
 	<service id="browsers" creator="browsers" /><!--taskDescriptor.properties.widget CMS -->

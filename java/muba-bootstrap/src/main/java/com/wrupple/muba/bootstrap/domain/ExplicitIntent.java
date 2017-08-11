@@ -11,7 +11,7 @@ public interface ExplicitIntent extends HasCatalogId{
 
 	/**
 	 * worker session to recover
-	 * @return
+	 * @return (Application State Id)
 	 */
 	Object getContext();
 }
