@@ -1,4 +1,4 @@
-package com.wrupple.muba.bpm.domain;
+package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 

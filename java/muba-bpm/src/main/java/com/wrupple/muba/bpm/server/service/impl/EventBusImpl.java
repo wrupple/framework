@@ -82,7 +82,7 @@ public class EventBusImpl implements EventBus {
 
 
     @Override
-    public String[] resolveContractSentence(CatalogEntry serviceContract) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public List<String> resolveContractSentence(CatalogEntry serviceContract) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         //FIXME find services registered for this contract's super types
 
         ServiceManifest handler = serviceDictionary.get(serviceContract.getCatalogType());
@@ -111,7 +111,7 @@ public class EventBusImpl implements EventBus {
             pathTokens.add(tokenValue);
         }
 
-        return pathTokens.toArray(new String[pathTokens.size()]);
+        return pathTokens;
     }
 
 

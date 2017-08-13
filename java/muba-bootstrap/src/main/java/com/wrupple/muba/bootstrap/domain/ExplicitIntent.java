@@ -10,8 +10,10 @@ public interface ExplicitIntent extends HasCatalogId{
 	Object getHandle();
 
 	/**
+	 *
+	 *
 	 * worker session to recover
-	 * @return (Application State Id)
+	 * @return (Application State Id) if the input was an activity booking id , the output would be an activity tracking id
 	 */
-	Object getContext();
+	Object getState();
 }

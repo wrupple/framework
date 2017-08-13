@@ -4,6 +4,7 @@ import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
 import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
 import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.IntentResolverServiceManifest;
+import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,8 +19,8 @@ import java.util.List;
 public class IntentResolverServiceManifestImpl extends ServiceManifestImpl implements IntentResolverServiceManifest {
 
     @Inject
-    public IntentResolverServiceManifestImpl( @Named(ImplicitIntent.CATALOG)ContractDescriptor contractDescriptorValue) {
+    public IntentResolverServiceManifestImpl( @Named(ImplicitIntent.CATALOG)CatalogDescriptor contractDescriptorValue) {
         super(IntentResolverServiceManifest.SERVICE_NAME, "1.0", contractDescriptorValue, Arrays.asList(
-                ImplicitIntent.CATALOG,ImplicitIntent.OUTOUT_CATALOG));
+                ImplicitIntent.CATALOG_FIELD,ImplicitIntent.OUTOUT_CATALOG));
     }
 }

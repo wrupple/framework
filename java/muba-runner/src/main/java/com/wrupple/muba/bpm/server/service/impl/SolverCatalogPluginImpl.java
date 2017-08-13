@@ -10,6 +10,7 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
+import org.apache.commons.chain.Command;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,7 +56,12 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
 
     @Override
     public ValidationExpression[] getValidations() {
-        return new ValidationExpression[0];
+        return null;
+    }
+
+    @Override
+    public Command[] getActions() {
+        return null;
     }
 
     @Override

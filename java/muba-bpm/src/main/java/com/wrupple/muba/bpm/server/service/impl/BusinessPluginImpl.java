@@ -11,12 +11,10 @@ import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.Host;
 import com.wrupple.muba.bootstrap.domain.Person;
 import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.bootstrap.server.service.CatalogManager;
-import com.wrupple.muba.bootstrap.server.service.FormatDictionary;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.server.chain.command.BPMStakeHolderTrigger;
-import com.wrupple.muba.bpm.server.chain.command.BPMValidationTrigger;
-import com.wrupple.muba.bpm.server.chain.command.BPMValueChangeListener;
+import com.wrupple.muba.bpm.server.chain.command.StakeHolderTrigger;
+import com.wrupple.muba.bpm.server.chain.command.ValueChangeAudit;
+import com.wrupple.muba.bpm.server.chain.command.ValueChangeListener;
 import com.wrupple.muba.bpm.server.chain.command.CheckSecureConditions;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -25,10 +23,8 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.WrupleSVGDocument;
-import com.wrupple.muba.catalogs.server.chain.command.WriteFormatedDocument;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import org.apache.commons.chain.Command;
 
 /**
  * Deals with
@@ -61,31 +57,24 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 
     private final Provider<CatalogDescriptor> notificationProvider;
-	private final Provider<CatalogDescriptor> clientProvider;
 
-	private final Provider<CatalogDescriptor> authTokenDescriptor;
+	private final int SECURE_STORAGE;
+	private final Command[] actions;
 
 	@Inject
-	public BusinessPluginImpl(SystemCatalogPlugin databasePlugin, WriteFormatedDocument documentWriter, FormatDictionary cms, BPMValueChangeListener changeListener,
-							  BPMValidationTrigger validationTrigger, BPMStakeHolderTrigger stakeHolderTrigger,
+	public BusinessPluginImpl(ValueChangeListener changeListener,
+							  ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
 							  @Named(ApplicationItem.CATALOG) Provider<CatalogDescriptor> appItem,
-							  @Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
+							  // @Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
 							  @Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
-							  @Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
+							  // @Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
 							  @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
 		this.SECURE_STORAGE = secureStorageIndex;
-
-		cms.addCommand(WruppleDomainHTMLPage.CATALOG, documentWriter);
-		cms.addCommand(WruppleDomainJavascript.CATALOG, documentWriter);
-		cms.addCommand(WruppleDomainStyleSheet.CATALOG, documentWriter);
-		cms.addCommand(WrupleSVGDocument.CATALOG, documentWriter);
 		this.notificationProvider = notificationProvider;
-		this.clientProvider = clientProvider;
-		this.authTokenDescriptor = authTokenDescriptor;
+
 		this.appItem=appItem;
-		databasePlugin.addCommand(BPMValidationTrigger.class.getSimpleName(), validationTrigger);
-		databasePlugin.addCommand(BPMValueChangeListener.class.getSimpleName(), changeListener);
-		databasePlugin.addCommand(BPMStakeHolderTrigger.class.getSimpleName(), stakeHolderTrigger);
+
+		actions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
 	}
 
 	@Override
@@ -99,11 +88,11 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			return appItem.get();
 		} else if (Notification.CATALOG.equals(catalogId)) {
 			return notificationProvider.get();
-		} else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
+		}/* else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
 			return clientProvider.get();
 		} else if (VegetateAuthenticationToken.CATALOG.equals(catalogId)) {
 			return authTokenDescriptor.get();
-		}
+		}*/
 		return null;
 	}
 
@@ -155,7 +144,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			e = new CatalogActionTriggerImpl();
 			e.setAction(0);
 			e.setAdvice(true);
-			e.setHandler(BPMStakeHolderTrigger.class.getSimpleName());
+			e.setHandler(StakeHolderTrigger.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
 			catalog.addTrigger(e);
@@ -166,7 +155,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			e = new CatalogActionTriggerImpl();
 			e.setAction(1);
 			e.setAdvice(true);
-			e.setHandler(BPMValidationTrigger.class.getSimpleName());
+			e.setHandler(ValueChangeAudit.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
 			catalog.addTrigger(e);
@@ -174,7 +163,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			e = new CatalogActionTriggerImpl();
 			e.setAction(1);
 			e.setAdvice(false);
-			e.setHandler(BPMValueChangeListener.class.getSimpleName());
+			e.setHandler(ValueChangeListener.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
 			catalog.addTrigger(e);
@@ -189,6 +178,13 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	@Override
 	public ValidationExpression[] getValidations() {
 		return null;
+	}
+
+	@Override
+	public Command[] getActions() {
+
+
+		return actions;
 	}
 
 }

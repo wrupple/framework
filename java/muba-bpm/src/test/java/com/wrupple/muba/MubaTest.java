@@ -4,6 +4,7 @@ import com.google.inject.*;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
+import com.wrupple.muba.bootstrap.server.service.FormatDictionary;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
@@ -44,6 +45,8 @@ public abstract class MubaTest extends EasyMockSupport {
 
     protected EventSuscriptionChain chainMock;
 
+    protected FormatDictionary mockFormats;
+
 
 	public class BPMTestModule extends AbstractModule {
 
@@ -65,6 +68,8 @@ public abstract class MubaTest extends EasyMockSupport {
             mockLogger = mock(WriteAuditTrails.class);
             peerValue = mock(CatalogPeer.class);
             chainMock = mock(EventSuscriptionChain.class);
+            mockFormats = mock(FormatDictionary.class);
+			bind(FormatDictionary.class).toInstance(mockFormats);
             bind(WriteAuditTrails.class).toInstance(mockLogger);
             bind(WriteOutput.class).toInstance(mockWriter);
             bind(EventSuscriptionChain.class).toInstance(chainMock);

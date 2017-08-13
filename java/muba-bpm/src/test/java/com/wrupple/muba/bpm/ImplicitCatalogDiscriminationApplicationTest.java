@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
+import com.wrupple.muba.bpm.domain.impl.ProcessRequestImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentReceiverEngine;
@@ -41,7 +42,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
 
     public ImplicitCatalogDiscriminationApplicationTest() {
-        init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
+        init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(),new ChocoSolverModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new BootstrapModule());
     }
 
@@ -60,17 +61,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
     @Before
     public void setUp() throws Exception {
-        expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
 
-        runtimeContext = injector.getInstance(RuntimeContext.class);
-        log.trace("NEW TEST EXCECUTION CONTEXT READY");
-    }
-
-    @Test
-    public void submitBookingData() throws Exception {
 
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
         log.trace("[-register catalogs-]");
@@ -151,25 +142,8 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
         runtimeContext.reset();
 
-        log.trace("[-Create a Booking-]");
 
-        Booking booking = new Booking();
-        booking.setLocation(7);
-        booking.setName("test");
 
-        action = new CatalogActionRequestImpl();
-        action.setFollowReferences(true);
-        action.setEntryValue(booking);
-
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-                CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
-
-        runtimeContext.process();
-        catalogContext = runtimeContext.getServiceContext();
-        booking = catalogContext.getEntryResult();
-
-        runtimeContext.reset();
 
         log.trace("[-create a pool of drivers to resolve the booking-]");
 
@@ -191,24 +165,61 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
             runtimeContext.reset();
         }
 
-        log.trace("[-Ask BPM what application item to use to handle this booking-]");
+        log.trace("[-Create a Booking-]");
 
-        //or CatalogIntent?
-        ImplicitIntent request ;
+        booking = new Booking();
+        booking.setLocation(7);
+        booking.setName("test");
+
+        action = new CatalogActionRequestImpl();
+        action.setFollowReferences(true);
+        action.setEntryValue(booking);
+
+        runtimeContext.setServiceContract(action);
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
+
+        runtimeContext.process();
+        catalogContext = runtimeContext.getServiceContext();
+        booking = catalogContext.getEntryResult();
+
+        runtimeContext.reset();
+        
+        expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+        expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+        expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+        expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+        expect(mockFormats.isFile(anyObject(String.class))).andStubReturn(false);
+
+        runtimeContext = injector.getInstance(RuntimeContext.class);
+        log.trace("NEW TEST EXCECUTION CONTEXT READY");
+    }
+
+    Booking booking;
+
+    @Test
+    public void submitBookingData() throws Exception {
+
+        log.trace("[-Ask BPM what application item to use to handle this booking-]");
 
         runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,Booking.class.getSimpleName(),Booking.class.getSimpleName());
 
         runtimeContext.process();
 
         //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
-        item = runtimeContext.getConvertedResult();
+        ApplicationItemImpl item = runtimeContext.getConvertedResult();
 
         runtimeContext.reset();
 
         log.trace("[-Create Booking Handling Application Context-]");
 
+        //item+booking;
+        ProcessRequestImpl bookingRequest = new ProcessRequestImpl();
+        bookingRequest.setEntry(booking.getId());
+        bookingRequest.setHandle(item.getId());
+
         //BOOKING IS SAVED AS entry value (result) on the initial application state
-        runtimeContext.setServiceContract(booking);
+        runtimeContext.setServiceContract(bookingRequest);
         runtimeContext.setSentence(IntentReceiverServiceManifest.SERVICE_NAME,/*activityId*/item.getId().toString());
 
         runtimeContext.process();
@@ -225,7 +236,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         runtimeContext.process();
             //TODO maybe solution of a selection task is Filter Data
         activityState = runtimeContext.getConvertedResult();
-        driver = (Driver) activityState.getUserSelectionValues().get(0);
+        Driver driver = (Driver) activityState.getUserSelectionValues().get(0);
         runtimeContext.reset();
 
         log.info("post solution of first task to the runner engine");
@@ -258,7 +269,6 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         assertTrue(booking.getStakeHolder()!=null);
         assertTrue(booking.getDriverValue()!=null);
         assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);
-
     }
 
 }

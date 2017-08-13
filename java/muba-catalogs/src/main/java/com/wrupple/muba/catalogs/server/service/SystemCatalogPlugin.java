@@ -15,9 +15,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager, JSRAnnotationsDictionary, CatalogKeyServices {
-    static final String DOMAIN_METADATA = "Namespace"+CatalogDescriptor.CATALOG_ID;
-		//necesaary to explicitly point to context? something.context.old
-		static final String SOURCE_OLD = ContextEvaluationService.NAME+".old"+CatalogEntry.FOREIGN_KEY;
+
 
     FieldAccessStrategy access();
 

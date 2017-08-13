@@ -8,12 +8,11 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
 import com.wrupple.muba.bootstrap.domain.reserved.HasFieldId;
 import com.wrupple.muba.bpm.server.chain.command.AbstractComparationCommand;
-import com.wrupple.muba.bpm.server.chain.command.BPMValueChangeListener;
+import com.wrupple.muba.bpm.server.chain.command.ValueChangeListener;
 import com.wrupple.muba.bpm.server.domain.ValueChangeTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -24,12 +23,12 @@ import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandler
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
-public class BPMValueChangeListenerImpl extends AbstractComparationCommand implements BPMValueChangeListener {
+public class ValueChangeListenerImpl extends AbstractComparationCommand implements ValueChangeListener {
 
 	private final CatalogTriggerInterpret interpret;
 
 	@Inject
-	public BPMValueChangeListenerImpl(CatalogTriggerInterpret interpret) {
+	public ValueChangeListenerImpl(CatalogTriggerInterpret interpret) {
 		super();
 		this.interpret = interpret;
 	}
@@ -44,7 +43,7 @@ public class BPMValueChangeListenerImpl extends AbstractComparationCommand imple
 			// TODO this means mny unecesary map searches when no triggers are
 			// provided
 			List<ValueChangeTrigger> changeTriggers = (List<ValueChangeTrigger>) context
-					.get(BPMValueChangeListener.CONTEXT_TRIGGERS_KEY);
+					.get(ValueChangeListener.CONTEXT_TRIGGERS_KEY);
 			if (changeTriggers == null) {
 				CatalogActionContext spawned = context.getCatalogManager().spawn(context);
 				FilterData filterData = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,

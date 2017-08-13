@@ -1,4 +1,4 @@
-package com.wrupple.muba.bpm.domain;
+package com.wrupple.muba.catalogs.domain;
 
 public interface WruppleDomainStyleSheet extends Document{
 

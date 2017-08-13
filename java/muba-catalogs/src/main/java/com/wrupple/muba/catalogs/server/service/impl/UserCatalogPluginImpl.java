@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +92,12 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 
 	@Override
 	public ValidationExpression[] getValidations() {
+		return null;
+	}
+
+	@Override
+	public Command[] getActions() {
+		//
 		return null;
 	}
 

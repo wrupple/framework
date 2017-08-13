@@ -9,19 +9,19 @@ import org.apache.commons.chain.Context;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.KnownExceptionImpl;
 import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.bpm.server.chain.command.BPMStakeHolderTrigger;
+import com.wrupple.muba.bpm.server.chain.command.StakeHolderTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 
-public class BPMStakeHolderTriggerImpl implements BPMStakeHolderTrigger {
+public class StakeHolderTriggerImpl implements StakeHolderTrigger {
 
 	private static final String CHANGE_STAKEHOLDER = "com.wrupple.muba.bpm.stakeHolder";
 	private final boolean anonStakeHolder;
 	private final int unknownUser;
 
 	@Inject
-	public BPMStakeHolderTriggerImpl(@Named("security.anonStakeHolder")Boolean anonStakeHolder,@Named("com.wrupple.errors.unknownUser") Integer unknownUser) {
+	public StakeHolderTriggerImpl(@Named("security.anonStakeHolder")Boolean anonStakeHolder, @Named("com.wrupple.errors.unknownUser") Integer unknownUser) {
 		this.anonStakeHolder=anonStakeHolder;
 		this.unknownUser=unknownUser;
 	}

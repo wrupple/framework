@@ -9,7 +9,7 @@ import com.wrupple.muba.catalogs.domain.CatalogTrigger;
 
 public interface ValueChangeTrigger extends CatalogTrigger,HasCatalogId ,ManagedObject,HasFieldId{
 	
-	String CATALOG = "ValueChangeTrigger";
+	String CATALOG = "ValueChangeAudit";
 	
 	String getInitialValue();
 	

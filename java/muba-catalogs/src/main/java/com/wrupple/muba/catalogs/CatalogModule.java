@@ -129,6 +129,7 @@ public class CatalogModule extends AbstractModule {
 		// 2014-01-18T00:35:03.463Z
 		String datePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+		bind(Integer.class).annotatedWith(Names.named("catalog.storage.secure")).toInstance(6);
 		bind(String.class).annotatedWith(Names.named("template.token.splitter")).toInstance("\\.");
 		Pattern pattern = Pattern.compile(rawPattern);
 		bind(Pattern.class).annotatedWith(Names.named("template.pattern")).toInstance(pattern);

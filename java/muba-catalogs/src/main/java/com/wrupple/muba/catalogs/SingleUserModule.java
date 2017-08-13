@@ -25,8 +25,10 @@ public class SingleUserModule extends AbstractModule {
 		 * CONFIGURATION
 		 */
 		// used when building urls for outsiders
-		
+
 		bind(Boolean.class).annotatedWith(Names.named("system.multitenant")).toInstance(false);
+		bind(Boolean.class).annotatedWith(Names.named("security.anonStakeHolder")).toInstance(true);
+
 
 		/*
 		 * SERVICES
