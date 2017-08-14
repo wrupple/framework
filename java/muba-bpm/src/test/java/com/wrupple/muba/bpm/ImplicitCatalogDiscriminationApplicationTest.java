@@ -11,12 +11,10 @@ import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessRequestImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
-import com.wrupple.muba.bpm.server.chain.IntentReceiverEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.IntentReceiverRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
@@ -49,8 +47,6 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
     @Override
     protected void registerServices(SystemContext switchs) {
         switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(IntentReceiverServiceManifest.class), injector.getInstance(IntentReceiverEngine.class), injector.getInstance(IntentReceiverRequestInterpret.class));
 
         switchs.registerService(injector.getInstance(BusinessServiceManifest.class), injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
 
@@ -215,27 +211,24 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
         //item+booking;
         ProcessRequestImpl bookingRequest = new ProcessRequestImpl();
-        bookingRequest.setEntry(booking.getId());
         bookingRequest.setHandle(item.getId());
+        bookingRequest.setEntry(booking.getId());
+
 
         //BOOKING IS SAVED AS entry value (result) on the initial application state
         runtimeContext.setServiceContract(bookingRequest);
-        runtimeContext.setSentence(IntentReceiverServiceManifest.SERVICE_NAME,/*activityId*/item.getId().toString());
+        //runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
 
-        runtimeContext.process();
-
-        //a new activity state
-        ApplicationState activityState = runtimeContext.getConvertedResult();
-        runtimeContext.reset();
-
+        //FIXME maybe this is the point we start using event handlers
         log.info("[-alter activity state (context) by invoking automatic solver on it]");
         log.trace("post a solver request to the runner engine");
-        runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,BusinessServiceManifest.SOLVE);
+        //runtimeContext.setServiceContract(activityState);
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
 
         runtimeContext.process();
-            //TODO maybe solution of a selection task is Filter Data
-        activityState = runtimeContext.getConvertedResult();
+        //a new activity state
+        ApplicationState activityState = runtimeContext.getConvertedResult();
+
         Driver driver = (Driver) activityState.getUserSelectionValues().get(0);
         runtimeContext.reset();
 

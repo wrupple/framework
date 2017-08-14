@@ -9,11 +9,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
 import com.wrupple.muba.bootstrap.server.service.EventBus;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
-import com.wrupple.muba.bpm.domain.impl.ImplicitIntentImpl;
-import com.wrupple.muba.bpm.domain.impl.IntentResolverServiceManifestImpl;
-import com.wrupple.muba.bpm.domain.impl.NotificationImpl;
-import com.wrupple.muba.bpm.server.chain.IntentReceiverEngine;
+import com.wrupple.muba.bpm.domain.impl.*;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
@@ -36,10 +32,6 @@ public class BusinessModule  extends AbstractModule {
         bind(IntentResolverEngine.class).to(IntentResolverEngineImpl.class);
         bind(IntentResolverRequestInterpret.class).to(IntentResolverRequestInterpretImpl.class);
         bind(IntentResolverContext.class).to(IntentResolverContextImpl.class);
-
-        bind(IntentReceiverServiceManifest.class).to(IntentReceiverServiceManifestImpl.class);
-        bind(IntentReceiverEngine.class).to(IntentReceiverEngineImpl.class);
-        bind(IntentReceiverRequestInterpret.class).to(IntentReceiverRequestInterpretImpl.class);
 
         bind(EventBus.class).to(EventBusImpl.class);
         bind(BusinessPlugin.class).to(BusinessPluginImpl.class);
