@@ -10,9 +10,13 @@ import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
 import com.wrupple.muba.bootstrap.server.service.EventBus;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.*;
+import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
+import com.wrupple.muba.bpm.server.chain.impl.BusinessEngineImpl;
+import com.wrupple.muba.bpm.server.domain.BusinessContext;
+import com.wrupple.muba.bpm.server.domain.BusinessContextImpl;
 import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.impl.BusinessPluginImpl;
@@ -27,6 +31,11 @@ public class BusinessModule  extends AbstractModule {
     @Override
     protected void configure() {
         bind(Integer.class).annotatedWith(Names.named("com.wrupple.errors.unknownUser")).toInstance(0);
+
+        bind(BusinessServiceManifest.class).to(BusinessServiceManifestImpl.class);
+        bind(BusinessEngine.class).to(BusinessEngineImpl.class);
+        bind(BusinessRequestInterpret.class).to(BusinessRequestInterpretImpl.class);
+        bind(BusinessContext.class).to(BusinessContextImpl.class);
 
         bind(IntentResolverServiceManifest.class).to(IntentResolverServiceManifestImpl.class);
         bind(IntentResolverEngine.class).to(IntentResolverEngineImpl.class);

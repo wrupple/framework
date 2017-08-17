@@ -46,9 +46,9 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
     @Override
     protected void registerServices(SystemContext switchs) {
-        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
-
         switchs.registerService(injector.getInstance(BusinessServiceManifest.class), injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
+
+        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
 
         switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 
@@ -213,6 +213,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         ProcessRequestImpl bookingRequest = new ProcessRequestImpl();
         bookingRequest.setHandle(item.getId());
         bookingRequest.setEntry(booking.getId());
+        bookingRequest.setState(null /*this means create a new activity context, otherwise the context would be retrived*/);
 
 
         //BOOKING IS SAVED AS entry value (result) on the initial application state
@@ -220,22 +221,29 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         //runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
 
         //FIXME maybe this is the point we start using event handlers
-        log.info("[-alter activity state (context) by invoking automatic solver on it]");
-        log.trace("post a solver request to the runner engine");
         //runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
 
         runtimeContext.process();
         //a new activity state
         ApplicationState activityState = runtimeContext.getConvertedResult();
 
-        Driver driver = (Driver) activityState.getUserSelectionValues().get(0);
+        String applicationId = activityState.getDistinguishedName();
+
         runtimeContext.reset();
 
-        log.info("post solution of first task to the runner engine");
+        log.info("find solution of first task to the runner engine");
         //the best available driver
-        runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,applicationId);
+
+        runtimeContext.process();
+
+        Driver driver = runtimeContext.getConvertedResult();
+
+        runtimeContext.reset();
+
+        log.info("post solution of first task to the business engine");
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,applicationId);
 
         runtimeContext.process();
 
@@ -243,15 +251,14 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         runtimeContext.reset();
 
         log.info("manually solving the second task");
-
         //set solution of second task in activity state
         booking.setDriverValue(driver);
         activityState.setEntryValue(booking);
 
-        log.info("post solution of first task to the runner engine");
+        log.info("post solution of second task to the business engine");
 
         runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,activityState.getDistinguishedName());
 
         runtimeContext.process();
 
