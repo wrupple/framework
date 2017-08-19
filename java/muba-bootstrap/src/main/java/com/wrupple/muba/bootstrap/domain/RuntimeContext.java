@@ -101,4 +101,5 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 	void setSentence(String... words);
 
 
+    <T extends CatalogEntry> T spawnProcess(CatalogEntry request,String... sentence);
 }

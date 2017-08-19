@@ -6,7 +6,7 @@ import com.wrupple.muba.bpm.domain.Notification;
 /**
  * Created by japi on 12/08/17.
  */
-public class NotificationImpl extends ProcessRequestImpl implements Notification{
+public class NotificationImpl extends BusinessEventImpl implements Notification{
     private Long source;
     private String sourceType;
     private CatalogEntry sourcevalue;

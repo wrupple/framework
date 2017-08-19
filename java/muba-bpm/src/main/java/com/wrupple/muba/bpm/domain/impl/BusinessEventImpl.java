@@ -3,16 +3,14 @@ package com.wrupple.muba.bpm.domain.impl;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationItem;
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.ProcessRequest;
+import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
-
-import java.util.Date;
 
 /**
  * Created by japi on 12/08/17.
  */
-public class ProcessRequestImpl extends ManagedObjectImpl implements ProcessRequest {
+public class BusinessEventImpl extends ManagedObjectImpl implements BusinessEvent {
     @CatalogKey(
             foreignCatalog = ApplicationState.CATALOG
     )

@@ -3,6 +3,7 @@ package com.wrupple.muba.bpm.server.service.impl;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
+import com.wrupple.muba.bpm.server.service.HumanSolver;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
@@ -14,7 +15,7 @@ import javax.inject.Singleton;
  * Created by rarl on 26/05/17.
  */
 @Singleton
-public class HumanSolverImpl implements Solver {
+public class HumanSolverImpl implements HumanSolver {
 
     private final FieldConversionStrategy access;
 

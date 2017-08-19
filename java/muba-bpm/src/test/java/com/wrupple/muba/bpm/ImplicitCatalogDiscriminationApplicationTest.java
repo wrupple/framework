@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import com.wrupple.muba.bootstrap.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
-import com.wrupple.muba.bpm.domain.impl.ProcessRequestImpl;
+import com.wrupple.muba.bpm.domain.impl.BusinessEventImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
@@ -210,7 +210,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         log.trace("[-Create Booking Handling Application Context-]");
 
         //item+booking;
-        ProcessRequestImpl bookingRequest = new ProcessRequestImpl();
+        BusinessEventImpl bookingRequest = new BusinessEventImpl();
         bookingRequest.setHandle(item.getId());
         bookingRequest.setEntry(booking.getId());
         bookingRequest.setState(null /*this means create a new activity context, otherwise the context would be retrived*/);
@@ -232,8 +232,14 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
         runtimeContext.reset();
 
+        Long firstTask = activityState.getTaskDescriptor();
+
+        assertTrue("First task has been assigned",firstTask!=null);
+
+
         log.info("find solution of first task to the runner engine");
         //the best available driver
+
         runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,applicationId);
 
         runtimeContext.process();
@@ -243,11 +249,21 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         runtimeContext.reset();
 
         log.info("post solution of first task to the business engine");
+
+        bookingRequest = new BusinessEventImpl();
+        bookingRequest.setEntryValue(driver);
+        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setState((Long) activityState.getId());
+
+        //BOOKING IS SAVED AS entry value (result) on the initial application state
+        runtimeContext.setServiceContract(bookingRequest);
         runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,applicationId);
 
         runtimeContext.process();
 
         activityState = runtimeContext.getConvertedResult();
+
+        assertTrue("Follow task has been assigned",activityState.getTaskDescriptor()!=null&&!firstTask.equals(activityState.getTaskDescriptor()));
+
         runtimeContext.reset();
 
         log.info("manually solving the second task");

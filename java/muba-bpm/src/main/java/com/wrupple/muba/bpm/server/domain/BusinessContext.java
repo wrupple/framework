@@ -9,4 +9,6 @@ import org.apache.commons.chain.Context;
  */
 public interface BusinessContext extends ServiceContext {
     BusinessContext setRuntimeContext(RuntimeContext requestContext);
+
+    boolean isChanged();
 }

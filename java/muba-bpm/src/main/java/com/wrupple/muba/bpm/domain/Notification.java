@@ -1,17 +1,14 @@
 package com.wrupple.muba.bpm.domain;
 
-import java.util.Date;
-
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
-import com.wrupple.muba.catalogs.domain.Location;
 
 
 /**
  * @author japi
  *
  */
-public interface Notification extends ProcessRequest,ImplicitIntent{
+public interface Notification extends BusinessEvent,ImplicitIntent{
 
 	String CATALOG = "Notification";
 

@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bpm.domain.ProcessRequest;
+import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.bpm.server.domain.BusinessContext;
 import org.apache.commons.beanutils.BeanUtils;
@@ -33,7 +33,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     @Override
     public boolean execute(Context ctx) throws Exception {
         RuntimeContext requestContext = (RuntimeContext) ctx;
-        ProcessRequest request = (ProcessRequest) requestContext.getServiceContract();
+        BusinessEvent request = (BusinessEvent) requestContext.getServiceContract();
         BusinessContext context = requestContext.getServiceContext();
 
         BeanUtils.copyProperties(context,request);
