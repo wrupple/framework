@@ -12,18 +12,18 @@ import com.wrupple.muba.bootstrap.domain.RuntimeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
-import com.wrupple.muba.bootstrap.server.chain.command.impl.ContextSwitchCommandImpl;
+import com.wrupple.muba.bootstrap.server.chain.command.EventDispatcher;
+import com.wrupple.muba.bootstrap.server.chain.command.impl.EventDispatcherImpl;
 
 public class ServiceInvocationThread extends Thread {
-	private static final Logger log = LoggerFactory.getLogger(ContextSwitchCommandImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(EventDispatcherImpl.class);
 
 	private final RuntimeContext requestContext;
-	private final ContextSwitchCommand command;
+	private final EventDispatcher command;
 	private  final boolean rollbackOnViolations;
 	
 	
-	public ServiceInvocationThread(RuntimeContext context, ContextSwitchCommand command, @Named("rollbackOnViolations") Boolean rollbackOnViolations) {
+	public ServiceInvocationThread(RuntimeContext context, EventDispatcher command, @Named("rollbackOnViolations") Boolean rollbackOnViolations) {
 		super();
 		this.command = command;
 		this.requestContext = context;
@@ -32,7 +32,7 @@ public class ServiceInvocationThread extends Thread {
 
 	@Override
 	public void run() {
-		UserTransaction transaction = requestContext.getTransaction();
+		UserTransaction transaction = requestContext.getApplication().getTransaction();
 
 		try {
 			try {

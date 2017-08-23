@@ -178,7 +178,7 @@ public class ServiceDictionaryBinder {
 
 					source.println("@Override");
 					source.println("public void configure(" + genericType
-							+ " object,JavaScriptObject configuration,ProcessContextServices services, EventBus bus,JsTransactionApplicationContext ctx) {");
+							+ " object,JavaScriptObject configuration,ProcessContextServices services, EventRegistry bus,JsTransactionApplicationContext ctx) {");
 					source.print(specificType);
 					source.print(" regreso = (");
 					source.print(specificType);
@@ -214,7 +214,7 @@ public class ServiceDictionaryBinder {
 					source.println("}");
 
 					source.println("public " + genericType
-							+ " get(final JavaScriptObject configuration, ProcessContextServices services, EventBus bus, JsTransactionApplicationContext ctx) { ");
+							+ " get(final JavaScriptObject configuration, ProcessContextServices services, EventRegistry bus, JsTransactionApplicationContext ctx) { ");
 					source.indent();
 					source.print(specificType);
 					source.println(" regreso= get();");
@@ -268,7 +268,7 @@ public class ServiceDictionaryBinder {
 
 				// TODO pass a String prefix Argument to read property value?
 				source.println("public " + genericType
-						+ " getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventBus bus, JsTransactionApplicationContext ctx) {");
+						+ " getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventRegistry bus, JsTransactionApplicationContext ctx) {");
 				source.indent();
 				// read property
 				source.print("String propValue =  JSOHelper.getAttribute(configuration,\"");
@@ -325,7 +325,7 @@ public class ServiceDictionaryBinder {
 				source.println("@Override");
 				source.print("public void reconfigure(PanelTransformationConfig configuration,");
 				source.print(genericType);
-				source.println(" regreso,ProcessContextServices contextServices, EventBus eventBus,JsTransactionApplicationContext contextParameters) {");
+				source.println(" regreso,ProcessContextServices contextServices, EventRegistry eventBus,JsTransactionApplicationContext contextParameters) {");
 				source.indent();
 				source.println("String mathingValue = JSOHelper.getAttribute(configuration, \"" + configurationPropertyName + "\");");
 				checkInitialization(source);

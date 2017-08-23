@@ -14,7 +14,7 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
 import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.server.service.EventBus;
+import com.wrupple.muba.bootstrap.server.service.EventRegistry;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
@@ -126,7 +126,7 @@ public class ServiceRequestValidation extends MubaTest {
 			bind(Person.class).toInstance(mock(Person.class));
 			bind(Host.class).toInstance(mock(Host.class));
 			bind(UserTransaction.class).toInstance(mock(UserTransaction.class));
-			bind(EventBus.class).toInstance(mock(EventBus.class));
+			bind(EventRegistry.class).toInstance(mock(EventRegistry.class));
 			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
 			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 

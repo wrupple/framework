@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
-import com.wrupple.muba.bootstrap.server.service.EventBus;
+import com.wrupple.muba.bootstrap.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.*;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
@@ -20,7 +20,7 @@ import com.wrupple.muba.bpm.server.domain.BusinessContextImpl;
 import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.impl.BusinessPluginImpl;
-import com.wrupple.muba.bpm.server.service.impl.EventBusImpl;
+import com.wrupple.muba.bootstrap.server.service.impl.EventRegistryImpl;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 
@@ -42,7 +42,7 @@ public class BusinessModule  extends AbstractModule {
         bind(IntentResolverRequestInterpret.class).to(IntentResolverRequestInterpretImpl.class);
         bind(IntentResolverContext.class).to(IntentResolverContextImpl.class);
 
-        bind(EventBus.class).to(EventBusImpl.class);
+        bind(EventRegistry.class).to(EventRegistryImpl.class);
         bind(BusinessPlugin.class).to(BusinessPluginImpl.class);
         bind(StakeHolderTrigger.class).to(StakeHolderTriggerImpl.class);
         bind(ValueChangeAudit.class).to(ValueChangeAuditImpl.class);

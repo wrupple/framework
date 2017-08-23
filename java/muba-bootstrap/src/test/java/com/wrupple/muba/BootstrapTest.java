@@ -14,12 +14,12 @@ public class BootstrapTest extends EasyMockSupport {
 	
 	protected Logger log = LoggerFactory.getLogger(BootstrapTest.class);
 
-	protected static final String ADDITION = "add";
-	protected static final String MULTIPLICATION = "multiply";
-	protected static final String DEFAULT_VERSION = "1.0";
-	protected static final String UPGRADED_VERSION = "1.1";
-	protected static final String FIRST_OPERAND_NAME = "first";
-	protected static final String SECOND_OPERAND_NAME = "second";
+	public static final String ADDITION = "add";
+	public static final String MULTIPLICATION = "multiply";
+	public static final String DEFAULT_VERSION = "1.0";
+	public static final String UPGRADED_VERSION = "1.1";
+	public static final String FIRST_OPERAND_NAME = "first";
+	public static final String SECOND_OPERAND_NAME = "second";
 
 	static final String validSerializedContext = "a valid context";
 
@@ -30,7 +30,6 @@ public class BootstrapTest extends EasyMockSupport {
 	// @Mock
 	protected SessionContextImpl session;
 
-	protected RuntimeContext runtimeContext;
 
 	// @TestSubject protected RootServiceManifest muba;
 

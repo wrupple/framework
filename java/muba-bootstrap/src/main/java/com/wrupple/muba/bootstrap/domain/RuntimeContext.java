@@ -25,13 +25,9 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	SessionContext getSession();
 
-	UserTransaction getTransaction();
-
 	void reset();
 
 	void end();
-
-	boolean process() throws Exception;
 
 	void setScopedWriting(boolean b);
 
@@ -100,6 +96,5 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	void setSentence(String... words);
 
-
-    <T extends CatalogEntry> T spawnProcess(CatalogEntry request,String... sentence);
+    boolean process() throws Exception;
 }

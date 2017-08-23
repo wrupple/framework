@@ -2,7 +2,7 @@ package com.wrupple.muba.bpm.domain;
 
 
 import com.wrupple.muba.bootstrap.domain.ServiceContext;
-import com.wrupple.muba.bootstrap.server.service.EventBus;
+import com.wrupple.muba.bootstrap.server.service.EventRegistry;
 
 /**
  * Created by japi on 11/05/17.
@@ -10,7 +10,7 @@ import com.wrupple.muba.bootstrap.server.service.EventBus;
 public interface ApplicationContext extends ApplicationState,ServiceContext {
     final String CATALOG = "ApplicationContext";
 
-    EventBus getServiceBus();
+    EventRegistry getServiceBus();
 
    /* StorageManager getStorageManager();
 

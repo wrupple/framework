@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Provider;
+import javax.transaction.UserTransaction;
 import javax.validation.constraints.NotNull;
 
 import com.wrupple.muba.bootstrap.domain.*;
@@ -25,6 +27,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	/*
 	 * SYSTEM CONTEXT
 	 */
+
 	private final SystemCatalogPlugin catalogManager;
 
 	private final NamespaceContext namespace;
@@ -407,7 +410,7 @@ this.name=name;
 
 	private TransactionHistory assertTransaction() {
 		if (transaction == null) {
-			transaction = new CatalogUserTransactionImpl(getRuntimeContext().getTransaction());
+			transaction = new CatalogUserTransactionImpl(getRuntimeContext().getApplication().getTransaction());
 		}
 		return transaction;
 	}

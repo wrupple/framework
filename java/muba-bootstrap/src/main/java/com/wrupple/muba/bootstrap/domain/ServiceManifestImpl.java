@@ -7,9 +7,10 @@ import java.util.Set;
 
 public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceManifest {
 	private static final long serialVersionUID = -2346526516336493001L;
-	private String distinguishedName, versionDistinguishedName;
+	private String distinguishedName, versionDistinguishedName,outputCatalog;
+	private Long stakeHolder;
 	private ContractDescriptor catalogValue;
-	private List<String> grammar;
+	private List<String> grammar,properties;
 	private List<Long> children;
 	private List<ServiceManifest> childrenValues;
 	private List<String> childrenPaths;
@@ -143,4 +144,37 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
     public Long spawnChild() {
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public String getOutputCatalog() {
+		return outputCatalog;
+	}
+
+	public void setOutputCatalog(String outputCatalog) {
+		this.outputCatalog = outputCatalog;
+	}
+
+	@Override
+	public Long getStakeHolder() {
+		return stakeHolder;
+	}
+
+	@Override
+	public void setStakeHolder(long stakeHolder) {
+		this.stakeHolder=stakeHolder;
+	}
+
+	public void setStakeHolder(Long stakeHolder) {
+		this.stakeHolder = stakeHolder;
+	}
+
+	@Override
+	public List<String> getProperties() {
+		return properties;
+	}
+
+	@Override
+	public void setProperties(List<String> properties) {
+		this.properties = properties;
+	}
 }

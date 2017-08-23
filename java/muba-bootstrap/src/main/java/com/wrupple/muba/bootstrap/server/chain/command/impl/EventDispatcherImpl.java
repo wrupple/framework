@@ -20,13 +20,13 @@ import org.slf4j.LoggerFactory;
 import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
 import com.wrupple.muba.bootstrap.domain.RootServiceManifest;
 import com.wrupple.muba.bootstrap.domain.ServiceManifest;
-import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
+import com.wrupple.muba.bootstrap.server.chain.command.EventDispatcher;
 import com.wrupple.muba.bootstrap.server.chain.command.RequestInterpret;
 import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
 
 @Singleton
-public class ContextSwitchCommandImpl implements ContextSwitchCommand {
-	private static final Logger log = LoggerFactory.getLogger(ContextSwitchCommandImpl.class);
+public class EventDispatcherImpl implements EventDispatcher {
+	private static final Logger log = LoggerFactory.getLogger(EventDispatcherImpl.class);
 
 	private final Validator validator;
 	private final Class<?>[] groups;
@@ -38,7 +38,7 @@ public class ContextSwitchCommandImpl implements ContextSwitchCommand {
 	protected boolean sentenceOverContract;
 
 	@Inject
-	public ContextSwitchCommandImpl(Validator validator, ValidationGroupProvider a) {
+	public EventDispatcherImpl(Validator validator, ValidationGroupProvider a) {
 		sentenceOverContract = true;
 		this.validator = validator;
 		this.groups = a == null ? null : a.get();

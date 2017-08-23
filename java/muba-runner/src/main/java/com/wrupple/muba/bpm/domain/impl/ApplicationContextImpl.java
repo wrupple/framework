@@ -3,7 +3,7 @@ package com.wrupple.muba.bpm.domain.impl;
 import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.FilterData;
 import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bootstrap.server.service.EventBus;
+import com.wrupple.muba.bootstrap.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
@@ -20,12 +20,13 @@ import java.util.List;
  */
 public class ApplicationContextImpl extends ContextBase implements ApplicationContext {
 
-    private final EventBus eventBus;
+    private final EventRegistry eventRegistry;
 
     private Long id,image;
     private String  name;
     @NotNull
     private Long domain;
+    private Long stakeHolder;
     private boolean anonymouslyVisible;
     private ProcessTaskDescriptor taskDescriptorValue;
     private boolean canceled;
@@ -40,8 +41,8 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     private FilterData filterData;
 
     @Inject
-    public ApplicationContextImpl(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public ApplicationContextImpl(EventRegistry eventRegistry) {
+        this.eventRegistry = eventRegistry;
     }
 
     @Override
@@ -168,8 +169,8 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     }
 
     @Override
-    public EventBus getServiceBus() {
-        return eventBus;
+    public EventRegistry getServiceBus() {
+        return eventRegistry;
     }
 
     @Override
@@ -229,5 +230,19 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
 
     public void setFilterData(FilterData filterData) {
         this.filterData = filterData;
+    }
+
+    @Override
+    public Long getStakeHolder() {
+        return stakeHolder;
+    }
+
+    @Override
+    public void setStakeHolder(long stakeHolder) {
+        this.stakeHolder = stakeHolder;
+    }
+
+    public void setStakeHolder(Long stakeHolder) {
+        this.stakeHolder = stakeHolder;
     }
 }

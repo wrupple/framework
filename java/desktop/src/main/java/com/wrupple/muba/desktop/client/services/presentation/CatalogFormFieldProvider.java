@@ -14,7 +14,7 @@ import com.wrupple.vegetate.domain.FieldDescriptor;
  */
 public interface CatalogFormFieldProvider {
 
-	/**EventBus bus,ProcessManager pm,
+	/**EventRegistry bus,ProcessManager pm,
 	 * @param bus 
 	 * @param pm 
 	 * @param d

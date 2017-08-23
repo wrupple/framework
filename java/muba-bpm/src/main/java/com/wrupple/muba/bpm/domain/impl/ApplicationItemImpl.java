@@ -2,6 +2,7 @@ package com.wrupple.muba.bpm.domain.impl;
 
 import com.sun.org.apache.xml.internal.resolver.CatalogEntry;
 import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
+import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.ApplicationItem;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 
@@ -10,36 +11,21 @@ import java.util.List;
 /**
  * Created by japi on 25/07/17.
  */
-public class ApplicationItemImpl extends CatalogEntryImpl implements ApplicationItem {
+public class ApplicationItemImpl extends ServiceManifestImpl implements ApplicationItem {
 
-    private String distinguishedName,outputHandler,description,outputCatalog,catalog, exitActivity, outputField;
-    private List<String> properties;
-    private List<Long> process,requiredElements,children;
-    private List<ProcessTaskDescriptor> processValue;
-    private List<ApplicationItem> childrenValues;
-    private Long stakeHolder,peer;
+    private Long peer;
+    private String description,outputField,exit,cancel,error;
+    private List<Long> dependencies,process;
 
+    private List<ProcessTaskDescriptor> processValues;
 
     @Override
-    public String getDistinguishedName() {
-        return distinguishedName;
+    public Long getPeer() {
+        return peer;
     }
 
-    public void setDistinguishedName(String distinguishedName)  {
-        if(getName()==null){
-            setName(distinguishedName);
-        }
-        this.distinguishedName = distinguishedName;
-    }
-
-    @Override
-    public String getOutputHandler() {
-        return outputHandler;
-    }
-
-    @Override
-    public void setOutputHandler(String outputHandler) {
-        this.outputHandler = outputHandler;
+    public void setPeer(Long peer) {
+        this.peer = peer;
     }
 
     @Override
@@ -52,32 +38,39 @@ public class ApplicationItemImpl extends CatalogEntryImpl implements Application
     }
 
     @Override
-    public String getOutputCatalog() {
-        return outputCatalog;
+    public String getExit() {
+        return exit;
     }
 
-    public void setOutputCatalog(String outputCatalog) {
-        this.outputCatalog = outputCatalog;
-    }
-
-    @Override
-    public String getCatalog() {
-        return catalog;
+    public void setExit(String exit) {
+        this.exit = exit;
     }
 
     @Override
-    public void setCatalog(String catalog) {
-        this.catalog = catalog;
+    public String getCancel() {
+        return cancel;
+    }
+
+    public void setCancel(String cancel) {
+        this.cancel = cancel;
     }
 
     @Override
-    public List<String> getProperties() {
-        return properties;
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     @Override
-    public void setProperties(List<String> properties) {
-        this.properties = properties;
+    public List<Long> getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(List<Long> dependencies) {
+        this.dependencies = dependencies;
     }
 
     @Override
@@ -85,81 +78,18 @@ public class ApplicationItemImpl extends CatalogEntryImpl implements Application
         return process;
     }
 
+    public <T extends ProcessTaskDescriptor> List<T> getProcessValues() {
+        return (List<T>) processValues;
+    }
+
     public void setProcess(List<Long> process) {
         this.process = process;
     }
 
-    @Override
-    public List<Long> getRequiredElements() {
-        return requiredElements;
-    }
 
-    public void setRequiredElements(List<Long> requiredElements) {
-        this.requiredElements = requiredElements;
-    }
 
-    @Override
-    public List<Long> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<Long> children) {
-        this.children = children;
-    }
-
-    public List<ProcessTaskDescriptor> getProcessValue() {
-        return processValue;
-    }
-
-    public void setProcessValue(List<ProcessTaskDescriptor> processValue) {
-        this.processValue = processValue;
-    }
-
-    @Override
-    public List<ApplicationItem> getChildrenValues() {
-        return childrenValues;
-    }
-
-    @Override
-    public void setChildrenValues(List<ApplicationItem> childrenValues) {
-        this.childrenValues = childrenValues;
-    }
-
-    @Override
-    public Long getStakeHolder() {
-        return stakeHolder;
-    }
-
-    @Override
-    public void setStakeHolder(long stakeHolder) {
-        this.stakeHolder=stakeHolder;
-    }
-
-    public void setStakeHolder(Long stakeHolder) {
-        this.stakeHolder = stakeHolder;
-    }
-
-    @Override
-    public Long getPeer() {
-        return peer;
-    }
-
-    public void setPeer(Long peer) {
-        this.peer = peer;
-    }
-
-    @Override
-    public String getCatalogType() {
-        return CATALOG;
-    }
-
-    @Override
-    public String getExitActivity() {
-        return exitActivity;
-    }
-
-    public void setExitActivity(String exitActivity) {
-        this.exitActivity = exitActivity;
+    public  <T extends ProcessTaskDescriptor> void setProcessValues(List<T> processValues) {
+        this.processValues = (List<ProcessTaskDescriptor>) processValues;
     }
 
     @Override

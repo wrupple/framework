@@ -2,12 +2,9 @@ package com.wrupple.muba.bootstrap.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasChildrenValues;
-import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
-import com.wrupple.muba.bootstrap.domain.reserved.HasParentValue;
+import com.wrupple.muba.bootstrap.domain.reserved.*;
 
-public interface ServiceManifest extends HasDistinguishedName,  HasChildrenValues<Long, ServiceManifest>,HasParentValue<Long,ServiceManifest>,CatalogEntry,HasCatalogId {
+public interface ServiceManifest extends HasProperties,HasStakeHolder,HasDistinguishedName,ImplicitIntent,HasCatalogId,TreeNode<Long,ServiceManifest> {
 	final String ROOT_SERVICE_MANIFEST ="vegetate.manifest";
 	final String CATALOG = "ServiceManifest";
 	

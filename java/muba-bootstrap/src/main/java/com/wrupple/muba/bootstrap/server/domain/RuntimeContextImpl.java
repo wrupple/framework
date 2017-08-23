@@ -25,7 +25,7 @@ import com.wrupple.muba.bootstrap.domain.SessionContext;
 import com.wrupple.muba.bootstrap.domain.annotations.Sentence;
 import com.wrupple.muba.bootstrap.domain.reserved.HasLocale;
 import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
-import com.wrupple.muba.bootstrap.server.chain.command.ContextSwitchCommand;
+import com.wrupple.muba.bootstrap.server.chain.command.EventDispatcher;
 
 @Sentence
 public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
@@ -39,7 +39,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	public static final String SCOPED_WRITER = "muba.bootstrap.writer";
 	public static final String SCOPED_BUFFER = SCOPED_WRITER + ".buffer";
 
-	private ContextSwitchCommand process;
 	private List<String> sentence;
 	private int nextIndex, error;
 
@@ -55,35 +54,22 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	private List<String> warnings;
 	private Exception caughtException;
 	private UserTransaction transaction;
-	private final Provider<UserTransaction> transactionProvider;
 	private final RuntimeContext parent;
 	private Object result;
 	private long totalResponseSize;
 	private Set<ConstraintViolation<?>> constraintViolations;
 	private ListIterator<String> wordIterator;
 
-	public RuntimeContextImpl(ContextSwitchCommand process, SystemContext appication, SessionContext session,
-							  Provider<UserTransaction> transactionProvider, RuntimeContext parent) {
+	public RuntimeContextImpl( SystemContext appication, SessionContext session, RuntimeContext parent) {
 		super();
-		this.process = process;
 		this.application = appication;
-		this.transactionProvider = transactionProvider;
 		this.session = session;
 		this.parent = parent;
 	}
 
 	@Inject
-	public RuntimeContextImpl(ContextSwitchCommand process, SystemContext appication, SessionContext session,
-							  Provider<UserTransaction> transactionProvider) {
-		this(process, appication, session, transactionProvider, null);
-	}
-
-	@Override
-	public UserTransaction getTransaction() {
-		if (transaction == null) {
-			transaction = transactionProvider == null ? null : transactionProvider.get();
-		}
-		return transaction;
+	public RuntimeContextImpl( SystemContext appication, SessionContext session) {
+		this( appication, session, null);
 	}
 
 	@Override
@@ -225,6 +211,11 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	}
 
 	@Override
+	public boolean process() throws Exception {
+		return getApplication().resume(this);
+	}
+
+	@Override
 	public void setNextWordIndex(int nextTokenIndex) {
 		wordIterator = sentence.listIterator(nextTokenIndex);
 	}
@@ -350,11 +341,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	}
 
 	@Override
-	public boolean process() throws Exception {
-		return process.execute(this);
-	}
-
-	@Override
 	public <T> T getConvertedResult() {
 		if (this.result == null) {
 			if (this.serviceContext != this && this.serviceContext instanceof HasResult) {
@@ -371,7 +357,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 	@Override
 	public RuntimeContext spawnChild() {
-		return new RuntimeContextImpl(process, getApplication(), getSession(), transactionProvider, this);
+		return new RuntimeContextImpl( getApplication(), getSession(), this);
 	}
 
 	@Override
@@ -444,7 +430,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
 		result = prime * result + nextIndex;
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + ((process == null) ? 0 : process.hashCode());
 		result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
 		result = prime * result + (scopedWriting ? 1231 : 1237);
 		result = prime * result + ((sentence == null) ? 0 : sentence.hashCode());
@@ -453,7 +438,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		result = prime * result + ((session == null) ? 0 : session.hashCode());
 		result = prime * result + (int) (totalResponseSize ^ (totalResponseSize >>> 32));
 		result = prime * result + ((transaction == null) ? 0 : transaction.hashCode());
-		result = prime * result + ((transactionProvider == null) ? 0 : transactionProvider.hashCode());
 		result = prime * result + ((warnings == null) ? 0 : warnings.hashCode());
 		result = prime * result + ((wordIterator == null) ? 0 : wordIterator.hashCode());
 		return result;
@@ -512,11 +496,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 				return false;
 		} else if (!parent.equals(other.parent))
 			return false;
-		if (process == null) {
-			if (other.process != null)
-				return false;
-		} else if (!process.equals(other.process))
-			return false;
 		if (result == null) {
 			if (other.result != null)
 				return false;
@@ -550,11 +529,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 			if (other.transaction != null)
 				return false;
 		} else if (!transaction.equals(other.transaction))
-			return false;
-		if (transactionProvider == null) {
-			if (other.transactionProvider != null)
-				return false;
-		} else if (!transactionProvider.equals(other.transactionProvider))
 			return false;
 		if (warnings == null) {
 			if (other.warnings != null)

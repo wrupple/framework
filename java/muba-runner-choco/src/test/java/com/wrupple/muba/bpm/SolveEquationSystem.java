@@ -16,7 +16,7 @@ import javax.validation.Validator;
 
 import com.wrupple.muba.ChocoSolverTestModule;
 import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.server.service.EventBus;
+import com.wrupple.muba.bootstrap.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
@@ -131,8 +131,8 @@ public class SolveEquationSystem extends MubaTest {
         }
 
         @Provides
-        public EventBus implicitIntentHandlerDictionary() {
-            return mock(EventBus.class);
+        public EventRegistry implicitIntentHandlerDictionary() {
+            return mock(EventRegistry.class);
         }
 
         @Provides
