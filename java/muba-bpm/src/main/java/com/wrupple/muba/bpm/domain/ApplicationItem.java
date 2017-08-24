@@ -2,10 +2,8 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
-import com.wrupple.muba.bootstrap.domain.reserved.*;
+import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.reserved.*;
 
 /**
  *

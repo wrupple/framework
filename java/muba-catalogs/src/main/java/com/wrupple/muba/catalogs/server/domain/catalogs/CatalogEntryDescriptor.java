@@ -3,7 +3,7 @@ package com.wrupple.muba.catalogs.server.domain.catalogs;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;

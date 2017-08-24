@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.server.service.ObjectMapper;
+import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 
 public class GenericResponseWriterImpl implements Command {

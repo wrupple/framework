@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
-			<artifactId>bootstrap</artifactId>
+			<artifactId>muba</artifactId>
 			<version>${muba.version}</version>
 		</dependency>
 

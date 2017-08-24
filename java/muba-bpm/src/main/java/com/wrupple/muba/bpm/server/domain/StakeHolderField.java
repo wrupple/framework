@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.domain;
 
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.domain.Person;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
 
 public class StakeHolderField extends FieldDescriptorImpl {

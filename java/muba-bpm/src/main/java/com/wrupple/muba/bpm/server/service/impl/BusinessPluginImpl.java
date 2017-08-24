@@ -7,10 +7,10 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.Host;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.Host;
+import com.wrupple.muba.event.domain.Person;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.chain.command.StakeHolderTrigger;
 import com.wrupple.muba.bpm.server.chain.command.ValueChangeAudit;

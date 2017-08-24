@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasFieldId;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.reserved.HasFieldId;
 import com.wrupple.muba.bpm.server.chain.command.AbstractComparationCommand;
 import com.wrupple.muba.bpm.server.chain.command.ValueChangeListener;
 import com.wrupple.muba.bpm.server.domain.ValueChangeTrigger;

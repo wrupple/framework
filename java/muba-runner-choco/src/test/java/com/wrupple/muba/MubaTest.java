@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.wrupple.muba.bootstrap.domain.SystemContext;
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.domain.SystemContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
 public abstract class MubaTest extends EasyMockSupport {
 

@@ -8,7 +8,7 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.generic.LookupCommand;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.bpm.server.chain.FormatManager;
 import com.wrupple.muba.catalogs.server.chain.command.FormatResultSet;
 

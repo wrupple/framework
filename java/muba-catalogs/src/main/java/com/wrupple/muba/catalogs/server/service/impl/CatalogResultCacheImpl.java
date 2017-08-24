@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterData;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.domain.FilterDataImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;

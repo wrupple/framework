@@ -15,7 +15,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate.Session;
 import com.wrupple.muba.catalogs.server.service.GenericJavaObjectDAO;
 import com.wrupple.muba.desktop.server.service.CatalogTableNameService;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 

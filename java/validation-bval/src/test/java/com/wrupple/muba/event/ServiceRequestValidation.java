@@ -1,4 +1,4 @@
-package com.wrupple.muba.bootstrap;
+package com.wrupple.muba.event;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,8 +13,8 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.server.service.EventRegistry;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
@@ -25,10 +25,10 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
-import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.reserved.HasResult;
+import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
 public class ServiceRequestValidation extends MubaTest {
 
@@ -44,7 +44,7 @@ public class ServiceRequestValidation extends MubaTest {
 		init(new MockModule(), new ValidationModule(), new BootstrapModule());
 	}
 	
-	protected void registerServices(Validator v, ValidationGroupProvider g,SystemContext switchs) {
+	protected void registerServices(SystemContext switchs) {
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });
 		ContractDescriptor operationContract = new ContractDescriptorImpl(
 				Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), ProblemRequest.class);
@@ -53,7 +53,7 @@ public class ServiceRequestValidation extends MubaTest {
 		ServiceManifest addDouble = new ServiceManifestImpl(ADDITION, UPGRADED_VERSION, operationContract, grammar);
 
 
-		switchs.registerService(multiply, new UpdatedVersionService() {
+		switchs.getIntentInterpret().registerService(multiply, new UpdatedVersionService() {
 
 			@Override
 			protected Double operation(Double first, Double second) {
@@ -61,7 +61,7 @@ public class ServiceRequestValidation extends MubaTest {
 				return first * second;
 			}
 		});
-		switchs.registerService(addInt, new OldVesionService() {
+		switchs.getIntentInterpret().registerService(addInt, new OldVesionService() {
 
 			@Override
 			protected int operation(int first, int second) {
@@ -70,7 +70,7 @@ public class ServiceRequestValidation extends MubaTest {
 			}
 
 		});
-		switchs.registerService(addDouble, new UpdatedVersionService() {
+		switchs.getIntentInterpret().registerService(addDouble, new UpdatedVersionService() {
 
 			@Override
 			protected Double operation(Double first, Double second) {
@@ -126,7 +126,6 @@ public class ServiceRequestValidation extends MubaTest {
 			bind(Person.class).toInstance(mock(Person.class));
 			bind(Host.class).toInstance(mock(Host.class));
 			bind(UserTransaction.class).toInstance(mock(UserTransaction.class));
-			bind(EventRegistry.class).toInstance(mock(EventRegistry.class));
 			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
 			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 
@@ -148,7 +147,7 @@ public class ServiceRequestValidation extends MubaTest {
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
 			log.debug("Excecuting on {},{}", first, second);
-			Map<String, ServiceManifest> versions = runtimeContext.getApplication().getRootService()
+			Map<String, ServiceManifest> versions = runtimeContext.getApplication().getIntentInterpret().getRootService()
 					.getVersions(second);
 			// is there an operation named like this?
 			if (versions == null) {

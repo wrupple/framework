@@ -2,10 +2,10 @@ package com.wrupple.muba.catalogs.server.domain;
 
 import javax.validation.constraints.NotNull;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.annotations.AvailableCommand;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.annotations.AvailableCommand;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 
 @ValidCatalogActionRequest

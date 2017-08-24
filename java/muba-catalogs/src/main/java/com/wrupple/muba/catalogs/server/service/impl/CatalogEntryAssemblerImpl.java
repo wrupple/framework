@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionResult;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;

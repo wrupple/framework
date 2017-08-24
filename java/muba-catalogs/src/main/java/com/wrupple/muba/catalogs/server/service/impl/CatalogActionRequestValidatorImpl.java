@@ -10,13 +10,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
-import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.event.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bootstrap.server.service.ContextAwareValidator;
-import com.wrupple.muba.bootstrap.server.service.PropertyValidationContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.service.ContextAwareValidator;
+import com.wrupple.muba.event.server.service.PropertyValidationContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;

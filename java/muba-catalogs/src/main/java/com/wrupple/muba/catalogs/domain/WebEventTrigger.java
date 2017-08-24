@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
+import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
+import com.wrupple.muba.event.domain.reserved.HasProperties;
 
 public interface WebEventTrigger extends CatalogTrigger,HasDistinguishedName,HasProperties
 {

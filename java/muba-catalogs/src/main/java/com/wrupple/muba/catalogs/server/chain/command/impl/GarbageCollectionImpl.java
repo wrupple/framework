@@ -11,11 +11,11 @@ import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterCriteria;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;

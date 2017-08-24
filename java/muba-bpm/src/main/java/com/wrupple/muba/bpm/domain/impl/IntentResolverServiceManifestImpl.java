@@ -1,8 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
-import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
-import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.ImplicitIntent;
+import com.wrupple.muba.event.domain.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.IntentResolverServiceManifest;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 
@@ -10,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by japi on 29/07/17.

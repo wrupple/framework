@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;

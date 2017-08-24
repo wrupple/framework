@@ -15,8 +15,8 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
 import com.wrupple.muba.ChocoSolverTestModule;
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.server.service.EventRegistry;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
@@ -37,9 +37,9 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.BootstrapModule;
+import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -131,11 +131,6 @@ public class SolveEquationSystem extends MubaTest {
         }
 
         @Provides
-        public EventRegistry implicitIntentHandlerDictionary() {
-            return mock(EventRegistry.class);
-        }
-
-        @Provides
         public CatalogDeserializationService catalogDeserializationService() {
             return mock(CatalogDeserializationService.class);
         }
@@ -150,11 +145,11 @@ public class SolveEquationSystem extends MubaTest {
     @Override
     protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-        switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
+        switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 
 
         SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
-        switchs.registerService(solverServiceManifest, injector.getInstance(SolverEngine.class),injector.getInstance(ActivityRequestInterpret.class));
+        switchs.getIntentInterpret().registerService(solverServiceManifest, injector.getInstance(SolverEngine.class),injector.getInstance(ActivityRequestInterpret.class));
     }
 
 

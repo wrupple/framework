@@ -1,7 +1,5 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;

@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.shared.service;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;

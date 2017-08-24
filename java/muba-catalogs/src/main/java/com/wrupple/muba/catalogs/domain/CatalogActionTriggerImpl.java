@@ -3,8 +3,8 @@ package com.wrupple.muba.catalogs.domain;
 import java.util.List;
 import java.util.Map;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntryImpl;
 
 public class CatalogActionTriggerImpl extends CatalogEntryImpl implements CatalogActionTrigger, CatalogEntry {
 

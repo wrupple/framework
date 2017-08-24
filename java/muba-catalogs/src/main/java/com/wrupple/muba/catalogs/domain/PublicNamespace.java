@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 
 public final class PublicNamespace implements CatalogNamespace {
 	private static final long serialVersionUID = -6580849358985409720L;

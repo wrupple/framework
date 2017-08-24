@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 
 public interface PersistentCatalogEntity extends CatalogEntry,
 		HasAccesablePropertyValues {

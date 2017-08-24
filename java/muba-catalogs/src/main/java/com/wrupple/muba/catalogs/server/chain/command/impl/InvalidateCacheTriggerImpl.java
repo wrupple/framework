@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;

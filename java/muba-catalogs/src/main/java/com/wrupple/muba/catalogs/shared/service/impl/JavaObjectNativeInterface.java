@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.shared.service.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;

@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.server.service;
 
 import java.util.Map;
 
-import com.wrupple.muba.bootstrap.domain.TransactionHistory;
+import com.wrupple.muba.event.domain.TransactionHistory;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogTrigger;
 

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Provider;
-import javax.transaction.UserTransaction;
 import javax.validation.constraints.NotNull;
 
-import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.impl.ContextBase;
 
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;

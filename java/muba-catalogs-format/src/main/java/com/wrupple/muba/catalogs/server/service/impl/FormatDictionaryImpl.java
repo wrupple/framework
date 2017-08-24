@@ -7,9 +7,9 @@ import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.WriteFormatedDocument;
 import org.apache.commons.chain.CatalogFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.server.service.FormatDictionary;
-import com.wrupple.muba.bootstrap.server.service.impl.Dictionary;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.server.service.FormatDictionary;
+import com.wrupple.muba.event.server.service.impl.Dictionary;
 import com.wrupple.muba.bpm.server.chain.FormatManager;
 
 @Singleton
@@ -25,14 +25,5 @@ public class FormatDictionaryImpl extends Dictionary implements FormatDictionary
 		addCommand(WruppleDomainStyleSheet.CATALOG, documentWriter);
 		addCommand(WrupleSVGDocument.CATALOG, documentWriter);
 	}
-
-
-    public boolean isFileField(FieldDescriptor field) {
-        String catalog = field.getCatalog();
-        return (field.isKey() && catalog != null
-                && (catalog.equals(PersistentImageMetadata.CATALOG) || catalog.equals(WrupleSVGDocument.CATALOG)
-                || catalog.equals(WruppleFileMetadata.CATALOG) || catalog.equals(WruppleAudioMetadata.CATALOG)
-                || catalog.equals(WruppleVideoMetadata.CATALOG)));
-    }
 
 }

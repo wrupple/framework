@@ -2,10 +2,10 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.domain.ServiceContext;
-import com.wrupple.muba.bootstrap.domain.reserved.HasParent;
-import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.ServiceContext;
+import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public interface CatalogActionContext

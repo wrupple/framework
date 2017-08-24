@@ -5,7 +5,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
-import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
 import com.wrupple.muba.bpm.domain.impl.BusinessEventImpl;
@@ -20,13 +20,14 @@ import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bootstrap.BootstrapModule;
+import com.wrupple.muba.event.BootstrapModule;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -45,7 +46,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
     }
 
     @Override
-    protected void registerServices(SystemContext switchs) {
+    protected void registerServices(EventRegistry switchs) {
         switchs.registerService(injector.getInstance(BusinessServiceManifest.class), injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
 
         switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
@@ -116,7 +117,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         ApplicationItemImpl item = new ApplicationItemImpl();
 
         item.setDistinguishedName("createTrip");;
-        item.setProcessValue(Arrays.asList(pickDriver,updateBooking));
+        item.setProcessValues(Arrays.asList(pickDriver,updateBooking));
         //this tells bpm to use this application to resolve bookings
         item.setCatalog(bookingDescriptor.getDistinguishedName());
         item.setOutputCatalog(bookingDescriptor.getDistinguishedName());
@@ -185,7 +186,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
-        expect(mockFormats.isFile(anyObject(String.class))).andStubReturn(false);
+
 
         runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");

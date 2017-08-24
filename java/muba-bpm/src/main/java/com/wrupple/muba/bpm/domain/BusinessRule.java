@@ -2,10 +2,8 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogKey;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 
 /*

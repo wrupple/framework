@@ -1,6 +1,6 @@
 package com.wrupple.vegetate.server.domain;
 
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.chain.web.servlet.ServletWebContext;
 
 public interface RequestScopedContext extends RuntimeContext {

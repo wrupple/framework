@@ -14,13 +14,12 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.domain.Constraint;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogField;

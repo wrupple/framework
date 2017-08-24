@@ -1,9 +1,7 @@
 package com.wrupple.muba.catalogs.server.service;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-
-import java.lang.reflect.InvocationTargetException;
 
 public interface CatalogDescriptorBuilder {
 

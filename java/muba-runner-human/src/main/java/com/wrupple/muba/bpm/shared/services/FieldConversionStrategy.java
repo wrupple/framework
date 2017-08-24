@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.shared.services;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterCriteria;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 

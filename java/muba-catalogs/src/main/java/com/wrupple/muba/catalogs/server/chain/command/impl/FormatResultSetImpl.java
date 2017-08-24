@@ -12,8 +12,8 @@ import javax.validation.ConstraintViolation;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.server.service.ObjectMapper;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;

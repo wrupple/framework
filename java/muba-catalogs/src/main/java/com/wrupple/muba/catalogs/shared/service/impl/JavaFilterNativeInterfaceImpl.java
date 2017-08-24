@@ -1,15 +1,14 @@
 package com.wrupple.muba.catalogs.shared.service.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterData;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterCriteria;
+import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 

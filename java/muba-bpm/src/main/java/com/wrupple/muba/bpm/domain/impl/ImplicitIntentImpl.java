@@ -1,8 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
-import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
+import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.ImplicitIntent;
 
 /**
  * Created by japi on 12/08/17.

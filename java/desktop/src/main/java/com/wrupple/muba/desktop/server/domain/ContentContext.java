@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.chain.impl.ContextBase;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;

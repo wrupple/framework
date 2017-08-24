@@ -1,13 +1,12 @@
 package com.wrupple.muba.catalogs.domain;
 
-import java.io.Serializable;
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasDescription;
-import com.wrupple.muba.bootstrap.domain.reserved.HasFieldId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.reserved.HasDescription;
+import com.wrupple.muba.event.domain.reserved.HasFieldId;
+import com.wrupple.muba.event.domain.reserved.HasProperties;
 
 
 /**

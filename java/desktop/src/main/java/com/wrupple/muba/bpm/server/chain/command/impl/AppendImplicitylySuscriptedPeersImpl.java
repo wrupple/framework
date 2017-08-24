@@ -6,19 +6,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.bootstrap.domain.Host;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.domain.CatalogChangeEvent;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.Host;
+import com.wrupple.muba.event.domain.Person;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.server.chain.command.AppendImplicitylySuscriptedPeers;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;

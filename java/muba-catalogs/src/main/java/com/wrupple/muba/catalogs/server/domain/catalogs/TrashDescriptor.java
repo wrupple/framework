@@ -3,9 +3,9 @@ package com.wrupple.muba.catalogs.server.domain.catalogs;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 import com.wrupple.muba.catalogs.domain.Trash;

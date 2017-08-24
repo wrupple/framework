@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;

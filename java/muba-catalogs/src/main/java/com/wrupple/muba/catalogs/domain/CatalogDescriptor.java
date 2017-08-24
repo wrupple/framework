@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
-import com.wrupple.muba.bootstrap.domain.reserved.HasParent;
-import com.wrupple.muba.bootstrap.domain.reserved.Versioned;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ContractDescriptor;
+import com.wrupple.muba.event.domain.FilterCriteria;
+import com.wrupple.muba.event.domain.FilterDataOrdering;
+import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.Versioned;
 
 public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,HasParent<Long>,Versioned,HasConstrains{
 	public static final String CATALOG_ID = "CatalogDescriptor";

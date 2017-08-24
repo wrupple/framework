@@ -13,20 +13,14 @@ import javax.inject.Provider;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
-import org.apache.commons.chain.generic.LookupCommand;
 import org.apache.commons.chain.web.servlet.ServletWebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasTimestamp;
+import com.wrupple.muba.event.domain.reserved.HasTimestamp;
 import com.wrupple.muba.catalogs.domain.PeerAuthenticationToken;
 import com.wrupple.muba.catalogs.domain.VegetatePeer;
 import com.wrupple.muba.catalogs.domain.ServiceManifest;

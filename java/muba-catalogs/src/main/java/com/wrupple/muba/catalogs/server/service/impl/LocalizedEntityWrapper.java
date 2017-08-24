@@ -2,8 +2,8 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 
 public class LocalizedEntityWrapper implements DistributiedLocalizedEntry {

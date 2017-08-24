@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.shared.service;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
 
 import java.lang.reflect.InvocationTargetException;

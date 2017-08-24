@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;

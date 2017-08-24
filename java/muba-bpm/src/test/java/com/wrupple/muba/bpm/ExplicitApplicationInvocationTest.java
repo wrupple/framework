@@ -1,61 +1,11 @@
 package com.wrupple.muba.bpm;
 
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
+import com.wrupple.muba.event.domain.*;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.transaction.UserTransaction;
-import javax.validation.Validator;
-
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.bpm.domain.SolverServiceManifest;
-import com.wrupple.muba.bpm.server.chain.SolverEngine;
-import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import org.apache.commons.chain.Command;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
-import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
-import com.wrupple.muba.catalogs.CatalogModule;
-import com.wrupple.muba.catalogs.HSQLDBModule;
-import com.wrupple.muba.catalogs.JDBCModule;
-import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadUrlHandlerTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
-import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataDeleteCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataQueryCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataReadCommand;
-import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
-import com.wrupple.muba.catalogs.server.chain.command.WriteAuditTrails;
-import com.wrupple.muba.catalogs.server.chain.command.WriteOutput;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataCreationCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataDeleteCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataQueryCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingCommandImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 
 
 public class ExplicitApplicationInvocationTest extends MubaTest {

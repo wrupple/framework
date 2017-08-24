@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.LoadTask;

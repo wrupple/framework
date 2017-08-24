@@ -8,13 +8,12 @@ import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;

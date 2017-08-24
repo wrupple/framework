@@ -1,9 +1,9 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.google.inject.Inject;
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.domain.reserved.*;
-import com.wrupple.muba.bootstrap.server.service.FormatDictionary;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.*;
+import com.wrupple.muba.event.server.service.FormatDictionary;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
@@ -105,15 +105,13 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	private WritePublicTimelineEventDiscriminator inheritanceHandler;
 
-    private final FormatDictionary formats;
 
 
 	@Inject
 	public CatalogManagerImpl(@Named("template.token.splitter") String splitter /* "\\." */,
                               @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
-            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, FieldAccessStrategy access,FormatDictionary formats) {
+            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(CatalogPeer.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, FieldAccessStrategy access) {
         super();
-        this.formats=formats;
 		this.ancestorIdField = ancestorIdField;
 		this.TOKEN_SPLITTER = splitter;
 		this.pattern = pattern;
@@ -974,7 +972,15 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
     @Override
     public boolean isJoinableValueField(FieldDescriptor field) {
 	    //data that lives on another layer
-        return (field.getCatalog() != null && (field.isEphemeral() || field.isKey() && !formats.isFile(field.getCatalog())));
+        return (field.getCatalog() != null && (field.isEphemeral() || field.isKey() && !isFileField(field)));
+	}
+
+	public boolean isFileField(FieldDescriptor field) {
+		String catalog = field.getCatalog();
+		return (field.isKey() && catalog != null
+				&& (catalog.equals(PersistentImageMetadata.CATALOG) ))/* FIXME or contained in format dictionary || catalog.equals(WrupleSVGDocument.CATALOG)
+				|| catalog.equals(WruppleFileMetadata.CATALOG) || catalog.equals(WruppleAudioMetadata.CATALOG)
+				|| catalog.equals(WruppleVideoMetadata.CATALOG)))*/;
 	}
 
 

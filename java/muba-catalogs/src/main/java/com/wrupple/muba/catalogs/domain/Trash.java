@@ -1,8 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogKey;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
+import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
 
 public interface Trash extends ContentNode ,HasCatalogKey{
 	

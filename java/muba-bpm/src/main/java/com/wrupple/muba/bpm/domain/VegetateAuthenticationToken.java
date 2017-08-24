@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
+import com.wrupple.muba.event.domain.reserved.HasProperties;
 
 /**
  * vegetate action passed unto vegetate oauth servlet to start a user

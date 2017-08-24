@@ -12,8 +12,9 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
-import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.service.*;
+import com.wrupple.muba.event.server.service.FormatDictionary;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,10 +24,10 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.BootstrapModule;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCHSQLTestModule;
@@ -63,7 +64,7 @@ public class HSQLTest extends MubaTest {
 	@Override
 	protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
+		switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 	}
 
 	/*
@@ -104,6 +105,8 @@ public class HSQLTest extends MubaTest {
 			bind(EventSuscriptionChain.class).toInstance(mockSuscriptorChain);
 			bind(WriteAuditTrails.class).toInstance(mockLogger);
 			bind(WriteOutput.class).toInstance(mockWriter);
+
+            bind(FormatDictionary.class).toInstance(mock(FormatDictionary.class));
 
 		}
 

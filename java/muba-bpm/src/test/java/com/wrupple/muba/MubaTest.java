@@ -2,9 +2,10 @@ package com.wrupple.muba;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.FormatDictionary;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.service.EventRegistry;
+import com.wrupple.muba.event.server.service.FormatDictionary;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
@@ -162,10 +163,10 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices(injector.getInstance(SystemContext.class));
+		registerServices(injector.getInstance(EventRegistry.class));
 	}
 
-	protected abstract void registerServices(SystemContext switchs);
+	protected abstract void registerServices(EventRegistry switchs);
 
 	protected abstract void setUp() throws Exception;
 

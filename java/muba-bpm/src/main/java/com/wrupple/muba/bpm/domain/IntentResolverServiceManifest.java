@@ -1,7 +1,6 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.ServiceManifest;
 
 /**
  * Created by japi on 28/07/17.

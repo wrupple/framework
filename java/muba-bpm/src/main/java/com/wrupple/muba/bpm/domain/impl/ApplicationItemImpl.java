@@ -1,8 +1,6 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.sun.org.apache.xml.internal.resolver.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
-import com.wrupple.muba.bootstrap.domain.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.ApplicationItem;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 

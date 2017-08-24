@@ -2,8 +2,7 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
 

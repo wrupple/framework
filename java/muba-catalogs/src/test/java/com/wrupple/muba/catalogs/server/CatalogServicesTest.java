@@ -12,7 +12,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
-import com.wrupple.muba.bootstrap.domain.*;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.CatalogTestModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
@@ -25,9 +25,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
-import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
-import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.BootstrapModule;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.domain.SessionContextImpl;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
@@ -130,7 +130,7 @@ public class CatalogServicesTest extends MubaTest {
 	@Override
 	protected void registerServices( SystemContext switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-		switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
+		switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 	}
 
 	@Before

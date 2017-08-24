@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogChangeEvent;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;

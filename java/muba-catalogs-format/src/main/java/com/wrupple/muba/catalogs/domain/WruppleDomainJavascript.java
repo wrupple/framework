@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 
 
 public interface WruppleDomainJavascript extends CatalogEntry{

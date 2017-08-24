@@ -1,4 +1,4 @@
-package com.wrupple.muba.bootstrap.domain
+package com.wrupple.muba.event.domain
 ;
 
 

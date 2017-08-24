@@ -1,9 +1,8 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.ImplicitIntent;
+import com.wrupple.muba.event.domain.ImplicitIntent;
 import com.wrupple.muba.bpm.domain.IntentResolverContext;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
-import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import org.apache.commons.chain.Context;
 
 /**

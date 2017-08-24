@@ -1,14 +1,10 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
 import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.List;
 
 /**
  * Created by rarl on 10/05/17.

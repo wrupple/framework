@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.*;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.*;
 
 public interface DistributiedLocalizedEntry extends CatalogEntry, HasLocale,HasCatalogKey,HasProperties{
 

@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;

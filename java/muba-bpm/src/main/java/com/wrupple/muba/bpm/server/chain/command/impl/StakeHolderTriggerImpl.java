@@ -6,9 +6,9 @@ import javax.inject.Named;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.KnownExceptionImpl;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.KnownExceptionImpl;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.server.chain.command.StakeHolderTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;

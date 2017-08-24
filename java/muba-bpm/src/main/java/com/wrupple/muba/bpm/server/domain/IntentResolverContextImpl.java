@@ -1,10 +1,8 @@
 package com.wrupple.muba.bpm.server.domain;
 
-import com.wrupple.muba.bootstrap.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.IntentResolverContext;
 import org.apache.commons.chain.impl.ContextBase;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Created by japi on 12/08/17.

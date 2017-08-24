@@ -1,8 +1,8 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogIntent;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.domain.CatalogIntent;
+import com.wrupple.muba.event.domain.reserved.HasProperties;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
 public interface CatalogTrigger extends CatalogIntent, HasStakeHolder,HasProperties {
 	

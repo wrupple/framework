@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.domain.fields;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
 
 public class AnonymouslyVisibleField extends FieldDescriptorImpl {

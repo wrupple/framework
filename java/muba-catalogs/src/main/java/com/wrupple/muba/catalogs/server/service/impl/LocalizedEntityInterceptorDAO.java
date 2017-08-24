@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;

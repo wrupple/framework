@@ -1,9 +1,9 @@
 package com.wrupple.muba.catalogs.server.domain;
 
-import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.CatalogChangeEvent;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 
 public class CatalogChangeEventImpl extends CatalogEntryImpl implements CatalogChangeEvent {
 	private static final long serialVersionUID = -5221787594135912800L;

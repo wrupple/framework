@@ -7,11 +7,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.wrupple.muba.bootstrap.domain.AbstractContractDescriptor;
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
+import com.wrupple.muba.event.domain.AbstractContractDescriptor;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterCriteria;
+import com.wrupple.muba.event.domain.FilterDataOrdering;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;

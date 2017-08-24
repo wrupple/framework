@@ -16,20 +16,18 @@ import com.wrupple.muba.catalogs.shared.service.impl.JavaFilterNativeInterfaceIm
 import com.wrupple.muba.catalogs.shared.service.impl.JavaObjectNativeInterface;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.BooleanConverter;
 import org.apache.commons.beanutils.converters.LongConverter;
-import org.apache.commons.chain.CatalogFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.Person;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
