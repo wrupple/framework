@@ -1,5 +1,8 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.bpm.domain.ApplicationItem;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.BusinessEvent;
@@ -10,6 +13,7 @@ import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Created by japi on 18/08/17.
@@ -26,6 +30,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
     @Override
     public boolean execute(Context ctx) throws Exception {
+
         BusinessContext context = (BusinessContext) ctx;
         BusinessEvent contractExplicitIntent = (BusinessEvent) context.getRuntimeContext().getServiceContract();
         ApplicationState applicationState = context.getRuntimeContext().getConvertedResult();
@@ -36,55 +41,146 @@ public class CommitSubmissionImpl implements CommitSubmission {
         CatalogEntry userOutput = applicationState.getEntryValue();
         //what task
         //what action
-        //conditions from GWT desktop (AbstractCommitUserTransactionImpl CommitEditTransaction CommitSelectTransaction)... do commit
         //AQUI VA LO BUENO
         FieldAccessStrategy.Session session = aceess.newSession(applicationState);
 
+        //conditions from GWT desktop ( CommitEditTransaction CommitSelectTransaction )... do commit
 
-
+        //FIXME this is handled on the client when an application State is updated
         if (producedField != null) {
             //TODO certain saveTo fields are reserved, like those in CatalogAction
-
             //GWTUtils.setAttribute(contextP, saveTo, userOutput);
             aceess.setPropertyValue(producedField,applicationState,userOutput.getId(),session);
-            if (userOutput == null) {
-                /*
-                 *
-                  *  esta llamad en realidad solo tiene sentido en el cliente (paquete runner human), pero esta logica no se debe perder, y debe realizarse aqui mismo
-                 *
-                 * on ApplicationState Update Catalog Event
-                 *
-                 * */
 
-                context.getHumanSolver().putPlaceParameter(saveTo, null);
+        }
+
+
+
+        CatalogEntry entry = applicationState.getEntryValue();
+        String transactionType = applicationState.getTaskDescriptorValue().getTransactionType();
+        final String catalog = (String) applicationState.getTaskDescriptorValue().getCatalog();
+
+        boolean canceled = applicationState.isCanceled();
+        Object id =applicationState.getEntry();
+        if(id ==null){
+            id = entry.getId();
+        }
+        CatalogActionRequestImpl entryCommit = null;
+        if(CatalogActionRequest.READ_ACTION.equals(transactionType)){
+           // onDone.setResultAndFinish(context);
+        }else  if(CatalogActionRequest.WRITE_ACTION.equals(transactionType)){
+			/*
+			 * THIS TRANSACTION HAS SOME SORT OF USER OUTPUT THAT MUST BE COMMITED
+			 */
+
+            if(entry==null){
+                //no user output, most likely canceled
+
             }else{
-                String unencodedString;
-                if (GWTUtils.isArray(userOutput)) {
 
-                    JsArray<JsCatalogEntry> out = userOutput.cast();
-                    if (out.length() == 0) {
-                        unencodedString = null;
-                    } else {
-                        StringBuilder builder = new StringBuilder(out.length()*20);
-                        for (int i = 0; i < out.length(); i++) {
-                            if (i > 0) {
-                                builder.append(',');
-                            }
-                            builder.append(out.get(i).getId());
+                /*boolean draft = entry.isDraft();
+                if(draft){
 
-                        }
-                        unencodedString = builder.toString();
+                    if(canceled){
+                        deleteDraft=true;
+                        commitEntry=false;
+
+                    }else{
+                        //user interaction ended normally
+                        commitEntry = true;
+                        deleteDraft= false;
                     }
-
-                } else {
-                    unencodedString = userOutput.getId();
+                }else{
+                    if(canceled){
+                        deleteDraft=true;
+                        commitEntry=false;
+                    }else{
+                        //user interaction ended normally,
+                        commitEntry = true;
+                        deleteDraft= false;
+                    }
                 }
-                context.getDesktopManager().putPlaceParameter(saveTo, unencodedString);
+
+                //StateTransition<JsCatalogEntry> callback=new EntryUpdateCallback(context,onDone);
+                if(commitEntry){
+                    sm.update(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(), catalog, id, entry, callback);
+                }else if(deleteDraft){
+                    sm.delete(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(), catalog, id, callback);
+                }*/
+
+                entryCommit= new CatalogActionRequestImpl();
+
+                entryCommit.setEntryValue(entry);
+                entryCommit.setEntry(id);
+                entryCommit.setCatalog(catalog);
+                entryCommit.setName(transactionType);
             }
 
+        }else if(CatalogActionRequest.CREATE_ACTION.equals(transactionType)){
+            if(canceled){
+                //no commiting required
+                //onDone.setResultAndFinish(context);
+            }else{
+                //final StateTransition<JsCatalogEntry> callback=new EntryUpdateCallback(context,onDone);
+
+                /*if(e.isClosed()||e.getCallback()==null){
+                    sm.create(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(),catalog, entry, callback);
+                }else{
+                    e.getCallback().hook(new DataCallback<Void>() {
+
+                        @Override
+                        public void execute() {
+                            sm.create(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(),catalog, entry, callback);
+                        }
+                    });
+
+                }*/
+
+                entryCommit= new CatalogActionRequestImpl();
+
+                entryCommit.setEntryValue(entry);
+                entryCommit.setCatalog(catalog);
+                entryCommit.setName(transactionType);
+
+            }
+        }
+        //no commit required for select
+        entryCommit.setFollowReferences(true);
+        entry = context.getRuntimeContext().spawnProcess(entryCommit);
+
+
+       /*
+            BusinessEventImpl bookingRequest = new BusinessEventImpl();
+        bookingRequest.setHandle(item.getId());
+        bookingRequest.setEntry(booking.getId());
+        bookingRequest.setState(null);
+
+        */
+
+       ApplicationItem item = (ApplicationItem) applicationState.getHandleValue();
+        List<ProcessTaskDescriptor> workflow = item.getProcessValues();
+        ProcessTaskDescriptor nextTask = inferNextTask(workflow,task,applicationState.getTaskDescriptor());
+        if(nextTask==null){
+            //FIXME PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
+        }else{
+            applicationState.setTaskDescriptorValue(nextTask);
+            applicationState.setTaskDescriptor(nextTask.getId());
         }
 
 
         return CONTINUE_PROCESSING;
     }
+
+    /**
+     *
+     *
+     * @param workflow
+     * @param task
+     * @param taskDescriptor
+     * @return the next task if this workflow, null if current task is the last task and output should be processed
+     * @throws IllegalArgumentException if task is not found in worflow
+     */
+    private ProcessTaskDescriptor inferNextTask(List<ProcessTaskDescriptor> workflow, ProcessTaskDescriptor task, Long taskDescriptor) throws IllegalArgumentException{
+    }
+
 }

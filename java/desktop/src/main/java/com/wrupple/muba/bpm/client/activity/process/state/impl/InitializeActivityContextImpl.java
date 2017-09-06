@@ -19,7 +19,7 @@ public class InitializeActivityContextImpl implements InitializeActivityContext 
 	
 	private JsApplicationItem item;
 	private ExternalAPILoaderMap apiMap;
-	private boolean[] resolved;
+	//private boolean[] resolved;
 	private ProcessContextServices context;
 
 	@Inject

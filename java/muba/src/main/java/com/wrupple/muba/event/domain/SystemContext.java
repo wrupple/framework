@@ -20,7 +20,9 @@ public interface SystemContext
 
     EventRegistry getIntentInterpret();
 
-    boolean fireEvent(UserEvent event, SessionContext session) throws Exception;
+    boolean handleIntent(UserEvent event, SessionContext session) throws Exception;
+
+//    boolean fireEvent(CatalogEntry event, RuntimeContextImpl runtimeContext) throws Exception;
 
 	public UserTransaction getTransaction();
 

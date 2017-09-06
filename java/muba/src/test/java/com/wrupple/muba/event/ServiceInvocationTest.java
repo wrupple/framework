@@ -14,7 +14,6 @@ import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import com.wrupple.muba.event.server.domain.JavaSystemContext;
 import com.wrupple.muba.event.server.service.EventRegistry;
-import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import org.apache.commons.chain.CatalogFactory;
 import org.junit.Before;
@@ -88,7 +87,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 		UserEvent event = new UserEventImpl(ADDITION, "1", "2" );
 
-		system.fireEvent/*TODO Async*/(event,session);
+		system.handleIntent/*TODO Async*/(event,session);
 
 		Integer result = event.getConvertedResult();
 		assertNotNull(result);
@@ -102,7 +101,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
         UserEvent event = new UserEventImpl(ADDITION, "1.0", "1");
 
-        system.fireEvent/*TODO Async*/(event, session);
+        system.handleIntent/*TODO Async*/(event, session);
 		// check rollback?
 	}
 
@@ -112,7 +111,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
         UserEvent event = new UserEventImpl("invalidService", "input");
 
-        system.fireEvent/*TODO Async*/(event, session);
+        system.handleIntent/*TODO Async*/(event, session);
 
 		fail("No exception thrown when creating invalid service context");
 	}
@@ -123,7 +122,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
         UserEvent event = new UserEventImpl(ADDITION, "one", "1.5");
 
-        system.fireEvent/*TODO Async*/(event, session);
+        system.handleIntent/*TODO Async*/(event, session);
 
 		fail("No exception thrown when processing invalid context");
 	}
@@ -134,7 +133,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
         UserEvent event = new UserEventImpl(ADDITION, UPGRADED_VERSION, "1", "1.5");
 
-        system.fireEvent/*TODO Async*/(event, session);
+        system.handleIntent/*TODO Async*/(event, session);
 
 		Double result = event.getConvertedResult();
 		assertNotNull(result);
@@ -147,7 +146,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
         UserEvent event = new UserEventImpl(ADDITION, "1..0", "2", "1.5");
 
-        system.fireEvent/*TODO Async*/(event, session);
+        system.handleIntent/*TODO Async*/(event, session);
 
 	}
 

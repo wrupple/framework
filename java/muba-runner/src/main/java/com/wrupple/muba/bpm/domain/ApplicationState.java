@@ -3,6 +3,7 @@ package com.wrupple.muba.bpm.domain;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.reserved.HasChildren;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
@@ -20,15 +21,19 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
      String CATALOG = "ApplicationState";
 
-    public FilterData getFilterData();
+    ServiceManifest getHandleValue();
+
+     FilterData getFilterData();
 
     Long getTaskDescriptor();
 
     ProcessTaskDescriptor getTaskDescriptorValue();
 
-    public <T extends CatalogEntry> List<T> getUserSelectionValues();
+    List<Object> getUserSelection();
 
-    public boolean isCanceled();
+     <T extends CatalogEntry> List<T> getUserSelectionValues();
+
+     boolean isCanceled();
 
     void setExcecutionContext(RuntimeContext context);
 
@@ -45,6 +50,18 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
     void setEntryValue(CatalogEntry booking);
 
     CatalogEntry getEntryValue();
+
+    /**
+     *
+     * TODO client manages draft state applicationState.setDraft(false);
+     * TODO If entry is a draft delete it when application state is deleted
+     * return staging status
+     */
+    boolean isDraft();
+
+    void setDraft(boolean b);
+
+    void setTaskDescriptor(Object id);
 
     // public void setLayoutUnit(String s);
 

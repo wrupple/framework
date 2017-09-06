@@ -1,6 +1,8 @@
 package com.wrupple.muba.event.domain;
 
 /**
+ * A user event is an explicit intent that has a result
+ *
  * Created by japi on 21/08/17.
  */
 public interface UserEvent extends ExplicitIntent {

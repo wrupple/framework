@@ -72,7 +72,7 @@ public class JavaSystemContext extends ContextBase implements SystemContext {
     }
 
 	@Override
-	public boolean fireEvent(UserEvent event, SessionContext session) throws Exception {
+	public boolean handleIntent(UserEvent event, SessionContext session) throws Exception {
 		RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
         runtimeContext.setSentence(event.getSentence());
         runtimeContext.setServiceContract(event.getState());

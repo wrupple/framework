@@ -20,7 +20,7 @@ public interface ImplicitEventResolver {
 
     HandlerRegistration addHandler(ServiceManifest serviceManifes);
 
-    //FIXME fireEvent(event)
+    //FIXME handleIntent(event)
 
     List<String> resolveContractSentence(CatalogEntry serviceContract) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 

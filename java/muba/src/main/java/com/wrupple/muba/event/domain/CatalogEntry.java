@@ -18,7 +18,6 @@ public interface CatalogEntry extends Entity {
 	public static final String WRUPPLE = "Wrupple";
 	public static final long WRUPPLE_ID = 0;
 	public static final String PUBLIC = "anonymouslyVisible";
-	public static final String DRAFT_FIELD = "draft";
 	public static final String NAME_FIELD = "name";
 	public static final String DOMAIN_TOKEN = "domain";
 	
