@@ -15,8 +15,8 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
 import com.wrupple.muba.ChocoSolverTestModule;
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
@@ -37,7 +37,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.BootstrapModule;
+import com.wrupple.muba.event.MainModule;
 import com.wrupple.muba.event.server.domain.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
@@ -139,11 +139,11 @@ public class SolveEquationSystem extends MubaTest {
 
     public SolveEquationSystem() {
         init(new RunnerTestModule(), new ChocoSolverTestModule(), new SingleUserModule(),new ChocoSolverModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new BootstrapModule());
+                new ValidationModule(), new CatalogModule(), new MainModule());
     }
 
     @Override
-    protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
+    protected void registerServices(Validator v, ValidationGroupProvider g, EventBus switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
         switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 

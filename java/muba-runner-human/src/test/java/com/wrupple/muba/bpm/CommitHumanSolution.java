@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
 import com.wrupple.muba.HumanRunnerTestModule;
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
@@ -35,7 +36,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.BootstrapModule;
+import com.wrupple.muba.event.MainModule;
 import com.wrupple.muba.event.server.domain.SessionContextImpl;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
@@ -134,11 +135,11 @@ public class CommitHumanSolution extends MubaTest {
 
     public CommitHumanSolution() {
         init(new RunnerTestModule(), new HumanRunnerTestModule(),new HumanSolverModule(), new SingleUserModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new BootstrapModule());
+                new ValidationModule(), new CatalogModule(), new MainModule());
     }
 
     @Override
-    protected void registerServices(SystemContext switchs) {
+    protected void registerServices(EventBus switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
         switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
         switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));

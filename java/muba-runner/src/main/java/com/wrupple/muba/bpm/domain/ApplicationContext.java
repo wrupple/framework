@@ -1,6 +1,8 @@
 package com.wrupple.muba.bpm.domain;
 
 
+import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.bpm.server.service.ServiceBus;
 import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.event.server.service.EventRegistry;
 
@@ -10,11 +12,15 @@ import com.wrupple.muba.event.server.service.EventRegistry;
 public interface ApplicationContext extends ApplicationState,ServiceContext {
     final String CATALOG = "ApplicationContext";
 
-    EventRegistry getServiceBus();
+    ServiceBus getServiceBus();
+
+    ProcessManager getProcessManager();
+
+    //EventBus available througg RuntimeContext
 
    /* StorageManager getStorageManager();
 
-	ProcessManager getProcessManager();
+
 
 	public PeerManager getPeerManager();*/
 

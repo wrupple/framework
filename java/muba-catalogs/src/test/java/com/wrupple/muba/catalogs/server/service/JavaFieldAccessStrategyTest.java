@@ -29,7 +29,7 @@ package com.wrupple.muba.catalogs.server.service;
         import com.google.inject.AbstractModule;
         import com.google.inject.Provides;
         import com.google.inject.name.Names;
-        import com.wrupple.muba.event.BootstrapModule;
+        import com.wrupple.muba.event.MainModule;
         import com.wrupple.muba.event.server.domain.SessionContextImpl;
         import com.wrupple.muba.catalogs.CatalogModule;
         import com.wrupple.muba.catalogs.SingleUserModule;
@@ -113,7 +113,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
     }
 
     public JavaFieldAccessStrategyTest() {
-        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new CatalogTestModule(), new ValidationModule(),new SingleUserModule(), new CatalogModule(), new BootstrapModule());
+        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new CatalogTestModule(), new ValidationModule(),new SingleUserModule(), new CatalogModule(), new MainModule());
 
     }
 

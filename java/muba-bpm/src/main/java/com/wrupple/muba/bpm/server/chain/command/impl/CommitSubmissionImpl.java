@@ -1,12 +1,9 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.ApplicationItem;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.BusinessEvent;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.CommitSubmission;
 import com.wrupple.muba.bpm.server.domain.BusinessContext;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
@@ -33,7 +30,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
         BusinessContext context = (BusinessContext) ctx;
         BusinessEvent contractExplicitIntent = (BusinessEvent) context.getRuntimeContext().getServiceContract();
-        ApplicationState applicationState = context.getRuntimeContext().getConvertedResult();
+        ApplicationContext applicationState = context.getRuntimeContext().getConvertedResult();
         ProcessTaskDescriptor task = applicationState.getTaskDescriptorValue();
         String producedField = task.getOutputField();
 
@@ -180,7 +177,9 @@ public class CommitSubmissionImpl implements CommitSubmission {
      * @return the next task if this workflow, null if current task is the last task and output should be processed
      * @throws IllegalArgumentException if task is not found in worflow
      */
-    private ProcessTaskDescriptor inferNextTask(List<ProcessTaskDescriptor> workflow, ProcessTaskDescriptor task, Long taskDescriptor) throws IllegalArgumentException{
-    }
+    private ProcessTaskDescriptor inferNextTask(ApplicationContext state, BusinessContext bpm,List<ProcessTaskDescriptor> workflow, ProcessTaskDescriptor task, Long taskDescriptor) throws IllegalArgumentException{
+        state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
+        state.getServiceBus().parseOutput();
+        }
 
 }

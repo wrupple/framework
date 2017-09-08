@@ -1,4 +1,4 @@
-package com.wrupple.muba.desktop.client.services.logic.impl;
+package com.wrupple.muba.bpm.server.service.impl;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.place.shared.PlaceController;
@@ -12,6 +12,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.bpm.client.services.impl.SimpleActivityTransition;
 import com.wrupple.muba.bpm.domain.BPMPeer;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.bpm.server.service.ProcessServiceManifest;
 import com.wrupple.muba.catalogs.server.domain.CatalogPeer;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
@@ -53,7 +54,6 @@ public class SequentialProcessManager implements ProcessManager {
 	private final ActivityPresenterMap presenterMap;
 
 	private ProcessVegetateChannel bpm;
-	private String process, task;
 
 	@Inject
 	public SequentialProcessManager(ActivityPresenterMap presenterMap, PlaceController placeController, StorageManager storageManager,

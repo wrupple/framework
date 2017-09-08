@@ -25,7 +25,7 @@ public class SentenceValidatorImpl implements SentenceValidator {
 			int currentWord = requestContext.nextIndex();
 			// dont move  iterator while validating
 			String service = requestContext.getSentence().get(currentWord);
-			RootServiceManifest rootService = requestContext.getApplication().getIntentInterpret().getRootService();
+			RootServiceManifest rootService = requestContext.getEventBus().getIntentInterpret().getRootService();
 			Map<String, ServiceManifest> versions = rootService.getVersions(service);
 			if (versions == null) {
 				// it could still fallbaack

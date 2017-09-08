@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.CatalogTestModule;
 import com.wrupple.muba.catalogs.domain.*;
@@ -25,7 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
-import com.wrupple.muba.event.BootstrapModule;
+import com.wrupple.muba.event.MainModule;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.domain.SessionContextImpl;
 import com.wrupple.muba.catalogs.CatalogModule;
@@ -124,11 +125,11 @@ public class CatalogServicesTest extends MubaTest {
 	}
 
 	public CatalogServicesTest() {
-		init(new CatalogServicesTestModule(),new CatalogTestModule(), new SingleUserModule(), new CatalogModule(), new BootstrapModule());
+		init(new CatalogServicesTestModule(),new CatalogTestModule(), new SingleUserModule(), new CatalogModule(), new MainModule());
 	}
 
 	@Override
-	protected void registerServices( SystemContext switchs) {
+	protected void registerServices( EventBus switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
 		switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 	}

@@ -11,10 +11,8 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
-import javax.validation.Validator;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
@@ -28,7 +26,6 @@ import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.event.server.domain.SessionContextImpl;
-import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
 public class ServiceRequestValidation extends MubaTest {
 
@@ -41,10 +38,10 @@ public class ServiceRequestValidation extends MubaTest {
 
 	public ServiceRequestValidation() {
 		super();
-		init(new MockModule(), new ValidationModule(), new BootstrapModule());
+		init(new MockModule(), new ValidationModule(), new MainModule());
 	}
 	
-	protected void registerServices(SystemContext switchs) {
+	protected void registerServices(EventBus switchs) {
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });
 		ContractDescriptor operationContract = new ContractDescriptorImpl(
 				Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), ProblemRequest.class);
@@ -147,7 +144,7 @@ public class ServiceRequestValidation extends MubaTest {
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
 			log.debug("Excecuting on {},{}", first, second);
-			Map<String, ServiceManifest> versions = runtimeContext.getApplication().getIntentInterpret().getRootService()
+			Map<String, ServiceManifest> versions = runtimeContext.getEventBus().getIntentInterpret().getRootService()
 					.getVersions(second);
 			// is there an operation named like this?
 			if (versions == null) {

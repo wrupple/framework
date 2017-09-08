@@ -35,8 +35,8 @@ public class PlainTextUserInteractionState implements UserInteractionState {
             //SearchEngineOptimizedDesktopWriterCommand
         ApplicationContext context = (ApplicationContext) ctx;
         List<VariableDescriptor> variables = context.getSolutionVariables();
-        PrintWriter out = context.getRuntimeContext().getApplication().getOutputWriter();
-        InputStream input = context.getRuntimeContext().getApplication().getInput();
+        PrintWriter out = context.getRuntimeContext().getEventBus().getOutputWriter();
+        InputStream input = context.getRuntimeContext().getEventBus().getInput();
         BufferedReader in = new BufferedReader(new InputStreamReader(input));
         CatalogDescriptor catalog = context.getSolutionDescriptor();
         out.println(catalog.getName());

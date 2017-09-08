@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.wrupple.muba.event.domain.SystemContext;
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
 
 public abstract class MubaTest extends EasyMockSupport {
@@ -32,11 +32,11 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices(injector.getInstance(SystemContext.class));
+		registerServices(injector.getInstance(EventBus.class));
 
 	}
 
-	protected abstract void registerServices(SystemContext switchs);
+	protected abstract void registerServices(EventBus switchs);
 
 	protected abstract void setUp() throws Exception;
 

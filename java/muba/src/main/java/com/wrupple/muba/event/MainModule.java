@@ -3,14 +3,13 @@ package com.wrupple.muba.event;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.event.server.chain.command.impl.JavaSentenceNativeInterface;
-import com.wrupple.muba.event.server.domain.JavaSystemContext;
+import com.wrupple.muba.event.server.domain.JavaEventBus;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import org.apache.commons.chain.CatalogFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
-import com.wrupple.muba.event.domain.SystemContext;
 import com.wrupple.muba.event.domain.RootServiceManifest;
 import com.wrupple.muba.event.domain.RootServiceManifestImpl;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
@@ -19,12 +18,12 @@ import com.wrupple.muba.event.server.domain.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.SentenceValidator;
 import com.wrupple.muba.event.server.service.impl.SentenceValidatorImpl;
 
-public class BootstrapModule extends AbstractModule {
+public class MainModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
 		
-		bind(SystemContext.class).to(JavaSystemContext.class);//ServletContext
+		bind(EventBus.class).to(JavaEventBus.class);//ServletContext
 		bind(RuntimeContext.class).to(RuntimeContextImpl.class);//request scoped
 		
 		bind(String.class).annotatedWith(Names.named("chain.unknownService")).toInstance("chain.unknownService");

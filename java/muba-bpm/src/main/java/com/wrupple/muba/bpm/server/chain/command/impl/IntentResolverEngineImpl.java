@@ -16,7 +16,7 @@ public class IntentResolverEngineImpl implements IntentResolverEngine {
         IntentResolverContext context = (IntentResolverContext) ctx;
         ImplicitIntent contract = (ImplicitIntent) context.getRuntimeContext().getServiceContract();
 
-        context.getRuntimeContext().setResult(context.getRuntimeContext().getApplication().getIntentInterpret().resolveIntent(contract,context.getRuntimeContext()));
+        context.getRuntimeContext().setResult(context.getRuntimeContext().getEventBus().getIntentInterpret().resolveIntent(contract,context.getRuntimeContext()));
 
 
         return CONTINUE_PROCESSING;

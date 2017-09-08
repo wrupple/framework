@@ -129,7 +129,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 			log.trace("excecution permission GRANTED for request {}, transaction will begin on {}",
 					requestContext.getId(), manifest.getServiceId());
 			if (CONTINUE_PROCESSING == incorporateContract(requestContext)) {
-				Command serviceHandler = requestContext.getApplication().getIntentInterpret().getDictionaryFactory()
+				Command serviceHandler = requestContext.getEventBus().getIntentInterpret().getDictionaryFactory()
 						.getCatalog(RootServiceManifest.NAME)
 						.getCommand(requestContext.getServiceManifest().getServiceId());
 				log.debug("delegating to service handler {}", serviceHandler);
@@ -148,7 +148,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 	private boolean incorporateContract(RuntimeContext requestContext) throws Exception {
 
 		List<String> tokens = requestContext.getServiceManifest().getGrammar();
-		RequestInterpret explicitInterpret = requestContext.getApplication().getIntentInterpret().getExplicitIntentInterpret(requestContext);
+		RequestInterpret explicitInterpret = requestContext.getEventBus().getIntentInterpret().getExplicitIntentInterpret(requestContext);
 		Object contract = requestContext.getServiceContext();
 		Context context = materializeContext(requestContext,
 				/* we know it's this class:registration is private */ explicitInterpret);
@@ -220,7 +220,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 	}
 
 	private ServiceManifest getChildServiceManifest(String service, RuntimeContext requestContext) {
-		RootServiceManifest rootService = requestContext.getApplication().getIntentInterpret().getRootService();
+		RootServiceManifest rootService = requestContext.getEventBus().getIntentInterpret().getRootService();
 		if (rootService == null) {
 			throw new IllegalStateException("No root service has been configured");
 		}

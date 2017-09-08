@@ -10,13 +10,14 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.impl.ContextBase;
 
 @Singleton
-public class JavaSystemContext extends ContextBase implements SystemContext {
+public class JavaEventBus extends ContextBase implements EventBus {
 
 	private static final long serialVersionUID = -7144539787781019055L;
 
@@ -29,7 +30,7 @@ public class JavaSystemContext extends ContextBase implements SystemContext {
     private UserTransaction transaction;
 
     @Inject
-	public JavaSystemContext(EventRegistry intentInterpret,EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in,Provider<UserTransaction> transactionProvider) {
+	public JavaEventBus(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, Provider<UserTransaction> transactionProvider) {
 		super();
 		this.process=process;
 		this.out=out;

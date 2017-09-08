@@ -3,14 +3,14 @@ package com.wrupple.muba.bpm;
 import static org.easymock.EasyMock.anyObject;
 import static org.junit.Assert.assertTrue;
 
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.EventBus;
 
 import com.wrupple.muba.MubaTest;
 
 
 public class ExplicitApplicationInvocationTest extends MubaTest {
 	@Override
-	protected void registerServices(SystemContext switchs) {
+	protected void registerServices(EventBus switchs) {
 
 	}
 

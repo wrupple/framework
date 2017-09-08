@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.event.server.service.FormatDictionary;
@@ -24,7 +25,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.BootstrapModule;
+import com.wrupple.muba.event.MainModule;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.domain.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
@@ -56,13 +57,13 @@ public class HSQLTest extends MubaTest {
 
 	public HSQLTest() {
 		init(new CRUDModule(), new CatalogModule(), new SingleUserModule(), new JDBCHSQLTestModule(),
-				new HSQLDBModule(), new JDBCModule(), new ValidationModule(), new BootstrapModule());
+				new HSQLDBModule(), new JDBCModule(), new ValidationModule(), new MainModule());
 
 	}
 	
 
 	@Override
-	protected void registerServices(Validator v, ValidationGroupProvider g, SystemContext switchs) {
+	protected void registerServices(Validator v, ValidationGroupProvider g, EventBus switchs) {
 		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
 		switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 	}

@@ -32,7 +32,7 @@ public class ServiceInvocationThread extends Thread {
 
 	@Override
 	public void run() {
-		UserTransaction transaction = requestContext.getApplication().getTransaction();
+		UserTransaction transaction = requestContext.getEventBus().getTransaction();
 
 		try {
 			try {

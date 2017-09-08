@@ -26,7 +26,7 @@ public abstract class UpdatedVersionService implements Command {
         String first = (String) context.get(BootstrapTest.FIRST_OPERAND_NAME);
         String second = (String) context.get(BootstrapTest.SECOND_OPERAND_NAME);
         // is there an operation named like this?
-        if (context.getApplication().getIntentInterpret().getRootService().getVersions(second) != null) {
+        if (context.getEventBus().getIntentInterpret().getRootService().getVersions(second) != null) {
             log.trace("delegating to {}, to find the second term", second);
 
             context.setNextWordIndex(context.nextIndex() - 1);

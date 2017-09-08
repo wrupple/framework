@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
@@ -42,7 +43,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 	private Context serviceContext;
 	private final SessionContext session;
-	private final SystemContext application;
+	private final EventBus eventBus;
 
 	private String locale, format, callbackFunction, id;
 	private boolean scopedWriting;
@@ -55,21 +56,21 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	private Set<ConstraintViolation<?>> constraintViolations;
 	private ListIterator<String> wordIterator;
 
-	public RuntimeContextImpl( SystemContext appication, SessionContext session, RuntimeContext parent) {
+	public RuntimeContextImpl(EventBus appication, SessionContext session, RuntimeContext parent) {
 		super();
-		this.application = appication;
+		this.eventBus = appication;
 		this.session = session;
 		this.parent = parent;
 	}
 
 	@Override
 	public boolean process() throws Exception {
-		return getApplication().resume(this);
+		return getEventBus().resume(this);
 	}
 
 	@Override
 	public <T> T spawnProcess(CatalogEntry implicitRequestContract) throws Exception {
-		RuntimeContextImpl next = new RuntimeContextImpl(application,session,this);
+		RuntimeContextImpl next = new RuntimeContextImpl(eventBus,session,this);
 		next.setServiceContract(implicitRequestContract);
         next.process();
 		return (T) next.getResult();
@@ -77,7 +78,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 
 	@Inject
-	public RuntimeContextImpl( SystemContext appication, SessionContext session) {
+	public RuntimeContextImpl(EventBus appication, SessionContext session) {
 		this( appication, session, null);
 	}
 
@@ -148,7 +149,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 			}
 			return r;
 		} else {
-			return getApplication().getOutputWriter();
+			return getEventBus().getOutputWriter();
 
 		}
 
@@ -341,8 +342,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		return parent;
 	}
 
-	public SystemContext getApplication() {
-		return application;
+	public EventBus getEventBus() {
+		return eventBus;
 	}
 
 	@Override
@@ -362,7 +363,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 	@Override
 	public RuntimeContext spawnChild() {
-		return new RuntimeContextImpl( getApplication(), getSession(), this);
+		return new RuntimeContextImpl( getEventBus(), getSession(), this);
 	}
 
 	@Override
@@ -425,7 +426,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	public int hashCode() {
 		final int prime = 31;
 		int result = prime;
-		result = prime * result + ((application == null) ? 0 : application.hashCode());
+		result = prime * result + ((eventBus == null) ? 0 : eventBus.hashCode());
 		result = prime * result + ((callbackFunction == null) ? 0 : callbackFunction.hashCode());
 		result = prime * result + ((caughtException == null) ? 0 : caughtException.hashCode());
 		result = prime * result + ((constraintViolations == null) ? 0 : constraintViolations.hashCode());
@@ -457,10 +458,10 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		if (getClass() != obj.getClass())
 			return false;
 		RuntimeContextImpl other = (RuntimeContextImpl) obj;
-		if (application == null) {
-			if (other.application != null)
+		if (eventBus == null) {
+			if (other.eventBus != null)
 				return false;
-		} else if (!application.equals(other.application))
+		} else if (!eventBus.equals(other.eventBus))
 			return false;
 		if (callbackFunction == null) {
 			if (other.callbackFunction != null)

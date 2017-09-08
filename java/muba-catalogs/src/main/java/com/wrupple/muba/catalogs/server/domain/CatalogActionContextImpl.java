@@ -408,7 +408,7 @@ this.name=name;
 
 	private TransactionHistory assertTransaction() {
 		if (transaction == null) {
-			transaction = new CatalogUserTransactionImpl(getRuntimeContext().getApplication().getTransaction());
+			transaction = new CatalogUserTransactionImpl(getRuntimeContext().getEventBus().getTransaction());
 		}
 		return transaction;
 	}

@@ -12,7 +12,7 @@ import com.wrupple.muba.event.chain.impl.UpdatedVersionService;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
-import com.wrupple.muba.event.server.domain.JavaSystemContext;
+import com.wrupple.muba.event.server.domain.JavaEventBus;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import org.apache.commons.chain.CatalogFactory;
@@ -24,7 +24,7 @@ import com.wrupple.muba.event.server.domain.SessionContextImpl;
 
 public class ServiceInvocationTest extends BootstrapTest {
 
-	private SystemContext system;
+	private EventBus system;
 
 	protected ContractDescriptor operationContract = new ContractDescriptorImpl(
 			Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), CatalogEntryImpl.class);
@@ -35,7 +35,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 		RootServiceManifestImpl rootService = new RootServiceManifestImpl();
         EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
 		EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
-		this.system = new JavaSystemContext(interpret,dispatcher, System.out,System.in,null);
+		this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,null);
 
 
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });

@@ -1,4 +1,4 @@
-package com.wrupple.muba.desktop.client.services.logic;
+package com.wrupple.muba.bpm.shared.services.impl;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.inject.Inject;
@@ -6,6 +6,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
+import com.wrupple.muba.bpm.server.service.ServiceBus;
 import com.wrupple.muba.desktop.client.factory.ServiceDictionary;
 import com.wrupple.muba.desktop.client.factory.dictionary.DictionaryRegistry;
 import com.wrupple.muba.desktop.client.factory.dictionary.OutputHandlerMap;
@@ -36,12 +37,12 @@ public class MubaServiceBus implements ServiceBus {
 			JsTransactionApplicationContext processParameters,
 			StateTransition<JsTransactionApplicationContext> callback) {
 
-		
-		
+
+
 		setCommand(properties,command);
-		
+
 		CommandService service = commandRegistry.getConfigured(properties, processContext, eventBus, processParameters);
-		
+
 		excecuteCommand(command,service, properties, eventBus, processContext, processParameters, callback);
 	}
 	private native void setCommand(JavaScriptObject properties,  String command) /*-{
@@ -54,13 +55,13 @@ public class MubaServiceBus implements ServiceBus {
 			StateTransition<JsTransactionApplicationContext> callback) {
 		excecuteCommand(null,service, properties, eventBus, processContext, processParameters, callback);
 	}
-	
+
 	private void excecuteCommand(String command, CommandService service, JavaScriptObject properties,
 			EventBus eventBus, ProcessContextServices processContext,
 			JsTransactionApplicationContext processParameters,
 			StateTransition<JsTransactionApplicationContext> callback) {
 
-		
+
 		if (callback == null) {
 			callback = DataCallback.nullCallback();
 		}
@@ -81,7 +82,7 @@ public class MubaServiceBus implements ServiceBus {
 		}
 		GWTUtils.setAttribute(properties, outputHandlerRegistry.getPropertyName(), command);
 		OutputHandler service = outputHandlerRegistry.getConfigured(properties, processContext, eventBus, processParameters);
-		
+
 		assert service != null : "No command '" + rawCommand + "' found";
 
 		service.prepare(rawCommand, properties, eventBus, processContext,

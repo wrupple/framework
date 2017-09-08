@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.wrupple.muba.event.EventBus;
 import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.event.domain.reserved.HasLocale;
@@ -19,7 +20,7 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	String FORMAT = "format";
 
-	SystemContext getApplication();
+	EventBus getEventBus();
 
 	SessionContext getSession();
 
