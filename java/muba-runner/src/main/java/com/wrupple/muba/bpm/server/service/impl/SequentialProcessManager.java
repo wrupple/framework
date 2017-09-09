@@ -42,6 +42,10 @@ public class SequentialProcessManager implements ProcessManager {
 
 	private static final String PROCESS_USER_AREA_CLASS = "application-content-area";
 
+	private ServiceMap commandRegistry;
+	private OutputHandlerMap outputHandlerRegistry;
+	private DictionaryRegistry serviceLocator;
+
 	/*
 	 * SERVICES
 	 */
@@ -56,7 +60,8 @@ public class SequentialProcessManager implements ProcessManager {
 	private ProcessVegetateChannel bpm;
 
 	@Inject
-	public SequentialProcessManager(ActivityPresenterMap presenterMap, PlaceController placeController, StorageManager storageManager,
+	public SequentialProcessManager(OutputHandlerMap outputHandlerRegistry,
+                                    ServiceMap services,DictionaryRegistry serviceLocator,ActivityPresenterMap presenterMap, PlaceController placeController, StorageManager storageManager,
 			ContentManagementSystem contentManager, DesktopManager desktopManager, PeerManager peerManager, ServiceBus serviceBus) {
 		super();
 		this.presenterMap = presenterMap;
@@ -66,6 +71,11 @@ public class SequentialProcessManager implements ProcessManager {
 		this.desktopManager = desktopManager;
 		this.serviceBus = serviceBus;
 		this.peerManager = peerManager;
+
+        this.outputHandlerRegistry = outputHandlerRegistry;
+        this.commandRegistry = services;
+        this.serviceLocator=serviceLocator;
+
 	}
 
 	@Override
@@ -193,4 +203,54 @@ public class SequentialProcessManager implements ProcessManager {
 		this.task = id;
 	}
 
+
+
+	@Override
+	public void excecuteCommand(String command, JavaScriptObject properties,
+								EventBus eventBus, ProcessContextServices processContext,
+								JsTransactionApplicationContext processParameters,
+								StateTransition<JsTransactionApplicationContext> callback) {
+
+
+
+		setCommand(properties,command);
+
+		CommandService service = commandRegistry.getConfigured(properties, processContext, eventBus, processParameters);
+
+		excecuteCommand(command,service, properties, eventBus, processContext, processParameters, callback);
+	}
+	private native void setCommand(JavaScriptObject properties,  String command) /*-{
+		properties.command=command;
+	}-*/;
+
+	public void excecuteCommand( CommandService service, JavaScriptObject properties,
+								 EventBus eventBus, ProcessContextServices processContext,
+								 JsTransactionApplicationContext processParameters,
+								 StateTransition<JsTransactionApplicationContext> callback) {
+		excecuteCommand(null,service, properties, eventBus, processContext, processParameters, callback);
+	}
+
+	private void excecuteCommand(String command, CommandService service, JavaScriptObject properties,
+								 EventBus eventBus, ProcessContextServices processContext,
+								 JsTransactionApplicationContext processParameters,
+								 StateTransition<JsTransactionApplicationContext> callback) {
+
+
+		if (callback == null) {
+			callback = DataCallback.nullCallback();
+		}
+
+		service.prepare(command, properties, eventBus, processContext,
+				processParameters, callback);
+		service.execute();
+	}
+
+
+	public ServiceDictionary<?> getServiceDictionary(String dictionary){
+		ServiceDictionary<?> regreso = this.serviceLocator.get(dictionary);
+		if(regreso==null){
+			throw new IllegalArgumentException("not a registered service dictionary: "+dictionary);
+		}
+		return regreso;
+	}
 }

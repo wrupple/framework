@@ -145,41 +145,9 @@ public class CommitSubmissionImpl implements CommitSubmission {
         entryCommit.setFollowReferences(true);
         entry = context.getRuntimeContext().spawnProcess(entryCommit);
 
-
-       /*
-            BusinessEventImpl bookingRequest = new BusinessEventImpl();
-        bookingRequest.setHandle(item.getId());
-        bookingRequest.setEntry(booking.getId());
-        bookingRequest.setState(null);
-
-        */
-
-       ApplicationItem item = (ApplicationItem) applicationState.getHandleValue();
-        List<ProcessTaskDescriptor> workflow = item.getProcessValues();
-        ProcessTaskDescriptor nextTask = inferNextTask(workflow,task,applicationState.getTaskDescriptor());
-        if(nextTask==null){
-            //FIXME PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
-        }else{
-            applicationState.setTaskDescriptorValue(nextTask);
-            applicationState.setTaskDescriptor(nextTask.getId());
-        }
-
-
+        applicationState.setEntryValue(entry);
         return CONTINUE_PROCESSING;
     }
 
-    /**
-     *
-     *
-     * @param workflow
-     * @param task
-     * @param taskDescriptor
-     * @return the next task if this workflow, null if current task is the last task and output should be processed
-     * @throws IllegalArgumentException if task is not found in worflow
-     */
-    private ProcessTaskDescriptor inferNextTask(ApplicationContext state, BusinessContext bpm,List<ProcessTaskDescriptor> workflow, ProcessTaskDescriptor task, Long taskDescriptor) throws IllegalArgumentException{
-        state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
-        state.getServiceBus().parseOutput();
-        }
 
 }
