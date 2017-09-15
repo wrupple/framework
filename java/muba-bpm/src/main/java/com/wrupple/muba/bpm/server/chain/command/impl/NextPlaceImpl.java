@@ -1,4 +1,4 @@
-package com.wrupple.muba.desktop.client.services.command.impl;
+package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -8,14 +8,18 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
+import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.WorkflowFinishedEvent;
 import com.wrupple.muba.desktop.client.services.command.NextPlace;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsNotification;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
+import org.apache.commons.chain.Context;
 
 /**
  * 
@@ -29,7 +33,7 @@ import com.wrupple.vegetate.domain.CatalogDescriptor;
  * @author japi
  *
  */
-public class NextPlaceImpl implements NextPlace {
+public class NextPlaceImpl implements com.wrupple.muba.bpm.server.chain.command.NextPlace {
 
 	private JavaScriptObject properties;
 	private JsNotification output;
@@ -40,29 +44,29 @@ public class NextPlaceImpl implements NextPlace {
 	}
 
 	@Override
-	public void prepare(String command, JavaScriptObject properties, EventBus eventBus, ProcessContextServices processContext,
-                        JsTransactionApplicationContext processParameters, StateTransition<DesktopPlace> callback) {
-		this.properties = properties;
-		this.output = StandardActivityCommand.getUserOutputEntry(processParameters.getUserOutput());
-		this.context = processContext;
-	}
+	public boolean execute(Context ctx) throws Exception {
 
-	@Override
-	public void execute() {
-		final PlaceController pc = context.getPlaceController();
-		DesktopManager dm = context.getDesktopManager();
-		StorageManager desc = context.getStorageManager();
-		DesktopPlace current = (DesktopPlace) pc.getWhere();
-		JsApplicationItem currentItem = (JsApplicationItem) dm.getApplicationItem(current);
-		currentItem = findNextTreeNode(currentItem);
+		RuntimeContext context = (RuntimeContext) ctx;
+		WorkflowFinishedEvent event = (WorkflowFinishedEvent) context.getServiceContract();
+		ApplicationState state= (ApplicationState) event.getState();
 
-		JsArray<JsApplicationItem> hierarchy = currentItem.getHierarchy();
-		int length = hierarchy.length();
-		String [] targetActivity = new String[length];
-		for(int i =0; i < length; i++){
-			targetActivity[i]= hierarchy.get(i).getActivity();
-		}
-		
+        final PlaceController pc = context.getPlaceController();
+        DesktopManager dm = context.getDesktopManager();
+        StorageManager desc = context.getStorageManager();
+        DesktopPlace current = (DesktopPlace) pc.getWhere();
+        JsApplicationItem currentItem = (JsApplicationItem) dm.getApplicationItem(current);
+        currentItem = findNextTreeNode(currentItem);
+
+        JsArray<JsApplicationItem> hierarchy = currentItem.getHierarchy();
+        int length = hierarchy.length();
+        String [] targetActivity = new String[length];
+        for(int i =0; i < length; i++){
+            targetActivity[i]= hierarchy.get(i).getActivity();
+        }
+
+ /*
+        READ NEXT PLACE OUTPUT HANDLER
+         */
 		final DesktopPlace place = StandardActivityCommand.determineExplicitPlaceIntentArguments(targetActivity, output, current, true);
 
 		if (output == null || output.getCatalog() == null) {
@@ -76,7 +80,12 @@ public class NextPlaceImpl implements NextPlace {
 				}
 			});
 		}
+
+		return CONTINUE_PROCESSING;
 	}
+
+
+
 
 	/**
 	 * 
@@ -125,5 +134,6 @@ public class NextPlaceImpl implements NextPlace {
 		throw new NullPointerException("Unable to determine next activity");
 
 	}
+
 
 }

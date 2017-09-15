@@ -1,7 +1,5 @@
-package com.wrupple.muba.desktop.client.services.command;
+package com.wrupple.muba.bpm.server.chain.command;
 
-import com.wrupple.muba.desktop.client.services.logic.OutputHandler;
-import com.wrupple.muba.desktop.shared.services.UrlParser;
 
 /**
  * Output Handler:
@@ -15,7 +13,5 @@ import com.wrupple.muba.desktop.shared.services.UrlParser;
  *
  */
 public interface GoToCommand extends OutputHandler {
-
-	String COMMAND = UrlParser.GOTO_OUTPUT_ITEM;
 
 }

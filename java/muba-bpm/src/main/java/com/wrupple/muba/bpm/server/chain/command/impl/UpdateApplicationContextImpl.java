@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.BusinessEvent;
-import com.wrupple.muba.bpm.server.chain.UpdateApplicationContext;
+import com.wrupple.muba.bpm.server.chain.command.UpdateApplicationContext;
 import com.wrupple.muba.bpm.server.domain.BusinessContext;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import org.apache.commons.chain.Context;

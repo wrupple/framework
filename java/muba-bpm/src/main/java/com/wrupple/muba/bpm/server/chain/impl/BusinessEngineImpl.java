@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.chain.impl;
 
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
-import com.wrupple.muba.bpm.server.chain.UpdateApplicationContext;
+import com.wrupple.muba.bpm.server.chain.command.UpdateApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.CommitSubmission;
 import com.wrupple.muba.bpm.server.chain.command.InferNextTask;
 import com.wrupple.muba.bpm.server.chain.command.MaterializeApplicationContext;

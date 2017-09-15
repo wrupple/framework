@@ -6,5 +6,4 @@ package com.wrupple.muba.event.server.service;
 public interface EventRegistry extends ImplicitEventResolver {
 
 
-
 }

@@ -25,6 +25,10 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
      FilterData getFilterData();
 
+     Long getApplication();
+
+     ApplicationItem getApplicationValue();
+
     Long getTaskDescriptor();
 
     ProcessTaskDescriptor getTaskDescriptorValue();
@@ -63,8 +67,16 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
     void setTaskDescriptor(Object id);
 
+    void setApplicationValue(ApplicationItem applicationItemValue);
+
     // public void setLayoutUnit(String s);
 
     //public void setTransactionViewClass(String s);
+
+
+
+    int getTaskIndex();
+
+    void setTaskIndex(int index);
 
 }

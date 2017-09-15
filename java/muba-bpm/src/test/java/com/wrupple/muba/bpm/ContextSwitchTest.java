@@ -1,13 +1,7 @@
 package com.wrupple.muba.bpm;
 
-
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertTrue;
-
-import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
-import com.wrupple.muba.bpm.server.chain.command.WorkflowEventInterpret;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.MubaTest;
+import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
 import com.wrupple.muba.bpm.domain.impl.BusinessEventImpl;
@@ -15,34 +9,41 @@ import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
+import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
-import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.bpm.server.chain.command.WorkflowEventInterpret;
+import com.wrupple.muba.catalogs.CatalogModule;
+import com.wrupple.muba.catalogs.HSQLDBModule;
+import com.wrupple.muba.catalogs.JDBCModule;
+import com.wrupple.muba.catalogs.SingleUserModule;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.domain.CatalogPeer;
+import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.wrupple.muba.MubaTest;
-import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.MainModule;
-import com.wrupple.muba.catalogs.CatalogModule;
-import com.wrupple.muba.catalogs.HSQLDBModule;
-import com.wrupple.muba.catalogs.JDBCModule;
-import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
-
 import java.util.Arrays;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertTrue;
 
-public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
+public class ContextSwitchTest extends MubaTest {
 
 
-    public ImplicitCatalogDiscriminationApplicationTest() {
+    public ContextSwitchTest() {
         init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(),new ChocoSolverModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
                 new ValidationModule(), new CatalogModule(), new MainModule());
     }
@@ -190,7 +191,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         booking = catalogContext.getEntryResult();
 
         runtimeContext.reset();
-        
+
         expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);

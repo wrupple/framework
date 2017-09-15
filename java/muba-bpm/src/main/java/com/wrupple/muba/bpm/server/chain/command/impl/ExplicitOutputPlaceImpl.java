@@ -1,4 +1,4 @@
-package com.wrupple.muba.desktop.client.services.command.impl;
+package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import java.util.Collection;
 

@@ -43,8 +43,6 @@ public interface ApplicationContext extends ApplicationState,ServiceContext {
     //TaskPresenter getNestedTaskPresenter();
 
 
-	int getTaskIndex();
-
 
 
 }

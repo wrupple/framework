@@ -26,6 +26,9 @@ public interface ImplicitEventResolver {
 
 
     RootServiceManifest getRootService();
+
+    void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret, ServiceManifest parent);
+
     //contract interpret per type? bpm?
     void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret);
 

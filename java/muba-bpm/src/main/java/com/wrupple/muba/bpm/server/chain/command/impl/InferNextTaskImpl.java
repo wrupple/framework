@@ -1,16 +1,25 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.ApplicationItem;
-import com.wrupple.muba.bpm.domain.BusinessEvent;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.google.inject.Provider;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.chain.command.InferNextTask;
 import com.wrupple.muba.bpm.server.domain.BusinessContext;
 import org.apache.commons.chain.Context;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 
+@Singleton
 public class InferNextTaskImpl implements InferNextTask {
+
+    private final Provider<WorkflowFinishedEvent> eventProvider;
+
+    @Inject
+    public InferNextTaskImpl(Provider<WorkflowFinishedEvent> eventProvider) {
+        this.eventProvider = eventProvider;
+    }
+
     @Override
     public boolean execute(Context ctx) throws Exception {
 
@@ -29,41 +38,36 @@ public class InferNextTaskImpl implements InferNextTask {
         ApplicationItem item = (ApplicationItem) applicationState.getHandleValue();
         List<ProcessTaskDescriptor> workflow = item.getProcessValues();
 
-
-        //state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
-        state.getServiceBus().parseOutput();
-
-        ProcessTaskDescriptor nextTask = ;
-        if(nextTask==null){
-            //FIXME PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
-
+        ProcessTaskDescriptor nextTask ;
+        int nextTaskIndex = applicationState.getTaskIndex()+1;
+        if(workflow.size()<=nextTaskIndex){
+            applicationState.setTaskIndex(nextTaskIndex);
+            nextTask = workflow.get(applicationState.getTaskIndex());
         }else{
-            applicationState.setTaskDescriptorValue(nextTask);
-            applicationState.setTaskDescriptor(nextTask.getId());
+
+            // PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
+            //state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
+
+            WorkflowFinishedEvent event = eventProvider.get();
+
+            event.setCatalog((String) applicationState.getTaskDescriptorValue().getCatalog());
+            String command = applicationState.getApplicationValue().getExit();
+            event.setHandle(command);
+            event.setState(applicationState);
+
+            applicationState.getRuntimeContext().getEventBus().fireEvent(event);
+
+            applicationState.setApplicationValue(event.getApplicationItemValue());
+            nextTask= event.getTaskDescriptorValue();
+
         }
 
+        applicationState.setTaskDescriptorValue(nextTask);
+        applicationState.setTaskDescriptor(nextTask.getId());
 
         return CONTINUE_PROCESSING;
     }
 
-    @Override
-    public void parseOutput(String rawCommand, JavaScriptObject properties,
-                            EventBus eventBus, ProcessContextServices processContext,
-                            JsTransactionApplicationContext processParameters,
-                            StateTransition<DesktopPlace> callback) {
 
-        String command = rawCommand;
-        if (rawCommand.contains(" ")) {
-            command = rawCommand.split(" ")[0];
-        }
-        GWTUtils.setAttribute(properties, outputHandlerRegistry.getPropertyName(), command);
-        OutputHandler service = outputHandlerRegistry.getConfigured(properties, processContext, eventBus, processParameters);
-
-        assert service != null : "No command '" + rawCommand + "' found";
-
-        service.prepare(rawCommand, properties, eventBus, processContext,
-                processParameters, callback);
-        service.execute();
-    }
 
 }
