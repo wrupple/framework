@@ -64,7 +64,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	@Inject
 	public BusinessPluginImpl(ValueChangeListener changeListener,
 							  ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
-							  @Named(ApplicationItem.CATALOG) Provider<CatalogDescriptor> appItem,
+							  @Named(Workflow.CATALOG) Provider<CatalogDescriptor> appItem,
 							  // @Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
 							  @Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
 							  // @Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
@@ -84,7 +84,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 	@Override
 	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) {
-		if (ApplicationItem.CATALOG.equals(catalogId)) {
+		if (Workflow.CATALOG.equals(catalogId)) {
 			return appItem.get();
 		} else if (Notification.CATALOG.equals(catalogId)) {
 			return notificationProvider.get();
@@ -101,7 +101,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 		names.add(new CatalogIdentificationImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
 				"/static/img/notification.png"));
 		names.add(new CatalogIdentificationImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
-		names.add(new CatalogIdentificationImpl(ApplicationItem.CATALOG, "Process", "/static/img/process.png"));
+		names.add(new CatalogIdentificationImpl(Workflow.CATALOG, "Process", "/static/img/process.png"));
 		names.add(new CatalogIdentificationImpl(Notification.CATALOG, Notification.CATALOG,
 				"/static/img/notification.png"));
 		// organization catalog as visible?

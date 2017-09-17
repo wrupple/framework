@@ -8,6 +8,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
+import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.desktop.client.services.command.ExplicitOutputPlace;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
@@ -22,67 +23,27 @@ import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 
-	private JsNotification output;
-	private StateTransition<DesktopPlace> callback;
-	private String[] activity;
-	private StorageManager desc;
-	private StorageManager sm;
-	private boolean entry;
-	private JavaScriptObject properties;
-	private ProcessContextServices processContext;
 
-	@Inject
-	public ExplicitOutputPlaceImpl() {
-		super();
-	}
 
-	private class Launch extends DataCallback<String[]> {
-		private final StorageManager desc;
-		private final JsNotification output;
-		private final boolean entry;
-		private final JavaScriptObject properties;
-		private final StateTransition<DesktopPlace> callback;
 
-		public Launch(StorageManager desc, JsNotification output, boolean entry, JavaScriptObject properties, StateTransition<DesktopPlace> callback) {
-			super();
-			this.desc = desc;
-			this.output = output;
-			this.entry = entry;
-			this.properties = properties;
-			this.callback = callback;
-		}
-
-		@Override
-		public void execute() {
-			// TODO this results in the next place sometimes having unessecary
-			// properties (such as entry ID)
-			final DesktopPlace p =    StandardActivityCommand.determineExplicitPlaceIntentArguments(result, output, null, entry);
-			
-			if(output==null||output.getCatalog()==null){
-				callback.setResultAndFinish(p);
-			}else{
-				DesktopManager dm = processContext.getDesktopManager();
-				desc.loadCatalogDescriptor(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(), output.getCatalog(), new DataCallback<CatalogDescriptor>() {
-					@Override
-					public void execute() {
-						StandardActivityCommand.determineFieldUrlParameters(result,p,properties,output);
-						callback.setResultAndFinish(p);
-					}
-				});
-			}
-			
-
-		}
-
-	}
 
 	@Override
-	public void execute() {
+	public boolean execute() {
+
+        private JsNotification output;
+        private StateTransition<DesktopPlace> callback;
+        private String[] activity;
+        private StorageManager desc;
+        private StorageManager sm;
+        private boolean entry;
+        private JavaScriptObject properties;
+        private ProcessContextServices processContext;
+
 		if (activity == null) {
 			/*
 			 * if activity has not been defined either by properties or command argument:
 			 * 
-			 * read the value from the output of whateve field that has a foreignKey pointing to ApplicationItem
+			 * read the value from the output of whateve field that has a foreignKey pointing to Workflow
 			 * 
 			 */
 			if (output != null) {
@@ -122,7 +83,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 		} else {
 			new Launch(desc,output,entry,properties,callback).setResultAndFinish(activity);
 		}
-
+        return CONTINUE_PROCESSING;
 	}
 
 	@Override

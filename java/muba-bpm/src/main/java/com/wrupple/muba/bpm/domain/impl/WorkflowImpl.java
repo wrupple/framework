@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.event.domain.ServiceManifestImpl;
-import com.wrupple.muba.bpm.domain.ApplicationItem;
+import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by japi on 25/07/17.
  */
-public class ApplicationItemImpl extends ServiceManifestImpl implements ApplicationItem {
+public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
 
     private Long peer;
     private String description,outputField,exit,cancel,error;

@@ -35,7 +35,7 @@ public class InferNextTaskImpl implements InferNextTask {
 
         */
 
-        ApplicationItem item = (ApplicationItem) applicationState.getHandleValue();
+        Workflow item = (Workflow) applicationState.getHandleValue();
         List<ProcessTaskDescriptor> workflow = item.getProcessValues();
 
         ProcessTaskDescriptor nextTask ;

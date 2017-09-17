@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.bpm.domain.ApplicationItem;
+import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
@@ -20,11 +20,11 @@ public class BusinessEventImpl extends ManagedObjectImpl implements BusinessEven
     )
     private ApplicationState stateValue;
     @CatalogValue(
-            foreignCatalog = ApplicationItem.CATALOG
+            foreignCatalog = Workflow.CATALOG
     )
-    private ApplicationItem handleValue;
+    private Workflow handleValue;
     @CatalogKey(
-            foreignCatalog = ApplicationItem.CATALOG
+            foreignCatalog = Workflow.CATALOG
     )
     private Long handle;
 
@@ -84,11 +84,11 @@ public class BusinessEventImpl extends ManagedObjectImpl implements BusinessEven
         this.catalog = catalog;
     }
 
-    public ApplicationItem getHandleValue() {
+    public Workflow getHandleValue() {
         return handleValue;
     }
 
-    public void setHandleValue(ApplicationItem handleValue) {
+    public void setHandleValue(Workflow handleValue) {
         this.handleValue = handleValue;
     }
 

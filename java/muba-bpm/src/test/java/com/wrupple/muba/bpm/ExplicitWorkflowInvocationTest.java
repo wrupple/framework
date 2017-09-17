@@ -8,7 +8,10 @@ import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.MubaTest;
 
 
-public class ExplicitApplicationInvocationTest extends MubaTest {
+/**
+ * FIXME Test ExplicitOutputPlaceImpl
+ */
+public class ExplicitWorkflowInvocationTest extends MubaTest {
 	@Override
 	protected void registerServices(EventBus switchs) {
 
@@ -17,6 +20,7 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 	@Override
 	protected void setUp() throws Exception {
 
+		//FIXME this tests catching ApplicationUpdateEvent And firing a workflow
 	}
 
 	/*
@@ -121,7 +125,14 @@ public class ExplicitApplicationInvocationTest extends MubaTest {
 
 		runtimeContext.setServiceContract(action);
 		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
+				CatalogActiprivate JsNotification output;
+	private StateTransition<DesktopPlace> callback;
+	private String[] activity;
+	private StorageManager desc;
+	private StorageManager sm;
+	private boolean entry;
+	private JavaScriptObject properties;
+	private ProcessContextServices processContext;onRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 
 		runtimeContext.process();
 

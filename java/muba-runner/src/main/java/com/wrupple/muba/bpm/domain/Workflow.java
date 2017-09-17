@@ -8,9 +8,9 @@ import com.wrupple.muba.event.domain.reserved.*;
 /**
  *
  */
-public interface ApplicationItem extends ServiceManifest,HasOutput{
+public interface Workflow extends ServiceManifest,HasOutput{
 	
-	public  final String CATALOG = "ApplicationItem";
+	public  final String CATALOG = "Workflow";
 
 	public Long getPeer();
 

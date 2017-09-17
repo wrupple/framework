@@ -10,6 +10,11 @@ import com.wrupple.muba.bpm.domain.ApplicationState;
 public class ApplicationStateUpdatePlaceImpl {
 
     public void onApplicationStateChanged(ApplicationState e){
+
+        final PlaceController pc = context.getPlaceController();
+
+        StandardActivityCommand.determineFieldUrlParameters(result,p,properties,output);
+
         //conditions from GWT desktop (AbstractCommitUserTransactionImpl CommitEditTransaction CommitSelectTransaction)... do commit
 
         if (userOutput == null) {

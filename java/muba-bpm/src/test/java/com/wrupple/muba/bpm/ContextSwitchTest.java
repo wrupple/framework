@@ -3,7 +3,7 @@ package com.wrupple.muba.bpm;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.impl.ApplicationItemImpl;
+import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.domain.impl.BusinessEventImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
@@ -124,7 +124,7 @@ public class ContextSwitchTest extends MubaTest {
 
 
         log.trace("[-create booking data handling application item-]");
-        ApplicationItemImpl item = new ApplicationItemImpl();
+        WorkflowImpl item = new WorkflowImpl();
 
         item.setDistinguishedName("createTrip");;
         item.setProcessValues(Arrays.asList(pickDriver,updateBooking));
@@ -139,7 +139,7 @@ public class ContextSwitchTest extends MubaTest {
 
         runtimeContext.setServiceContract(action);
         runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-                CatalogActionRequest.LOCALE_FIELD, ApplicationItem.CATALOG, CatalogActionRequest.CREATE_ACTION);
+                CatalogActionRequest.LOCALE_FIELD, Workflow.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
 
@@ -214,7 +214,7 @@ public class ContextSwitchTest extends MubaTest {
         runtimeContext.process();
 
         //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
-        ApplicationItemImpl item = runtimeContext.getConvertedResult();
+        WorkflowImpl item = runtimeContext.getConvertedResult();
 
         runtimeContext.reset();
 

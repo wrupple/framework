@@ -13,7 +13,7 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import java.util.List;
 
 /**
- * EntryId determines the input contract that created this context according to the data type referenced by the (HasCatalogId:)ApplicationItem.
+ * EntryId determines the input contract that created this context according to the data type referenced by the (HasCatalogId:)Workflow.
  * The reference to this contract is found in the runtineContext
  *
  */
@@ -27,7 +27,7 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
      Long getApplication();
 
-     ApplicationItem getApplicationValue();
+     Workflow getApplicationValue();
 
     Long getTaskDescriptor();
 
@@ -67,7 +67,7 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
     void setTaskDescriptor(Object id);
 
-    void setApplicationValue(ApplicationItem applicationItemValue);
+    void setApplicationValue(Workflow workflowValue);
 
     // public void setLayoutUnit(String s);
 

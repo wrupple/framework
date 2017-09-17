@@ -52,12 +52,12 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(ApplicationItem.CATALOG)
+    @Named(Workflow.CATALOG)
     public CatalogDescriptor activity(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(ApplicationItemImpl.class, ApplicationItem.CATALOG, "Activity",
+        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Activity",
                 -990090, null);
-        r.setClazz(ApplicationItemImpl.class);
+        r.setClazz(WorkflowImpl.class);
         return r;
     }
 
