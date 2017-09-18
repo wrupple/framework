@@ -10,7 +10,7 @@ import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.domain.Trash;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;

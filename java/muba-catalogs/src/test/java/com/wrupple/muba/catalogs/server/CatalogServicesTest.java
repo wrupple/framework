@@ -17,7 +17,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.CatalogTestModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import org.apache.commons.chain.Command;
 import org.junit.Before;

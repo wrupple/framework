@@ -7,7 +7,7 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ChainBase;
 
 import com.wrupple.muba.bpm.server.chain.command.AppendImplicitylySuscriptedPeers;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 
 @Singleton
 public class EventSuscriptionChainImpl  extends ChainBase implements EventSuscriptionChain {

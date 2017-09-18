@@ -8,7 +8,7 @@ import org.apache.commons.chain.impl.ChainBase;
 
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.CommitCatalogAction;
-import com.wrupple.muba.catalogs.server.chain.command.PublishEvents;
+import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.catalogs.server.chain.command.WriteAuditTrails;
 import com.wrupple.muba.catalogs.server.chain.command.WriteOutput;
 

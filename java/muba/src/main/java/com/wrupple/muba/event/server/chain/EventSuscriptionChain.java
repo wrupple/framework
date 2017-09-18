@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.server.chain;
+package com.wrupple.muba.event.server.chain;
 
 import org.apache.commons.chain.Chain;
 

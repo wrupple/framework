@@ -40,7 +40,7 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataCreationCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataDeleteCommandImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataQueryCommandImpl;

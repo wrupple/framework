@@ -25,7 +25,7 @@ import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
 import org.apache.commons.chain.Command;

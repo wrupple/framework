@@ -60,7 +60,7 @@ import com.wrupple.muba.catalogs.server.chain.command.FieldDescriptorUpdateTrigg
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
 import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
-import com.wrupple.muba.catalogs.server.chain.command.PublishEvents;
+import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
 import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
 import com.wrupple.muba.catalogs.server.chain.command.TrashDeleteTrigger;
@@ -81,7 +81,7 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.FieldDescriptorUpdate
 import com.wrupple.muba.catalogs.server.chain.command.impl.GarbageCollectionImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitDataJoinImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.IncreaseVersionNumberImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.PublishEventsImpl;
+import com.wrupple.muba.event.server.chain.command.impl.PublishEventsImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.RestoreTrashImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.TimestamperImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.TrashDeleteTriggerImpl;

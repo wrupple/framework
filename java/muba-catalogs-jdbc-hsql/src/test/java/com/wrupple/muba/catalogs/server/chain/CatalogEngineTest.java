@@ -16,6 +16,7 @@ import javax.validation.Validator;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;

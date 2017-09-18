@@ -1,11 +1,11 @@
-package com.wrupple.muba.catalogs.server.chain.command.impl;
+package com.wrupple.muba.event.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogChangeEvent;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogPeer;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
-import com.wrupple.muba.catalogs.server.chain.command.PublishEvents;
+import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;

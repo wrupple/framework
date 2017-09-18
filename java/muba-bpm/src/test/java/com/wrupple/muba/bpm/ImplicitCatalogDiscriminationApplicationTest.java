@@ -205,7 +205,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
     @Test
     public void submitBookingData() throws Exception {
-
+        //FIXME rewrite this with events
         log.trace("[-Ask BPM what application item to use to handle this booking-]");
 
         runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,Booking.class.getSimpleName(),Booking.class.getSimpleName());
