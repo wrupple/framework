@@ -22,9 +22,9 @@ public class ExplicitWorkflowInvocationTest extends MubaTest {
 
 		//FIXME this tests catching ApplicationUpdateEvent And firing a workflow
 		/**
-         * Triggers are serializable listeners, move trigger logit to an event
-		 * fire a catalog change event (PublishEventsImpl) ( install remote listeners on Event CHain)
-         * listen event  and have the desktop fire the first task of a workflow and install a listener for the task submission
+         * Triggers are serializable listeners, move trigger logit to an event (fire a workflow with one catalog task)
+		 * fire a catalog change event (PublishEventsImpl) ( install remote listeners on Event CHain (vegetate web hooks))
+         * listen event  and have the desktop fire the first task of a workflow and install a listener for the task submission(desktop)
 		 **/
 
 	}
