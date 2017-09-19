@@ -10,7 +10,7 @@ import java.util.Map;
  * @author japi
  *
  */
-public interface RootServiceManifest extends ServiceManifest {
+public interface ParentServiceManifest extends ServiceManifest {
 
 	final String NAME = "root",THREAD = "vegetate.thread",MANIFEST_HOLDER = "manifestObj";
 	

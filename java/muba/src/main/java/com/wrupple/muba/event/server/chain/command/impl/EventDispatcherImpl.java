@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import com.wrupple.muba.event.domain.ParentServiceManifest;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.chain.Command;
@@ -18,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.event.domain.ContractDescriptor;
-import com.wrupple.muba.event.domain.RootServiceManifest;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
@@ -130,7 +130,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 					requestContext.getId(), manifest.getServiceId());
 			if (CONTINUE_PROCESSING == incorporateContract(requestContext)) {
 				Command serviceHandler = requestContext.getEventBus().getIntentInterpret().getDictionaryFactory()
-						.getCatalog(RootServiceManifest.NAME)
+						.getCatalog(ParentServiceManifest.NAME)
 						.getCommand(requestContext.getServiceManifest().getServiceId());
 				log.debug("delegating to service handler {}", serviceHandler);
 				return serviceHandler.execute(requestContext.getServiceContext());
@@ -220,7 +220,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 	}
 
 	private ServiceManifest getChildServiceManifest(String service, RuntimeContext requestContext) {
-		RootServiceManifest rootService = requestContext.getEventBus().getIntentInterpret().getRootService();
+		ParentServiceManifest rootService = requestContext.getEventBus().getIntentInterpret().getRootService();
 		if (rootService == null) {
 			throw new IllegalStateException("No root service has been configured");
 		}

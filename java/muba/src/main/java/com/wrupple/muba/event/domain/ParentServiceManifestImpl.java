@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class RootServiceManifestImpl extends ServiceManifestImpl implements RootServiceManifest {
+public class ParentServiceManifestImpl extends ServiceManifestImpl implements ParentServiceManifest {
 	private static final long serialVersionUID = -5309668537269581130L;
 
 	private Map<String, LinkedHashMap<String, ServiceManifest>> childServices;
@@ -25,7 +25,7 @@ public class RootServiceManifestImpl extends ServiceManifestImpl implements Root
 
 
 	@Inject
-	public RootServiceManifestImpl() {
+	public ParentServiceManifestImpl() {
 		super(NAME, "1.0",  new ContractDescriptorImpl(TOKENS, CatalogEntry.class),(List) Arrays.asList(TOKENS));
 	
 	}

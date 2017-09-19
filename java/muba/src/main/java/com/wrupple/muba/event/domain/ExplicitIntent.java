@@ -5,9 +5,10 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 public interface ExplicitIntent extends Intent{
 
 	final String HANDLE_FIELD = "handle";
+    String CATALOG = "ExplicitIntent";
 
 
-	/**
+    /**
 	 *
 	 *
 	 * worker session to recover

@@ -20,14 +20,16 @@ public interface ImplicitEventResolver {
 
     HandlerRegistration addHandler(ServiceManifest serviceManifes);
 
+    List<ExplicitIntent> resolveHandlers(String intentType);
+
     //FIXME fireHandler(event)
 
     List<String> resolveContractSentence(CatalogEntry serviceContract) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
 
-    RootServiceManifest getRootService();
+    ParentServiceManifest getRootService();
 
-    void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret, ServiceManifest parent);
+    void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret, ParentServiceManifest parent);
 
     //contract interpret per type? bpm?
     void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret);

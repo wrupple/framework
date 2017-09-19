@@ -68,15 +68,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		return getEventBus().resume(this);
 	}
 
-	@Override
-	public <T> T spawnProcess(CatalogEntry implicitRequestContract) throws Exception {
-		RuntimeContextImpl next = new RuntimeContextImpl(eventBus,session,this);
-		next.setServiceContract(implicitRequestContract);
-        next.process();
-		return (T) next.getResult();
-	}
-
-
 	@Inject
 	public RuntimeContextImpl(EventBus appication, SessionContext session) {
 		this( appication, session, null);

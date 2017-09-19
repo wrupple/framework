@@ -30,7 +30,7 @@ public class BootstrapTest extends EasyMockSupport {
 	protected SessionContextImpl session;
 
 
-	// @TestSubject protected RootServiceManifest muba;
+	// @TestSubject protected ParentServiceManifest muba;
 
 	
 

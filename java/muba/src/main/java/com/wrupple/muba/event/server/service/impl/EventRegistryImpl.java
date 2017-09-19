@@ -3,7 +3,6 @@ package com.wrupple.muba.event.server.service.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 import com.wrupple.muba.event.server.service.EventRegistry;
-import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.chain.Catalog;
 import org.apache.commons.chain.CatalogFactory;
@@ -11,7 +10,6 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.CatalogBase;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -25,28 +23,44 @@ import java.util.*;
 public class EventRegistryImpl implements EventRegistry {
 
 
-    private final String DICTIONARY = RootServiceManifest.NAME + "-interpret";
-    private final RootServiceManifest root;
+    private final String DICTIONARY = ParentServiceManifest.NAME + "-interpret";
+    private final ParentServiceManifest root;
     private final Map<String,ServiceManifest> serviceDictionary;
 
     private final CatalogFactory factory;
     @Inject
-    public EventRegistryImpl(RootServiceManifest root, CatalogFactory factory) {
+    public EventRegistryImpl(ParentServiceManifest root, CatalogFactory factory) {
         this.root = root;
         this.factory = factory;
         this.serviceDictionary=new HashMap<>();
     }
 
 
-    public RootServiceManifest getRootService() {
+    public ParentServiceManifest getRootService() {
         return root;
     }
 
+    @Override
+    public void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret, ParentServiceManifest parent) {
+        Catalog dictionary = getDictionaryFactory().getCatalog(ParentServiceManifest.NAME);
+        if (dictionary == null) {
+            dictionary = getDictionaryFactory().getCatalog(DICTIONARY);
+            if (dictionary == null) {
+                dictionary = new CatalogBase();
+                getDictionaryFactory().addCatalog(DICTIONARY, dictionary);
+            }
+
+            dictionary = new CatalogBase();
+            getDictionaryFactory().addCatalog(ParentServiceManifest.NAME, dictionary);
+        }
+        dictionary.addCommand(manifest.getServiceId(), service);
+        parent.register(manifest);
+    }
 
 
     @Override
     public void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret) {
-        registerService(manifest,service);
+        registerService(manifest,service,contractInterpret,getRootService());
         registerContractInterpret(manifest,contractInterpret);
     }
 
@@ -59,10 +73,10 @@ public class EventRegistryImpl implements EventRegistry {
                                            RequestInterpret service) {
         Catalog dictionary = getDictionaryFactory().getCatalog(DICTIONARY);
         if (dictionary == null) {
-            dictionary = getDictionaryFactory().getCatalog(RootServiceManifest.NAME);
+            dictionary = getDictionaryFactory().getCatalog(ParentServiceManifest.NAME);
             if (dictionary == null) {
                 dictionary = new CatalogBase();
-                getDictionaryFactory().addCatalog(RootServiceManifest.NAME, dictionary);
+                getDictionaryFactory().addCatalog(ParentServiceManifest.NAME, dictionary);
             }
             dictionary = new CatalogBase();
             getDictionaryFactory().addCatalog(DICTIONARY, dictionary);
@@ -74,19 +88,7 @@ public class EventRegistryImpl implements EventRegistry {
 
     @Override
     public void registerService( ServiceManifest manifest, Command service) {
-        Catalog dictionary = getDictionaryFactory().getCatalog(RootServiceManifest.NAME);
-        if (dictionary == null) {
-            dictionary = getDictionaryFactory().getCatalog(DICTIONARY);
-            if (dictionary == null) {
-                dictionary = new CatalogBase();
-                getDictionaryFactory().addCatalog(DICTIONARY, dictionary);
-            }
 
-            dictionary = new CatalogBase();
-            getDictionaryFactory().addCatalog(RootServiceManifest.NAME, dictionary);
-        }
-        dictionary.addCommand(manifest.getServiceId(), service);
-        getRootService().register(manifest);
     }
 
     @Override
@@ -174,7 +176,7 @@ public class EventRegistryImpl implements EventRegistry {
          */
         List<String> pathTokens = generatePathTokens(serviceManifest);
         //TODO Business Event or User Event
-        UserEventImpl event = new UserEventImpl( pathTokens.toArray(new String[pathTokens.size()]));
+        ExplicitIntentImpl event = new ExplicitIntentImpl( pathTokens.toArray(new String[pathTokens.size()]));
 
         return event;
     }

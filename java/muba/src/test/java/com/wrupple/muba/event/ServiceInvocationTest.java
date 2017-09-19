@@ -32,7 +32,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 	public ServiceInvocationTest() {
 
-		RootServiceManifestImpl rootService = new RootServiceManifestImpl();
+		ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
 		EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
 		this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,null);
@@ -85,7 +85,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void defaultVersion() throws Exception {
 		log.trace("[-defaultVersion-]");
 
-		UserEvent event = new UserEventImpl(ADDITION, "1", "2" );
+		ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "1", "2" );
 
 		system.fireHandler/*TODO Async*/(event,session);
 
@@ -99,7 +99,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 		log.trace("[-conflict-] insufficient and/or malformed arguments were provided,should fail");
 		// conflicting input data with version, fails
 
-        UserEvent event = new UserEventImpl(ADDITION, "1.0", "1");
+        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "1.0", "1");
 
         system.fireHandler/*TODO Async*/(event, session);
 		// check rollback?
@@ -109,7 +109,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void invalidService() throws Exception {
 		log.trace("[-invalidService-]");
 
-        UserEvent event = new UserEventImpl("invalidService", "input");
+        ExplicitIntent event = new ExplicitIntentImpl("invalidService", "input");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -120,7 +120,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void invalidInput() throws Exception {
 		log.trace("[-invalidInput-]");
 
-        UserEvent event = new UserEventImpl(ADDITION, "one", "1.5");
+        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "one", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -131,7 +131,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void specificVersion() throws Exception {
 		log.trace("[-specificVersion-]");
 
-        UserEvent event = new UserEventImpl(ADDITION, UPGRADED_VERSION, "1", "1.5");
+        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, UPGRADED_VERSION, "1", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -144,7 +144,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 	public void invalidVersion() throws Exception {
 		log.trace("[-invalidVersion-]");
 
-        UserEvent event = new UserEventImpl(ADDITION, "1..0", "2", "1.5");
+        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "1..0", "2", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 

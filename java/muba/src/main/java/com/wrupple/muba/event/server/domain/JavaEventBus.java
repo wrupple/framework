@@ -3,6 +3,7 @@ package com.wrupple.muba.event.server.domain;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -72,15 +73,28 @@ public class JavaEventBus extends ContextBase implements EventBus {
         return intentInterpret;
     }
 
-	@Override
-	public boolean fireHandler(UserEvent event, SessionContext session) throws Exception {
-		RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
+    @Override
+    public boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception {
+        RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
         runtimeContext.setSentence(event.getSentence());
         runtimeContext.setServiceContract(event.getState());
         boolean regreso = resume(runtimeContext);
         event.setResult(runtimeContext.getResult());
         return regreso;
-	}
+    }
+
+    @Override
+    public <T> T fireEvent(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
+        //FIXME use FilterNativeInterface to filter explicit handlers, return compund result (list?) if many handlers match
+        List<ExplicitIntent> handlers = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
+        handlers.
+        ExplicitIntent call = null;
+        return call.getConvertedResult();
+    }
+
+
+
+
 
     @Override
     public boolean resume(RuntimeContextImpl runtimeContext) throws Exception {

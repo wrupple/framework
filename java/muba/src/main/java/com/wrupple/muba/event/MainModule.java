@@ -10,8 +10,8 @@ import org.apache.commons.chain.CatalogFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
-import com.wrupple.muba.event.domain.RootServiceManifest;
-import com.wrupple.muba.event.domain.RootServiceManifestImpl;
+import com.wrupple.muba.event.domain.ParentServiceManifest;
+import com.wrupple.muba.event.domain.ParentServiceManifestImpl;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import com.wrupple.muba.event.server.domain.RuntimeContextImpl;
@@ -37,7 +37,7 @@ public class MainModule extends AbstractModule {
 		 */
 		bind(EventRegistry.class).to(EventRegistryImpl.class);
 		bind(CatalogFactory.class).toInstance(CatalogFactory.getInstance());
-		bind(RootServiceManifest.class).to(RootServiceManifestImpl.class);
+		bind(ParentServiceManifest.class).to(ParentServiceManifestImpl.class);
 		bind(SentenceValidator.class).to(SentenceValidatorImpl.class);
 	}
 

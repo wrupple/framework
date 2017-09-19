@@ -3,7 +3,7 @@ package com.wrupple.muba.event.domain;
 /**
  * Created by japi on 21/08/17.
  */
-public class UserEventImpl extends CatalogEntryImpl implements ExplicitIntent {
+public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitIntent {
 
     /**
      * it's up to the event contract to decide if the catalog is metadata to the result or the event
@@ -13,7 +13,7 @@ public class UserEventImpl extends CatalogEntryImpl implements ExplicitIntent {
     private Object state;
     private String[] handle;
 
-    public UserEventImpl(String... tokenValues) {
+    public ExplicitIntentImpl(String... tokenValues) {
         super();
         this.handle=tokenValues;
     }
@@ -45,18 +45,14 @@ public class UserEventImpl extends CatalogEntryImpl implements ExplicitIntent {
         this.state = state;
     }
 
-    @Override
-    public String[] getHandle() {
-        return handle;
-    }
 
-    public void setHandle(String[] handle) {
+    public void setSentence(String[] handle) {
         this.handle = handle;
     }
 
     @Override
     public String getCatalogType() {
-        return UserEvent.class.getSimpleName();
+        return ExplicitIntent.CATALOG;
     }
 
     @Override
@@ -66,6 +62,6 @@ public class UserEventImpl extends CatalogEntryImpl implements ExplicitIntent {
 
     @Override
     public String[] getSentence() {
-        return getHandle();
+        return handle;
     }
 }
