@@ -4,8 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import com.wrupple.muba.catalogs.domain.Constraint;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Constraint;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 
 public interface JSRAnnotationsDictionary {

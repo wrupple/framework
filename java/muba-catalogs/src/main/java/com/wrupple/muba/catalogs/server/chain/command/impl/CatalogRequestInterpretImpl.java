@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;

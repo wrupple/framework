@@ -4,9 +4,8 @@ import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
 import com.wrupple.muba.bpm.server.service.HumanSolver;
-import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

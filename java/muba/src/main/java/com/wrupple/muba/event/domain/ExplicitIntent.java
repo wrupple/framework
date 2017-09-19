@@ -2,9 +2,11 @@ package com.wrupple.muba.event.domain;
 
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 
+import java.util.List;
+
 public interface ExplicitIntent extends Intent{
 
-	final String HANDLE_FIELD = "handle";
+	final String HANDLE_FIELD = "sentence";
     String CATALOG = "ExplicitIntent";
 
 
@@ -24,7 +26,9 @@ public interface ExplicitIntent extends Intent{
 	 *
 	 * @return alias to getHandle()
 	 */
-	String[] getSentence();
+	List<String> getSentence();
 
 	void setResult(Object result);
+
+	<R> R setError(Exception e);
 }

@@ -19,7 +19,7 @@ import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;

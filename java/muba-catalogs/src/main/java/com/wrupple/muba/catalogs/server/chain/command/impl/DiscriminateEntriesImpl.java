@@ -7,10 +7,10 @@ import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import com.wrupple.muba.event.domain.Instrospector;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +57,15 @@ public class DiscriminateEntriesImpl implements CatalogReadTransaction {
 		HashMap<Long, CatalogEntry> discriminatedMap = new HashMap<Long, CatalogEntry>(size);
 
 		Long disciminator;
-		Session session = null;
+		Instrospector instrospector = null;
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		FieldDescriptor field = catalog.getFieldDescriptor(discriminatingField);
 		log.trace("[BUILD DISCRIMINATOR MAP]");
 		for (CatalogEntry e : members) {
-			if (session == null) {
-                session = context.getCatalogManager().access().newSession(e);
+			if (instrospector == null) {
+                instrospector = context.getCatalogManager().access().newSession(e);
             }
-            disciminator = (Long) context.getCatalogManager().access().getPropertyValue(field, e, null, session);
+            disciminator = (Long) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospector);
             discriminatedMap.put(disciminator, e);
 		}
 		// IN THE SAME ORDER AS DISCRIMINATORS, this only works for long primary

@@ -3,7 +3,10 @@ package com.wrupple.muba.event.server.domain;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,6 +18,8 @@ import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.service.EventRegistry;
+import com.wrupple.muba.event.server.service.FilterNativeInterface;
+import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
 
 @Singleton
@@ -28,17 +33,24 @@ public class JavaEventBus extends ContextBase implements EventBus {
 	private final EventRegistry intentInterpret;
     private final EventDispatcher process;
 	private final Provider<UserTransaction> transactionProvider;
+    private final Boolean parallel;
+    private final Map<String, FieldDescriptor> handleField;
     private UserTransaction transaction;
 
+    private final FilterNativeInterface filterer;
+
     @Inject
-	public JavaEventBus(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, Provider<UserTransaction> transactionProvider) {
+	public JavaEventBus(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named("event.sentence") FieldDescriptor handleFieldDescriptor) {
 		super();
+		this.parallel=parallel;
 		this.process=process;
 		this.out=out;
 		this.in = in;
 		this.outputWriter = new PrintWriter(out);
         this.intentInterpret = intentInterpret;
         this.transactionProvider=transactionProvider;
+        this.filterer = filterer;
+        this.handleField= Collections.singletonMap(ExplicitIntent.HANDLE_FIELD,handleFieldDescriptor);
     }
 
     @Override
@@ -76,6 +88,10 @@ public class JavaEventBus extends ContextBase implements EventBus {
     @Override
     public boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception {
         RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
+        return fireHandlerWithRuntime(event,runtimeContext);
+    }
+
+    private boolean fireHandlerWithRuntime(ExplicitIntent event, RuntimeContext runtimeContext) throws Exception {
         runtimeContext.setSentence(event.getSentence());
         runtimeContext.setServiceContract(event.getState());
         boolean regreso = resume(runtimeContext);
@@ -85,11 +101,43 @@ public class JavaEventBus extends ContextBase implements EventBus {
 
     @Override
     public <T> T fireEvent(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
-        //FIXME use FilterNativeInterface to filter explicit handlers, return compund result (list?) if many handlers match
         List<ExplicitIntent> handlers = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
-        handlers.
-        ExplicitIntent call = null;
-        return call.getConvertedResult();
+
+        if(handlerCriterion!=null && !handlerCriterion.isEmpty()){
+            Instrospector introspector=;
+            handlers= handlers.stream().
+                    filter(handler ->filterer.matchAgainstFilters(handler, handlerCriterion, handleField, introspector) ).
+                    collect(Collectors.toList());
+        }
+
+
+
+        if(handlers.size()==1){
+            ExplicitIntent call = handlers.get(0);
+            fireHandler(call,session);
+            return call.getConvertedResult();
+        }else if(parallel){
+            List<Object> results=  handlers.parallelStream().map(handler -> {
+                try {
+                    fireHandler(handler,session);
+                } catch (Exception e) {
+                    handler.setError(e);
+                    //implicitRequestContract.addError(e);
+                    return handler;
+                }
+                return handler.getConvertedResult();
+            }).collect(Collectors.toList());
+            return (T) results;
+        }else{
+            RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
+            for(ExplicitIntent handler : handlers){
+                if( fireHandlerWithRuntime(handler,runtimeContext)!= Command.CONTINUE_PROCESSING){
+                    break;
+                }
+            }
+            return runtimeContext.getConvertedResult();
+        }
+
     }
 
 
@@ -97,7 +145,7 @@ public class JavaEventBus extends ContextBase implements EventBus {
 
 
     @Override
-    public boolean resume(RuntimeContextImpl runtimeContext) throws Exception {
+    public boolean resume(RuntimeContext runtimeContext) throws Exception {
         return process.execute(runtimeContext);
     }
 }

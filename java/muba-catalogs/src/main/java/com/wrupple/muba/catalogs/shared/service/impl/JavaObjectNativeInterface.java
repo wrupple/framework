@@ -1,9 +1,9 @@
 package com.wrupple.muba.catalogs.shared.service.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.slf4j.Logger;
@@ -40,13 +40,13 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public FieldAccessStrategy.Session newSession(CatalogEntry sample) {
-        FieldAccessSession session = new FieldAccessSession();
+    public Instrospector newSession(CatalogEntry sample) {
+        FieldAccessInstrospector session = new FieldAccessInstrospector();
         session.resample(sample);
         return session;
     }
 
-    private class FieldAccessSession implements FieldAccessStrategy.Session {
+    private class FieldAccessInstrospector implements Instrospector {
         boolean accesible;
 
         @Override
@@ -170,10 +170,10 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public Object getWrappedValue(String fieldId, FieldAccessStrategy.Session session, CatalogEntry object, boolean silentFail) {
+    public Object getWrappedValue(String fieldId, Instrospector instrospector, CatalogEntry object, boolean silentFail) {
 
             try {
-                return ((FieldAccessSession)session).getPropertyValue(object,fieldId);
+                return ((FieldAccessInstrospector) instrospector).getPropertyValue(object,fieldId);
             } catch (Exception e) {
                 if(silentFail){
                     return null;
@@ -187,7 +187,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public void setProperty(CatalogEntry object, String fieldId, Object value, FieldAccessStrategy.Session session) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void setProperty(CatalogEntry object, String fieldId, Object value, Instrospector instrospector) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         bean.setProperty(object,fieldId,value);
     }
 
@@ -197,11 +197,11 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public Object getPropertyValue(CatalogEntry o, String pathing, FieldAccessStrategy.Session session) {
-        if(session.isAccesible()){
+    public Object getPropertyValue(CatalogEntry o, String pathing, Instrospector instrospector) {
+        if(instrospector.isAccesible()){
             return ((HasAccesablePropertyValues)o).getPropertyValue(pathing);
         }else{
-            return getWrappedValue(pathing,session,o,false);
+            return getWrappedValue(pathing, instrospector,o,false);
         }
     }
 
@@ -211,7 +211,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
 
-    private Object goBeanGet(FieldAccessSession session, CatalogEntry object, String fieldId)
+    private Object goBeanGet(FieldAccessInstrospector session, CatalogEntry object, String fieldId)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IntrospectionException,
             NoSuchMethodException {
         return session.getPropertyValue(object, fieldId);

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import org.slf4j.Logger;
@@ -17,13 +18,12 @@ import org.slf4j.LoggerFactory;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> implements QueryResultHandler {
 	protected Logger log = LoggerFactory.getLogger(QueryResultHandlerImpl.class);
@@ -70,7 +70,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 	class CatalogRowProcessor extends BasicRowProcessor {
 
 		private CatalogDescriptor catalog;
-		private Session session;
+		private Instrospector instrospector;
 
 		public CatalogRowProcessor(CatalogDescriptor catalog) {
 			this.catalog = catalog;
@@ -111,8 +111,8 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 			}catch(IllegalAccessException e){
 				throw new IllegalArgumentException("cannot instantiate " + type);
 			}
-			if (session == null) {
-				session = cms.access().newSession((CatalogEntry) result);
+			if (instrospector == null) {
+				instrospector = cms.access().newSession((CatalogEntry) result);
 			}
 			FieldDescriptor field;
 			for (int i = 1; i <= cols; i++) {
@@ -126,7 +126,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				if (field != null) {
 					try {
 						cms.access().setPropertyValue(field, (CatalogEntry) result,
-								delegate.handleColumnField(rs,field, field.getDataType(), i, format), session);
+								delegate.handleColumnField(rs,field, field.getDataType(), i, format), instrospector);
 					} catch (Exception e) {
 						throw new IllegalArgumentException(e);
 					}

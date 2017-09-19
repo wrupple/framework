@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.reserved.HasTimestamp;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import com.wrupple.muba.event.domain.Instrospector;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -25,9 +25,9 @@ public class TimestamperImpl implements Timestamper {
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
-		Session session = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
+		Instrospector instrospector = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
 		CatalogEntry entry = (CatalogEntry)context.getEntryValue();
-		context.getCatalogManager().access().setPropertyValue(HasTimestamp.FIELD, entry, new Date(), session);
+		context.getCatalogManager().access().setPropertyValue(HasTimestamp.FIELD, entry, new Date(), instrospector);
 		return CONTINUE_PROCESSING;
 	}
 

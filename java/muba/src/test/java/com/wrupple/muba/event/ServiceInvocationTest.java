@@ -35,7 +35,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 		ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
 		EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
-		this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,null);
+		this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,null, filterer);
 
 
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });

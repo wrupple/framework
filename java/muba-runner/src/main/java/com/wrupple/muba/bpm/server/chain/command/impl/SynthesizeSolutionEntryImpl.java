@@ -1,14 +1,14 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
 
         log.trace("solution has {} variables",variableDescriptors.size());
 
-        FieldAccessStrategy.Session solutionWritingSession = catalog.access().newSession(solution);
+        Instrospector solutionWritingInstrospector = catalog.access().newSession(solution);
 
         FieldDescriptor fieldId;
         Object fieldValue;
@@ -52,7 +52,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
             fieldId = solutionVariable.getField();
             fieldValue = solutionVariable.getValue();
             log.debug("    {}={}",fieldId.getFieldId(),fieldValue);
-            catalog.access().setPropertyValue(fieldId,solution,fieldValue,solutionWritingSession);
+            catalog.access().setPropertyValue(fieldId,solution,fieldValue, solutionWritingInstrospector);
         }
 
         context.getRuntimeContext().setResult(solution);

@@ -4,10 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.ContractDescriptor;
-import com.wrupple.muba.event.domain.FilterCriteria;
-import com.wrupple.muba.event.domain.FilterDataOrdering;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasParent;
 import com.wrupple.muba.event.domain.reserved.Versioned;
 

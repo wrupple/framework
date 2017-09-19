@@ -1,15 +1,12 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterCriteria;
-import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +92,7 @@ public abstract class DataJoiner implements Command {
 	}
 
 	protected void joinWithGivenJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog,
-			String[][] joins, CatalogActionContext context, Map<JoinQueryKey, Set<Object>> filterMap, Session session)
+			String[][] joins, CatalogActionContext context, Map<JoinQueryKey, Set<Object>> filterMap, Instrospector instrospector)
 			throws Exception {
 
 		if (log.isInfoEnabled()) {
@@ -120,15 +117,15 @@ public abstract class DataJoiner implements Command {
 			fieldValues = filterMap.get(key);
 
 			log.trace("[GATHERING VALUES FOR JOIN] {}/{}", key, localField);
-			gatherFieldValues(localField, mainResults, mainCatalog, session, fieldValues, context);
+			gatherFieldValues(localField, mainResults, mainCatalog, instrospector, fieldValues, context);
 
 			log.trace("[PROCESS JOIN] {}", key);
-			processJoin(key.catalog, key.field, context, session, fieldValues, mainResults, mainCatalog);
+			processJoin(key.catalog, key.field, context, instrospector, fieldValues, mainResults, mainCatalog);
 
 		}
 	}
 
-	private void processJoin(String catalogId, String foreignField, CatalogActionContext context, Session session,
+	private void processJoin(String catalogId, String foreignField, CatalogActionContext context, Instrospector instrospector,
 			Set<Object> fieldValues, List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog) throws Exception {
 
 		/*
@@ -143,13 +140,13 @@ public abstract class DataJoiner implements Command {
 		if (currentMatchingEntries == null || currentMatchingEntries.isEmpty()) {
 			return;
 		} else {
-			workJoinData(mainResults, mainCatalog, currentMatchingEntries, catalog, context, session);
+			workJoinData(mainResults, mainCatalog, currentMatchingEntries, catalog, context, instrospector);
 
 		}
 	}
 
 	private void gatherFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog,
-			Session session, Set<Object> fieldValues, CatalogActionContext context) throws Exception {
+                                   Instrospector instrospector, Set<Object> fieldValues, CatalogActionContext context) throws Exception {
 		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 		int indexOfLastSeparator = fieldId.lastIndexOf('.');
@@ -220,12 +217,12 @@ public abstract class DataJoiner implements Command {
 				throw new RuntimeException("no results to join");
 			} else {
 				log.trace("[READ JOIN DISCRIMINATORS] ");
-				putFieldValues(fieldId, results, catalog, session, fieldValues,context.getCatalogManager());
+				putFieldValues(fieldId, results, catalog, instrospector, fieldValues,context.getCatalogManager());
 			}
 		}
 	}
 
-	private void putFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog, Session session,
+	private void putFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog, Instrospector instrospector,
 			Set<Object> fieldValues, SystemCatalogPlugin cms) throws Exception {
 		FieldDescriptor field = catalog.getFieldDescriptor(fieldId);
 		if (field == null) {
@@ -236,7 +233,7 @@ public abstract class DataJoiner implements Command {
 			if (field.isMultiple()) {
 				Collection<?> temp;
 				for (CatalogEntry e : results) {
-                    temp = (Collection<?>) cms.access().getPropertyValue(field, e, null, session);
+                    temp = (Collection<?>) cms.access().getPropertyValue(field, e, null, instrospector);
                     if (temp != null) {
 						for (Object o : temp) {
 							if (o != null) {
@@ -250,7 +247,7 @@ public abstract class DataJoiner implements Command {
 
 				Object value;
 				for (CatalogEntry e : results) {
-                    value = cms.access().getPropertyValue(field, e, null, session);
+                    value = cms.access().getPropertyValue(field, e, null, instrospector);
                     if (value != null) {
 						fieldValues.add(value);
 					}
@@ -302,7 +299,7 @@ public abstract class DataJoiner implements Command {
 	}
 
 	protected abstract void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog,
-			List<CatalogEntry> joins, CatalogDescriptor joinCatalog, CatalogActionContext context, Session session)
+			List<CatalogEntry> joins, CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospector instrospector)
 			throws Exception;
 	/*
 	 * protected void workJoinData(List<CatalogEntry> list, CatalogDescriptor
@@ -326,7 +323,7 @@ public abstract class DataJoiner implements Command {
 	 * List<Object> fieldContents; log.trace("[RESULT SET CREATED] {}",
 	 * catalog.getDistinguishedName()); // System.err.println(list);
 	 * 
-	 * Session session = context.getCatalogManager().newSession(list.get(0)); int j = 0; for
+	 * Instrospector session = context.getCatalogManager().newSession(list.get(0)); int j = 0; for
 	 * (FieldDescriptor field : fields) { fieldId = field.getFieldId();
 	 * fieldContents = new ArrayList<Object>(list.size()); collectedValues[j] =
 	 * fieldContents; log.trace("[ALLOCATED SPACE FOR FIELD] {}", fieldId);
@@ -407,7 +404,7 @@ public abstract class DataJoiner implements Command {
 	}
 
 	protected CatalogColumnResultSet createResultSet(List<CatalogEntry> list, CatalogDescriptor catalog,
-			String currentCatalogId, CatalogActionContext context, Session session) throws Exception {
+			String currentCatalogId, CatalogActionContext context, Instrospector instrospector) throws Exception {
 		log.trace("[CREATE RESULT SET]");
 		if (catalog == null) {
 			catalog = context.getCatalogManager().getDescriptorForName(currentCatalogId, context);
@@ -463,7 +460,7 @@ public abstract class DataJoiner implements Command {
 						log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId());
 						fieldValue = null;
 					} else {
-                        fieldValue = context.getCatalogManager().access().getPropertyValue(field, object, localizedObject, session);
+                        fieldValue = context.getCatalogManager().access().getPropertyValue(field, object, localizedObject, instrospector);
                     }
 					fieldContents.add(fieldValue);
 				}

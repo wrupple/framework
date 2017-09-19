@@ -19,8 +19,8 @@ import com.wrupple.muba.event.server.service.ContextAwareValidator;
 import com.wrupple.muba.event.server.service.PropertyValidationContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.HasConstrains;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.HasConstrains;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
@@ -274,7 +274,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	}
 
 	private Annotation[] buildAnnotation(HasConstrains source, FieldDescriptor field) {
-		List<com.wrupple.muba.catalogs.domain.Constraint> constraints = source.getConstraintsValues();
+		List<Constraint> constraints = source.getConstraintsValues();
 		boolean key = field != null & dictionary.isJoinableValueField(field)
 				&& field.isKey() /* not ephemerals */;
 		boolean normalized = field != null && field.getDefaultValueOptions() != null;
@@ -302,7 +302,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			j++;
 		}
 
-		com.wrupple.muba.catalogs.domain.Constraint constraint;
+		Constraint constraint;
 		if (constraints != null) {
 			Annotation rannotation;
 			for (int i = 0; i < size; i++) {

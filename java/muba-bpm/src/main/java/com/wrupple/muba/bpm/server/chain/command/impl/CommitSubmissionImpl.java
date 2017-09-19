@@ -2,6 +2,7 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.server.chain.command.CommitSubmission;
@@ -37,7 +38,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
         //what task
         //what action
         //AQUI VA LO BUENO
-        FieldAccessStrategy.Session session = aceess.newSession(applicationState);
+        Instrospector instrospector = aceess.newSession(applicationState);
 
         //conditions from GWT desktop ( CommitEditTransaction CommitSelectTransaction )... do commit
 
@@ -45,7 +46,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
         if (producedField != null) {
             //TODO certain saveTo fields are reserved, like those in CatalogAction
             //GWTUtils.setAttribute(contextP, saveTo, userOutput);
-            aceess.setPropertyValue(producedField,applicationState,userOutput.getId(),session);
+            aceess.setPropertyValue(producedField,applicationState,userOutput.getId(), instrospector);
 
         }
 

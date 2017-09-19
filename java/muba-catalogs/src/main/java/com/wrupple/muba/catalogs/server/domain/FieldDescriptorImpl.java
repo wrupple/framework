@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.Constraint;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Constraint;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldWidget;

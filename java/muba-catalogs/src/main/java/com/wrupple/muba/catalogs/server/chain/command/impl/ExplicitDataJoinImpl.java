@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -8,7 +9,6 @@ import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -34,9 +34,9 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 			return CONTINUE_PROCESSING;
 		}
 		List<CatalogEntry> result = context.getResults();
-        Session session = context.getCatalogManager().access().newSession(result.get(0));
+        Instrospector instrospector = context.getCatalogManager().access().newSession(result.get(0));
         CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
-				(String) context.getCatalog(), context, session);
+				(String) context.getCatalog(), context, instrospector);
 		FilterData filter = context.getFilter();
 		if (filter != null) {
 			resultSet.setCursor(filter.getCursor());
@@ -47,15 +47,15 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 		regreso.add(resultSet);
 		context.put(CompleteCatalogGraph.JOINED_DATA, regreso);
 
-		joinWithGivenJoinData(result, context.getCatalogDescriptor(), joins, context, filterMap, session);
+		joinWithGivenJoinData(result, context.getCatalogDescriptor(), joins, context, filterMap, instrospector);
 		return CONTINUE_PROCESSING;
 	}
 
 	@Override
 	protected void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog, List<CatalogEntry> joins,
-			CatalogDescriptor joinCatalog, CatalogActionContext context, Session session) throws Exception {
+			CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospector instrospector) throws Exception {
 		CatalogColumnResultSet resultSet = super.createResultSet(joins, joinCatalog, joinCatalog.getDistinguishedName(),
-				context, session);
+				context, instrospector);
 		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 		joinsThusFar.add(resultSet);

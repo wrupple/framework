@@ -20,11 +20,11 @@ import org.slf4j.LoggerFactory;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import com.wrupple.muba.event.domain.Instrospector;
 
 @Singleton
 public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
@@ -111,7 +111,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		Collection<FieldDescriptor> fields = catalogDescriptor.getFieldsValues();
 		String foreignTableName;
 		List<Object> fieldValues;
-		Session session = null;
+		Instrospector instrospector = null;
 		MultipleFieldResultsHandler handler = null;
 		for (FieldDescriptor field : fields) {
 			if (field.isMultiple() && !field.isEphemeral()) {
@@ -128,10 +128,10 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 					handler.setField(field);
 					log.trace("[DB secondary read] {}  id={}", builder.toString(), id);
 					fieldValues = runner.query(builder.toString(), handler, id);
-					if (session == null) {
-						session = context.getCatalogManager().access().newSession(r);
+					if (instrospector == null) {
+						instrospector = context.getCatalogManager().access().newSession(r);
 					}
-					context.getCatalogManager().access().setPropertyValue(field, r, fieldValues, session);
+					context.getCatalogManager().access().setPropertyValue(field, r, fieldValues, instrospector);
 				}
 			}
 		}

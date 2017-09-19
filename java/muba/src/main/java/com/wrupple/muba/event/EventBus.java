@@ -28,6 +28,6 @@ public interface EventBus
 
 	public UserTransaction getTransaction();
 
-    boolean resume(RuntimeContextImpl runtimeContext) throws Exception;
+    boolean resume(RuntimeContext runtimeContext) throws Exception;
 
 }

@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.catalogs.domain.Constraint;
+import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

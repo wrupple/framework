@@ -1,10 +1,11 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
@@ -45,15 +46,15 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
         Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 
-        Session session = newSession(copy);
+        Instrospector instrospector = newSession(copy);
 
         Object value;
         for (FieldDescriptor field : fields) {
             if (field.isKey() && field.getFieldId().equals(catalog.getKeyField())) {
 
             } else {
-                value = getPropertyValue(field, entry, null, session);
-                setPropertyValue(field, copy, value, session);
+                value = getPropertyValue(field, entry, null, instrospector);
+                setPropertyValue(field, copy, value, instrospector);
             }
         }
 
@@ -61,8 +62,8 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     }
 
     @Override
-    public boolean isReadableProperty(String foreignKeyValuePropertyName, CatalogEntry e, Session session) {
-        if(session.isAccesible()){
+    public boolean isReadableProperty(String foreignKeyValuePropertyName, CatalogEntry e, Instrospector instrospector) {
+        if(instrospector.isAccesible()){
             return true;
         }else{
             return this.nativeInterface.isReadable(foreignKeyValuePropertyName,e);
@@ -86,17 +87,17 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
 
     @Override
-    public Session newSession(CatalogEntry sample) {
+    public Instrospector newSession(CatalogEntry sample) {
         return this.nativeInterface.newSession(sample);
     }
 
     @Override
     public Object getPropertyValue(FieldDescriptor field, CatalogEntry object,
-                                   DistributiedLocalizedEntry localizedObject, Session session) throws ReflectiveOperationException {
+                                   DistributiedLocalizedEntry localizedObject, Instrospector instrospector) throws ReflectiveOperationException {
         // log.trace("[READ PROPERTY] {}.{}", catalog.getDistinguishedName(),
         // field.getFieldId());
         /*
-		 * if(s==null){ session = new FieldAccessSession(entry instanceof
+		 * if(s==null){ instrospector = new FieldAccessSession(entry instanceof
 		 * HasAccesablePropertyValues); }
 		 */
         String fieldId = field.getFieldId();
@@ -111,7 +112,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 		 * TODO cache in catalog descriptor
 		 */
         if (value == null) {
-            value = getPropertyValue(fieldId, object, localizedObject, session);
+            value = getPropertyValue(fieldId, object, localizedObject, instrospector);
 
             if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
                 value = nativeInterface.getStringValue(value);
@@ -123,26 +124,26 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     }
 
     @Override
-    public Object getPropertyValue(String fieldId, CatalogEntry object, DistributiedLocalizedEntry localizedObject, Session session) throws ReflectiveOperationException {
+    public Object getPropertyValue(String fieldId, CatalogEntry object, DistributiedLocalizedEntry localizedObject, Instrospector instrospector) throws ReflectiveOperationException {
         Object value = null;
-        //value = valuedoReadProperty(fieldId, session, object, false);
-        if (session.isAccesible()) {
+        //value = valuedoReadProperty(fieldId, instrospector, object, false);
+        if (instrospector.isAccesible()) {
             try {
                 value = doGetAccesibleProperty(object, fieldId);
             } catch (ClassCastException e) {
-                log.debug("Catalog Property Session Changed State");
-                session.setAccesible(false);
-                value = nativeInterface.getWrappedValue(fieldId, session, object, true);
+                log.debug("Catalog Property Instrospector Changed State");
+                instrospector.setAccesible(false);
+                value = nativeInterface.getWrappedValue(fieldId, instrospector, object, true);
             }
 
         } else {
             try {
-                value = nativeInterface.getWrappedValue(fieldId, session, object, false);
+                value = nativeInterface.getWrappedValue(fieldId, instrospector, object, false);
 
             } catch (Throwable e) {
 
-                log.debug("Catalog Property Session Changed State");
-                session.setAccesible(true);
+                log.debug("Catalog Property Instrospector Changed State");
+                instrospector.setAccesible(true);
                 value = doGetAccesibleProperty(object, fieldId);
             }
         }
@@ -157,12 +158,12 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
     @Override
     public void setPropertyValue(FieldDescriptor field, CatalogEntry object, Object value,
-                                 Session session) throws ReflectiveOperationException {
+                                 Instrospector instrospector) throws ReflectiveOperationException {
         // log.trace("[WRITE PROPERTY] {}.{}", catalog.getDistinguishedName(),
         // field.getFieldId());
         // log.trace("[WRITE PROPERTY] value = {}", value);
 		/*
-		 * if(s==null){ session = new FieldAccessSession(entry instanceof
+		 * if(s==null){ instrospector = new FieldAccessSession(entry instanceof
 		 * HasAccesablePropertyValues); }
 		 */
         String fieldId = field.getFieldId();
@@ -170,7 +171,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
         if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
             value = nativeInterface.processRawLongString((String) value);
         }
-        setPropertyValue(fieldId, object, value, session);
+        setPropertyValue(fieldId, object, value, instrospector);
 
     }
 
@@ -180,14 +181,14 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     }
 
 
-    private void doBeanSet(Session session, CatalogEntry object, String fieldId, Object value)
+    private void doBeanSet(Instrospector instrospector, CatalogEntry object, String fieldId, Object value)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        nativeInterface.setProperty(object, fieldId, value,session);
+        nativeInterface.setProperty(object, fieldId, value, instrospector);
     }
 
     @Override
-    public boolean isWriteableProperty(String property, CatalogEntry entry, Session session) {
-        if (session.isAccesible()) {
+    public boolean isWriteableProperty(String property, CatalogEntry entry, Instrospector instrospector) {
+        if (instrospector.isAccesible()) {
             return true;
         }
         return nativeInterface.isWriteable(entry, property);
@@ -195,15 +196,15 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
     @Override
     public void setPropertyValue(String fieldId, CatalogEntry object, Object value,
-                                 Session session) throws ReflectiveOperationException {
-        if (session.isAccesible()) {
+                                 Instrospector instrospector) throws ReflectiveOperationException {
+        if (instrospector.isAccesible()) {
             try {
                 doSetAccesibleProperty(object, fieldId, value);
             } catch (ClassCastException e) {
                 log.error("reading field",e);
-                session.setAccesible(false);
+                instrospector.setAccesible(false);
                 try {
-                    doBeanSet(session, object, fieldId, value);
+                    doBeanSet(instrospector, object, fieldId, value);
                 } catch (IllegalAccessException ee) {
                     throw new IllegalArgumentException("access field " + fieldId, ee);
                 } catch (InvocationTargetException ee) {
@@ -213,9 +214,9 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             }
         } else {
             try {
-                doBeanSet(session, object, fieldId, value);
+                doBeanSet(instrospector, object, fieldId, value);
             } catch (Exception e) {
-                session.setAccesible(true);
+                instrospector.setAccesible(true);
                 log.error("reading field",e);
                 try {
                     doSetAccesibleProperty(object, fieldId, value);
@@ -229,23 +230,23 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     }
 
     @Override
-    public void deleteAttribute(CatalogEntry jso, String fieldId, FieldAccessStrategy.Session session) throws ReflectiveOperationException {
-        setPropertyValue(fieldId, jso, null, session);
+    public void deleteAttribute(CatalogEntry jso, String fieldId, Instrospector instrospector) throws ReflectiveOperationException {
+        setPropertyValue(fieldId, jso, null, instrospector);
     }
 
     @Override
-    public void parseSetDouble(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session) throws ReflectiveOperationException {
-        setPropertyValue(fieldId, jso, Double.parseDouble(rawValue), session);
+    public void parseSetDouble(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Instrospector instrospector) throws ReflectiveOperationException {
+        setPropertyValue(fieldId, jso, Double.parseDouble(rawValue), instrospector);
     }
 
     @Override
-    public void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Session session) throws ReflectiveOperationException {
-        setPropertyValue(fieldId, jso, Integer.parseInt(rawValue), session);
+    public void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Instrospector instrospector) throws ReflectiveOperationException {
+        setPropertyValue(fieldId, jso, Integer.parseInt(rawValue), instrospector);
     }
 
     @Override
-    public void parseSetBoolean(CatalogEntry jso, FieldDescriptor fieldId, String rawValue, Session session) throws ReflectiveOperationException {
-        setPropertyValue(fieldId, jso, null == null ? false : Boolean.parseBoolean(rawValue), session);
+    public void parseSetBoolean(CatalogEntry jso, FieldDescriptor fieldId, String rawValue, Instrospector instrospector) throws ReflectiveOperationException {
+        setPropertyValue(fieldId, jso, null == null ? false : Boolean.parseBoolean(rawValue), instrospector);
     }
 
 }

@@ -1,12 +1,12 @@
 package com.wrupple.muba.catalogs.shared.service.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterCriteria;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
-import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.server.service.FilterNativeInterface;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -26,7 +26,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
     }
 
     @Override
-    public  boolean jsMatch(String pathing, CatalogEntry o, List<Object> values, int valueIndex, FieldAccessStrategy.Session session){
+    public  boolean jsMatch(String pathing, CatalogEntry o, List<Object> values, int valueIndex, Instrospector instrospector){
          /*-{
 		var rawValue = o[pathing];
 		var string = values[i];
@@ -39,7 +39,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
 	}-*/;
 
         //var rawValue = o[pathing];
-        Object rawValue = oni.getPropertyValue(o,pathing,session);
+        Object rawValue = oni.getPropertyValue(o,pathing, instrospector);
         //var string = values[i];
         Object string = values.get(valueIndex);
         if (string != null && rawValue != null) {
@@ -51,7 +51,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
     }
 
     @Override
-    public boolean matchAgainstFilters(CatalogEntry entry, List<FilterCriteria> filters, CatalogDescriptor descriptor, FieldAccessStrategy.Session session) {
+    public boolean matchAgainstFilters(CatalogEntry entry, List<FilterCriteria> filters, CatalogDescriptor descriptor, Instrospector instrospector) {
         if (entry == null) {
             return false;
         } else if (filters == null || filters.size() == 0) {
@@ -79,7 +79,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
                 }
                 if (fieldDescriptor != null) {
 
-                    if (!mathAgainstCriteria(entry, criteria, fieldDescriptor,session)) {
+                    if (!mathAgainstCriteria(entry, criteria, fieldDescriptor, instrospector)) {
                         // GWT.log(" FAILED ON CRITERIA  : "+new
                         // JSONObject((JavaScriptObject)criteria).toString());
                         return false;
@@ -91,7 +91,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
     }
 
 
-    private boolean mathAgainstCriteria(CatalogEntry entry, FilterCriteria criteria, FieldDescriptor fieldDescriptor, FieldAccessStrategy.Session session) {
+    private boolean mathAgainstCriteria(CatalogEntry entry, FilterCriteria criteria, FieldDescriptor fieldDescriptor, Instrospector instrospector) {
         String operator = criteria.getOperator();
         List<String> fieldTokens = criteria.getPath();
         List<Object> values = criteria.getValues();
@@ -103,7 +103,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
         boolean nested = fieldTokens.size() > 1 && (fieldDescriptor.isEphemeral() || fieldDescriptor.isKey());
         for (int i = 0; i < valuesSize; i++) {
             // perform or
-            match = matchRecursive(entry, fieldTokens, operator, values, 0, i, nested, mustMatchAll,session);
+            match = matchRecursive(entry, fieldTokens, operator, values, 0, i, nested, mustMatchAll, instrospector);
             if (match) {
                 if (mustMatchAll) {
                     matchedAtLeastOne = true;
@@ -121,19 +121,19 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
     }
 
     private boolean matchRecursive(CatalogEntry entry, List<String> fieldTokens, String operator, List<Object> values, int pathTokenIndex,
-                                   int filterIndex, boolean nested, boolean mustMatchAll, FieldAccessStrategy.Session session) {
+                                   int filterIndex, boolean nested, boolean mustMatchAll, Instrospector instrospector) {
         String field = fieldTokens.get(pathTokenIndex);
 
         // is last token
         if (pathTokenIndex == (fieldTokens.size() - 1)) {
-            boolean matched = matchFinal(entry, field, operator, values, filterIndex, session);
+            boolean matched = matchFinal(entry, field, operator, values, filterIndex, instrospector);
             // GWT.log(JSOHelper.getAttribute(entry, field)+" == "+new
             // JSONObject(values)+"@"+filterIndex+"  IS  "+matched);
             return matched;
         }
         int newPathTokenIndex = pathTokenIndex + 1;
         //Object nestedEntry = GWTUtils.getAttributeAsJavaScriptObject(entry, field);
-        Object nestedEntry = (CatalogEntry) oni.getPropertyValue(entry,field,session);
+        Object nestedEntry = (CatalogEntry) oni.getPropertyValue(entry,field, instrospector);
         if (nestedEntry == null) {
             // establish a criteria for null values along the path?
             return false;
@@ -145,7 +145,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
             boolean matchedAtLeastOne = false;
             for (int i = 0; i < nestedArray.size(); i++) {
                 nestedEntry = (CatalogEntry) nestedArray.get(i);
-                match = matchRecursive((CatalogEntry) nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll, session);
+                match = matchRecursive((CatalogEntry) nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll, instrospector);
                 if (match) {
                     if (mustMatchAll) {
                         matchedAtLeastOne = true;
@@ -160,16 +160,16 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
             }
             return matchedAtLeastOne;
         } else {
-            return matchRecursive((CatalogEntry) nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll, session);
+            return matchRecursive((CatalogEntry) nestedEntry, fieldTokens, operator, values, newPathTokenIndex, filterIndex, nested, mustMatchAll, instrospector);
         }
     }
 
 
-    private boolean matchFinal(CatalogEntry entry, String field, String operator, List<Object> values, int filterIndex, FieldAccessStrategy.Session session) {
+    private boolean matchFinal(CatalogEntry entry, String field, String operator, List<Object> values, int filterIndex, Instrospector instrospector) {
 
 		//var value = values[filterIndex];
         Object value = values.get(filterIndex);
-		Object comparableValue = oni.getPropertyValue(entry,field,session);
+		Object comparableValue = oni.getPropertyValue(entry,field, instrospector);
 
 		if (comparableValue == null) {
 			if ("null".equals(value)) {

@@ -1,10 +1,10 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +32,10 @@ public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTim
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogEntry node = (CatalogEntry) context.getEntryValue();
-        Session session = context.getCatalogManager().access().newSession(node);
+        Instrospector instrospector = context.getCatalogManager().access().newSession(node);
         CatalogDescriptor catalog = context.getCatalogDescriptor();
-        context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), session);
-        context.getCatalogManager().access().setPropertyValue(getCatalogField(), node, catalog.getId(), session);
+        context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), instrospector);
+        context.getCatalogManager().access().setPropertyValue(getCatalogField(), node, catalog.getId(), instrospector);
         return CONTINUE_PROCESSING;
 	}
 

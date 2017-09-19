@@ -23,12 +23,12 @@ import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.FilterDataOrdering;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataQueryCommand;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl.MultipleFieldResultsHandler;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
+import com.wrupple.muba.event.domain.Instrospector;
 
 @Singleton
 public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
@@ -174,7 +174,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 		String foreignTableName;
 		List<Object> fieldValues;
 		String queryL;
-		Session session = null;
+		Instrospector instrospector = null;
 		MultipleFieldResultsHandler handler = null;
 		for (FieldDescriptor field : fields) {
 			if (field.isMultiple() && !field.isEphemeral()) {
@@ -192,15 +192,15 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 					log.trace("[DB secondary query] {} ", queryL);
 
 					for (CatalogEntry o : results) {
-						if (session == null) {
-							session = context.getCatalogManager().access().newSession(o);
+						if (instrospector == null) {
+							instrospector = context.getCatalogManager().access().newSession(o);
 						}
 						log.trace("[DB secondary query for] {} ", o.getId());
 						// FIXME this is terrible, at lest use prepared
 						// statements??
 						fieldValues = runner.query(queryL, handler, o.getId());
 						log.trace("[DB results for {}] {}", o.getId(), fieldValues == null ? 0 : fieldValues.size());
-						context.getCatalogManager().access().setPropertyValue(field, o, fieldValues, session);
+						context.getCatalogManager().access().setPropertyValue(field, o, fieldValues, instrospector);
 					}
 				}
 

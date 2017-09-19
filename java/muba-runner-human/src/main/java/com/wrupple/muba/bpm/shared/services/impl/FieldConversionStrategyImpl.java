@@ -1,12 +1,12 @@
 package com.wrupple.muba.bpm.shared.services.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterCriteria;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.shared.service.FilterNativeInterface;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.server.service.FilterNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 
 import javax.inject.Inject;
@@ -35,7 +35,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
         this.filterer = filterer;
     }
 
-    public Object getUserReadableCollection(Object arro, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session) {
+    public Object getUserReadableCollection(Object arro, List<FilterCriteria> includeCriteria, Instrospector instrospector) {
         if (includeCriteria == null) {
             return arro;
         } else {
@@ -50,7 +50,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
                 List<CatalogEntry> regreso = new ArrayList<>(arr.size());
                 for (int i = 0; i < arr.size(); i++) {
                     o = arr.get(i);
-                    match = matchesCriteria(o, includeCriteria, session);
+                    match = matchesCriteria(o, includeCriteria, instrospector);
                     if (match) {
                         // include
                         regreso.add(o);
@@ -65,9 +65,9 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
 
 
-    private boolean matchesCriteria(CatalogEntry o, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session ) {
+    private boolean matchesCriteria(CatalogEntry o, List<FilterCriteria> includeCriteria, Instrospector instrospector) {
         for (FilterCriteria criteria : includeCriteria) {
-            if (matches( criteria, o,session)) {
+            if (matches( criteria, o, instrospector)) {
                 return true;
             }
         }
@@ -75,7 +75,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
     }
 
     // TRUE IF MATCH AGINST AT LEAST ONE CRITERIA
-    private boolean matches(FilterCriteria criteria, CatalogEntry o, FieldAccessStrategy.Session session) {
+    private boolean matches(FilterCriteria criteria, CatalogEntry o, Instrospector instrospector) {
         //JsArrayMixed values = criteria.getValuesArray();
         List<Object> values = criteria.getValues();
         //JsArrayString path = criteria.getPathArray();;
@@ -84,7 +84,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
             if (values.size() > 0 && path.size() > 0) {
                 String pathing = path.get(0);
                 for (int i = 0; i < values.size(); i++) {
-                    if (filterer.jsMatch(pathing, o, values, i,session)) {
+                    if (filterer.jsMatch(pathing, o, values, i, instrospector)) {
                         return true;
                     }
                 }
@@ -95,12 +95,12 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
 
     @Override
-    public Object convertToPresentableValue(String attr, CatalogEntry elem, List<FilterCriteria> includeCriteria, FieldAccessStrategy.Session session) {
-        Object value =  nativeInterface.getWrappedValue(attr, session,elem,false);
+    public Object convertToPresentableValue(String attr, CatalogEntry elem, List<FilterCriteria> includeCriteria, Instrospector instrospector) {
+        Object value =  nativeInterface.getWrappedValue(attr, instrospector,elem,false);
         if (value == null) {
             return null;
         } else if (nativeInterface.isCollection(value)) {
-            return getUserReadableCollection(value, includeCriteria, session);
+            return getUserReadableCollection(value, includeCriteria, instrospector);
         } else if (nativeInterface.isBoolean(value)) {
             return value;
         } else if (nativeInterface.isNumber(value)) {
@@ -120,63 +120,63 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
     }
 
     @Override
-    public void setAsPersistentValue(Object value, FieldDescriptor field, CatalogEntry jso, FieldAccessStrategy.Session session) throws ReflectiveOperationException {
+    public void setAsPersistentValue(Object value, FieldDescriptor field, CatalogEntry jso, Instrospector instrospector) throws ReflectiveOperationException {
 
         int dataType = field == null ? -1 : field.getDataType();
         if (value == null) {
-            access.access().deleteAttribute(jso, field.getFieldId(),session);
+            access.access().deleteAttribute(jso, field.getFieldId(), instrospector);
         } else if (nativeInterface.isCollection(value)) {
-            access.access().setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value),session);
+            access.access().setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value), instrospector);
         } else if (value instanceof Number) {
 
             // FIXME some runtimes (browser) may require to unwrap the java object
             /*Number v = (Number) value;
             if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
 
-                 access.setAttribute(jso, field, v.intValue(),session);
+                 access.setAttribute(jso, field, v.intValue(),instrospector);
             } else {
-                access.setAttribute(jso, field, v.doubleValue(),session);
+                access.setAttribute(jso, field, v.doubleValue(),instrospector);
             }
             */
-            access.access().setPropertyValue(field,jso,value,session);
+            access.access().setPropertyValue(field,jso,value, instrospector);
         } else if (value instanceof String) {
             String v = (String) value;
             v = getSendableString(v);
             if (v == null) {
-                access.access().deleteAttribute(jso, field.getFieldId(),session);
+                access.access().deleteAttribute(jso, field.getFieldId(), instrospector);
             }else{
                 if(field.isMultiple()){
-                    access.access().setPropertyValue(field,jso,nativeInterface.eval(v),session);
+                    access.access().setPropertyValue(field,jso,nativeInterface.eval(v), instrospector);
                 }else{
                     try {
                         switch (dataType) {
                             case CatalogEntry.BOOLEAN_DATA_TYPE:
-                                access.access().parseSetBoolean(jso, field, v,session);
+                                access.access().parseSetBoolean(jso, field, v, instrospector);
                                 break;
                             case CatalogEntry.INTEGER_DATA_TYPE:
                                 if(field.isKey()){
                                     //TODO distinguish client and server runtime cus KEYS ARE ALWAYS SUPPOSED TO BE STRINGS CLIENT-SIDE,
-                                    access.access().setPropertyValue(field,jso,v,session);
+                                    access.access().setPropertyValue(field,jso,v, instrospector);
                                     //access.setAttribute(jso, fieldId, v);
                                 }else{
-                                    access.access().parseSetInteger(v,jso,field,session);
+                                    access.access().parseSetInteger(v,jso,field, instrospector);
                                 }
                                 break;
                             case CatalogEntry.NUMERIC_DATA_TYPE:
-                                access.access().parseSetDouble(v,jso,field,session);
+                                access.access().parseSetDouble(v,jso,field, instrospector);
                                 break;
                             default:
-                                access.access().setPropertyValue(field,jso,v,session);
+                                access.access().setPropertyValue(field,jso,v, instrospector);
                         }
                     } catch (Exception e) {
-                        access.access().setPropertyValue(field,jso,v,session);
+                        access.access().setPropertyValue(field,jso,v, instrospector);
                         //access.setAttribute(jso, fieldId, v);
                     }
                 }
             }
 
         } else {
-            access.access().setPropertyValue(field,jso,value,session);
+            access.access().setPropertyValue(field,jso,value, instrospector);
             //access.setAttribute(jso, fieldId, value);
         }
     }

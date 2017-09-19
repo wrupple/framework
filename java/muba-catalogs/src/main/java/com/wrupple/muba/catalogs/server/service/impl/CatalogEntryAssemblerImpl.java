@@ -1,13 +1,13 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionResult;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryAssembler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -86,7 +86,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 		FieldDescriptor field;
 		if (newEntry != null) {
 			// at least one entry got created (logically)
-            Session session = cms.access().newSession(newEntry);
+            Instrospector instrospector = cms.access().newSession(newEntry);
             for (String fieldId : containedFields) {
 				field = catalog.getFieldDescriptor(fieldId);
 				if (field != null) {
@@ -98,7 +98,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 							// entry to put field value in
 							newEntry = regreso.get(j);
 							value = fieldContents.get(j);
-                            cms.access().setPropertyValue(field, newEntry, value, session);
+                            cms.access().setPropertyValue(field, newEntry, value, instrospector);
                         }
 					}
 				}

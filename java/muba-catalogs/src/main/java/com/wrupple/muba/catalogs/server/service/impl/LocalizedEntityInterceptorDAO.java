@@ -1,9 +1,10 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Instrospector;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Singleton;
@@ -52,7 +53,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		// what catalog is this localized entity pointing to?
 		context.getCatalogManager().getRead().execute(localize);
 		CatalogDescriptor pointsTo = localize.getEntryResult();
-		Session session = context.getCatalogManager().access().newSession(pointsTo);
+		Instrospector instrospector = context.getCatalogManager().access().newSession(pointsTo);
 
 		// what strategy does the referenced catalog use to localize it's
 		// entities
@@ -60,7 +61,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		if (0 == strategy /* CONSOLIDATED */) {
 			// this is the special case we need to intercept
 			String catalogId = pointsTo.getDistinguishedName();
-			session.resample(o);
+			instrospector.resample(o);
 
 			// read localized field values
 			List<String> values = (List<String>) o.getProperties();

@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.domain;
+package com.wrupple.muba.event.domain;
 
 import java.util.List;
 
