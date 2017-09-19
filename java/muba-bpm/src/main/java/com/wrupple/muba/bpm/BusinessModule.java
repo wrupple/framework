@@ -15,8 +15,6 @@ import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.chain.impl.BusinessEngineImpl;
-import com.wrupple.muba.bpm.server.domain.BusinessContext;
-import com.wrupple.muba.bpm.server.domain.BusinessContextImpl;
 import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.impl.BusinessPluginImpl;

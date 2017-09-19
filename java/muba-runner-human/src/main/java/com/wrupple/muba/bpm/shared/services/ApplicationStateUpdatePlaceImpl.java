@@ -77,7 +77,7 @@ public class ApplicationStateUpdatePlaceImpl {
 				key.setId(targetEntryId);
 			}
 			key.setCatalog(targetCatalog);
-			eventBus.handleIntent(new EntryUpdatedEvent(key, resolvedHost, resolvedDomain));
+			eventBus.fireHandler(new EntryUpdatedEvent(key, resolvedHost, resolvedDomain));
 		} else if (CatalogActionRequest.CREATE_ACTION.equals(sourceAction) && key != null) {
 			if (targetEntryId == null) {
 				targetEntryId = getIdAsString(key);
@@ -86,10 +86,10 @@ public class ApplicationStateUpdatePlaceImpl {
 				key.setId(targetEntryId);
 			}
 			key.setCatalog(targetCatalog);
-			eventBus.handleIntent(new EntryCreatedEvent(key, resolvedHost, resolvedDomain));
+			eventBus.fireHandler(new EntryCreatedEvent(key, resolvedHost, resolvedDomain));
 		} else if (CatalogActionRequest.DELETE_ACTION.equals(sourceAction)) {
 			Collection<String> entries = Collections.singletonList(targetEntryId);
-			eventBus.handleIntent(new EntriesDeletedEvent(entries, targetCatalog, resolvedDomain, resolvedHost));
+			eventBus.fireHandler(new EntriesDeletedEvent(entries, targetCatalog, resolvedDomain, resolvedHost));
 		}
 	}
      */

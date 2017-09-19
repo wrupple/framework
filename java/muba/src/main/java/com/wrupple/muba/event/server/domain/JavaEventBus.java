@@ -73,7 +73,7 @@ public class JavaEventBus extends ContextBase implements EventBus {
     }
 
 	@Override
-	public boolean handleIntent(UserEvent event, SessionContext session) throws Exception {
+	public boolean fireHandler(UserEvent event, SessionContext session) throws Exception {
 		RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
         runtimeContext.setSentence(event.getSentence());
         runtimeContext.setServiceContract(event.getState());

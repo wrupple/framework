@@ -3,7 +3,6 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 import com.google.inject.Provider;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.chain.command.InferNextTask;
-import com.wrupple.muba.bpm.server.domain.BusinessContext;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -52,6 +51,9 @@ public class InferNextTaskImpl implements InferNextTask {
 
             event.setCatalog((String) applicationState.getTaskDescriptorValue().getCatalog());
             String command = applicationState.getApplicationValue().getExit();
+            if(command==null){
+                command=
+            }
             event.setHandle(command);
             event.setState(applicationState);
 

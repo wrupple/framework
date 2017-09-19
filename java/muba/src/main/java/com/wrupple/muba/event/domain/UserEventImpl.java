@@ -3,7 +3,7 @@ package com.wrupple.muba.event.domain;
 /**
  * Created by japi on 21/08/17.
  */
-public class UserEventImpl extends CatalogEntryImpl implements UserEvent {
+public class UserEventImpl extends CatalogEntryImpl implements ExplicitIntent {
 
     /**
      * it's up to the event contract to decide if the catalog is metadata to the result or the event

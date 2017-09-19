@@ -3,10 +3,9 @@ package com.wrupple.muba.event;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.List;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.SessionContext;
-import com.wrupple.muba.event.domain.UserEvent;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.domain.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Context;
@@ -23,9 +22,9 @@ public interface EventBus
 
     EventRegistry getIntentInterpret();
 
-    boolean handleIntent(UserEvent event, SessionContext session) throws Exception;
+    boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception;
 
-    boolean fireEvent(CatalogEntry event) throws Exception;
+    <T> T fireEvent(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception;
 
 	public UserTransaction getTransaction();
 

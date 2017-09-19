@@ -97,5 +97,5 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
     boolean process() throws Exception;
 
-    <T> T spawnProcess(CatalogEntry implicitRequestContract) throws Exception;
+
 }

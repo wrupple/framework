@@ -26,7 +26,10 @@ public class ExplicitWorkflowInvocationTest extends MubaTest {
 		 * fire a catalog change event (PublishEventsImpl) ( install remote listeners on Event CHain (vegetate web hooks))
          * listen event  and have the desktop fire the first task of a workflow and install a listener for the task submission(desktop)
 		 **/
-
+		//CREATE ApplicationState
+		//INSTALL LISTENER HERE
+		//Update ApplicationState
+        //Expect (but don't install an instance of) ApplicationStateUpdatePlace to be fired
 	}
 
 	/*
