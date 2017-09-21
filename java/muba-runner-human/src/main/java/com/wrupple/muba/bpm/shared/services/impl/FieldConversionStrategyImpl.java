@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.shared.services.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterCriteria;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
@@ -35,7 +35,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
         this.filterer = filterer;
     }
 
-    public Object getUserReadableCollection(Object arro, List<FilterCriteria> includeCriteria, Instrospector instrospector) {
+    public Object getUserReadableCollection(Object arro, List<FilterCriteria> includeCriteria, Instrospection instrospection) {
         if (includeCriteria == null) {
             return arro;
         } else {
@@ -50,7 +50,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
                 List<CatalogEntry> regreso = new ArrayList<>(arr.size());
                 for (int i = 0; i < arr.size(); i++) {
                     o = arr.get(i);
-                    match = matchesCriteria(o, includeCriteria, instrospector);
+                    match = matchesCriteria(o, includeCriteria, instrospection);
                     if (match) {
                         // include
                         regreso.add(o);
@@ -65,9 +65,9 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
 
 
-    private boolean matchesCriteria(CatalogEntry o, List<FilterCriteria> includeCriteria, Instrospector instrospector) {
+    private boolean matchesCriteria(CatalogEntry o, List<FilterCriteria> includeCriteria, Instrospection instrospection) {
         for (FilterCriteria criteria : includeCriteria) {
-            if (matches( criteria, o, instrospector)) {
+            if (matches( criteria, o, instrospection)) {
                 return true;
             }
         }
@@ -75,7 +75,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
     }
 
     // TRUE IF MATCH AGINST AT LEAST ONE CRITERIA
-    private boolean matches(FilterCriteria criteria, CatalogEntry o, Instrospector instrospector) {
+    private boolean matches(FilterCriteria criteria, CatalogEntry o, Instrospection instrospection) {
         //JsArrayMixed values = criteria.getValuesArray();
         List<Object> values = criteria.getValues();
         //JsArrayString path = criteria.getPathArray();;
@@ -84,7 +84,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
             if (values.size() > 0 && path.size() > 0) {
                 String pathing = path.get(0);
                 for (int i = 0; i < values.size(); i++) {
-                    if (filterer.jsMatch(pathing, o, values, i, instrospector)) {
+                    if (filterer.jsMatch(pathing, o, values, i, instrospection)) {
                         return true;
                     }
                 }
@@ -95,12 +95,12 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
 
     @Override
-    public Object convertToPresentableValue(String attr, CatalogEntry elem, List<FilterCriteria> includeCriteria, Instrospector instrospector) {
-        Object value =  nativeInterface.getWrappedValue(attr, instrospector,elem,false);
+    public Object convertToPresentableValue(String attr, CatalogEntry elem, List<FilterCriteria> includeCriteria, Instrospection instrospection) {
+        Object value =  nativeInterface.getWrappedValue(attr, instrospection,elem,false);
         if (value == null) {
             return null;
         } else if (nativeInterface.isCollection(value)) {
-            return getUserReadableCollection(value, includeCriteria, instrospector);
+            return getUserReadableCollection(value, includeCriteria, instrospection);
         } else if (nativeInterface.isBoolean(value)) {
             return value;
         } else if (nativeInterface.isNumber(value)) {
@@ -120,63 +120,63 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
     }
 
     @Override
-    public void setAsPersistentValue(Object value, FieldDescriptor field, CatalogEntry jso, Instrospector instrospector) throws ReflectiveOperationException {
+    public void setAsPersistentValue(Object value, FieldDescriptor field, CatalogEntry jso, Instrospection instrospection) throws ReflectiveOperationException {
 
         int dataType = field == null ? -1 : field.getDataType();
         if (value == null) {
-            access.access().deleteAttribute(jso, field.getFieldId(), instrospector);
+            access.access().deleteAttribute(jso, field.getFieldId(), instrospection);
         } else if (nativeInterface.isCollection(value)) {
-            access.access().setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value), instrospector);
+            access.access().setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value), instrospection);
         } else if (value instanceof Number) {
 
             // FIXME some runtimes (browser) may require to unwrap the java object
             /*Number v = (Number) value;
             if (dataType == CatalogEntry.INTEGER_DATA_TYPE) {
 
-                 access.setAttribute(jso, field, v.intValue(),instrospector);
+                 access.setAttribute(jso, field, v.intValue(),instrospection);
             } else {
-                access.setAttribute(jso, field, v.doubleValue(),instrospector);
+                access.setAttribute(jso, field, v.doubleValue(),instrospection);
             }
             */
-            access.access().setPropertyValue(field,jso,value, instrospector);
+            access.access().setPropertyValue(field,jso,value, instrospection);
         } else if (value instanceof String) {
             String v = (String) value;
             v = getSendableString(v);
             if (v == null) {
-                access.access().deleteAttribute(jso, field.getFieldId(), instrospector);
+                access.access().deleteAttribute(jso, field.getFieldId(), instrospection);
             }else{
                 if(field.isMultiple()){
-                    access.access().setPropertyValue(field,jso,nativeInterface.eval(v), instrospector);
+                    access.access().setPropertyValue(field,jso,nativeInterface.eval(v), instrospection);
                 }else{
                     try {
                         switch (dataType) {
                             case CatalogEntry.BOOLEAN_DATA_TYPE:
-                                access.access().parseSetBoolean(jso, field, v, instrospector);
+                                access.access().parseSetBoolean(jso, field, v, instrospection);
                                 break;
                             case CatalogEntry.INTEGER_DATA_TYPE:
                                 if(field.isKey()){
                                     //TODO distinguish client and server runtime cus KEYS ARE ALWAYS SUPPOSED TO BE STRINGS CLIENT-SIDE,
-                                    access.access().setPropertyValue(field,jso,v, instrospector);
+                                    access.access().setPropertyValue(field,jso,v, instrospection);
                                     //access.setAttribute(jso, fieldId, v);
                                 }else{
-                                    access.access().parseSetInteger(v,jso,field, instrospector);
+                                    access.access().parseSetInteger(v,jso,field, instrospection);
                                 }
                                 break;
                             case CatalogEntry.NUMERIC_DATA_TYPE:
-                                access.access().parseSetDouble(v,jso,field, instrospector);
+                                access.access().parseSetDouble(v,jso,field, instrospection);
                                 break;
                             default:
-                                access.access().setPropertyValue(field,jso,v, instrospector);
+                                access.access().setPropertyValue(field,jso,v, instrospection);
                         }
                     } catch (Exception e) {
-                        access.access().setPropertyValue(field,jso,v, instrospector);
+                        access.access().setPropertyValue(field,jso,v, instrospection);
                         //access.setAttribute(jso, fieldId, v);
                     }
                 }
             }
 
         } else {
-            access.access().setPropertyValue(field,jso,value, instrospector);
+            access.access().setPropertyValue(field,jso,value, instrospection);
             //access.setAttribute(jso, fieldId, value);
         }
     }

@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -37,12 +37,12 @@ public class StakeHolderTriggerImpl implements StakeHolderTrigger {
 		if(actualStakeHolder==CatalogEntry.PUBLIC_ID && ! anonStakeHolder){
 			throw new KnownExceptionImpl("User Identity Unknown",null, unknownUser);
 		}
-		//get fieldWriting instrospector, see ocurrences
+		//get fieldWriting instrospection, see ocurrences
         FieldAccessStrategy accessor = context.getCatalogManager().access();
 		//write into old the person id
 		FieldDescriptor field = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
-        Instrospector instrospector = accessor.newSession(old);
-		Long stakeHolder= (Long) accessor.getPropertyValue(field, old, null, instrospector);
+        Instrospection instrospection = accessor.newSession(old);
+		Long stakeHolder= (Long) accessor.getPropertyValue(field, old, null, instrospection);
 		if(stakeHolder==null || !context.getRuntimeContext().getSession().hasPermission(CHANGE_STAKEHOLDER+":"+catalog.getDistinguishedName())){
 			System.err.println("[set stakeHolder]"+actualStakeHolder);
 			accessor.setPropertyValue( field, (CatalogEntry) old, actualStakeHolder, accessor.newSession((CatalogEntry) old));

@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.shared.service;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 public interface ObjectNativeInterface extends LargeStringFieldDataAccessObject{
 
-    public Instrospector newSession(CatalogEntry sample);
+    public Instrospection newSession(CatalogEntry sample);
     //previously convertToJavascriptArray
     Object unwrapAsNativeCollection(Collection objects);
 
@@ -32,13 +32,13 @@ public interface ObjectNativeInterface extends LargeStringFieldDataAccessObject{
 
     Object getDefaultValue(Object value);
 
-    Object getWrappedValue(String fieldId, Instrospector instrospector, CatalogEntry object, boolean silentFail);
+    Object getWrappedValue(String fieldId, Instrospection instrospection, CatalogEntry object, boolean silentFail);
 
-    void setProperty(CatalogEntry object, String fieldId, Object value, Instrospector instrospector) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
+    void setProperty(CatalogEntry object, String fieldId, Object value, Instrospection instrospection) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     boolean isWriteable(CatalogEntry entry, String property);
 
-    Object getPropertyValue(CatalogEntry o, String pathing, Instrospector instrospector);
+    Object getPropertyValue(CatalogEntry o, String pathing, Instrospection instrospection);
 
     boolean isReadable(String foreignKeyValuePropertyName, CatalogEntry e);
 }

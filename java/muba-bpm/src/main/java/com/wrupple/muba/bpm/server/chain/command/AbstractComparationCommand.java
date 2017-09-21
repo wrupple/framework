@@ -12,7 +12,7 @@ import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 
 public abstract class AbstractComparationCommand implements Command {
 
@@ -31,9 +31,9 @@ public abstract class AbstractComparationCommand implements Command {
 		Object finalValue, initialValue;
 		String codedFinalValue, codedInitialValue;
 		boolean accesible = old instanceof HasAccesablePropertyValues;
-		Instrospector instrospector = null;
+		Instrospection instrospection = null;
 		if (!accesible) {
-			instrospector = accesor.newSession(old);
+			instrospection = accesor.newSession(old);
 		}
 		for (FieldDescriptor field : fields) {
 			if (!field.isMultiple() && field.isWriteable()) {
@@ -41,8 +41,8 @@ public abstract class AbstractComparationCommand implements Command {
 					initialValue = ((HasAccesablePropertyValues) old).getPropertyValue(field.getFieldId());
 					finalValue = ((HasAccesablePropertyValues) neew).getPropertyValue(field.getFieldId());
 				} else {
-					initialValue = accesor.getPropertyValue(field, old, null, instrospector);
-					finalValue = accesor.getPropertyValue(field, neew, null, instrospector);
+					initialValue = accesor.getPropertyValue(field, old, null, instrospection);
+					finalValue = accesor.getPropertyValue(field, neew, null, instrospection);
 				}
 
 				if (!(initialValue == null && finalValue == null)

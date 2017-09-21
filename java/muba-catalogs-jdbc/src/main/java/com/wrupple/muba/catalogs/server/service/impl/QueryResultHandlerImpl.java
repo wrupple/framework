@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 	class CatalogRowProcessor extends BasicRowProcessor {
 
 		private CatalogDescriptor catalog;
-		private Instrospector instrospector;
+		private Instrospection instrospection;
 
 		public CatalogRowProcessor(CatalogDescriptor catalog) {
 			this.catalog = catalog;
@@ -111,8 +111,8 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 			}catch(IllegalAccessException e){
 				throw new IllegalArgumentException("cannot instantiate " + type);
 			}
-			if (instrospector == null) {
-				instrospector = cms.access().newSession((CatalogEntry) result);
+			if (instrospection == null) {
+				instrospection = cms.access().newSession((CatalogEntry) result);
 			}
 			FieldDescriptor field;
 			for (int i = 1; i <= cols; i++) {
@@ -126,7 +126,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				if (field != null) {
 					try {
 						cms.access().setPropertyValue(field, (CatalogEntry) result,
-								delegate.handleColumnField(rs,field, field.getDataType(), i, format), instrospector);
+								delegate.handleColumnField(rs,field, field.getDataType(), i, format), instrospection);
 					} catch (Exception e) {
 						throw new IllegalArgumentException(e);
 					}

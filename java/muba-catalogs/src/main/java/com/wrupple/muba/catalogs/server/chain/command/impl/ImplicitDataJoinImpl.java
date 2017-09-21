@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
@@ -34,9 +34,9 @@ public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin
 		}
 
 		List<CatalogEntry> result = context.getResults();
-        Instrospector instrospector = context.getCatalogManager().access().newSession(result.get(0));
+        Instrospection instrospection = context.getCatalogManager().access().newSession(result.get(0));
         CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
-				(String) context.getCatalog(), context, instrospector);
+				(String) context.getCatalog(), context, instrospection);
 
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
 		String[][] joins = context.getCatalogManager().getJoins(context.getCatalogManager(), null, descriptor, null,
@@ -47,15 +47,15 @@ public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin
 		regreso.add(resultSet);
 		context.put(CompleteCatalogGraph.JOINED_DATA, regreso);
 
-		joinWithGivenJoinData(context.getResults(), context.getCatalogDescriptor(), joins, context, filterMap, instrospector);
+		joinWithGivenJoinData(context.getResults(), context.getCatalogDescriptor(), joins, context, filterMap, instrospection);
 		return CONTINUE_PROCESSING;
 	}
 
 	@Override
 	protected void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog, List<CatalogEntry> joins,
-			CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospector instrospector) throws Exception {
+			CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospection instrospection) throws Exception {
 		CatalogColumnResultSet resultSet = super.createResultSet(joins, joinCatalog, joinCatalog.getDistinguishedName(), context,
-                instrospector);
+                instrospection);
 		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 		joinsThusFar.add(resultSet);

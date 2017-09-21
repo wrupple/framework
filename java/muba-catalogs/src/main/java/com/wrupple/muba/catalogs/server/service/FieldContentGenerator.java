@@ -6,7 +6,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.server.chain.command.UserCommand;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 
 /**
  * 
@@ -28,7 +28,7 @@ public interface FieldContentGenerator {
 	 * @param dao (optional) foreign catalog access object in case this field declares a foreign catalog.
 	 * @return
 	 */
-	public List<? extends CatalogEntry> fetchFieldContents(Instrospector accesor, CatalogDescriptor descriptor, FieldDescriptor localField,
+	public List<? extends CatalogEntry> fetchFieldContents(Instrospection accesor, CatalogDescriptor descriptor, FieldDescriptor localField,
                                                            CatalogDescriptor foreignCatalogDescriptor, UserCommand dao) throws Exception;
 
 }

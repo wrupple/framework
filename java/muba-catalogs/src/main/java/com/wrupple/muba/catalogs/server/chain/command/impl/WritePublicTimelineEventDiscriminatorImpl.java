@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -32,10 +32,10 @@ public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTim
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogEntry node = (CatalogEntry) context.getEntryValue();
-        Instrospector instrospector = context.getCatalogManager().access().newSession(node);
+        Instrospection instrospection = context.getCatalogManager().access().newSession(node);
         CatalogDescriptor catalog = context.getCatalogDescriptor();
-        context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), instrospector);
-        context.getCatalogManager().access().setPropertyValue(getCatalogField(), node, catalog.getId(), instrospector);
+        context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), instrospection);
+        context.getCatalogManager().access().setPropertyValue(getCatalogField(), node, catalog.getId(), instrospection);
         return CONTINUE_PROCESSING;
 	}
 

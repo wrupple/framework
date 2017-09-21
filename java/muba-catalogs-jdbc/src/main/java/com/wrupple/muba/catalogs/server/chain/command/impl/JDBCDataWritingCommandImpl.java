@@ -24,7 +24,7 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataWritingCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 
 @Singleton
 public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implements JDBCDataWritingCommand{
@@ -54,7 +54,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		CatalogEntry originalEntry = context.getCatalogManager().access().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
 
 		CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
-		Instrospector instrospector = context.getCatalogManager().access().newSession(originalEntry);
+		Instrospection instrospection = context.getCatalogManager().access().newSession(originalEntry);
 
 		updatedEntry.setDomain((Long) originalEntry.getDomain());
 		Object id = context.getEntry();
@@ -74,8 +74,8 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().access().getPropertyValue(field, updatedEntry, null, instrospector);
-				context.getCatalogManager().access().setPropertyValue(field, originalEntry, fieldValue, instrospector);
+				fieldValue = context.getCatalogManager().access().getPropertyValue(field, updatedEntry, null, instrospection);
+				context.getCatalogManager().access().setPropertyValue(field, originalEntry, fieldValue, instrospection);
 				if (field.isMultiple() && !field.isEphemeral()) {
 					// also update (delete and create) and create multiple
 					// fields
@@ -121,7 +121,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		if (descriptor.isVersioned()) {
 			Long version = (Long) context.getCatalogManager().access().getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
-					context.getOldValue(), null, instrospector);
+					context.getOldValue(), null, instrospection);
 			builder.append(" && ");
 			builder.append(Versioned.FIELD);
 			builder.append("=?");

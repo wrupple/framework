@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.shared.service.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
@@ -40,13 +40,13 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public Instrospector newSession(CatalogEntry sample) {
-        FieldAccessInstrospector session = new FieldAccessInstrospector();
+    public Instrospection newSession(CatalogEntry sample) {
+        FieldAccessInstrospection session = new FieldAccessInstrospection();
         session.resample(sample);
         return session;
     }
 
-    private class FieldAccessInstrospector implements Instrospector {
+    private class FieldAccessInstrospection implements Instrospection {
         boolean accesible;
 
         @Override
@@ -170,10 +170,10 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public Object getWrappedValue(String fieldId, Instrospector instrospector, CatalogEntry object, boolean silentFail) {
+    public Object getWrappedValue(String fieldId, Instrospection instrospection, CatalogEntry object, boolean silentFail) {
 
             try {
-                return ((FieldAccessInstrospector) instrospector).getPropertyValue(object,fieldId);
+                return ((FieldAccessInstrospection) instrospection).getPropertyValue(object,fieldId);
             } catch (Exception e) {
                 if(silentFail){
                     return null;
@@ -187,7 +187,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public void setProperty(CatalogEntry object, String fieldId, Object value, Instrospector instrospector) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void setProperty(CatalogEntry object, String fieldId, Object value, Instrospection instrospection) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         bean.setProperty(object,fieldId,value);
     }
 
@@ -197,11 +197,11 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
     @Override
-    public Object getPropertyValue(CatalogEntry o, String pathing, Instrospector instrospector) {
-        if(instrospector.isAccesible()){
+    public Object getPropertyValue(CatalogEntry o, String pathing, Instrospection instrospection) {
+        if(instrospection.isAccesible()){
             return ((HasAccesablePropertyValues)o).getPropertyValue(pathing);
         }else{
-            return getWrappedValue(pathing, instrospector,o,false);
+            return getWrappedValue(pathing, instrospection,o,false);
         }
     }
 
@@ -211,7 +211,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     }
 
 
-    private Object goBeanGet(FieldAccessInstrospector session, CatalogEntry object, String fieldId)
+    private Object goBeanGet(FieldAccessInstrospection session, CatalogEntry object, String fieldId)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IntrospectionException,
             NoSuchMethodException {
         return session.getPropertyValue(object, fieldId);

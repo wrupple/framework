@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
@@ -44,7 +44,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
 
         log.trace("solution has {} variables",variableDescriptors.size());
 
-        Instrospector solutionWritingInstrospector = catalog.access().newSession(solution);
+        Instrospection solutionWritingInstrospection = catalog.access().newSession(solution);
 
         FieldDescriptor fieldId;
         Object fieldValue;
@@ -52,7 +52,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
             fieldId = solutionVariable.getField();
             fieldValue = solutionVariable.getValue();
             log.debug("    {}={}",fieldId.getFieldId(),fieldValue);
-            catalog.access().setPropertyValue(fieldId,solution,fieldValue, solutionWritingInstrospector);
+            catalog.access().setPropertyValue(fieldId,solution,fieldValue, solutionWritingInstrospection);
         }
 
         context.getRuntimeContext().setResult(solution);

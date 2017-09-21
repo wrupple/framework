@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -39,18 +39,18 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 		if (oldValues == null) {
 			oldValues = context.getResults();
 		}
-		Instrospector instrospector = null;
+		Instrospection instrospection = null;
 		Boolean trashed;
 
 		CatalogActionContext trashContext = null;
 		for (CatalogEntry e : oldValues) {
 			if (trashContext == null) {
-                instrospector = context.getCatalogManager().access().newSession(e);
+                instrospection = context.getCatalogManager().access().newSession(e);
                 trashContext = context.getCatalogManager().spawn(context);
 
 				trashContext.setName(CatalogActionRequest.CREATE_ACTION);
 			}
-            trashed = (Boolean) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospector);
+            trashed = (Boolean) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
             if (trashed != null && trashed) {
 				Trash trashItem = trashp.get();
 				trashItem.setName(e.getName());

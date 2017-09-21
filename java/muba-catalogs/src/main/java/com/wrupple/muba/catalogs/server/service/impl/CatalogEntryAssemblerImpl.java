@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionResult;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
@@ -86,7 +86,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 		FieldDescriptor field;
 		if (newEntry != null) {
 			// at least one entry got created (logically)
-            Instrospector instrospector = cms.access().newSession(newEntry);
+            Instrospection instrospection = cms.access().newSession(newEntry);
             for (String fieldId : containedFields) {
 				field = catalog.getFieldDescriptor(fieldId);
 				if (field != null) {
@@ -98,7 +98,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 							// entry to put field value in
 							newEntry = regreso.get(j);
 							value = fieldContents.get(j);
-                            cms.access().setPropertyValue(field, newEntry, value, instrospector);
+                            cms.access().setPropertyValue(field, newEntry, value, instrospection);
                         }
 					}
 				}

@@ -104,7 +104,7 @@ public class JavaEventBus extends ContextBase implements EventBus {
         List<ExplicitIntent> handlers = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
 
         if(handlerCriterion!=null && !handlerCriterion.isEmpty()){
-            Instrospector introspector=;
+            Instrospection introspector=;
             handlers= handlers.stream().
                     filter(handler ->filterer.matchAgainstFilters(handler, handlerCriterion, handleField, introspector) ).
                     collect(Collectors.toList());

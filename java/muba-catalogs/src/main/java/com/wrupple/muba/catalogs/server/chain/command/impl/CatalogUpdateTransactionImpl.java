@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -49,21 +49,21 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 
 		DataWritingCommand dao = (DataWritingCommand) writers.getCommand(String.valueOf(catalog.getStorage()));
 		CatalogEntry childEntity = null;
-		Instrospector instrospector = null;
+		Instrospection instrospection = null;
 		CatalogDescriptor parentCatalog = null;
 		Object parentEntityId = null;
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
-            instrospector = context.getCatalogManager().access().newSession(originalEntry);
+            instrospection = context.getCatalogManager().access().newSession(originalEntry);
             // we are certain this catalog has a parent, otherwise this DAO
 			// would
 			// not be called
 			CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
 			parentCatalog = context.getCatalogManager().getDescriptorForKey(catalog.getParent(), context);
-			parentEntityId = context.getCatalogManager().getAllegedParentId(originalEntry, instrospector);
+			parentEntityId = context.getCatalogManager().getAllegedParentId(originalEntry, instrospection);
 
 			// synthesize parent entity from all non-inherited, passing all
 			// inherited field Values
-			CatalogEntry updatedParentEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, false, instrospector,
+			CatalogEntry updatedParentEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, false, instrospection,
 					context);
 			// delegate deeper inheritance to another instance of an
 			// AncestorAware
@@ -77,14 +77,14 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 
 			// synthesize childEntity (Always will be Entity Kind) ignoring all
 			// inheritedFields
-			childEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, true, instrospector, context);
+			childEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, true, instrospection, context);
 		}
 		dao.execute(context);
 
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
 			// add inherited values to child Entity (result)
 			context.getCatalogManager().processChild(childEntity, parentCatalog, parentEntityId,
-					context.getCatalogManager().spawn(context), catalog, instrospector);
+					context.getCatalogManager().spawn(context), catalog, instrospection);
 		}
 		CatalogEntry ress = context.getEntryResult();
 		context.getTransactionHistory().didUpdate(context,ress , context.getOldValue(), dao);

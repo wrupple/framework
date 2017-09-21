@@ -92,7 +92,7 @@ public abstract class DataJoiner implements Command {
 	}
 
 	protected void joinWithGivenJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog,
-			String[][] joins, CatalogActionContext context, Map<JoinQueryKey, Set<Object>> filterMap, Instrospector instrospector)
+			String[][] joins, CatalogActionContext context, Map<JoinQueryKey, Set<Object>> filterMap, Instrospection instrospection)
 			throws Exception {
 
 		if (log.isInfoEnabled()) {
@@ -117,15 +117,15 @@ public abstract class DataJoiner implements Command {
 			fieldValues = filterMap.get(key);
 
 			log.trace("[GATHERING VALUES FOR JOIN] {}/{}", key, localField);
-			gatherFieldValues(localField, mainResults, mainCatalog, instrospector, fieldValues, context);
+			gatherFieldValues(localField, mainResults, mainCatalog, instrospection, fieldValues, context);
 
 			log.trace("[PROCESS JOIN] {}", key);
-			processJoin(key.catalog, key.field, context, instrospector, fieldValues, mainResults, mainCatalog);
+			processJoin(key.catalog, key.field, context, instrospection, fieldValues, mainResults, mainCatalog);
 
 		}
 	}
 
-	private void processJoin(String catalogId, String foreignField, CatalogActionContext context, Instrospector instrospector,
+	private void processJoin(String catalogId, String foreignField, CatalogActionContext context, Instrospection instrospection,
 			Set<Object> fieldValues, List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog) throws Exception {
 
 		/*
@@ -140,13 +140,13 @@ public abstract class DataJoiner implements Command {
 		if (currentMatchingEntries == null || currentMatchingEntries.isEmpty()) {
 			return;
 		} else {
-			workJoinData(mainResults, mainCatalog, currentMatchingEntries, catalog, context, instrospector);
+			workJoinData(mainResults, mainCatalog, currentMatchingEntries, catalog, context, instrospection);
 
 		}
 	}
 
 	private void gatherFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog,
-                                   Instrospector instrospector, Set<Object> fieldValues, CatalogActionContext context) throws Exception {
+                                   Instrospection instrospection, Set<Object> fieldValues, CatalogActionContext context) throws Exception {
 		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 		int indexOfLastSeparator = fieldId.lastIndexOf('.');
@@ -217,12 +217,12 @@ public abstract class DataJoiner implements Command {
 				throw new RuntimeException("no results to join");
 			} else {
 				log.trace("[READ JOIN DISCRIMINATORS] ");
-				putFieldValues(fieldId, results, catalog, instrospector, fieldValues,context.getCatalogManager());
+				putFieldValues(fieldId, results, catalog, instrospection, fieldValues,context.getCatalogManager());
 			}
 		}
 	}
 
-	private void putFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog, Instrospector instrospector,
+	private void putFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog, Instrospection instrospection,
 			Set<Object> fieldValues, SystemCatalogPlugin cms) throws Exception {
 		FieldDescriptor field = catalog.getFieldDescriptor(fieldId);
 		if (field == null) {
@@ -233,7 +233,7 @@ public abstract class DataJoiner implements Command {
 			if (field.isMultiple()) {
 				Collection<?> temp;
 				for (CatalogEntry e : results) {
-                    temp = (Collection<?>) cms.access().getPropertyValue(field, e, null, instrospector);
+                    temp = (Collection<?>) cms.access().getPropertyValue(field, e, null, instrospection);
                     if (temp != null) {
 						for (Object o : temp) {
 							if (o != null) {
@@ -247,7 +247,7 @@ public abstract class DataJoiner implements Command {
 
 				Object value;
 				for (CatalogEntry e : results) {
-                    value = cms.access().getPropertyValue(field, e, null, instrospector);
+                    value = cms.access().getPropertyValue(field, e, null, instrospection);
                     if (value != null) {
 						fieldValues.add(value);
 					}
@@ -299,7 +299,7 @@ public abstract class DataJoiner implements Command {
 	}
 
 	protected abstract void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog,
-			List<CatalogEntry> joins, CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospector instrospector)
+			List<CatalogEntry> joins, CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospection instrospection)
 			throws Exception;
 	/*
 	 * protected void workJoinData(List<CatalogEntry> list, CatalogDescriptor
@@ -323,7 +323,7 @@ public abstract class DataJoiner implements Command {
 	 * List<Object> fieldContents; log.trace("[RESULT SET CREATED] {}",
 	 * catalog.getDistinguishedName()); // System.err.println(list);
 	 * 
-	 * Instrospector session = context.getCatalogManager().newSession(list.get(0)); int j = 0; for
+	 * Instrospection session = context.getCatalogManager().newSession(list.get(0)); int j = 0; for
 	 * (FieldDescriptor field : fields) { fieldId = field.getFieldId();
 	 * fieldContents = new ArrayList<Object>(list.size()); collectedValues[j] =
 	 * fieldContents; log.trace("[ALLOCATED SPACE FOR FIELD] {}", fieldId);
@@ -404,7 +404,7 @@ public abstract class DataJoiner implements Command {
 	}
 
 	protected CatalogColumnResultSet createResultSet(List<CatalogEntry> list, CatalogDescriptor catalog,
-			String currentCatalogId, CatalogActionContext context, Instrospector instrospector) throws Exception {
+			String currentCatalogId, CatalogActionContext context, Instrospection instrospection) throws Exception {
 		log.trace("[CREATE RESULT SET]");
 		if (catalog == null) {
 			catalog = context.getCatalogManager().getDescriptorForName(currentCatalogId, context);
@@ -460,7 +460,7 @@ public abstract class DataJoiner implements Command {
 						log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId());
 						fieldValue = null;
 					} else {
-                        fieldValue = context.getCatalogManager().access().getPropertyValue(field, object, localizedObject, instrospector);
+                        fieldValue = context.getCatalogManager().access().getPropertyValue(field, object, localizedObject, instrospection);
                     }
 					fieldContents.add(fieldValue);
 				}

@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.reserved.Versioned;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -27,15 +27,15 @@ public class IncreaseVersionNumberImpl implements IncreaseVersionNumber {
 		CatalogEntry old = (CatalogEntry) context.getOldValue();
 		CatalogDescriptor catalog =  context.getCatalogDescriptor();
 		CatalogEntry updated = (CatalogEntry) context.getEntryValue();
-		Instrospector instrospector = context.getCatalogManager().access().newSession((CatalogEntry) old);
+		Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) old);
 		FieldDescriptor versionField = catalog.getFieldDescriptor(Versioned.FIELD);
-		Long version = (Long) context.getCatalogManager().access().getPropertyValue(versionField, (CatalogEntry) old, null, instrospector);
+		Long version = (Long) context.getCatalogManager().access().getPropertyValue(versionField, (CatalogEntry) old, null, instrospection);
 		if(version==null){
 			version=0l;
 		}else{
 			version++;
 		}
-		context.getCatalogManager().access().setPropertyValue(versionField, (CatalogEntry) updated, version, instrospector);
+		context.getCatalogManager().access().setPropertyValue(versionField, (CatalogEntry) updated, version, instrospection);
 		return CONTINUE_PROCESSING;
 	}
 

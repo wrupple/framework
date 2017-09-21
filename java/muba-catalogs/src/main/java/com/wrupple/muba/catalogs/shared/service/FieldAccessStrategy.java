@@ -6,7 +6,7 @@ import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 
 /**
  *
@@ -16,35 +16,35 @@ import com.wrupple.muba.event.domain.Instrospector;
 public interface FieldAccessStrategy {
 
 
-    Instrospector newSession(CatalogEntry sample);
+    Instrospection newSession(CatalogEntry sample);
 
     Object getPropertyValue(FieldDescriptor field, CatalogEntry entry,
-                            DistributiedLocalizedEntry localizedObject, Instrospector instrospector) throws ReflectiveOperationException;
+                            DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException;
 
     Object getPropertyValue(String field, CatalogEntry entry,
-                            DistributiedLocalizedEntry localizedObject, Instrospector instrospector) throws ReflectiveOperationException;
+                            DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException;
 
     void setPropertyValue(FieldDescriptor field, CatalogEntry entry, Object value,
-                          Instrospector instrospector) throws ReflectiveOperationException;
+                          Instrospection instrospection) throws ReflectiveOperationException;
 
     public CatalogEntry synthesize(CatalogDescriptor catalog) throws ReflectiveOperationException;
 
     CatalogEntry catalogCopy(CatalogDescriptor catalog, CatalogEntry entry) throws ReflectiveOperationException;
 
 
-    boolean isReadableProperty(String foreignKeyValuePropertyName, CatalogEntry e, Instrospector instrospector);
+    boolean isReadableProperty(String foreignKeyValuePropertyName, CatalogEntry e, Instrospection instrospection);
 
-    boolean isWriteableProperty(String string, CatalogEntry sample, Instrospector instrospector);
+    boolean isWriteableProperty(String string, CatalogEntry sample, Instrospection instrospection);
 
     void setPropertyValue(String reservedField, CatalogEntry e, Object value,
-                          Instrospector instrospector) throws Exception;
+                          Instrospection instrospection) throws Exception;
     ///TODO implement with GWTUtils
 
-    void deleteAttribute(CatalogEntry jso, String fieldId, Instrospector instrospector) throws ReflectiveOperationException;
+    void deleteAttribute(CatalogEntry jso, String fieldId, Instrospection instrospection) throws ReflectiveOperationException;
 
-    void parseSetDouble(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Instrospector instrospector) throws ReflectiveOperationException;
+    void parseSetDouble(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Instrospection instrospection) throws ReflectiveOperationException;
 
-    void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Instrospector instrospector) throws ReflectiveOperationException;
+    void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Instrospection instrospection) throws ReflectiveOperationException;
 
-    void parseSetBoolean(CatalogEntry jso, FieldDescriptor field, String v, Instrospector instrospector) throws ReflectiveOperationException;
+    void parseSetBoolean(CatalogEntry jso, FieldDescriptor field, String v, Instrospection instrospection) throws ReflectiveOperationException;
 }

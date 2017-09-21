@@ -6,7 +6,7 @@ import com.wrupple.muba.event.domain.TransactionHistory;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +68,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			}
 
 			if (entryIdPointer != null) {
-                Instrospector instrospector = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
-                entryIdPointer = synthethizeKeyValue(entryIdPointer, context, instrospector,
+                Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
+                entryIdPointer = synthethizeKeyValue(entryIdPointer, context, instrospection,
 						targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()));
 				context.setEntry(entryIdPointer);
 			}
@@ -113,7 +113,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		}
 	}
 
-	private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospector instrospector,
+	private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,
 			FieldDescriptor field) throws Exception {
 		if (entryIdPointer instanceof String) {
 			return context.getCatalogManager().synthethizeFieldValue(((String) entryIdPointer).split("\\."), context);
@@ -152,12 +152,12 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		context.setCatalog(targetCatalog.getDistinguishedName());
 
-        Instrospector instrospector = context.getCatalogManager().access().newSession(synthesizedEntry);
+        Instrospection instrospection = context.getCatalogManager().access().newSession(synthesizedEntry);
         Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
 		String fieldId;
 		String token;
 		Object fieldValue;
-        Instrospector lowInstrospector = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
+        Instrospection lowInstrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
 
 		for (FieldDescriptor field : fields) {
 			fieldId = field.getFieldId();
@@ -165,7 +165,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 				token = properties.get(fieldId);
 				if (token != null) {
 					fieldValue = context.getCatalogManager().synthethizeFieldValue(token.split(" "), context);
-                    context.getCatalogManager().access().setPropertyValue(field, synthesizedEntry, fieldValue, instrospector);
+                    context.getCatalogManager().access().setPropertyValue(field, synthesizedEntry, fieldValue, instrospection);
                 }
 			}
 

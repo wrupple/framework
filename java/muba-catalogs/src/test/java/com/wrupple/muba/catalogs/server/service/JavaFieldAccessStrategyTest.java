@@ -14,7 +14,7 @@ package com.wrupple.muba.catalogs.server.service;
         import com.google.inject.Guice;
         import com.google.inject.Injector;
         import com.wrupple.muba.ValidationModule;
-        import com.wrupple.muba.event.domain.Instrospector;
+        import com.wrupple.muba.event.domain.Instrospection;
         import com.wrupple.muba.event.domain.*;
         import com.wrupple.muba.catalogs.CatalogTestModule;
         import com.wrupple.muba.catalogs.domain.*;
@@ -145,13 +145,13 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
         TestEntry bean = (TestEntry) access.synthesize(problemContract);
 
-        Instrospector instrospector = access.newSession(bean);
+        Instrospection instrospection = access.newSession(bean);
 
-        assertTrue(access.isWriteableProperty("number",bean, instrospector));
+        assertTrue(access.isWriteableProperty("number",bean, instrospection));
 
-        access.setPropertyValue("number",bean,7, instrospector);
+        access.setPropertyValue("number",bean,7, instrospection);
 
-        Integer value = (Integer) access.getPropertyValue("number",bean,null, instrospector);
+        Integer value = (Integer) access.getPropertyValue("number",bean,null, instrospection);
 
         assertTrue(value.intValue()==7);
 
@@ -159,9 +159,9 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
         HasAccesablePropertyValues map = (HasAccesablePropertyValues) access.synthesize(problemContract);
 
-        access.setPropertyValue("number",map,7, instrospector);
+        access.setPropertyValue("number",map,7, instrospection);
 
-        value = (Integer) access.getPropertyValue("number",map,null, instrospector);
+        value = (Integer) access.getPropertyValue("number",map,null, instrospection);
 
         assertTrue(value.intValue()==7);
 
