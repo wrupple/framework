@@ -1,9 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterCriteria;
-import com.wrupple.muba.event.domain.FilterData;
-import com.wrupple.muba.event.domain.FilterDataOrdering;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
@@ -15,7 +12,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
 import com.wrupple.muba.catalogs.server.service.QueryReaders;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
-import com.wrupple.muba.event.domain.Instrospector;
+import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -80,7 +77,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 
 		Object targetEntryId = context.getEntry();
-        Instrospector instrospector = context.getCatalogManager().access().newSession(null);
+        Instrospection instrospection = context.getCatalogManager().access().newSession(null);
         if (targetEntryId == null) {
 			FilterData filter = context.getFilter();
 			if (filter == null) {
@@ -91,11 +88,11 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 				return CONTINUE_PROCESSING;
 			}
 			applySorts(filter, catalog.getAppliedSorts());
-			applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, instrospector);
+			applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, instrospection);
 			List<CatalogEntry> result = null;
 			FilterCriteria keyCriteria = filter.fetchCriteria(CatalogEntry.ID_FIELD);
 			if (!filter.isConstrained() || keyCriteria == null) {
-				result = read(filter, catalog, context, cache, instrospector);
+				result = read(filter, catalog, context, cache, instrospection);
 			} else {
 				List<Object> keys = keyCriteria.getValues();
 				if (keys == null) {
@@ -106,10 +103,10 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 						int ammountOfKeys = keys.size();
 						// only if theres still some unsatisfied idś in criteria
 						if (filter.getStart() < ammountOfKeys) {
-							result = read(filter, catalog, context, cache, instrospector);
+							result = read(filter, catalog, context, cache, instrospection);
 						}
 					} else {
-						result = read(filter, catalog, context, cache, instrospector);
+						result = read(filter, catalog, context, cache, instrospection);
 					}
 				}
 			}
@@ -131,7 +128,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 				graphJoin.execute(context);
 			}
 		} else {
-			CatalogEntry originalEntry = read(targetEntryId, catalog, context, cache, instrospector);
+			CatalogEntry originalEntry = read(targetEntryId, catalog, context, cache, instrospection);
 
 			context.setResults(Collections.singletonList(originalEntry));
 
@@ -145,16 +142,16 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	}
 
 	public List<CatalogEntry> read(FilterData filterData, CatalogDescriptor catalog, CatalogActionContext context,
-			CatalogResultCache cache, Instrospector instrospector) throws Exception {
+			CatalogResultCache cache, Instrospection instrospection) throws Exception {
 		List<CatalogEntry> regreso;
 		filterData = queryRewriter.interceptQuery(filterData, context, catalog);
 
 		if (cache == null) {
-			regreso = doRead(filterData, catalog, context, instrospector);
+			regreso = doRead(filterData, catalog, context, instrospection);
 		} else {
 			regreso = cache.satisfy(context, catalog.getDistinguishedName(), filterData);
 			if (regreso == null) {
-				regreso = doRead(filterData, catalog, context, instrospector);
+				regreso = doRead(filterData, catalog, context, instrospection);
 				if (regreso != null) {
 					if (log.isInfoEnabled()) {
 						log.trace("Saving {} query result(s) in cache {} list {}", regreso.size(),
@@ -172,14 +169,14 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	}
 
 	public CatalogEntry read(Object targetEntryId, CatalogDescriptor catalog, CatalogActionContext context,
-			CatalogResultCache cache, Instrospector instrospector) throws Exception {
+			CatalogResultCache cache, Instrospection instrospection) throws Exception {
 		CatalogEntry regreso;
 		if (cache == null) {
-			regreso = doRead(targetEntryId, catalog, context, instrospector);
+			regreso = doRead(targetEntryId, catalog, context, instrospection);
 		} else {
 			regreso = cache.get(context, catalog.getDistinguishedName(), targetEntryId);
 			if (regreso == null) {
-				regreso = doRead(targetEntryId, catalog, context, instrospector);
+				regreso = doRead(targetEntryId, catalog, context, instrospection);
 				if (regreso != null) {
 					cache.put(context, catalog.getDistinguishedName(), regreso);
 				}
@@ -192,12 +189,12 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	}
 
 	public CatalogEntry readVanityId(String vanityId, CatalogDescriptor catalog, CatalogActionContext context,
-			CatalogResultCache cache, Instrospector instrospector) throws Exception {
+			CatalogResultCache cache, Instrospection instrospection) throws Exception {
 		CatalogEntry regreso = null;
 		if (context.getCatalogManager().isPrimaryKey(vanityId)) {
 			// almost certainly an Id
 			Object primaryId = context.getCatalogManager().decodePrimaryKeyToken(vanityId);
-			regreso = read(primaryId, catalog, context, cache, instrospector);
+			regreso = read(primaryId, catalog, context, cache, instrospection);
 		}
 
 		if (regreso == null) {
@@ -205,7 +202,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			List<CatalogEntry> results;
 			// if(catalog.getFieldDescriptor(HasDistinguishedName.FIELD)==null){
 			filter = FilterDataUtils.createSingleFieldFilter(HasDistinguishedName.FIELD, vanityId);
-			results = doRead(filter, catalog, context, instrospector);
+			results = doRead(filter, catalog, context, instrospection);
 			if (results == null || results.isEmpty()) {
 				throw new IllegalArgumentException(vanityId);
 			} else {
@@ -217,7 +214,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	}
 
 	private List<CatalogEntry> doRead(FilterData filterData, CatalogDescriptor catalog, CatalogActionContext context,
-			Instrospector instrospector) throws Exception {
+			Instrospection instrospection) throws Exception {
 		log.trace("DATASTORE QUERY");
 		context.setFilter(filterData);
 		Command command = queryers.getCommand(String.valueOf(catalog.getStorage()));
@@ -230,7 +227,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			if (children != null && !children.isEmpty()) {
 
 				CatalogActionContext readContext = context.getCatalogManager().spawn(context);
-				processChildren(children, readContext, catalog, instrospector);
+				processChildren(children, readContext, catalog, instrospection);
 				return children;
 			} else {
 				return Collections.EMPTY_LIST;
@@ -241,7 +238,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	}
 
 	private CatalogEntry doRead(Object targetEntryId, CatalogDescriptor catalog, CatalogActionContext context,
-			Instrospector instrospector) throws Exception {
+			Instrospection instrospection) throws Exception {
 		log.trace("DATASTORE READ");
 		context.setEntry(targetEntryId);
 
@@ -256,7 +253,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			// not be called
 			Long parentCatalogId = catalog.getParent();
 			// aquire parent id
-			Object parentEntityId = context.getCatalogManager().getAllegedParentId(childEntity, instrospector);
+			Object parentEntityId = context.getCatalogManager().getAllegedParentId(childEntity, instrospection);
 			// delegate deeper inheritance to another instance of an
 			// AncestorAware
 			// DAO
@@ -264,28 +261,28 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			log.trace("[PROCESSING CHILD ENTRY]");
 			context.getCatalogManager().processChild(childEntity,
 					context.getCatalogManager().getDescriptorForKey(parentCatalogId, context), parentEntityId,
-					context.getCatalogManager().spawn(context), catalog, instrospector);
+					context.getCatalogManager().spawn(context), catalog, instrospection);
 		}
 		return context.getEntryResult();
 
 	}
 
 	protected void processChildren(List<CatalogEntry> children, CatalogActionContext readContext,
-			CatalogDescriptor catalog, Instrospector instrospector) throws Exception {
+			CatalogDescriptor catalog, Instrospection instrospection) throws Exception {
 		// we are certain this catalog has a parent, otherwise this DAO would
 		// not be called
 		Long parentCatalogId = catalog.getParent();
 		CatalogDescriptor parent = readContext.getCatalogManager().getDescriptorForKey(parentCatalogId, readContext);
 		Object parentEntityId;
 		for (CatalogEntry childEntity : children) {
-			parentEntityId = readContext.getCatalogManager().getAllegedParentId(childEntity, instrospector);
+			parentEntityId = readContext.getCatalogManager().getAllegedParentId(childEntity, instrospection);
 			readContext.getCatalogManager().processChild(childEntity, parent, parentEntityId, readContext, catalog,
-                    instrospector);
+                    instrospection);
 		}
 	}
 
 	private void applyCriteria(FilterData filter, CatalogDescriptor catalog,
-			List<? extends FilterCriteria> appliedCriteria, CatalogActionContext context, Instrospector instrospector)
+			List<? extends FilterCriteria> appliedCriteria, CatalogActionContext context, Instrospection instrospection)
 			throws Exception {
 		if (appliedCriteria != null) {
 			for (FilterCriteria criteria : appliedCriteria) {
