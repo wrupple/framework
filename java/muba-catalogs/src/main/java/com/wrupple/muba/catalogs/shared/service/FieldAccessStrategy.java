@@ -7,16 +7,15 @@ import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.server.service.IntrospectionStrategy;
 
 /**
  *
  * implemented from a mix of GWTUtils and VegetateStorageUnit and WruppleCatalogEvaluationDelegate
  * Created by rarl on 29/05/17.
  */
-public interface FieldAccessStrategy {
+public interface FieldAccessStrategy extends IntrospectionStrategy {
 
-
-    Instrospection newSession(CatalogEntry sample);
 
     Object getPropertyValue(FieldDescriptor field, CatalogEntry entry,
                             DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException;

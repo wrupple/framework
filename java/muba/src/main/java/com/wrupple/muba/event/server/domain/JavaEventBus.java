@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,6 +20,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
+import com.wrupple.muba.event.server.service.IntrospectionStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
 
@@ -39,8 +41,10 @@ public class JavaEventBus extends ContextBase implements EventBus {
 
     private final FilterNativeInterface filterer;
 
+    private final IntrospectionStrategy instrospector;
+
     @Inject
-	public JavaEventBus(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named("event.sentence") FieldDescriptor handleFieldDescriptor) {
+	public JavaEventBus(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named("event.sentence") FieldDescriptor handleFieldDescriptor, IntrospectionStrategy instrospector) {
 		super();
 		this.parallel=parallel;
 		this.process=process;
@@ -51,6 +55,8 @@ public class JavaEventBus extends ContextBase implements EventBus {
         this.transactionProvider=transactionProvider;
         this.filterer = filterer;
         this.handleField= Collections.singletonMap(ExplicitIntent.HANDLE_FIELD,handleFieldDescriptor);
+        this.instrospector = instrospector;
+
     }
 
     @Override
@@ -104,8 +110,9 @@ public class JavaEventBus extends ContextBase implements EventBus {
         List<ExplicitIntent> handlers = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
 
         if(handlerCriterion!=null && !handlerCriterion.isEmpty()){
-            Instrospection introspector=;
-            handlers= handlers.stream().
+            Stream<ExplicitIntent> stream = handlers.stream();
+            Instrospection introspector=instrospector.newSession(stream.findAny().get());
+            handlers= stream.
                     filter(handler ->filterer.matchAgainstFilters(handler, handlerCriterion, handleField, introspector) ).
                     collect(Collectors.toList());
         }
