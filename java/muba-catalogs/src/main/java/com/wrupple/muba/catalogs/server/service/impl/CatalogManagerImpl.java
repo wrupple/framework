@@ -2,9 +2,10 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.google.inject.Inject;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.*;
 import com.wrupple.muba.event.domain.reserved.*;
 import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionContextImpl;
@@ -596,11 +597,11 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
     @Override
 	@SuppressWarnings("unchecked")
-	public com.wrupple.muba.catalogs.domain.annotations.CatalogKey buildCatalogKeyValidation(FieldDescriptor field) {
+	public com.wrupple.muba.event.domain.annotations.CatalogKey buildCatalogKeyValidation(FieldDescriptor field) {
 		Map properties = Collections.singletonMap("foreignCatalog", field.getCatalog());
 
-		com.wrupple.muba.catalogs.domain.annotations.CatalogKey annotation = Defaults
-				.of(com.wrupple.muba.catalogs.domain.annotations.CatalogKey.class, properties);
+		com.wrupple.muba.event.domain.annotations.CatalogKey annotation = Defaults
+				.of(com.wrupple.muba.event.domain.annotations.CatalogKey.class, properties);
 		return annotation;
 
 	}

@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.domain;
 
 import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

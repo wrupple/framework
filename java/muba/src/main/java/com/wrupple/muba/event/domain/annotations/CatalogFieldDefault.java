@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.domain.annotations;
+package com.wrupple.muba.event.domain.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

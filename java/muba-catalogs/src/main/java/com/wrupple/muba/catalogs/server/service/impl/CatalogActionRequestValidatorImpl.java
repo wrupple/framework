@@ -21,7 +21,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.HasConstrains;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;

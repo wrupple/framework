@@ -14,6 +14,8 @@ import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import com.wrupple.muba.event.server.domain.JavaEventBus;
 import com.wrupple.muba.event.server.service.EventRegistry;
+import com.wrupple.muba.event.server.service.FilterNativeInterface;
+import com.wrupple.muba.event.server.service.IntrospectionStrategy;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import org.apache.commons.chain.CatalogFactory;
 import org.junit.Before;
@@ -31,11 +33,14 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 
 	public ServiceInvocationTest() {
-
+		FieldDescriptor sentenceField;
 		ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
 		EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
-		this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,null, filterer);
+		FilterNativeInterface filterer;
+		IntrospectionStrategy instrospector;
+
+		this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,false,null,filterer,sentenceField,instrospector);
 
 
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });

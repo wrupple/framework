@@ -4,8 +4,8 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.BusinessEvent;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 /**
  * Created by japi on 12/08/17.

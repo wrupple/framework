@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.domain.annotations;
+package com.wrupple.muba.event.domain.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import com.wrupple.muba.catalogs.server.service.CatalogNormalizationConstraintValidator;
+import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValidator;
 
 @Documented
 @Target(ElementType.FIELD)

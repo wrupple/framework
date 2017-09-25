@@ -6,11 +6,11 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldWidget;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldWidget;
+import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 /**
  * 

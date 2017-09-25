@@ -18,10 +18,10 @@ import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.catalogs.domain.annotations.InheritanceTree;
 import com.wrupple.muba.catalogs.server.chain.command.I18nProcessing;
 

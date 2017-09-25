@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
 
 public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
 	private static final long serialVersionUID = 7957074775049623796L;

@@ -10,12 +10,12 @@ import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
-import com.wrupple.muba.catalogs.server.service.CatalogKeyConstraintValidator;
+import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.server.service.KeyDomainValidator;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 
-public class CatalogKeyConstraintValidatorImpl implements CatalogKeyConstraintValidator {
+public class KeyDomainValidatorImpl implements KeyDomainValidator {
 
 	private final SystemCatalogPlugin cms;
 	private final Provider<RuntimeContext> exp;
@@ -24,7 +24,7 @@ public class CatalogKeyConstraintValidatorImpl implements CatalogKeyConstraintVa
 	private boolean unique;
 
 	@Inject
-	public CatalogKeyConstraintValidatorImpl(Provider<RuntimeContext> exp, SystemCatalogPlugin cms, ObjectNativeInterface nativeInterface) {
+	public KeyDomainValidatorImpl(Provider<RuntimeContext> exp, SystemCatalogPlugin cms, ObjectNativeInterface nativeInterface) {
 		this.exp = exp;
 		this.nativeInterface=nativeInterface;
 		this.cms = cms;

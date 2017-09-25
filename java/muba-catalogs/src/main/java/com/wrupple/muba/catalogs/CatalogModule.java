@@ -97,8 +97,8 @@ import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescripto
 import com.wrupple.muba.catalogs.server.domain.catalogs.TrashDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogKeyConstraintValidator;
-import com.wrupple.muba.catalogs.server.service.CatalogNormalizationConstraintValidator;
+import com.wrupple.muba.event.server.service.KeyDomainValidator;
+import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValidator;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.Deleters;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
@@ -221,7 +221,7 @@ public class CatalogModule extends AbstractModule {
 
 		bind(LargeStringFieldDataAccessObject.class).to(LargeStringFieldDataAccessObjectImpl.class);
 
-		bind(CatalogKeyConstraintValidator.class).to(CatalogKeyConstraintValidatorImpl.class);
+		bind(KeyDomainValidator.class).to(KeyDomainValidatorImpl.class);
 		bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
 
 		bind(SystemCatalogPlugin.class).to(CatalogManagerImpl.class);

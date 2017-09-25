@@ -1,8 +1,8 @@
 package com.wrupple.muba.bpm.domain;
 
 import com.wrupple.muba.bpm.domain.impl.ManagedObjectImpl;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 /**
  * Created by japi on 25/07/17.

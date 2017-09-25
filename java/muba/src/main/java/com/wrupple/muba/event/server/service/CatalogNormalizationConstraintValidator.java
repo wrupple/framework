@@ -1,8 +1,8 @@
-package com.wrupple.muba.catalogs.server.service;
+package com.wrupple.muba.event.server.service;
 
 import javax.validation.ConstraintValidator;
 
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 
 public interface CatalogNormalizationConstraintValidator extends ConstraintValidator<CatalogFieldValues, Object> {
 
