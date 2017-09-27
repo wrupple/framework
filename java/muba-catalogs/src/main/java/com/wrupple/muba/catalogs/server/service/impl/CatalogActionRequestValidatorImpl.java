@@ -24,7 +24,7 @@ import com.wrupple.muba.event.domain.HasConstrains;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
-import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
+import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogActionRequestValidatorImpl implements CatalogActionRequestValidator {

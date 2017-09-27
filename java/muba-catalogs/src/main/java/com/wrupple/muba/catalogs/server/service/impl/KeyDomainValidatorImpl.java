@@ -13,7 +13,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.annotations.CatalogKey;
 import com.wrupple.muba.event.server.service.KeyDomainValidator;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
+import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 
 public class KeyDomainValidatorImpl implements KeyDomainValidator {
 

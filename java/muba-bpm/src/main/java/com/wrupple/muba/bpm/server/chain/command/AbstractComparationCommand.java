@@ -3,7 +3,7 @@ package com.wrupple.muba.bpm.server.chain.command;
 import java.util.Collection;
 import java.util.Date;
 
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 

@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.server.service.impl;
+package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -7,8 +7,8 @@ import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
-import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

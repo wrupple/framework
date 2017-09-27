@@ -1,9 +1,10 @@
-package com.wrupple.muba.catalogs.shared.service.impl;
+package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
+import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -15,10 +16,10 @@ import java.util.regex.Pattern;
  */
 public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
 
-    private final JavaObjectNativeInterface oni;
+    private final ObjectNativeInterface oni;
 
     @Inject
-    public JavaFilterNativeInterfaceImpl(JavaObjectNativeInterface oni) {
+    public JavaFilterNativeInterfaceImpl(ObjectNativeInterface oni) {
         this.oni = oni;
     }
 

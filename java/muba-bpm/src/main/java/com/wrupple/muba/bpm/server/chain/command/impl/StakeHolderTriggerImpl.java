@@ -3,7 +3,7 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.chain.Context;
 

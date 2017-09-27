@@ -12,11 +12,8 @@ import com.wrupple.muba.event.chain.impl.UpdatedVersionService;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
-import com.wrupple.muba.event.server.service.impl.JavaEventBus;
-import com.wrupple.muba.event.server.service.EventRegistry;
-import com.wrupple.muba.event.server.service.FilterNativeInterface;
-import com.wrupple.muba.event.server.service.IntrospectionStrategy;
-import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
+import com.wrupple.muba.event.server.service.*;
+import com.wrupple.muba.event.server.service.impl.*;
 import org.apache.commons.chain.CatalogFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,13 +31,17 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 	public ServiceInvocationTest() {
 		FieldDescriptor sentenceField = new SentenceField();
-		ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
-        EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
-		EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
-		FilterNativeInterface filterer;
-		IntrospectionStrategy instrospector;
 
-		this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,false,null,filterer,sentenceField,instrospector);
+		LargeStringFieldDataAccessObject largeStringDelegate= new LargeStringFieldDataAccessObjectImpl();
+		ObjectNativeInterface oni= new JavaObjectNativeInterface(largeStringDelegate);
+		FilterNativeInterface filterer=new JavaFilterNativeInterfaceImpl(oni);
+		IntrospectionStrategy instrospector=new JavaFieldAccessStrategy(null,oni);
+
+        EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
+        ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
+        EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
+
+        this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,false,null,filterer,sentenceField,instrospector);
 
 
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });

@@ -7,7 +7,7 @@ import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
-import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
+import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

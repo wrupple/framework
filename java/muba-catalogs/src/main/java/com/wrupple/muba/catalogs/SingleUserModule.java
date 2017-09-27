@@ -11,9 +11,9 @@ import com.wrupple.muba.catalogs.domain.CatalogNamespace;
 import com.wrupple.muba.catalogs.domain.PublicNamespace;
 import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
-import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
+import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogResultCacheImpl;
-import com.wrupple.muba.catalogs.server.service.impl.LargeStringFieldDataAccessObjectImpl;
+import com.wrupple.muba.event.server.service.impl.LargeStringFieldDataAccessObjectImpl;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
 
 public class SingleUserModule extends AbstractModule {

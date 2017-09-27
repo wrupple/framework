@@ -16,7 +16,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.chain.CatalogFactory;

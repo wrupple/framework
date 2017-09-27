@@ -1,10 +1,10 @@
-package com.wrupple.muba.catalogs.server.service.impl;
+package com.wrupple.muba.event.server.service.impl;
 
 import java.lang.reflect.Type;
 
 import javax.inject.Singleton;
 
-import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
+import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 
 @Singleton
 public class LargeStringFieldDataAccessObjectImpl implements LargeStringFieldDataAccessObject {

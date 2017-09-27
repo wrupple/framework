@@ -1,10 +1,10 @@
-package com.wrupple.muba.catalogs.shared.service.impl;
+package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
-import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
+import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
+import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
