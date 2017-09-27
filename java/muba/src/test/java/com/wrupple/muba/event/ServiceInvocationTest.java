@@ -12,7 +12,7 @@ import com.wrupple.muba.event.chain.impl.UpdatedVersionService;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
-import com.wrupple.muba.event.server.domain.JavaEventBus;
+import com.wrupple.muba.event.server.service.impl.JavaEventBus;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
 import com.wrupple.muba.event.server.service.IntrospectionStrategy;
@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.wrupple.muba.BootstrapTest;
-import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 
 public class ServiceInvocationTest extends BootstrapTest {
 
@@ -33,7 +33,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 
 	public ServiceInvocationTest() {
-		FieldDescriptor sentenceField;
+		FieldDescriptor sentenceField = new SentenceField();
 		ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
 		EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());

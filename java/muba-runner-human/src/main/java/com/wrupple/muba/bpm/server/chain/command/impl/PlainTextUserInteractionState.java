@@ -4,7 +4,7 @@ import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.UserInteractionState;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import org.apache.commons.chain.Context;
 

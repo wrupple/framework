@@ -19,7 +19,7 @@ import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.impl.BusinessPluginImpl;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 
 /**

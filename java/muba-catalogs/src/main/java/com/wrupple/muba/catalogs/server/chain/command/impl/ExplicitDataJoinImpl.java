@@ -5,7 +5,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
 import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;

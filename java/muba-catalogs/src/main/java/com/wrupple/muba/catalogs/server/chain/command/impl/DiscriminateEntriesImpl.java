@@ -6,7 +6,7 @@ import com.wrupple.muba.event.domain.FilterCriteria;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;

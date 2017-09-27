@@ -14,7 +14,7 @@ import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.bpm.server.service.impl.SolverCatalogPluginImpl;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 
 /**

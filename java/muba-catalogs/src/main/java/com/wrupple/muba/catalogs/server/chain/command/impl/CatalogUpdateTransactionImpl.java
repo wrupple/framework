@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandler;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;

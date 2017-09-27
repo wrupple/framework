@@ -3,7 +3,7 @@ package com.wrupple.muba.bpm.domain.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -19,7 +19,7 @@ import com.wrupple.muba.event.domain.TransactionHistory;
 import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.event.server.chain.command.UserCommand;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.impl.UndoBasedTransactionDelegate;
 import com.wrupple.muba.catalogs.server.service.impl.UndoBasedTransactionDelegate.UndoToken;
 

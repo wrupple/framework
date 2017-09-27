@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataQueryCommand;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl.MultipleFieldResultsHandler;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;

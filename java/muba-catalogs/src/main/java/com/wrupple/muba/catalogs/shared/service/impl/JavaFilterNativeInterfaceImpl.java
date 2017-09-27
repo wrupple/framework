@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.shared.service.impl;
 
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
 
 import javax.inject.Inject;

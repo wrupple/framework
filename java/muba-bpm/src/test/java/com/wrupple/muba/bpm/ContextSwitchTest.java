@@ -19,8 +19,7 @@ import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
@@ -195,7 +194,7 @@ public class ContextSwitchTest extends MubaTest {
         expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
 
 
         runtimeContext = injector.getInstance(RuntimeContext.class);

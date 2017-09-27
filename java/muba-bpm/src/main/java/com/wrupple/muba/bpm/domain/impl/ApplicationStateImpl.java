@@ -6,7 +6,7 @@ import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 
 import java.util.List;
 

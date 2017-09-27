@@ -37,7 +37,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.event.MainModule;
-import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -70,7 +70,7 @@ public class CommitHumanSolution extends MubaTest {
 
     protected WriteAuditTrails mockLogger;
 
-    protected CatalogPeer peerValue;
+    protected Host peerValue;
 
     protected EventSuscriptionChain chainMock;
 
@@ -90,7 +90,7 @@ public class CommitHumanSolution extends MubaTest {
             // mocks
             mockWriter = mock(WriteOutput.class);
             mockLogger = mock(WriteAuditTrails.class);
-            peerValue = mock(CatalogPeer.class);
+            peerValue = mock(Host.class);
             chainMock = mock(EventSuscriptionChain.class);
             bind(WriteAuditTrails.class).toInstance(mockLogger);
             bind(WriteOutput.class).toInstance(mockWriter);
@@ -155,7 +155,7 @@ public class CommitHumanSolution extends MubaTest {
         expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
 
         runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");

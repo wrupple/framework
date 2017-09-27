@@ -12,7 +12,7 @@ import com.wrupple.muba.event.domain.KnownExceptionImpl;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.server.chain.command.StakeHolderTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 
 public class StakeHolderTriggerImpl implements StakeHolderTrigger {

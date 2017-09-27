@@ -76,5 +76,19 @@ public interface Host extends CatalogEntry,HasStakeHolder {
 	 */
 	String getAgent();
 	void setAgent(String s);
-	
+
+
+
+	/**
+	 * used to support multiple users logged in a peer, this value represents the state in the catalog provider side that spawned this peer
+	 *
+	 * @return
+	 */
+	Integer getStakeHolderIndex();
+
+	String getCatalogUrlBase();
+
+//	List<String> getSuscriptions();
+
+
 }

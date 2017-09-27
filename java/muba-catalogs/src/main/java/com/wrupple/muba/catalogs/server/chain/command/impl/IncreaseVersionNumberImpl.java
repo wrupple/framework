@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.reserved.Versioned;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
 import org.apache.commons.chain.Context;

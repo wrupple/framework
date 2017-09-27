@@ -12,7 +12,7 @@ import com.wrupple.muba.event.domain.CatalogKey;
 import com.wrupple.muba.event.server.chain.command.UserCommand;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 
 public class UndoBasedTransactionDelegate {
 	private static final Logger log = LoggerFactory.getLogger(UndoBasedTransactionDelegate.class);

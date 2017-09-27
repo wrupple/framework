@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.ServiceManifestImpl;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 
 @Singleton

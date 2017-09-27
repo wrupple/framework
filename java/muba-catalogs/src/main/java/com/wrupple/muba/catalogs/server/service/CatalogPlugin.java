@@ -5,7 +5,7 @@ import java.util.List;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.ContextEvaluationService;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import org.apache.commons.chain.Command;

@@ -5,9 +5,9 @@ import javax.inject.Named;
 
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.DistributiedLocalizedEntry;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.LocaleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;

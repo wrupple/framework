@@ -25,7 +25,7 @@ import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.reserved.HasResult;
-import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 
 public class ServiceRequestValidation extends MubaTest {
 

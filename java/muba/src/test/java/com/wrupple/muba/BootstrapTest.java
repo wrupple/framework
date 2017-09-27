@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 
 public class BootstrapTest extends EasyMockSupport {
 

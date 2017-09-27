@@ -8,8 +8,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.inject.Singleton;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.domain.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.ObjectNativeInterface;
 import com.wrupple.muba.catalogs.shared.service.impl.JavaFilterNativeInterfaceImpl;
@@ -23,27 +27,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.event.domain.Person;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
-import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.event.domain.Constraint;
-import com.wrupple.muba.catalogs.domain.ConstraintImpl;
-import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.catalogs.domain.ContentRevision;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.LocalizedString;
-import com.wrupple.muba.catalogs.domain.NamespaceContext;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
-import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandler;
 import com.wrupple.muba.catalogs.server.chain.command.CommitCatalogAction;
@@ -87,11 +71,7 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.TimestamperImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.TrashDeleteTriggerImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.UpdateTreeLevelIndexImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.WritePublicTimelineEventDiscriminatorImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogPeerImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.TrashDescriptor;
@@ -255,9 +235,9 @@ public class CatalogModule extends AbstractModule {
 	@Provides
 	@Singleton
 	@Inject
-	@Named(CatalogPeer.CATALOG)
+	@Named(Host.CATALOG)
 	public CatalogDescriptor catalogPeer(CatalogDescriptorBuilder builder) {
-		CatalogDescriptor r = builder.fromClass(CatalogPeerImpl.class, CatalogPeer.CATALOG, "Peers", -1911193, null);
+		CatalogDescriptor r = builder.fromClass(HostImpl.class, Host.CATALOG, "Peers", -1911193, null);
 		return r;
 	}
 

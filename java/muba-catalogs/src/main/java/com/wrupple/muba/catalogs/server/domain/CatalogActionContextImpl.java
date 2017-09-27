@@ -11,7 +11,7 @@ import org.apache.commons.chain.impl.ContextBase;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;

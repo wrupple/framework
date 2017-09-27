@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
+import com.wrupple.muba.event.domain.DistributiedLocalizedEntry;
 
 public class LocalizedEntityWrapper implements DistributiedLocalizedEntry {
 	private static final long serialVersionUID = 4051797443336293564L;

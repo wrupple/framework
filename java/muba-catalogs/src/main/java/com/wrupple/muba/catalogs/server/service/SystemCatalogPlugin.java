@@ -5,8 +5,8 @@ import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy;
 

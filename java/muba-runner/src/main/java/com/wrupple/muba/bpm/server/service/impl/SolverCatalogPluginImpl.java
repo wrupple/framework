@@ -6,7 +6,7 @@ import com.wrupple.muba.bpm.domain.WruppleActivityAction;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;

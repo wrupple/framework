@@ -15,7 +15,7 @@ import com.google.inject.Singleton;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandler;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 

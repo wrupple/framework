@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionResult;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryAssembler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;

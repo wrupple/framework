@@ -3,12 +3,11 @@ package com.wrupple.muba;
 import com.google.inject.*;
 import com.google.inject.name.Names;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.domain.SessionContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.FormatDictionary;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.chain.command.*;
@@ -42,7 +41,7 @@ public abstract class MubaTest extends EasyMockSupport {
 
     protected WriteAuditTrails mockLogger;
 
-    protected CatalogPeer peerValue;
+    protected Host peerValue;
 
     protected EventSuscriptionChain chainMock;
 
@@ -67,7 +66,7 @@ public abstract class MubaTest extends EasyMockSupport {
             // mocks
             mockWriter = mock(WriteOutput.class);
             mockLogger = mock(WriteAuditTrails.class);
-            peerValue = mock(CatalogPeer.class);
+            peerValue = mock(Host.class);
             chainMock = mock(EventSuscriptionChain.class);
             mockFormats = mock(FormatDictionary.class);
 			bind(FormatDictionary.class).toInstance(mockFormats);

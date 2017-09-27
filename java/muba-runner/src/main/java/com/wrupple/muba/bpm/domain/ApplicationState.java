@@ -8,7 +8,7 @@ import com.wrupple.muba.event.domain.reserved.HasChildren;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.event.domain.reserved.HasParent;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 
 import java.util.List;
 

@@ -15,7 +15,7 @@ import com.wrupple.muba.bpm.server.chain.command.AbstractComparationCommand;
 import com.wrupple.muba.bpm.server.chain.command.ValueChangeListener;
 import com.wrupple.muba.bpm.server.domain.ValueChangeTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;

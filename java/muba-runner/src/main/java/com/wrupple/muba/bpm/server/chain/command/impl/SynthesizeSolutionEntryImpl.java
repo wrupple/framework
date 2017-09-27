@@ -6,7 +6,7 @@ import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;

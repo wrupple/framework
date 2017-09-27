@@ -7,7 +7,7 @@ import com.wrupple.muba.bpm.domain.impl.FieldValueChangeImpl;
 import com.wrupple.muba.bpm.server.chain.command.AbstractComparationCommand;
 import com.wrupple.muba.bpm.server.chain.command.ValueChangeAudit;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 
 import java.util.List;

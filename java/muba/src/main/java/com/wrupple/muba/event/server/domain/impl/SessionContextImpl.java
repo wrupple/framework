@@ -1,4 +1,4 @@
-package com.wrupple.muba.event.server.domain;
+package com.wrupple.muba.event.server.domain.impl;
 
 import java.util.Date;
 

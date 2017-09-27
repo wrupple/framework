@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;

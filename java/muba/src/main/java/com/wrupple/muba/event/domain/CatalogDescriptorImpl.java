@@ -1,35 +1,22 @@
-package com.wrupple.muba.catalogs.server.domain;
+package com.wrupple.muba.event.domain;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.wrupple.muba.event.domain.AbstractContractDescriptor;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterCriteria;
-import com.wrupple.muba.event.domain.FilterDataOrdering;
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
-import com.wrupple.muba.event.domain.Constraint;
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.event.domain.annotations.CatalogKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
-import com.wrupple.muba.catalogs.domain.annotations.InheritanceTree;
-import com.wrupple.muba.catalogs.server.chain.command.I18nProcessing;
+import com.wrupple.muba.event.domain.annotations.InheritanceTree;
 
 public class CatalogDescriptorImpl extends AbstractContractDescriptor implements CatalogDescriptor {
 
 	private static final long serialVersionUID = 7222404658673284250L;
 
-	@CatalogKey(foreignCatalog = CatalogPeer.CATALOG)
+	@CatalogKey(foreignCatalog = Host.CATALOG)
 	private Long peer;
 
 	@CatalogKey(foreignCatalog = CatalogDescriptor.CATALOG_ID)
@@ -44,7 +31,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 			LOCAL_CACHE, MAIN_CACHE, SECURE })
 	private int storage;
 
-	@CatalogFieldValues(defaultValueOptions = { I18nProcessing.CONSOLIDATED, I18nProcessing.DISTRIBUTED })
+	@CatalogFieldValues(defaultValueOptions = { CONSOLIDATED, DistributiedLocalizedEntry.CATALOG})
 	private int localization;
 
 	@CatalogFieldValues(defaultValueOptions = { CatalogActionRequest.FULL_CACHE, CatalogActionRequest.QUERY_CACHE,
@@ -67,13 +54,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	@CatalogValue(foreignCatalog = Constraint.CATALOG_ID)
 	private List<Constraint> constraintsValues;
 
-	@CatalogKey(foreignCatalog = CatalogActionTrigger.CATALOG)
-	private List<Long> triggers;
-
 	private List<String> sorts, criteria;
-
-	@CatalogField(ephemeral = true)
-	private List<CatalogActionTrigger> triggersValues;
 
 	@CatalogField(ignore = true)
 	private int foreignKeyCount = -1;
@@ -191,14 +172,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.versioned = versioned;
 	}
 
-	@Override
-	public List<CatalogActionTrigger> getTriggersValues() {
-		return triggersValues;
-	}
-
-	public void setTriggersValues(List<CatalogActionTrigger> triggersValues) {
-		this.triggersValues = triggersValues;
-	}
 
 	public void setConsolidated(boolean mergeAncestors) {
 		this.consolidated = mergeAncestors;
@@ -214,14 +187,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	public void setPeer(Long peer) {
 		this.peer = peer;
-	}
-
-	public List<Long> getTriggers() {
-		return triggers;
-	}
-
-	public void setTriggers(List<Long> triggers) {
-		this.triggers = triggers;
 	}
 
 	public List<String> getSorts() {
@@ -406,13 +371,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		return CatalogDescriptor.CATALOG_ID;
 	}
 
-	@Override
-	public void addTrigger(CatalogActionTrigger t) {
-		if (triggersValues == null) {
-			triggersValues = new ArrayList<CatalogActionTrigger>(3);
-		}
-		triggersValues.add(t);
-	}
 
 	public boolean isTyped() {
 		return typed;

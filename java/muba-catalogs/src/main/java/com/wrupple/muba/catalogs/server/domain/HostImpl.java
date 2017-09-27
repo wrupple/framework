@@ -3,10 +3,9 @@ package com.wrupple.muba.catalogs.server.domain;
 import java.util.Date;
 import java.util.List;
 
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 
-public class CatalogPeerImpl extends ContentNodeImpl implements CatalogPeer {
+public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.domain.Host {
 	
 
 	private static final long serialVersionUID = -671577088785926566L;
@@ -113,7 +112,7 @@ public class CatalogPeerImpl extends ContentNodeImpl implements CatalogPeer {
 	}
 	@Override
 	public String getCatalogType() {
-		return CatalogPeer.CATALOG;
+		return Host.CATALOG;
 	}
 
 	public Date getExpirationDate() {

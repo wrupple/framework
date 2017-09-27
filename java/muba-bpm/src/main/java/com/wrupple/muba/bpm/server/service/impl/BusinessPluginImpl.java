@@ -19,7 +19,7 @@ import com.wrupple.muba.bpm.server.chain.command.CheckSecureConditions;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.event.domain.FieldDescriptor;

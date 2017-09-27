@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.server.domain.fields;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
 public class ImageField extends FieldDescriptorImpl {
 

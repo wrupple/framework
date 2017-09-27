@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.server.chain.command.UserCommand;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Instrospection;
 

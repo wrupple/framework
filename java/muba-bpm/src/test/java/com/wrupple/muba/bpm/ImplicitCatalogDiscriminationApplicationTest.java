@@ -194,7 +194,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
 
 
         runtimeContext = injector.getInstance(RuntimeContext.class);

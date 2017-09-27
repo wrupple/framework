@@ -1,9 +1,9 @@
-package com.wrupple.muba.catalogs.server.domain;
+package com.wrupple.muba.event.server.domain.impl;
 
 import java.util.List;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.annotations.CatalogField;

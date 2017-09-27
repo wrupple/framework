@@ -18,7 +18,7 @@ import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.service.ContextAwareValidator;
 import com.wrupple.muba.event.server.service.PropertyValidationContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.HasConstrains;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;

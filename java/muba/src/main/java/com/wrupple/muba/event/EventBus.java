@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.domain.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Context;
 

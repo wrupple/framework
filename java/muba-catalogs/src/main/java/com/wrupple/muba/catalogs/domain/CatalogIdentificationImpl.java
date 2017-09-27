@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+
 public class CatalogIdentificationImpl implements CatalogIdentification {
 
 	private static final long serialVersionUID = -7040850909734516615L;

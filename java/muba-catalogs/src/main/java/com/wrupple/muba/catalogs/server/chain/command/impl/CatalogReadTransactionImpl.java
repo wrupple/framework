@@ -3,7 +3,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;

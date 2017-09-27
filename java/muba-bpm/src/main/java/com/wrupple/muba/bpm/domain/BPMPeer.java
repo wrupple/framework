@@ -2,9 +2,7 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.Date;
 
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
-
-public interface BPMPeer extends CatalogPeer,ManagedObject {
+public interface BPMPeer extends ManagedObject, com.wrupple.muba.event.domain.Host {
 	
 
 	/**

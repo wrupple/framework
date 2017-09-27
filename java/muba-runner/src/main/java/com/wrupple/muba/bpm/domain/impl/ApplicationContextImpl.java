@@ -7,7 +7,7 @@ import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import org.apache.commons.chain.impl.ContextBase;
 
 import javax.inject.Inject;

@@ -8,7 +8,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.PersistentCatalogEntity;
 
 public class PersistentCatalogEntityImpl implements PersistentCatalogEntity {
 	private static final long serialVersionUID = -8295920370428632912L;

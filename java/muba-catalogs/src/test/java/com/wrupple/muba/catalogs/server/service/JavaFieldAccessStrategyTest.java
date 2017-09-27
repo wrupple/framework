@@ -31,7 +31,7 @@ package com.wrupple.muba.catalogs.server.service;
         import com.google.inject.Provides;
         import com.google.inject.name.Names;
         import com.wrupple.muba.event.MainModule;
-        import com.wrupple.muba.event.server.domain.SessionContextImpl;
+        import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
         import com.wrupple.muba.catalogs.CatalogModule;
         import com.wrupple.muba.catalogs.SingleUserModule;
         import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
     class JavaFieldAccessStrategyTestModule extends AbstractModule {
 
-        CatalogPeer peerValue;
+        Host peerValue;
         @Override
         protected void configure() {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
@@ -57,7 +57,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
             // mocks
             WriteOutput mockWriter = mock(WriteOutput.class);
             WriteAuditTrails mockLogger = mock(WriteAuditTrails.class);
-             peerValue= mock(CatalogPeer.class);
+             peerValue= mock(Host.class);
             EventSuscriptionChain chainMock = mock(EventSuscriptionChain.class);
 
             DataCreationCommand mockCreate = mock(DataCreationCommand.class);
@@ -123,7 +123,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
        /* expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
 
         runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");*/

@@ -1,8 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasChildren;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;

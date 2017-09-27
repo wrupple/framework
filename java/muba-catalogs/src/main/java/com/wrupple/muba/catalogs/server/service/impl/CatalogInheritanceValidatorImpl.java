@@ -9,9 +9,9 @@ import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.annotations.InheritanceTree;
-import com.wrupple.muba.catalogs.server.service.CatalogInheritanceValidator;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.annotations.InheritanceTree;
+import com.wrupple.muba.event.server.service.CatalogInheritanceValidator;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogInheritanceValidatorImpl implements CatalogInheritanceValidator {

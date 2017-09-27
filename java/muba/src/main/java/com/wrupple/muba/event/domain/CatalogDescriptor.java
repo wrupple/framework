@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.domain;
+package com.wrupple.muba.event.domain;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,9 +18,10 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,Ha
 	
 	String MAIN_CACHE = "index";
 	String SECURE = "secure";
-	
-	
-	public String getGreatAncestor();
+    String CONSOLIDATED =  "MONOLITIC";
+
+
+    public String getGreatAncestor();
 
 	/**
 	 * @return url (also used as peerManager pseudo-key)
@@ -54,8 +55,6 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,Ha
 	 * @return
 	 */
 	public FieldDescriptor getFieldDescriptor(String id);
-
-	public List<CatalogActionTrigger> getTriggersValues();
 
 	public boolean isRevised();
 	public void setRevised(boolean b);
@@ -94,7 +93,6 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,Ha
 
 	public void setAppliedSorts(List<? extends FilterDataOrdering> sorts);
 
-	public void addTrigger(CatalogActionTrigger beforeIndexedTreeCreate);
 
 	public void setGreatAncestor(String greatAncestor);
 }

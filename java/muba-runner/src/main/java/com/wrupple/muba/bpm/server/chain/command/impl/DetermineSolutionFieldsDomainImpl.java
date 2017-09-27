@@ -7,7 +7,7 @@ import com.wrupple.muba.bpm.server.chain.command.DetermineSolutionFieldsDomain;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
