@@ -93,7 +93,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 		ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "1", "2" );
 
-		system.fireHandler/*TODO Async*/(event,session);
+		system.fireHandler(event,session);
 
 		Integer result = event.getConvertedResult();
 		assertNotNull(result);

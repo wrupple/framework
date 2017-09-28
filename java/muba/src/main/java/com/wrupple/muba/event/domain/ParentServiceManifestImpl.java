@@ -85,6 +85,7 @@ public class ParentServiceManifestImpl extends ServiceManifestImpl implements Pa
 		vvv.add(manifest);
 		//TODO wildly inefficient
 		setChildrenValues(vvv);
+		manifest.setParentValue(this);
 	}
 
 }

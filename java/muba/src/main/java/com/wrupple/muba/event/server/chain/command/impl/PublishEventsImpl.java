@@ -2,11 +2,8 @@ package com.wrupple.muba.event.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogChangeEvent;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
 import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.catalogs.shared.service.FieldAccessStrategy.Session;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.generic.LookupCommand;
@@ -38,7 +35,7 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 	// Object eval(CatalogActionContext context, String... sentence);
 	@Override
 	public boolean execute(Context c) throws Exception {
-		CatalogActionContext context = (CatalogActionContext) c;
+		/*CatalogActionContext context = (CatalogActionContext) c;
 		System.err.println("[Publish Request Events]");
 
 		// UPDATE CLIENT'S ACTIVITY STATUS
@@ -72,10 +69,10 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 
 			}
 		}
-
+*/
 		return CONTINUE_PROCESSING;
 	}
-
+/*
 	private Collection<CatalogPeer> getConcernedClients(CatalogChangeEvent event, CatalogActionContext context) throws Exception {
 
 		context.put(EventSuscriptionChain.CONCERNED_CLIENTS, new HashSet<CatalogPeer>());

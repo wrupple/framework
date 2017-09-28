@@ -410,7 +410,10 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 	@Override
 	public void setSentence(List<String> pathTokens) {
-		this.sentence = sentence;
+		if(pathTokens==null){
+			throw new NullPointerException("Cannot explicitly set a null sentence");
+		}
+		this.sentence = pathTokens;
 	}
 
 	@Override

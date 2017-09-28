@@ -14,12 +14,6 @@ import java.util.List;
 public interface ImplicitEventResolver {
 
 
-    public interface HandlerRegistration {
-        void removeHandler();
-    }
-
-    HandlerRegistration addHandler(ServiceManifest serviceManifes);
-
     List<ExplicitIntent> resolveHandlers(String intentType);
 
     //FIXME fireHandler(event)

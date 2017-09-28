@@ -37,7 +37,7 @@ public class JavaEventBus extends ContextBase implements EventBus {
     private final EventDispatcher process;
 	private final Provider<UserTransaction> transactionProvider;
     private final Boolean parallel;
-    private final Map<String, FieldDescriptor> handleField;
+    private final CatalogDescriptor handleField;
     private UserTransaction transaction;
 
     private final FilterNativeInterface filterer;
@@ -55,7 +55,8 @@ public class JavaEventBus extends ContextBase implements EventBus {
         this.intentInterpret = intentInterpret;
         this.transactionProvider=transactionProvider;
         this.filterer = filterer;
-        this.handleField= Collections.singletonMap(ExplicitIntent.HANDLE_FIELD,handleFieldDescriptor);
+
+        this.handleField= new CatalogDescriptorImpl(ExplicitIntent.CATALOG,ExplicitIntent.class,-1,ExplicitIntent.CATALOG,null,handleFieldDescriptor);
         this.instrospector = instrospector;
 
     }
@@ -147,10 +148,6 @@ public class JavaEventBus extends ContextBase implements EventBus {
         }
 
     }
-
-
-
-
 
     @Override
     public boolean resume(RuntimeContext runtimeContext) throws Exception {

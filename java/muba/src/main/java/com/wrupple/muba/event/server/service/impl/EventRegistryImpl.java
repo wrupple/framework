@@ -35,13 +35,21 @@ public class EventRegistryImpl implements EventRegistry {
         this.serviceDictionary=new HashMap<>();
     }
 
-
+    @Override
     public ParentServiceManifest getRootService() {
         return root;
     }
 
     @Override
-    public void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret, ParentServiceManifest parent) {
+    public List<ExplicitIntent> resolveHandlers(String eventCatalogName) {
+        return null;
+    }
+
+    @Override
+    public void registerService(ServiceManifest manifest,
+                                Command service,
+                                RequestInterpret contractInterpret,
+                                ParentServiceManifest parent) {
         Catalog dictionary = getDictionaryFactory().getCatalog(ParentServiceManifest.NAME);
         if (dictionary == null) {
             dictionary = getDictionaryFactory().getCatalog(DICTIONARY);
@@ -53,16 +61,26 @@ public class EventRegistryImpl implements EventRegistry {
             dictionary = new CatalogBase();
             getDictionaryFactory().addCatalog(ParentServiceManifest.NAME, dictionary);
         }
+        serviceDictionary.put((String)manifest.getCatalog(),manifest);
         dictionary.addCommand(manifest.getServiceId(), service);
         parent.register(manifest);
-    }
-
-
-    @Override
-    public void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret) {
-        registerService(manifest,service,contractInterpret,getRootService());
         registerContractInterpret(manifest,contractInterpret);
     }
+    @Override
+    public void registerService(ServiceManifest manifest,
+                                Command service,
+                                RequestInterpret contractInterpret) {
+        registerService(manifest,service,contractInterpret,getRootService());
+    }
+
+    @Override
+    public void registerService( ServiceManifest manifest,
+                                 Command service) {
+        registerService(manifest,service,null,getRootService());
+    }
+
+
+
 
     @Override
     public CatalogFactory getDictionaryFactory() {
@@ -71,43 +89,28 @@ public class EventRegistryImpl implements EventRegistry {
 
     private void registerContractInterpret(ServiceManifest manifest,
                                            RequestInterpret service) {
-        Catalog dictionary = getDictionaryFactory().getCatalog(DICTIONARY);
-        if (dictionary == null) {
-            dictionary = getDictionaryFactory().getCatalog(ParentServiceManifest.NAME);
+        if(service!=null){
+            Catalog dictionary = getDictionaryFactory().getCatalog(DICTIONARY);
             if (dictionary == null) {
+                dictionary = getDictionaryFactory().getCatalog(ParentServiceManifest.NAME);
+                if (dictionary == null) {
+                    dictionary = new CatalogBase();
+                    getDictionaryFactory().addCatalog(ParentServiceManifest.NAME, dictionary);
+                }
                 dictionary = new CatalogBase();
-                getDictionaryFactory().addCatalog(ParentServiceManifest.NAME, dictionary);
+                getDictionaryFactory().addCatalog(DICTIONARY, dictionary);
+
             }
-            dictionary = new CatalogBase();
-            getDictionaryFactory().addCatalog(DICTIONARY, dictionary);
-
+            dictionary.addCommand(manifest.getServiceId(), service);
         }
-        dictionary.addCommand(manifest.getServiceId(), service);
-
     }
 
-    @Override
-    public void registerService( ServiceManifest manifest, Command service) {
 
-    }
 
     @Override
     public RequestInterpret getExplicitIntentInterpret(RuntimeContext req) {
         return (RequestInterpret) getDictionaryFactory().getCatalog(DICTIONARY).getCommand(req.getServiceManifest().getServiceId());
     }
-
-    @Override
-    public HandlerRegistration addHandler(final ServiceManifest serviceManifes) {
-        serviceDictionary.put((String)serviceManifes.getCatalog(),serviceManifes);
-
-        return new HandlerRegistration() {
-            @Override
-            public void removeHandler() {
-                serviceDictionary.remove((String)serviceManifes.getCatalog());
-            }
-        };
-    }
-
 
     @Override
     public List<String> resolveContractSentence(CatalogEntry serviceContract) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
@@ -170,14 +173,11 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
     private ExplicitIntent createIntent(RuntimeContext context, ImplicitIntent intent, ServiceManifest serviceManifest) {
-        /* if application item extends service manifest this method can return explicit intents of any nature in the known tree, even desktop human tasks
-         *
-         *
-         */
+
         List<String> pathTokens = generatePathTokens(serviceManifest);
         //TODO Business Event or User Event
-        ExplicitIntentImpl event = new ExplicitIntentImpl( pathTokens.toArray(new String[pathTokens.size()]));
-
+        ExplicitIntentImpl event = new ExplicitIntentImpl( );
+        event.setSentence(pathTokens);
         return event;
     }
 

@@ -30,5 +30,5 @@ public interface ExplicitIntent extends Intent{
 
 	void setResult(Object result);
 
-	<R> R setError(Exception e);
+	void setError(Exception e);
 }
