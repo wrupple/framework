@@ -3,7 +3,6 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandler;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
@@ -25,13 +24,12 @@ import java.util.Collections;
 public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 	protected static final Logger log = LoggerFactory.getLogger(CatalogCreateTransactionImpl.class);
 
-	private final CatalogActionTriggerHandler trigerer;
+	//private final CatalogActionTriggerHandler trigerer;
 	private final EntryCreators creators;
 	private final boolean follow;
 
 	@Inject
-	public CatalogCreateTransactionImpl(@Named("catalog.followGraph")Boolean follow,EntryCreators creators, CatalogActionTriggerHandler trigerer, CatalogFactory factory, String creatorsDictionary) {
-		this.trigerer=trigerer;
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph")Boolean follow,EntryCreators creators, CatalogFactory factory, String creatorsDictionary) {
 		this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();
 	}
@@ -48,6 +46,9 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 			throw new NullPointerException("no entry in context");
 		}
 		context.setName(CatalogActionRequest.CREATE_ACTION);
+        Intent preprocessEvent;//Extends catalog action request
+        context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
+        //FIXME copy all properties of event to context
 		trigerer.execute(context);
 		
 		CatalogDescriptor catalog=context.getCatalogDescriptor();
@@ -102,8 +103,9 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		CatalogChangeEvent event=new CatalogChangeEventImpl((Long) context.getDomain(), catalog.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, regreso);
 		//cache invalidation
 		context.getRootAncestor().addBroadcastable(event);
-		
-		
+
+        Intent postprocessEvent;//Extends catalog action request
+        context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
 		trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
 		context.setResults(Collections.singletonList(regreso));
 		log.trace("[END] created: {}", regreso);

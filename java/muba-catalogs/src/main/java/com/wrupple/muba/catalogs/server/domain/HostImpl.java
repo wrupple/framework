@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
+import com.wrupple.muba.event.domain.Host;
 
 public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.domain.Host {
 	

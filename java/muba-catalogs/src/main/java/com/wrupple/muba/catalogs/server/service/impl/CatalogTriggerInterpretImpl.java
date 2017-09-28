@@ -44,7 +44,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		Long stakeHolder = null;
 		if (trigger.isRunAsStakeHolder()) {
 			stakeHolder = (Long) trigger.getStakeHolder();
-
+				//FIXME if trigger fails context is changed stake holders
 			context.getRuntimeContext().getSession().setStakeHolder(stakeHolder);
 		}
 		String targetCatalogId = trigger.getCatalog();

@@ -9,5 +9,5 @@ import com.wrupple.muba.catalogs.domain.CatalogTrigger;
 public interface CatalogTriggerInterpret {
 	void invokeTrigger(Map<String, String> properties, CatalogActionContext original, CatalogTrigger matchingRegistry) throws Exception;
 
-	void configureContext(CatalogActionContext userContext, CatalogTrigger matchingRegistry, Long domain, TransactionHistory transaction) throws Exception;
+	//void configureContext(CatalogActionContext userContext, CatalogTrigger matchingRegistry, Long domain, TransactionHistory transaction) throws Exception;
 }

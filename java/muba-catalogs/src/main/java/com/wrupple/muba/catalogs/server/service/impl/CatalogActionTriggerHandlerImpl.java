@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.chain.Context;
+import org.apache.commons.chain.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +17,10 @@ import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandler;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 
 @Singleton
-public class CatalogActionTriggerHandlerImpl implements CatalogActionTriggerHandler {
+public class CatalogActionTriggerHandlerImpl implements Filter {
 
 	private static final Logger log = LoggerFactory.getLogger(CatalogActionTriggerHandlerImpl.class);
 
