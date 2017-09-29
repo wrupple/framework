@@ -2,7 +2,7 @@ package com.wrupple.muba.event.domain;
 
 import com.wrupple.muba.event.domain.reserved.HasLocale;
 
-public interface CatalogActionRequest extends HasLocale,CatalogChangeEvent{
+public interface CatalogActionRequest extends HasLocale,CatalogIntent {
 
 	final String CATALOG = "CatalogAction";
 

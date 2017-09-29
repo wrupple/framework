@@ -23,7 +23,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.MubaTest;
+import com.wrupple.muba.AbstractTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.event.MainModule;
 import com.wrupple.muba.event.domain.RuntimeContext;
@@ -52,7 +52,7 @@ import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.impl.UserCatalogPluginImpl;
 
-public class HSQLTest extends MubaTest {
+public class HSQLTest extends AbstractTest {
 
 
 	public HSQLTest() {
@@ -153,7 +153,7 @@ public class HSQLTest extends MubaTest {
 	}
 
 	@Test
-	public void crud() throws Exception {
+	public void filters() throws Exception {
 
 		String TRES = "TRES";
 		String FIVE = "five";
@@ -269,7 +269,7 @@ public class HSQLTest extends MubaTest {
 		log.trace("[-find element by single LIKE criteria-]");
 		criteria.setPath(Arrays.asList(CatalogEntry.NAME_FIELD));
 		criteria.setOperator(FilterData.LIKE);
-		/*
+
 		criteria.setValue("f???");
 
 		query.execute(context);
@@ -280,7 +280,7 @@ public class HSQLTest extends MubaTest {
 
 		query.execute(context);
 		results = context.getResults();
-		assertTrue(results.size() == 0);*/
+		assertTrue(results.size() == 0);
 
 		criteria.setValue("f%");
 
@@ -288,33 +288,33 @@ public class HSQLTest extends MubaTest {
 		results = context.getResults();
 		assertTrue(results.size() == 2);
 
-		/*
-		 * 
-		 * 
-		 * STARTS log.trace("[-find element by single STARTS criteria-]");
-		 * 
-		 * criteria.setOperator(FilterData.STARTS); criteria.setValue("f");
-		 * 
-		 * query.execute(context); results = context.getResults();
-		 * assertTrue(results.size() == 2);
-		 */
 
-		/*
-		 * ENDS log.trace("[-find element by single ENDS criteria-]");
-		 * criteria.setOperator(FilterData.ENDS); criteria.setValue("o");
-		 * 
-		 * query.execute(context); results = context.getResults();
-		 * assertTrue(results.size() == 1);
-		 */
 
-		/*
-		 * log.trace("[-find element by single REGEX criteria-]");
-		 * criteria.setOperator(FilterData.REGEX);
-		 * criteria.setValue("([A-Z])\\w+");
-		 * 
-		 * query.execute(context); results = context.getResults();
-		 * assertTrue(results.size() == 1);
-		 */
+
+		   log.trace("[-find element by single STARTS criteria-]");
+
+		  criteria.setOperator(FilterData.STARTS); criteria.setValue("f");
+
+		 query.execute(context); results = context.getResults();
+		 assertTrue(results.size() == 2);
+
+
+
+		   log.trace("[-find element by single ENDS criteria-]");
+		  criteria.setOperator(FilterData.ENDS); criteria.setValue("o");
+
+		  query.execute(context); results = context.getResults();
+		  assertTrue(results.size() == 1);
+
+
+
+		  log.trace("[-find element by single REGEX criteria-]");
+		  criteria.setOperator(FilterData.REGEX);
+		  criteria.setValue("([A-Z])\\w+");
+
+		  query.execute(context); results = context.getResults();
+		  assertTrue(results.size() == 1);
+
 		
 		log.debug("testing collection filters");
 		// IN

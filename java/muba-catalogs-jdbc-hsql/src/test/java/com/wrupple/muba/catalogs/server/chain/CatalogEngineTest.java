@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
+import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.domain.*;
@@ -24,7 +25,6 @@ import org.junit.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.event.MainModule;
 import com.wrupple.muba.event.EventBus;
@@ -45,89 +45,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
-public class CatalogEngineTest extends MubaTest {
-	/*
-	 * mocks
-	 */
-
-	protected WriteOutput mockWriter;
-
-	protected WriteAuditTrails mockLogger;
-
-	protected Host peerValue;
-
-	protected EventSuscriptionChain chainMock;
-
-	class CatalogEngineTestModule extends AbstractModule {
-
-		@Override
-		protected void configure() {
-			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
-			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-
-			// this makes JDBC the default storage unit
-			bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
-			bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
-			bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
-			bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
-			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
-
-			// mocks
-			mockWriter = mock(WriteOutput.class);
-			mockLogger = mock(WriteAuditTrails.class);
-			peerValue = mock(Host.class);
-			chainMock = mock(EventSuscriptionChain.class);
-			bind(WriteAuditTrails.class).toInstance(mockLogger);
-			bind(WriteOutput.class).toInstance(mockWriter);
-			bind(EventSuscriptionChain.class).toInstance(chainMock);
-			/*
-			 * COMMANDS
-			 */
-
-			bind(CatalogFileUploadTransaction.class).toInstance(mock(CatalogFileUploadTransaction.class));
-			bind(CatalogFileUploadUrlHandlerTransaction.class)
-					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
-			// TODO cms test isMasked FieldDescriptor
-
-		}
-
-		@Provides
-		@Inject
-		@Singleton
-		public SessionContext sessionContext(@Named("host") String peer) {
-			long stakeHolder = 1;
-			Person stakeHolderValue = mock(Person.class);
-
-			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
-		}
-
-		@Provides
-		public UserTransaction localTransaction() {
-			return mock(UserTransaction.class);
-		}
-
-		@Provides
-		public Trash trash() {
-			return mock(Trash.class);
-		}
-
-		@Provides
-		public CatalogDeserializationService catalogDeserializationService() {
-			return mock(CatalogDeserializationService.class);
-		}
-
-	}
-
-	public CatalogEngineTest() {
-		init(new CatalogEngineTestModule(), new JDBCHSQLTestModule(), new HSQLDBModule(), new JDBCModule(),
-				new ValidationModule(), new SingleUserModule(), new CatalogModule(), new MainModule());
-	}
-
-	@Override
-	protected void registerServices(Validator v, ValidationGroupProvider g, EventBus switchs) {
-		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-		switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
-	}
+public class CatalogEngineTest extends IntegralTest {
 
 	@Before
 	public void setUp() throws Exception {

@@ -1,7 +1,5 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogChangeEvent;
 import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import org.apache.commons.chain.CatalogFactory;
@@ -10,9 +8,6 @@ import org.apache.commons.chain.generic.LookupCommand;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 @Singleton
 public class PublishEventsImpl  extends LookupCommand   implements PublishEvents {
@@ -52,13 +47,13 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 			}
 		}
 
-		List<CatalogChangeEvent> broadcastable = context.getRootAncestor().getEvents();
+		List<CatalogEvent> broadcastable = context.getRootAncestor().getEvents();
 
 		// BROADCAST EVENT'S TO CONCERNED CLIENTS
 
 		if (broadcastable != null && !broadcastable.isEmpty()) {
 			Collection<CatalogPeer> concernedClients;
-			for (CatalogChangeEvent data : broadcastable) {
+			for (CatalogEvent data : broadcastable) {
 
 				// push to online clients
 				concernedClients = getConcernedClients(data, context);
@@ -73,7 +68,7 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 		return CONTINUE_PROCESSING;
 	}
 /*
-	private Collection<CatalogPeer> getConcernedClients(CatalogChangeEvent event, CatalogActionContext context) throws Exception {
+	private Collection<CatalogPeer> getConcernedClients(CatalogEvent event, CatalogActionContext context) throws Exception {
 
 		context.put(EventSuscriptionChain.CONCERNED_CLIENTS, new HashSet<CatalogPeer>());
 		context.put(EventSuscriptionChain.CURRENT_EVENT, event);
@@ -84,7 +79,7 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 	}
 
 
-	private void publishImplicitEvents(CatalogChangeEvent event, Collection<CatalogPeer> concernedClients,CatalogActionContext context, Session session) throws Exception {
+	private void publishImplicitEvents(CatalogEvent event, Collection<CatalogPeer> concernedClients,CatalogActionContext context, Session session) throws Exception {
 		boolean goAhead = actionRequiresNotifying(event.getName());
 		if (goAhead && concernedClients!=null  &&! concernedClients.isEmpty() ){
 			for(CatalogPeer client : concernedClients){

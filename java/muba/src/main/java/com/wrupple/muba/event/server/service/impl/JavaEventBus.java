@@ -95,8 +95,18 @@ public class JavaEventBus extends ContextBase implements EventBus {
 
     @Override
     public boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception {
-        RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
+        return fireHandler(event,session,null);
+    }
+
+
+    public boolean fireHandler(ExplicitIntent event, SessionContext session,RuntimeContext parentTimeline) throws Exception {
+        RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
         return fireHandlerWithRuntime(event,runtimeContext);
+    }
+
+    @Override
+    public <T> T fireEvent(Intent implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception {
+        return fireonRuntimeline(implicitRequestContract,parent.getSession(),handlerCriterion,parent);
     }
 
     private boolean fireHandlerWithRuntime(ExplicitIntent event, RuntimeContext runtimeContext) throws Exception {
@@ -109,6 +119,10 @@ public class JavaEventBus extends ContextBase implements EventBus {
 
     @Override
     public <T> T fireEvent(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
+       return fireonRuntimeline(implicitRequestContract,session,handlerCriterion,null);
+    }
+
+    public <T> T fireonRuntimeline(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion,RuntimeContext parentTimeline) throws Exception {
         List<ExplicitIntent> handlers = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
 
         if(handlerCriterion!=null && !handlerCriterion.isEmpty()){
@@ -119,16 +133,16 @@ public class JavaEventBus extends ContextBase implements EventBus {
                     collect(Collectors.toList());
         }
 
-
-
-        if(handlers.size()==1){
+        if(handlers==null || handlers.isEmpty()){
+            throw new RuntimeException("No known handlers for event "+implicitRequestContract);
+        } else if(handlers.size()==1){
             ExplicitIntent call = handlers.get(0);
-            fireHandler(call,session);
+            fireHandler(call,session,parentTimeline);
             return call.getConvertedResult();
         }else if(parallel){
             List<Object> results=  handlers.parallelStream().map(handler -> {
                 try {
-                    fireHandler(handler,session);
+                    fireHandler(handler,session,parentTimeline);
                 } catch (Exception e) {
                     handler.setError(e);
                     //implicitRequestContract.addError(e);
@@ -138,7 +152,7 @@ public class JavaEventBus extends ContextBase implements EventBus {
             }).collect(Collectors.toList());
             return (T) results;
         }else{
-            RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,null);
+            RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
             for(ExplicitIntent handler : handlers){
                 if( fireHandlerWithRuntime(handler,runtimeContext)!= Command.CONTINUE_PROCESSING){
                     break;
@@ -146,7 +160,6 @@ public class JavaEventBus extends ContextBase implements EventBus {
             }
             return runtimeContext.getConvertedResult();
         }
-
     }
 
     @Override

@@ -59,7 +59,6 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	 * OUTPUT
 	 */
 	private List<CatalogEntry> oldValues;
-	private List<CatalogChangeEvent> events;
 
 	private List<CatalogEntry> results;
 	private CatalogResultSet resultSet;
@@ -77,7 +76,6 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		this.namespace = domainContext;
 		this.parentValue = parentValue;
 		if (parentValue != null) {
-			events = new ArrayList<CatalogChangeEvent>(2);
 			setEntry(parentValue.getEntry());
 			setEntryValue(parentValue.getEntryValue());
 			setCatalog((String) parentValue.getCatalog());
@@ -379,32 +377,6 @@ this.name=name;
 		}
 	}
 
-	public void addBroadcastable(CatalogChangeEvent data) {
-		CatalogActionContext ans = getRootAncestor();
-		if(ans==this){
-			if (data != null) {
-				if (data.getEntry() != null) {
-					
-					if(events==null){
-						events = new ArrayList<CatalogChangeEvent>(5);
-					}
-					events.add(data);
-				}
-			}
-		}else{
-			ans.addBroadcastable(data);
-		}
-		
-	}
-
-	public List<CatalogChangeEvent> getEvents() {
-		CatalogActionContext ans = getRootAncestor();
-		if(ans==this){
-			return events;
-		}else{
-			return ans.getEvents();
-		}
-	}
 
 	private TransactionHistory assertTransaction() {
 		if (transaction == null) {

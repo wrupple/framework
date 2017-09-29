@@ -15,14 +15,14 @@ import com.google.inject.Module;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
-public abstract class MubaTest extends EasyMockSupport {
+public abstract class AbstractTest extends EasyMockSupport {
 
 
 	static {
 		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
 	}
 
-	protected Logger log = LoggerFactory.getLogger(MubaTest.class);
+	protected Logger log = LoggerFactory.getLogger(AbstractTest.class);
 
 	@Rule
 	public EasyMockRule rule = new EasyMockRule(this);
@@ -40,8 +40,6 @@ public abstract class MubaTest extends EasyMockSupport {
 	}
 	
 	protected abstract void registerServices(Validator v, ValidationGroupProvider g,EventBus switchs);
-	
-	protected abstract void setUp() throws Exception;
 
 
 

@@ -119,7 +119,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		}
 	}
 
-	@Override
+	/*@Override
 	public void configureContext(CatalogActionContext context, CatalogTrigger trigger, Long domain,
 			TransactionHistory transaction) throws Exception {
 
@@ -142,7 +142,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		context.setEntryValue(seed);
 		log.trace("[CONFIGURE TRIGGER {} ] {} ", trigger, context);
 
-	}
+	}*/
 
 	private CatalogEntry synthethize(CatalogEntry synthesizedEntry, CatalogDescriptor targetCatalog,
 			CatalogActionContext context, Map<String, String> properties) throws Exception {

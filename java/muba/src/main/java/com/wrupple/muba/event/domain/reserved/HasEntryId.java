@@ -6,6 +6,6 @@ public interface HasEntryId {
 	Object getEntry();
 	void setEntry(Object id);
 
-	//Object getEntryValue();
+	Object getEntryValue();
 
 }

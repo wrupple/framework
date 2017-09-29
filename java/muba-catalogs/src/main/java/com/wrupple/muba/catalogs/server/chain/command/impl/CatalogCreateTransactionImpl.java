@@ -1,11 +1,12 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.google.inject.Provider;
+import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataCreationCommand;
-import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
 import com.wrupple.muba.event.domain.Instrospection;
@@ -20,24 +21,29 @@ import javax.inject.Singleton;
 import java.util.Collection;
 import java.util.Collections;
 
+import static com.wrupple.muba.catalogs.domain.CatalogEvent.CREATE_ACTION;
+
 @Singleton
-public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
+public class CatalogCreateTransactionImpl extends CatalogTransaction implements CatalogCreateTransaction {
 	protected static final Logger log = LoggerFactory.getLogger(CatalogCreateTransactionImpl.class);
 
 	//private final CatalogActionTriggerHandler trigerer;
 	private final EntryCreators creators;
 	private final boolean follow;
+	private final Provider<CatalogActionCommit> catalogActionCommitProvider;
 
 	@Inject
-	public CatalogCreateTransactionImpl(@Named("catalog.followGraph")Boolean follow,EntryCreators creators, CatalogFactory factory, String creatorsDictionary) {
-		this.creators=creators;
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider) {
+        super(catalogActionCommitProvider);
+        this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();
+		this.catalogActionCommitProvider = catalogActionCommitProvider;
 	}
 
 	
 	@Override
 	public boolean execute(Context cxt) throws Exception {
-		log.trace("[CREATE START]");
+		log.trace("[COMMIT CREATE ACTION START]");
 		CatalogActionContext context = (CatalogActionContext) cxt;
 
 		// must have been deserialized by this point
@@ -45,13 +51,11 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		if(result ==null){
 			throw new NullPointerException("no entry in context");
 		}
-		context.setName(CatalogActionRequest.CREATE_ACTION);
-        Intent preprocessEvent;//Extends catalog action request
-        context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
-        //FIXME copy all properties of event to context
-		trigerer.execute(context);
-		
-		CatalogDescriptor catalog=context.getCatalogDescriptor();
+        log.debug("<CatalogActionFilter>");
+        preprocess(context,CREATE_ACTION);
+        log.debug("</CatalogActionFilter>");
+
+        CatalogDescriptor catalog=context.getCatalogDescriptor();
 		DataCreationCommand createDao = (DataCreationCommand) creators.getCommand(String.valueOf(catalog.getStorage()));
 
 		Instrospection instrospection = context.getCatalogManager().access().newSession(result);
@@ -98,17 +102,14 @@ public class CatalogCreateTransactionImpl implements CatalogCreateTransaction {
 		if (cache != null) {
 			cache.clearLists(context,catalog.getDistinguishedName());
 		}
-		
-		
-		CatalogChangeEvent event=new CatalogChangeEventImpl((Long) context.getDomain(), catalog.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, regreso);
-		//cache invalidation
-		context.getRootAncestor().addBroadcastable(event);
 
-        Intent postprocessEvent;//Extends catalog action request
-        context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
-		trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
+
+        log.debug("<CatalogActionEvent-Broadcast>");
+        postProcess(context,catalog.getDistinguishedName(),CREATE_ACTION,regreso);
+        log.debug("</CatalogActionEvent-Broadcast>");
+
 		context.setResults(Collections.singletonList(regreso));
-		log.trace("[END] created: {}", regreso);
+		log.trace("[COMMIT CREATE ACTION END] created: {}", regreso);
 		return CONTINUE_PROCESSING;
 	}
 

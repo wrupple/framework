@@ -7,7 +7,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
-import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Writers;
 import org.apache.commons.chain.Context;
@@ -17,20 +17,22 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.wrupple.muba.catalogs.domain.CatalogEvent.CREATE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogEvent.DELETE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogEvent.WRITE_ACTION;
+
 @Singleton
-public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
+public class CatalogUpdateTransactionImpl extends CatalogTransaction implements CatalogUpdateTransaction {
 	protected static final Logger log = LoggerFactory.getLogger(CatalogUpdateTransactionImpl.class);
 
-	private final CatalogActionTriggerHandler trigerer;
 
 	
 
 	private final Writers writers;
 
 	@Inject
-	public CatalogUpdateTransactionImpl( CatalogActionTriggerHandler trigerer,
+	public CatalogUpdateTransactionImpl(
 			Writers writers) {
-		this.trigerer = trigerer;
 		this.writers = writers;
 		
 	}
@@ -43,8 +45,11 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 		context.setOldValue(originalEntry);
 
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		context.setName(CatalogActionRequest.WRITE_ACTION);
-		trigerer.execute(context);
+
+
+		log.debug("<CatalogActionFilter>");
+		preprocess(context,WRITE_ACTION);
+		log.debug("</CatalogActionFilter>");
 
 		DataWritingCommand dao = (DataWritingCommand) writers.getCommand(String.valueOf(catalog.getStorage()));
 		CatalogEntry childEntity = null;
@@ -87,14 +92,17 @@ public class CatalogUpdateTransactionImpl implements CatalogUpdateTransaction {
 		}
 		CatalogEntry ress = context.getEntryResult();
 		context.getTransactionHistory().didUpdate(context,ress , context.getOldValue(), dao);
-		trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
+
 		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 		if (cache != null) {
 			cache.update(context, catalog.getDistinguishedName(), context.getOldValue(), ress);
 		}
-		 ress = context.getEntryResult();
-		context.getRootAncestor().addBroadcastable(new CatalogChangeEventImpl((Long)context.getDomain(),
-				(String) context.getCatalog(), CatalogActionRequest.WRITE_ACTION, ress));
+		ress = context.getEntryResult();
+		log.debug("<CatalogActionEvent-Broadcast>");
+		postProcess(context,catalog.getDistinguishedName(),WRITE_ACTION,ress);
+		log.debug("</CatalogActionEvent-Broadcast>");
+
+
 
 		log.trace("[UPDATED] {}", context.getEntryResult());
 		return CONTINUE_PROCESSING;

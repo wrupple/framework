@@ -7,6 +7,6 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
  * @author japi
  *
  */
-public interface CatalogIntent extends CatalogEntry,HasCatalogKey {
+public interface CatalogIntent extends Intent,HasCatalogKey {
 
 }

@@ -7,8 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.chain.Context;
-import org.apache.commons.chain.Filter;
+import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +19,9 @@ import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 
 @Singleton
-public class CatalogActionTriggerHandlerImpl implements Filter {
+public class CatalogActionTriggerHandlerImpl  {
 
-	private static final Logger log = LoggerFactory.getLogger(CatalogActionTriggerHandlerImpl.class);
+	protected static final Logger log = LoggerFactory.getLogger(CatalogActionTriggerHandlerImpl.class);
 
 	private CatalogTriggerInterpret interpret;
 
@@ -32,15 +31,10 @@ public class CatalogActionTriggerHandlerImpl implements Filter {
 		this.interpret = interpret;
 	}
 
-	@Override
-	public boolean execute(Context c) throws Exception {
 
-		return extecute((CatalogActionContext) c, true);
-	}
-
-	private boolean extecute(CatalogActionContext context, boolean advise) throws Exception {
+	protected boolean extecute(CatalogActionContext context, boolean advise) throws Exception {
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		List<CatalogActionTrigger> triggers = catalog.getTriggersValues();
+		List<CatalogActionTrigger> triggers = interpret.getTriggersValues(context,advise);
 		if (triggers == null || triggers.isEmpty()) {
 			log.trace("no triggers to process");
 		} else {
@@ -50,49 +44,37 @@ public class CatalogActionTriggerHandlerImpl implements Filter {
 			for (int i = 0; i < triggers.size(); i++) {
 				trigger = triggers.get(i);
 				action = trigger.getAction();
-				r = CONTINUE_PROCESSING;
+				r = Command.CONTINUE_PROCESSING;
 				switch (action) {
 				case 0:// Create
 					if (CatalogActionRequest.CREATE_ACTION.equals(context.getName())) {
-						r = excecuteTrigger(trigger, context, advise);
+						r = excecuteTrigger(trigger, context);
 					}
 					break;
 				case 1:// Update
 					if (CatalogActionRequest.WRITE_ACTION.equals(context.getName())) {
-						r = excecuteTrigger(trigger, context, advise);
+						r = excecuteTrigger(trigger, context);
 					}
 					break;
 				case 2:// Delete
 					if (CatalogActionRequest.DELETE_ACTION.equals(context.getName())) {
-						r = excecuteTrigger(trigger, context, advise);
+						r = excecuteTrigger(trigger, context);
 					}
 					break;
 				default:
 					break;
 				}
-				if (PROCESSING_COMPLETE == r) {
-					return CONTINUE_PROCESSING;
+				if (Command.PROCESSING_COMPLETE == r) {
+					return Command.CONTINUE_PROCESSING;
 				}
 			}
 		}
 
-		return CONTINUE_PROCESSING;
+		return Command.CONTINUE_PROCESSING;
 	}
 
-	@Override
-	public boolean postprocess(Context c, Exception exception) {
 
-		CatalogActionContext context = (CatalogActionContext) c;
-		// AFTER
-		try {
-			return extecute(context, false);
-		} catch (Exception e) {
-			log.error("[FATAL TRIGGER ERROR]", e);
-			throw new RuntimeException(e);
-		}
-	}
-
-	private boolean excecuteTrigger(CatalogActionTrigger trigger, CatalogActionContext context, boolean before)
+	private boolean excecuteTrigger(CatalogActionTrigger trigger, CatalogActionContext context)
 			throws Exception {
 
 		log.trace("[PROCESS trigger] ");
@@ -101,7 +83,7 @@ public class CatalogActionTriggerHandlerImpl implements Filter {
 
 		Map<String, String> properties = parseProperties(rawProperties, trigger, context);
 
-		if (before == trigger.isAdvice()) {
+
 			if (!trigger.isFailSilence() || trigger.isStopOnFail()) {
 				log.trace("invoking trigger {}", trigger);
 				interpret.invokeTrigger( properties, (CatalogActionContext) context, trigger);
@@ -115,14 +97,14 @@ public class CatalogActionTriggerHandlerImpl implements Filter {
 					context.getRuntimeContext().addWarning("Trigger failed " + trigger.getName());
 
 					if (trigger.isStopOnFail()) {
-						return PROCESSING_COMPLETE;
+						return Command.PROCESSING_COMPLETE;
 					}
 				}
 			}
-		}
+
 
 		log.trace("[PROCESS trigger DONE] ");
-		return CONTINUE_PROCESSING;
+		return Command.CONTINUE_PROCESSING;
 	}
 
 	private static Map<String, String> parseProperties(List<String> rawProperties, CatalogActionTrigger trigger,

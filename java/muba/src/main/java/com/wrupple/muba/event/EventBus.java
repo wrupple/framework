@@ -21,6 +21,8 @@ public interface EventBus
 
     EventRegistry getIntentInterpret();
 
+    void broadcastEvent(Intent event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers);
+
     boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception;
 
     <T> T fireEvent(Intent implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception;

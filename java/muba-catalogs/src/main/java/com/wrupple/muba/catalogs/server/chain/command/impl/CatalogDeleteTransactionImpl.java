@@ -5,7 +5,6 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.catalogs.server.domain.CatalogChangeEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Deleters;
 import com.wrupple.muba.event.domain.Instrospection;
@@ -18,12 +17,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
+import static com.wrupple.muba.catalogs.domain.CatalogEvent.CREATE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogEvent.DELETE_ACTION;
+
 @Singleton
-public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
+public class CatalogDeleteTransactionImpl extends CatalogTransaction implements CatalogDeleteTransaction {
 
 	protected static final Logger log = LoggerFactory.getLogger(CatalogDeleteTransactionImpl.class);
-
-	private final CatalogActionTriggerHandler trigerer;
 
 	private final CatalogReadTransaction read;
 
@@ -33,9 +33,7 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 	private final Deleters deleters;
 
 	@Inject
-	public CatalogDeleteTransactionImpl(Deleters deleters, CatalogUpdateTransaction update,
-			CatalogActionTriggerHandler trigerer, CatalogReadTransaction read, CatalogFactory factory) {
-		this.trigerer = trigerer;
+	public CatalogDeleteTransactionImpl(Deleters deleters, CatalogUpdateTransaction update,CatalogReadTransaction read, CatalogFactory factory) {
 		this.read = read;
 		this.update = update;
 		this.deleters = deleters;
@@ -67,9 +65,9 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 			DataDeleteCommand dao = (DataDeleteCommand) deleters.getCommand(String.valueOf(catalog.getStorage()));
 
 			context.setOldValues(originalEntries);
-			context.setName(CatalogActionRequest.DELETE_ACTION);
-			// performBeforeDelete
-			trigerer.execute(context);
+			log.debug("<CatalogActionFilter>");
+			preprocess(context,DELETE_ACTION);
+			log.debug("</CatalogActionFilter>");
 
 			// single or multiple delete
 
@@ -95,6 +93,7 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 
 			}
 
+			//FIXME cache invalidation (as with remote cache invalidation) should be handled with an event
 			dao.execute(context);
 			CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 			for (CatalogEntry originalEntry : originalEntries) {
@@ -103,14 +102,11 @@ public class CatalogDeleteTransactionImpl implements CatalogDeleteTransaction {
 					cache.delete(context, catalog.getDistinguishedName(), originalEntry);
 				}
 
-				CatalogChangeEvent event = new CatalogChangeEventImpl((Long) context.getDomain(),
-						catalog.getDistinguishedName(), CatalogActionRequest.DELETE_ACTION, originalEntry);
-				// cache invalidation
-				context.getRootAncestor().addBroadcastable(event);
 			}
-
-			// performAfterDelete
-			trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
+            // performAfterDelete
+			log.debug("<CatalogActionEvent-Broadcast>");
+			postProcess(context,catalog.getDistinguishedName(),DELETE_ACTION,null);
+			log.debug("</CatalogActionEvent-Broadcast>");
 
 		}
 

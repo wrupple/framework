@@ -1,13 +1,14 @@
 package com.wrupple.muba.bpm.shared.services;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
 
 /**
  *
  * When a catalog update event is fired for an application state we update desktop place
  * Created by japi on 24/08/17.
  */
-public class ApplicationStateUpdatePlaceImpl {
+public class ApplicationStateUpdatePlaceImpl implements CatalogEventHandler {
 
     public void onApplicationStateChanged(ApplicationState e){
 

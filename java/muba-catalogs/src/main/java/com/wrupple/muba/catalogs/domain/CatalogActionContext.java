@@ -17,13 +17,7 @@ public interface CatalogActionContext
 
 	public SystemCatalogPlugin getCatalogManager();
 
-	CatalogActionContext getRootAncestor();
-
 	TransactionHistory getTransactionHistory();
-
-	public void addBroadcastable(CatalogChangeEvent data);
-
-	public List<CatalogChangeEvent> getEvents();
 
 	public CatalogDescriptor getCatalogDescriptor() throws RuntimeException;
 	

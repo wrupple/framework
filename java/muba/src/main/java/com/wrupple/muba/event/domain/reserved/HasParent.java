@@ -7,4 +7,6 @@ public interface HasParent<T> {
 
 	
 	T spawnChild();
+
+	T getRootAncestor();
 }
