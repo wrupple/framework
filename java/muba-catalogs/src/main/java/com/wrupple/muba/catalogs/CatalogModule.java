@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.domain.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
@@ -120,7 +121,7 @@ public class CatalogModule extends AbstractModule {
 		bind(Boolean.class).annotatedWith(Names.named("catalog.followGraph")).toInstance(true);
 		bind(Integer.class).annotatedWith(Names.named("catalog.read.preloadCatalogGraph")).toInstance(0);
 
-		bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);
+
 		bind(UserCatalogPlugin.class).to(UserCatalogPluginImpl.class);
 
 		bind(String.class).annotatedWith(Names.named("catalog.ancestorKeyField")).toInstance("superAncestorHIdentity");
@@ -141,7 +142,6 @@ public class CatalogModule extends AbstractModule {
 				.toInstance(CatalogDescriptorImpl.class);
 		bind(Class.class).annotatedWith(Names.named(CatalogActionRequest.CATALOG))
 				.toInstance(CatalogActionRequestImpl.class);
-		bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);
 		/*
 		 * CONFIGURATION
 		 */
@@ -178,8 +178,6 @@ public class CatalogModule extends AbstractModule {
 
 		bind(PublishEvents.class).to(PublishEventsImpl.class);
 
-		bind(CatalogActionTriggerHandler.class).to(CatalogActionTriggerHandlerImpl.class);
-
 		bind(EntryDeleteTrigger.class).to(EntryDeleteTriggerImpl.class);
 		bind(FieldDescriptorUpdateTrigger.class).to(FieldDescriptorUpdateTriggerImpl.class);
 		bind(CatalogDescriptorUpdateTrigger.class).to(CatalogDescriptorUpdateTriggerImpl.class);
@@ -200,8 +198,6 @@ public class CatalogModule extends AbstractModule {
 
 		bind(CatalogTriggerInterpret.class).to(CatalogTriggerInterpretImpl.class);
 
-		bind(LargeStringFieldDataAccessObject.class).to(LargeStringFieldDataAccessObjectImpl.class);
-
 		bind(KeyDomainValidator.class).to(KeyDomainValidatorImpl.class);
 		bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
 
@@ -211,12 +207,7 @@ public class CatalogModule extends AbstractModule {
 		bind(CatalogNormalizationConstraintValidator.class).to(CatalogNormalizationConstraintValidatorImpl.class);
 		bind(CatalogActionRequestValidator.class).to(CatalogActionRequestValidatorImpl.class);
 
-		/*
-		Runtime
-		 */
-		bind(ObjectNativeInterface.class).to(JavaObjectNativeInterface.class);
-		bind(FieldAccessStrategy.class).to(JavaFieldAccessStrategy.class);
-		bind(FilterNativeInterface.class).to(JavaFilterNativeInterfaceImpl.class);
+
 	}
 
 	/*

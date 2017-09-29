@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.google.inject.Provider;
+import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -31,8 +33,9 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 	private final Writers writers;
 
 	@Inject
-	public CatalogUpdateTransactionImpl(
+	public CatalogUpdateTransactionImpl(Provider<CatalogActionCommit> catalogActionCommitProvider,
 			Writers writers) {
+		super(catalogActionCommitProvider);
 		this.writers = writers;
 		
 	}

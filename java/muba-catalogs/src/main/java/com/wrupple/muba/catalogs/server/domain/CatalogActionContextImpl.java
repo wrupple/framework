@@ -273,16 +273,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	@Override
 	public CatalogActionContext getRootAncestor() {
-		CatalogActionContext ancestor = getParent();
-		if (ancestor == null) {
-			ancestor = this;
-		} else {
-			while (ancestor.getParent() != null) {
-				ancestor = ancestor.getParent();
-			}
-		}
-
-		return ancestor;
+		return CatalogEntryImpl.getRootAncestor(this);
 	}
 
 

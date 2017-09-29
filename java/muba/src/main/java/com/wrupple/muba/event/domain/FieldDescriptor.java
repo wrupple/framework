@@ -2,11 +2,7 @@ package com.wrupple.muba.event.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.reserved.HasCatalogId;
-import com.wrupple.muba.event.domain.reserved.HasDescription;
-import com.wrupple.muba.event.domain.reserved.HasFieldId;
-import com.wrupple.muba.event.domain.reserved.HasProperties;
+import com.wrupple.muba.event.domain.reserved.*;
 
 
 /**
@@ -15,7 +11,7 @@ import com.wrupple.muba.event.domain.reserved.HasProperties;
  * @author japi
  * 
  */
-public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,HasCatalogId ,HasDescription,HasConstrains{
+public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,HasCatalogId ,HasDescription,HasConstrains {
 	public static final String CATALOG_ID = "FieldDescriptor";
 
 

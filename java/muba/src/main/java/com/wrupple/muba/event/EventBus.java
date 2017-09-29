@@ -12,7 +12,7 @@ import org.apache.commons.chain.Context;
 import javax.transaction.UserTransaction;
 
 public interface EventBus
-		/* basic implementation: JavaEventBus */ extends Context {
+		/* basic implementation: EventBusImpl */ extends Context {
 
     OutputStream getOutput();
     InputStream getInput();
@@ -21,7 +21,7 @@ public interface EventBus
 
     EventRegistry getIntentInterpret();
 
-    void broadcastEvent(Intent event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers);
+    void broadcastEvent(Intent event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
 
     boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception;
 

@@ -36,7 +36,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
@@ -135,7 +135,7 @@ public class CommitHumanSolution extends MubaTest {
 
     public CommitHumanSolution() {
         init(new RunnerTestModule(), new HumanRunnerTestModule(),new HumanSolverModule(), new SingleUserModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new MainModule());
+                new ValidationModule(), new CatalogModule(), new ApplicationModule());
     }
 
     @Override

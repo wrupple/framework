@@ -25,7 +25,7 @@ import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.service.EventRegistry;
@@ -44,7 +44,7 @@ public class ContextSwitchTest extends MubaTest {
 
     public ContextSwitchTest() {
         init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(),new ChocoSolverModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new MainModule());
+                new ValidationModule(), new CatalogModule(), new ApplicationModule());
     }
 
     @Override

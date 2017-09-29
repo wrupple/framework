@@ -26,7 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
-import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.catalogs.CatalogModule;
@@ -125,7 +125,7 @@ public class CatalogServicesTest extends MubaTest {
 	}
 
 	public CatalogServicesTest() {
-		init(new CatalogServicesTestModule(),new CatalogTestModule(), new SingleUserModule(), new CatalogModule(), new MainModule());
+		init(new CatalogServicesTestModule(),new CatalogTestModule(), new SingleUserModule(), new CatalogModule(), new ApplicationModule());
 	}
 
 	@Override

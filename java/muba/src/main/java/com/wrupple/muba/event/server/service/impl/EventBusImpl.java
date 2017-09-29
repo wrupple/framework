@@ -3,9 +3,7 @@ package com.wrupple.muba.event.server.service.impl;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,13 +18,14 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
 import com.wrupple.muba.event.server.service.IntrospectionStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
 
 @Singleton
-public class JavaEventBus extends ContextBase implements EventBus {
+public class EventBusImpl extends ContextBase implements EventBus {
 
 	private static final long serialVersionUID = -7144539787781019055L;
 
@@ -43,9 +42,10 @@ public class JavaEventBus extends ContextBase implements EventBus {
     private final FilterNativeInterface filterer;
 
     private final IntrospectionStrategy instrospector;
+    private final Provider<EventBroadcastQueueElement> queueElementProvider;
 
     @Inject
-	public JavaEventBus(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named("event.sentence") FieldDescriptor handleFieldDescriptor, IntrospectionStrategy instrospector) {
+	public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named("event.sentence") FieldDescriptor handleFieldDescriptor, FieldAccessStrategy instrospector, Provider<EventBroadcastQueueElement> queueElementProvider) {
 		super();
 		this.parallel=parallel;
 		this.process=process;
@@ -59,6 +59,7 @@ public class JavaEventBus extends ContextBase implements EventBus {
         this.handleField= new CatalogDescriptorImpl(ExplicitIntent.CATALOG,ExplicitIntent.class,-1,ExplicitIntent.CATALOG,null,handleFieldDescriptor);
         this.instrospector = instrospector;
 
+        this.queueElementProvider = queueElementProvider;
     }
 
     @Override
@@ -91,6 +92,14 @@ public class JavaEventBus extends ContextBase implements EventBus {
     @Override
     public EventRegistry getIntentInterpret() {
         return intentInterpret;
+    }
+
+    @Override
+    public void broadcastEvent(Intent event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
+        EventBroadcastQueueElement queued = queueElementProvider.get();
+        queued.setEventValue(event);
+        queued.setObserversValues(explicitlySuscriptedObservers);
+        fireEvent(queued,runtimeContext,null/*use all broadcast handlers*/);
     }
 
     @Override

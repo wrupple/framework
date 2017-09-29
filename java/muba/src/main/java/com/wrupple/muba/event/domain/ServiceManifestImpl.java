@@ -140,10 +140,10 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
         return (Long) getParentValue().getId();
     }
 
-    @Override
-    public Long spawnChild() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public ServiceManifest getRootAncestor() {
+		return CatalogEntryImpl.getRootAncestor(this);
+	}
 
 	@Override
 	public String getOutputCatalog() {

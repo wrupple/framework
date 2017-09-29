@@ -1,4 +1,4 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.reserved;
 
 import java.util.Collection;
 import java.util.Set;

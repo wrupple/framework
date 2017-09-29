@@ -17,14 +17,6 @@ public interface CatalogEvent extends CatalogIntent,HasLiveContext{
 
 	String CATALOG = "CatalogEvent";
 
-    public final String DELETE_ACTION = "delete";
-
-    public final String WRITE_ACTION = "write";
-
-    public final String READ_ACTION = "read";
-
-    public final String CREATE_ACTION = "new";
-
     Object getEntryValue();
 
     List<Long> getExplicitlySuscriptedPeers();

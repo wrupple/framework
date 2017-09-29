@@ -20,7 +20,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
+import com.wrupple.muba.event.server.domain.impl.PersistentCatalogEntityImpl;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;

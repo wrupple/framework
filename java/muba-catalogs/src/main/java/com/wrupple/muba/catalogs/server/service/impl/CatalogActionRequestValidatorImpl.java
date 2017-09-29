@@ -11,6 +11,7 @@ import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ import com.wrupple.muba.event.server.service.PropertyValidationContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.HasConstrains;
+import com.wrupple.muba.event.domain.reserved.HasConstrains;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;

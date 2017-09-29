@@ -50,7 +50,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	private List<String> warnings;
 	private Exception caughtException;
 	private UserTransaction transaction;
-	private final RuntimeContext parent;
+	private final RuntimeContext parentValue;
 	private Object result;
 	private long totalResponseSize;
 	private Set<ConstraintViolation<?>> constraintViolations;
@@ -60,7 +60,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		super();
 		this.eventBus = appication;
 		this.session = session;
-		this.parent = parent;
+		this.parentValue = parent;
 	}
 
 	@Override
@@ -329,8 +329,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	}
 
 	@Override
-	public RuntimeContext getParent() {
-		return parent;
+	public RuntimeContext getParentValue() {
+		return parentValue;
 	}
 
 	public EventBus getEventBus() {
@@ -355,6 +355,11 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	@Override
 	public RuntimeContext spawnChild() {
 		return new RuntimeContextImpl( getEventBus(), getSession(), this);
+	}
+
+	@Override
+	public RuntimeContext getRootAncestor() {
+		return CatalogEntryImpl.getRootAncestor(this);
 	}
 
 	@Override
@@ -429,7 +434,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
 		result = prime * result + nextIndex;
-		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		result = prime * result + ((parentValue == null) ? 0 : parentValue.hashCode());
 		result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
 		result = prime * result + (scopedWriting ? 1231 : 1237);
 		result = prime * result + ((sentence == null) ? 0 : sentence.hashCode());
@@ -491,10 +496,10 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 			return false;
 		if (nextIndex != other.nextIndex)
 			return false;
-		if (parent == null) {
-			if (other.parent != null)
+		if (parentValue == null) {
+			if (other.parentValue != null)
 				return false;
-		} else if (!parent.equals(other.parent))
+		} else if (!parentValue.equals(other.parentValue))
 			return false;
 		if (result == null) {
 			if (other.result != null)
@@ -544,4 +549,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	}
 
 
+	@Override
+	public Object getParent() {
+		return parentValue.getId();
+	}
 }

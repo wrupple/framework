@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.HasConstrains;
+import com.wrupple.muba.event.domain.reserved.HasParentValue;
 import com.wrupple.muba.event.domain.reserved.Versioned;
 
-public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,HasParent<Long>,Versioned,HasConstrains{
+public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,HasParentValue<Long,CatalogDescriptor>,Versioned,HasConstrains {
 	public static final String CATALOG_ID = "CatalogDescriptor";
 	String MAIN_STORAGE_UNIT = "main";
 	String QUICK_STORAGE_UNIT = "quick";

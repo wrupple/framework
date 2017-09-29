@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.domain;
+package com.wrupple.muba.event.server.domain.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.PersistentCatalogEntity;
+import com.wrupple.muba.event.domain.reserved.HasParent;
 
 public class PersistentCatalogEntityImpl implements PersistentCatalogEntity {
 	private static final long serialVersionUID = -8295920370428632912L;
@@ -109,7 +110,7 @@ public class PersistentCatalogEntityImpl implements PersistentCatalogEntity {
 
 	@Override
 	public String getImage() {
-		return (String) persistentProperties.get(PersistentImageMetadata.IMAGE_FIELD);
+		return (String) persistentProperties.get(IMAGE_FIELD);
 	}
 
 	@Override

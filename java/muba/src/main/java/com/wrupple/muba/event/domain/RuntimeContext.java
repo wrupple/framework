@@ -6,14 +6,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.reserved.*;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.event.domain.reserved.HasLocale;
-import com.wrupple.muba.event.domain.reserved.HasParent;
-import com.wrupple.muba.event.domain.reserved.HasResult;
-
 public interface RuntimeContext extends Context, HasValidations, HasLocale, ListIterator<String>, CatalogKey,
-		HasParent<RuntimeContext>, HasResult<Object> {
+		HasParentValue<Object,RuntimeContext>, HasResult<Object> {
 
 	final int Unauthorized = 401;
 	final int PaymentRequired = 402;
@@ -97,5 +94,8 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
     boolean process() throws Exception;
 
+
+
+	RuntimeContext spawnChild();
 
 }

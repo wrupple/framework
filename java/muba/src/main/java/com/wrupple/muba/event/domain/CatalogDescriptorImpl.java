@@ -11,6 +11,7 @@ import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.event.domain.annotations.CatalogKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.InheritanceTree;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class CatalogDescriptorImpl extends AbstractContractDescriptor implements CatalogDescriptor {
 
@@ -312,22 +313,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.parent = parent;
 	}
 
-	public String getGreatAncestor() {
-		return greatAncestor;
-	}
-
-	public void setGreatAncestor(String greatAncestor) {
-		this.greatAncestor = greatAncestor;
-	}
-
-	public String getGreatDescendant() {
-		return greatDescendant;
-	}
-
-	public void setGreatDescendant(String greatDescendant) {
-		this.greatDescendant = greatDescendant;
-	}
-
 	public String getHost() {
 		return host;
 	}
@@ -388,10 +373,22 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.clazz = clazz;
 	}
 
-	@Override
-	public Long spawnChild() {
-		throw new IllegalAccessError();
+	public String getGreatAncestor() {
+		return greatAncestor;
 	}
+
+	public void setGreatAncestor(String greatAncestor) {
+		this.greatAncestor = greatAncestor;
+	}
+
+	public String getGreatDescendant() {
+		return greatDescendant;
+	}
+
+	public void setGreatDescendant(String greatDescendant) {
+		this.greatDescendant = greatDescendant;
+	}
+
 
 	@Override
 	public Long getVersion() {
@@ -402,4 +399,13 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.version = version;
 	}
 
+    @Override
+    public CatalogDescriptor getParentValue() {
+        return null;
+    }
+
+    @Override
+    public CatalogDescriptor getRootAncestor() {
+        return null;
+    }
 }

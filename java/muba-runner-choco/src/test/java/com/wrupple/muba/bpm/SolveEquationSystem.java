@@ -37,7 +37,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
@@ -139,7 +139,7 @@ public class SolveEquationSystem extends MubaTest {
 
     public SolveEquationSystem() {
         init(new RunnerTestModule(), new ChocoSolverTestModule(), new SingleUserModule(),new ChocoSolverModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new MainModule());
+                new ValidationModule(), new CatalogModule(), new ApplicationModule());
     }
 
     @Override

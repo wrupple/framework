@@ -13,7 +13,7 @@ import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.domain.Person;
@@ -106,7 +106,7 @@ public class IntegralTest extends AbstractTest{
 
     public IntegralTest() {
         init(new IntegralTestModule(), new JDBCHSQLTestModule(), new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new SingleUserModule(), new CatalogModule(), new MainModule());
+                new ValidationModule(), new SingleUserModule(), new CatalogModule(), new ApplicationModule());
     }
 
     @Override

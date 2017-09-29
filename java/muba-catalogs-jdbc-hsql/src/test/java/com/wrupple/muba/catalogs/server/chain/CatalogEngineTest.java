@@ -4,45 +4,15 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.transaction.UserTransaction;
-import javax.validation.Validator;
-
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Names;
-import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.MainModule;
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
-import com.wrupple.muba.event.server.service.ValidationGroupProvider;
-import com.wrupple.muba.catalogs.CatalogModule;
-import com.wrupple.muba.catalogs.HSQLDBModule;
-import com.wrupple.muba.catalogs.JDBCHSQLTestModule;
-import com.wrupple.muba.catalogs.JDBCModule;
-import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataCreationCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataDeleteCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataQueryCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingCommandImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 public class CatalogEngineTest extends IntegralTest {

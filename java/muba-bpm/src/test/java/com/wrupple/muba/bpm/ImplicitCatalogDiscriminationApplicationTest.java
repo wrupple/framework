@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -44,7 +44,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
     public ImplicitCatalogDiscriminationApplicationTest() {
         init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(),new ChocoSolverModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new MainModule());
+                new ValidationModule(), new CatalogModule(), new ApplicationModule());
     }
 
     @Override

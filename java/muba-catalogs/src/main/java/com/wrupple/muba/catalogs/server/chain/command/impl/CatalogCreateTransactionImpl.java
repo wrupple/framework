@@ -30,14 +30,12 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 	//private final CatalogActionTriggerHandler trigerer;
 	private final EntryCreators creators;
 	private final boolean follow;
-	private final Provider<CatalogActionCommit> catalogActionCommitProvider;
 
 	@Inject
 	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider) {
         super(catalogActionCommitProvider);
         this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();
-		this.catalogActionCommitProvider = catalogActionCommitProvider;
 	}
 
 	

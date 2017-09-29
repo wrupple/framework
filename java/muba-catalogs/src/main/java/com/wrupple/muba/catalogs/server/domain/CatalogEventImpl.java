@@ -3,7 +3,7 @@ package com.wrupple.muba.catalogs.server.domain;
 import com.wrupple.muba.catalogs.domain.CatalogEvent;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.CatalogEntryImpl;
-import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 
 public class CatalogEventImpl extends CatalogEntryImpl implements CatalogEvent {
 	private static final long serialVersionUID = -5221787594135912800L;

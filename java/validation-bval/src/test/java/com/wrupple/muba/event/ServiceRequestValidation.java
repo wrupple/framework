@@ -38,7 +38,7 @@ public class ServiceRequestValidation extends MubaTest {
 
 	public ServiceRequestValidation() {
 		super();
-		init(new MockModule(), new ValidationModule(), new MainModule());
+		init(new MockModule(), new ValidationModule(), new ApplicationModule());
 	}
 	
 	protected void registerServices(EventBus switchs) {

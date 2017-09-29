@@ -2,7 +2,7 @@ package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 import org.apache.commons.beanutils.PropertyUtilsBean;

@@ -1,5 +1,8 @@
 package com.wrupple.muba.event.domain;
 
+import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.HasParentValue;
+
 import javax.validation.constraints.NotNull;
 
 @SuppressWarnings("serial")
@@ -54,4 +57,30 @@ public abstract class CatalogEntryImpl implements CatalogEntry {
 		this.anonymouslyVisible = anonymouslyVisible;
 	}
 
+
+	public  static final <T extends HasParent<T>> T getRootAncestor(HasParent<T> parent){
+		T ancestor =  parent.getParent();
+		if (ancestor == null) {
+			ancestor = (T) parent;
+		} else {
+			while (ancestor.getParent() != null) {
+				ancestor = ancestor.getParent();
+			}
+		}
+
+		return ancestor;
+	}
+
+    public  static final <T extends HasParentValue<?,T>> T getRootAncestor(HasParentValue<?,T> parent){
+        T ancestor =  parent.getParentValue();
+        if (ancestor == null) {
+            ancestor = (T) parent;
+        } else {
+            while (ancestor.getParent() != null) {
+                ancestor = ancestor.getParentValue();
+            }
+        }
+
+        return ancestor;
+    }
 }

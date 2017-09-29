@@ -25,7 +25,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.AbstractTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.MainModule;
+import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
@@ -57,7 +57,7 @@ public class HSQLTest extends AbstractTest {
 
 	public HSQLTest() {
 		init(new CRUDModule(), new CatalogModule(), new SingleUserModule(), new JDBCHSQLTestModule(),
-				new HSQLDBModule(), new JDBCModule(), new ValidationModule(), new MainModule());
+				new HSQLDBModule(), new JDBCModule(), new ValidationModule(), new ApplicationModule());
 
 	}
 	

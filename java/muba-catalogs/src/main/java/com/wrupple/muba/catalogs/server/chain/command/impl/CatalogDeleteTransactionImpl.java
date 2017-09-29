@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.google.inject.Provider;
+import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
@@ -33,7 +35,8 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 	private final Deleters deleters;
 
 	@Inject
-	public CatalogDeleteTransactionImpl(Deleters deleters, CatalogUpdateTransaction update,CatalogReadTransaction read, CatalogFactory factory) {
+	public CatalogDeleteTransactionImpl(Provider<CatalogActionCommit> catalogActionCommitProvider,Deleters deleters, CatalogUpdateTransaction update, CatalogReadTransaction read, CatalogFactory factory) {
+		super(catalogActionCommitProvider);
 		this.read = read;
 		this.update = update;
 		this.deleters = deleters;

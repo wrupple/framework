@@ -1,5 +1,6 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.EventBroadcastQueueElement;
 import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import org.apache.commons.chain.CatalogFactory;
@@ -30,6 +31,7 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 	// Object eval(CatalogActionContext context, String... sentence);
 	@Override
 	public boolean execute(Context c) throws Exception {
+        EventBroadcastQueueElement queueElement;
 		/*CatalogActionContext context = (CatalogActionContext) c;
 		System.err.println("[Publish Request Events]");
 

@@ -35,13 +35,13 @@ public class ServiceInvocationTest extends BootstrapTest {
 		LargeStringFieldDataAccessObject largeStringDelegate= new LargeStringFieldDataAccessObjectImpl();
 		ObjectNativeInterface oni= new JavaObjectNativeInterface(largeStringDelegate);
 		FilterNativeInterface filterer=new JavaFilterNativeInterfaceImpl(oni);
-		IntrospectionStrategy instrospector=new JavaFieldAccessStrategy(null,oni);
+		FieldAccessStrategy instrospector=new JavaFieldAccessStrategy(null,oni);
 
         EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
         ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
 
-        this.system = new JavaEventBus(interpret,dispatcher, System.out,System.in,false,null,filterer,sentenceField,instrospector);
+        this.system = new EventBusImpl(interpret,dispatcher, System.out,System.in,false,null,filterer,sentenceField,instrospector, null);
 
 
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });

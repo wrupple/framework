@@ -18,6 +18,7 @@ package com.wrupple.muba.catalogs.server.service;
         import com.wrupple.muba.event.domain.*;
         import com.wrupple.muba.catalogs.CatalogTestModule;
         import com.wrupple.muba.catalogs.domain.*;
+        import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
         import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
         import com.wrupple.muba.catalogs.server.chain.command.*;
         import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
@@ -30,7 +31,7 @@ package com.wrupple.muba.catalogs.server.service;
         import com.google.inject.AbstractModule;
         import com.google.inject.Provides;
         import com.google.inject.name.Names;
-        import com.wrupple.muba.event.MainModule;
+        import com.wrupple.muba.event.ApplicationModule;
         import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
         import com.wrupple.muba.catalogs.CatalogModule;
         import com.wrupple.muba.catalogs.SingleUserModule;
@@ -114,7 +115,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
     }
 
     public JavaFieldAccessStrategyTest() {
-        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new CatalogTestModule(), new ValidationModule(),new SingleUserModule(), new CatalogModule(), new MainModule());
+        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new CatalogTestModule(), new ValidationModule(),new SingleUserModule(), new CatalogModule(), new ApplicationModule());
 
     }
 
