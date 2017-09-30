@@ -14,7 +14,7 @@ import java.util.List;
 public interface ImplicitEventResolver {
 
 
-    List<ExplicitIntent> resolveHandlers(String intentType);
+    List<ServiceManifest> resolveHandlers(String intentType);
 
     //FIXME fireHandler(event)
 
@@ -39,6 +39,8 @@ public interface ImplicitEventResolver {
     RequestInterpret getExplicitIntentInterpret(RuntimeContext context);
 
     public ExplicitIntent resolveIntent(ImplicitIntent intent, RuntimeContext context) throws Exception;
+
+    public ExplicitIntent resolveIntent(Intent implicitRequestContract, ServiceManifest manifest, RuntimeContext parentTimeline);
 
 
     CatalogFactory getDictionaryFactory();

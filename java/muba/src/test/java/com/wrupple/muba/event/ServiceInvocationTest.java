@@ -30,7 +30,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 
 	public ServiceInvocationTest() {
-		FieldDescriptor sentenceField = new SentenceField();
+
 
 		LargeStringFieldDataAccessObject largeStringDelegate= new LargeStringFieldDataAccessObjectImpl();
 		ObjectNativeInterface oni= new JavaObjectNativeInterface(largeStringDelegate);
@@ -41,7 +41,7 @@ public class ServiceInvocationTest extends BootstrapTest {
         ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
 
-        this.system = new EventBusImpl(interpret,dispatcher, System.out,System.in,false,null,filterer,sentenceField,instrospector, null);
+        this.system = new EventBusImpl(interpret,dispatcher, System.out,System.in,false,null,filterer,null,instrospector, null);
 
 
 		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });

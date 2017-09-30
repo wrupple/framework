@@ -8,6 +8,8 @@ import org.apache.commons.chain.Catalog;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.CatalogBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,10 +24,11 @@ import java.util.*;
 @Singleton
 public class EventRegistryImpl implements EventRegistry {
 
+    protected static final Logger log = LoggerFactory.getLogger(EventRegistryImpl.class);
 
     private final String DICTIONARY = ParentServiceManifest.NAME + "-interpret";
     private final ParentServiceManifest root;
-    private final Map<String,ServiceManifest> serviceDictionary;
+    private final Map<String,List<ServiceManifest>> serviceDictionary;
 
     private final CatalogFactory factory;
     @Inject
@@ -41,8 +44,12 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
     @Override
-    public List<ExplicitIntent> resolveHandlers(String eventCatalogName) {
-        return null;
+    public List<ServiceManifest> resolveHandlers(String eventCatalogName) {
+
+        List<ServiceManifest> list = serviceDictionary.get(eventCatalogName);
+        log.trace("[FOUND IMPLICIT TYPE HANDLERS] {}->{}",eventCatalogName,list);
+        return list;
+
     }
 
     @Override
@@ -61,11 +68,22 @@ public class EventRegistryImpl implements EventRegistry {
             dictionary = new CatalogBase();
             getDictionaryFactory().addCatalog(ParentServiceManifest.NAME, dictionary);
         }
-        serviceDictionary.put((String)manifest.getCatalog(),manifest);
+        serviceDictionaryput((String)manifest.getCatalog(),manifest);
         dictionary.addCommand(manifest.getServiceId(), service);
         parent.register(manifest);
         registerContractInterpret(manifest,contractInterpret);
     }
+
+    private void serviceDictionaryput(String catalog, ServiceManifest manifest) {
+        List<ServiceManifest> list = serviceDictionary.get(catalog);
+        if(list==null){
+            list = new ArrayList<>(2);
+            serviceDictionary.put(catalog,list);
+        }
+        list.add(manifest);
+        log.trace("[NEW IMPLICIT TYPE HANDLER] {}->{}",catalog,manifest);
+    }
+
     @Override
     public void registerService(ServiceManifest manifest,
                                 Command service,
@@ -116,7 +134,7 @@ public class EventRegistryImpl implements EventRegistry {
     public List<String> resolveContractSentence(CatalogEntry serviceContract) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         //FIXME find services registered for this contract's super types
 
-        ServiceManifest handler = serviceDictionary.get(serviceContract.getCatalogType());
+        ServiceManifest handler = serviceDictionaryget(serviceContract.getCatalogType());
         if(handler==null){
             throw new IllegalArgumentException("No contract handler for : "+serviceContract.getCatalogType());
         }
@@ -131,6 +149,15 @@ public class EventRegistryImpl implements EventRegistry {
         }
 
         return pathTokens;
+    }
+
+    private ServiceManifest serviceDictionaryget(String catalogType) {
+        List<ServiceManifest> list = serviceDictionary.get(catalogType);
+        if(list==null){
+            return null;
+        }else{
+            return list.get(0);
+        }
     }
 
     private List<String> generatePathTokens(ServiceManifest handler) {
@@ -157,22 +184,29 @@ public class EventRegistryImpl implements EventRegistry {
 
         if(input!=null) {
 
-            ServiceManifest serviceManifest = serviceDictionary.get(input);
+            ServiceManifest serviceManifest = serviceDictionaryget(input);
 
-            if (serviceManifest != null) {
-                String output = intent.getOutputCatalog();
-                if (output == null) {
-                    return createIntent(context, intent, serviceManifest);
-                }/*else if (output.equals(serviceManifest.getC)){
-               FIXME support output type discrimination
-            }*/
-            }
+           return resolveIntent(intent,serviceManifest,context);
         }
         return null;
 
     }
 
-    private ExplicitIntent createIntent(RuntimeContext context, ImplicitIntent intent, ServiceManifest serviceManifest) {
+    @Override
+    public ExplicitIntent resolveIntent(Intent implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
+        if (serviceManifest != null) {
+            String output =implicitRequestContract instanceof ImplicitIntent ?  ((ImplicitIntent)implicitRequestContract).getOutputCatalog() :null;
+            if (output == null) {
+                return createIntent(parentTimeline, implicitRequestContract, serviceManifest);
+            }/*else if (output.equals(serviceManifest.getC)){
+               FIXME support output type discrimination
+            }*/
+        }
+        return null;
+    }
+
+
+    private ExplicitIntent createIntent(RuntimeContext context, Intent intent, ServiceManifest serviceManifest) {
 
         List<String> pathTokens = generatePathTokens(serviceManifest);
         //TODO Business Event or User Event

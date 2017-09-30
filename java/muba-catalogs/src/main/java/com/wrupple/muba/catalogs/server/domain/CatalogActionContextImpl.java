@@ -264,7 +264,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	@Override
-	public CatalogActionContext getParent() {
+	public CatalogActionContext getParentValue() {
 		if (parentValue == this) {
 			return null;
 		}
@@ -395,5 +395,10 @@ this.name=name;
 	@Override
 	public void setResult(CatalogEntry catalogEntry) {
 		setResults((List) Collections.singletonList(catalogEntry));
+	}
+
+	@Override
+	public Object getParent() {
+		return getParentValue()==null? null:getParentValue().getId();
 	}
 }

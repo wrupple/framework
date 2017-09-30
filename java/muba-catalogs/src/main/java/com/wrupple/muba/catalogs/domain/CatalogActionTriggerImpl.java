@@ -22,6 +22,7 @@ public class CatalogActionTriggerImpl extends CatalogEntryImpl implements Catalo
 		this.catalog = targetCatalogId;
 		this.properties = properties;
 	}
+
 	private Long stakeHolder;
 	private String description,catalog,entry,seed,expression,systemEvent;
 	private String handler;
@@ -158,7 +159,13 @@ public class CatalogActionTriggerImpl extends CatalogEntryImpl implements Catalo
 		setEntry((String)id);
 	}
 
-	@Override
+    @Override
+    public Object getEntryValue() {
+
+        return null;
+    }
+
+    @Override
 	public String toString() {
 		return getName()==null?getHandler():getName();
 	}

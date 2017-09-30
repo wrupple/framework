@@ -23,9 +23,12 @@ import com.wrupple.muba.event.server.service.FilterNativeInterface;
 import com.wrupple.muba.event.server.service.IntrospectionStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class EventBusImpl extends ContextBase implements EventBus {
+    protected static final Logger log = LoggerFactory.getLogger(EventBusImpl.class);
 
 	private static final long serialVersionUID = -7144539787781019055L;
 
@@ -45,7 +48,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
     private final Provider<EventBroadcastQueueElement> queueElementProvider;
 
     @Inject
-	public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named("event.sentence") FieldDescriptor handleFieldDescriptor, FieldAccessStrategy instrospector, Provider<EventBroadcastQueueElement> queueElementProvider) {
+	public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named(ServiceManifest.CATALOG) CatalogDescriptor handleField, FieldAccessStrategy instrospector, Provider<EventBroadcastQueueElement> queueElementProvider) {
 		super();
 		this.parallel=parallel;
 		this.process=process;
@@ -56,7 +59,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
         this.transactionProvider=transactionProvider;
         this.filterer = filterer;
 
-        this.handleField= new CatalogDescriptorImpl(ExplicitIntent.CATALOG,ExplicitIntent.class,-1,ExplicitIntent.CATALOG,null,handleFieldDescriptor);
+        this.handleField=handleField;
         this.instrospector = instrospector;
 
         this.queueElementProvider = queueElementProvider;
@@ -132,42 +135,55 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
     public <T> T fireonRuntimeline(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion,RuntimeContext parentTimeline) throws Exception {
-        List<ExplicitIntent> handlers = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
+        List<ServiceManifest> manifests = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
 
-        if(handlerCriterion!=null && !handlerCriterion.isEmpty()){
-            Stream<ExplicitIntent> stream = handlers.stream();
-            Instrospection introspector=instrospector.newSession(stream.findAny().get());
-            handlers= stream.
-                    filter(handler ->filterer.matchAgainstFilters(handler, handlerCriterion, handleField, introspector) ).
-                    collect(Collectors.toList());
-        }
+        if(manifests==null || manifests.isEmpty()){
 
-        if(handlers==null || handlers.isEmpty()){
-            throw new RuntimeException("No known handlers for event "+implicitRequestContract);
-        } else if(handlers.size()==1){
-            ExplicitIntent call = handlers.get(0);
-            fireHandler(call,session,parentTimeline);
-            return call.getConvertedResult();
-        }else if(parallel){
-            List<Object> results=  handlers.parallelStream().map(handler -> {
-                try {
-                    fireHandler(handler,session,parentTimeline);
-                } catch (Exception e) {
-                    handler.setError(e);
-                    //implicitRequestContract.addError(e);
-                    return handler;
-                }
-                return handler.getConvertedResult();
-            }).collect(Collectors.toList());
-            return (T) results;
+            throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
+
         }else{
-            RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
-            for(ExplicitIntent handler : handlers){
-                if( fireHandlerWithRuntime(handler,runtimeContext)!= Command.CONTINUE_PROCESSING){
-                    break;
+
+            Instrospection introspector=instrospector.newSession(manifests.get(0));
+            List<ExplicitIntent> handlers =  manifests.stream().
+                    filter(handler -> {
+                        if(handlerCriterion==null||handleField==null||handlerCriterion.isEmpty()){
+                            return true;
+                        }else{
+                            return filterer.matchAgainstFilters(handler, handlerCriterion, handleField, introspector);
+                        }
+                    }).
+                    map(manifest -> intentInterpret.resolveIntent(implicitRequestContract, manifest, parentTimeline)).
+                    collect(Collectors.toList());
+
+
+            if(handlers==null || handlers.isEmpty()){
+                log.error("No known handlers for event {}",implicitRequestContract);
+                return (T) implicitRequestContract;
+            } else if(handlers.size()==1){
+                ExplicitIntent call = handlers.get(0);
+                fireHandler(call,session,parentTimeline);
+                return call.getConvertedResult();
+            }else if(parallel){
+                List<Object> results=  handlers.parallelStream().map(handler -> {
+                    try {
+                        fireHandler(handler,session,parentTimeline);
+                    } catch (Exception e) {
+                        handler.setError(e);
+                        //implicitRequestContract.addError(e);
+                        return handler;
+                    }
+                    return handler.getConvertedResult();
+                }).collect(Collectors.toList());
+                return (T) results;
+            }else{
+                RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
+                for(ExplicitIntent handler : handlers){
+                    if( fireHandlerWithRuntime(handler,runtimeContext)!= Command.CONTINUE_PROCESSING){
+                        break;
+                    }
                 }
+                return runtimeContext.getConvertedResult();
             }
-            return runtimeContext.getConvertedResult();
         }
     }
 

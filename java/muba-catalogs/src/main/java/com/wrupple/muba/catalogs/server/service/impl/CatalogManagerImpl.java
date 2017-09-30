@@ -1,6 +1,8 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.google.inject.Inject;
+import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
+import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.CatalogKey;
 import com.wrupple.muba.event.domain.annotations.*;
@@ -12,10 +14,6 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionContextImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -105,18 +103,19 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	private WritePublicTimelineEventDiscriminator inheritanceHandler;
 
-
+	private final CatalogTriggerInterpret triggerInterpret;
 
 	@Inject
 	public CatalogManagerImpl(@Named("template.token.splitter") String splitter /* "\\." */,
                               @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
-            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(Host.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, FieldAccessStrategy access) {
+            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory, CatalogDescriptorBuilder builder, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(Host.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, FieldAccessStrategy access, CatalogTriggerInterpret triggerInterpret) {
         super();
 		this.ancestorIdField = ancestorIdField;
 		this.TOKEN_SPLITTER = splitter;
 		this.pattern = pattern;
 		this.builder = builder;
         this.access = access;
+        this.triggerInterpret = triggerInterpret;
         versionTrigger = new CatalogActionTriggerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
                 null);
 		versionTrigger.setFailSilence(true);
@@ -299,12 +298,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 						FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.addTrigger(trigger);
+				addTrigger_catalogScope(trigger,regreso);
 				trigger = new CatalogActionTriggerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.addTrigger(trigger);
+                addTrigger_catalogScope(trigger,regreso);
 				return regreso;
 			} else if (CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = catalogProvider.get();
@@ -312,12 +311,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 						CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.addTrigger(trigger);
+                addTrigger_catalogScope(trigger,regreso);
 				trigger = new CatalogActionTriggerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.addTrigger(trigger);
+                addTrigger_catalogScope(trigger,regreso);
 			} else if (Host.CATALOG.equals(catalogId)) {
 				regreso = peerProvider.get();
 			} else if (DistributiedLocalizedEntry.CATALOG.equals(catalogId)) {
@@ -334,12 +333,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 						true, null, null, null);
 				trigger.setFailSilence(false);
 				trigger.setStopOnFail(false);
-				regreso.addTrigger(trigger);
+                addTrigger_catalogScope(trigger,regreso);
 				trigger = new CatalogActionTriggerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
 						null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				regreso.addTrigger(trigger);
+                addTrigger_catalogScope(trigger,regreso);
 			} else if (ContentNode.NUMERIC_ID.equals(catalogId)) {
 				regreso = builder.fromClass(ContentNodeImpl.class, ContentNode.class.getSimpleName(),
 						CatalogEntry.class.getSimpleName(), -1l, null);
@@ -367,6 +366,11 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		}
 	}
 
+	private void addTrigger_catalogScope(CatalogActionTrigger trigger, CatalogDescriptor catalog) {
+	    //counter to .getTriggersValues(context,advise);
+        triggerInterpret.addCatalogScopeTrigger(trigger, catalog);
+	}
+
 	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context,
 			CatalogResultCache cache) throws RuntimeException {
 		if(log.isTraceEnabled()){
@@ -379,11 +383,11 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				// MUST HAVE VERSION FIELD
 				catalog.putField(new VersionFields());
 			}
-			catalog.addTrigger(getVersioningTrigger());
+            addTrigger_catalogScope(getVersioningTrigger(),catalog);
 		}
 
 		if (catalog.isRevised()) {
-			catalog.addTrigger(getRevisionTrigger(catalog));
+            addTrigger_catalogScope(getRevisionTrigger(catalog),catalog);
 		}
 		if (catalog.getParent() != null) {
 			if (catalog.getGreatAncestor() == null) {
@@ -398,7 +402,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()
 					&& ContentNode.CATALOG.equals(catalog.getGreatAncestor())) {
 
-				catalog.addTrigger(timestamp);
+                addTrigger_catalogScope(timestamp,catalog);
 				List<FilterDataOrdering> sorts = catalog.getAppliedSorts();
 				FilterDataOrderingImpl index;
 				if (sorts == null) {
@@ -419,7 +423,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				if (catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null
 						&& catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null) {
 					log.debug("catalog is public timeline");
-					catalog.addTrigger(afterCreateHandledTimeline());
+                    addTrigger_catalogScope(afterCreateHandledTimeline(),catalog);
 				}
 
 				if (catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX) != null && field != null
@@ -427,8 +431,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 					index = new FilterDataOrderingImpl(ContentNode.CHILDREN_TREE_LEVEL_INDEX, true);
 					sorts.add(index);
 					// INDEXED TREE
-					catalog.addTrigger(beforeIndexedTreeCreate());
 
+                    addTrigger_catalogScope(beforeIndexedTreeCreate(),catalog);
 				}
 			}
 		}
@@ -471,7 +475,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
-		regreso.addTrigger(trigger);
+        addTrigger_catalogScope(trigger,regreso);
 
 		FieldDescriptor field = regreso.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
@@ -480,7 +484,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 					null);
 			trigger.setFailSilence(true);
 			trigger.setStopOnFail(true);
-			regreso.addTrigger(trigger);
+
+            addTrigger_catalogScope(trigger,regreso);
 		}
 
 	}

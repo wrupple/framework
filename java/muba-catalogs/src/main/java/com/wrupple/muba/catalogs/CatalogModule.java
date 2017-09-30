@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -32,47 +34,8 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.command.CommitCatalogAction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
-import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
-import com.wrupple.muba.catalogs.server.chain.command.FieldDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
-import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
-import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
 import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
-import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
-import com.wrupple.muba.catalogs.server.chain.command.TrashDeleteTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
-import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CommitCatalogActionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogCreateTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogDeleteTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogDescriptorUpdateTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogEngineImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogReadTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogRequestInterpretImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogUpdateTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CompleteCatalogGraphImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.EntryDeleteTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.ExplicitDataJoinImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.FieldDescriptorUpdateTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.GarbageCollectionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitDataJoinImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.IncreaseVersionNumberImpl;
 import com.wrupple.muba.event.server.chain.command.impl.PublishEventsImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.RestoreTrashImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.TimestamperImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.TrashDeleteTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.UpdateTreeLevelIndexImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.WritePublicTimelineEventDiscriminatorImpl;
 import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
@@ -99,6 +62,21 @@ public class CatalogModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+
+	    /*
+	     * Event Handlers
+	     */
+        bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
+        bind(CatalogActionFilterManifest.class).to(CatalogActionFilterManifestImpl.class);
+        bind(CatalogEventListenerManifest.class).to(CatalogEventListenerManifestImpl.class);
+
+        bind(CatalogEngine.class).to(CatalogEngineImpl.class);
+        bind(CatalogActionFilterEngine.class).to(CatalogActionFilterEngineImpl.class);
+        bind(CatalogEventHandler.class).to(CatalogEventHandlerImpl.class);
+
+        bind(CatalogRequestInterpret.class).to(CatalogRequestInterpretImpl.class);
+        bind(CatalogActionFilterInterpret.class).to(CatalogActionFilterInterpretImpl.class);
+        bind(CatalogEventInterpret.class).to(CatalogEventInterpretImpl.class);
 		/*
 		 * workarounds / replacement classes
 		 */
@@ -140,14 +118,19 @@ public class CatalogModule extends AbstractModule {
 		bind(Class.class).annotatedWith(Names.named(FieldDescriptor.CATALOG_ID)).toInstance(FieldDescriptorImpl.class);
 		bind(Class.class).annotatedWith(Names.named(CatalogDescriptor.CATALOG_ID))
 				.toInstance(CatalogDescriptorImpl.class);
-		bind(Class.class).annotatedWith(Names.named(CatalogActionRequest.CATALOG))
-				.toInstance(CatalogActionRequestImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogActionRequest.CATALOG))
+                .toInstance(CatalogActionRequestImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogActionCommit.CATALOG))
+                .toInstance(CatalogActionCommitImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogEvent.CATALOG))
+                .toInstance(CatalogEventImpl.class);
+
 		/*
 		 * CONFIGURATION
 		 */
 
 		bind(NamespaceContext.class).to(NamespaceContextImpl.class);
-
+        bind(CatalogActionCommit.class).to(CatalogActionCommitImpl.class);
 		bind(CatalogDescriptor.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
 				.to(DistributiedLocalizedEntryDescriptor.class);
 		bind(CatalogDescriptor.class).annotatedWith(Names.named(LocalizedString.CATALOG))
@@ -167,8 +150,7 @@ public class CatalogModule extends AbstractModule {
 		/*
 		 * Commands
 		 */
-		bind(CatalogEngine.class).to(CatalogEngineImpl.class);
-		bind(CatalogRequestInterpret.class).to(CatalogRequestInterpretImpl.class);
+
 		bind(CommitCatalogAction.class).to(CommitCatalogActionImpl.class);
 
 		bind(CatalogCreateTransaction.class).to(CatalogCreateTransactionImpl.class);
@@ -199,7 +181,6 @@ public class CatalogModule extends AbstractModule {
 		bind(CatalogTriggerInterpret.class).to(CatalogTriggerInterpretImpl.class);
 
 		bind(KeyDomainValidator.class).to(KeyDomainValidatorImpl.class);
-		bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
 
 		bind(SystemCatalogPlugin.class).to(CatalogManagerImpl.class);
 		bind(CatalogDescriptorBuilder.class).to(CatalogDescriptorBuilderImpl.class);
@@ -306,6 +287,33 @@ public class CatalogModule extends AbstractModule {
 		return r;
 	}
 
+
+
+
+    @Provides
+    @Inject
+    @Singleton
+    @Named(CatalogEvent.CATALOG)
+    public CatalogDescriptor eventCatalog(@Named(CatalogEvent.CATALOG) Class clazz,
+                                          CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(CatalogEventImpl.class, CatalogEvent.CATALOG,
+                "Catalog Event", -13939395, null);
+        r.setClazz(clazz);
+        return r;
+    }
+
+    @Provides
+    @Inject
+    @Singleton
+    @Named(CatalogActionCommit.CATALOG)
+    public CatalogDescriptor actionCommit(@Named(CatalogActionCommit.CATALOG) Class clazz,
+                                           CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(CatalogActionCommitImpl.class, CatalogActionCommit.CATALOG,
+                "Catalog Commit", -13939394, null);
+        r.setClazz(clazz);
+        return r;
+    }
+
 	@Provides
 	@Inject
 	@Singleton
@@ -313,7 +321,7 @@ public class CatalogModule extends AbstractModule {
 	public CatalogDescriptor actionRequest(@Named(CatalogActionRequest.CATALOG) Class clazz,
 			CatalogDescriptorBuilder builder) {
 		CatalogDescriptor r = builder.fromClass(CatalogActionRequestImpl.class, CatalogActionRequest.CATALOG,
-				"Catalog Action", -13939393, null);
+				"Catalog Request", -13939393, null);
 		r.setClazz(clazz);
 		return r;
 	}

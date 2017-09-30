@@ -47,12 +47,17 @@ public class CatalogTransaction {
         //cache invalidation trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
         context.getRuntimeContext().getEventBus().fireEvent(event,context.getRuntimeContext(),null);
         //pubblishEventsimpl -> AppendImplicityliSuscriptedPeersImpl
+        List<FilterCriteria> observers;
+        if(event.getExplicitlySuscriptedPeers()==null){
+            observers=null;
+        }else{
+            FilterCriteria people = newFilterCriteria();
+            people.setOperator(FilterData.EQUALS);
+            people.setValues(new ArrayList<>(event.getExplicitlySuscriptedPeers()));
+            people.pushToPath(HasStakeHolder.STAKE_HOLDER_FIELD);
+            observers = Collections.singletonList(people);
+        }
 
-        FilterCriteria people = newFilterCriteria();
-        people.setOperator(FilterData.EQUALS);
-        people.setValues(new ArrayList<>(event.getExplicitlySuscriptedPeers()));
-        people.pushToPath(HasStakeHolder.STAKE_HOLDER_FIELD);
-        List<FilterCriteria> observers = Collections.singletonList(people);
         context.getRuntimeContext().getEventBus().broadcastEvent(event,context.getRuntimeContext(),observers);
 
     }

@@ -5,11 +5,12 @@ import java.util.List;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.HasParentValue;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public interface CatalogActionContext
-		extends ServiceContext, HasParent<CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
+		extends ServiceContext, HasParentValue<Object,CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
 
 	final String CATALOG = "CatalogActionContext";
 	
@@ -52,5 +53,5 @@ public interface CatalogActionContext
 
 	void setNamespace(String domain) throws Exception;
 
-
+	public CatalogActionContext spawnChild();
 }

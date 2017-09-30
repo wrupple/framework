@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
@@ -12,9 +13,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
@@ -22,14 +22,37 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
+	private final Map<String,List<CatalogActionTrigger>> catalogScope;
 
 	@Inject
 	public CatalogTriggerInterpretImpl(Provider<CatalogServiceManifest> manifestP,
-			CatalogDeserializationService deserializer) {
+                                       CatalogDeserializationService deserializer) {
 		super();
 		this.manifestP = manifestP;
 		this.deserializer = deserializer;
+		this.catalogScope = new HashMap<>();
+    }
+
+	/**
+	 * before == trigger.isAdvice()
+	 * @param context
+	 * @param advise
+	 * @return
+	 */
+	@Override public List<CatalogActionTrigger> getTriggersValues(CatalogActionContext context, boolean advise){
+		return catalogScope.get(context.getCatalogDescriptor().getDistinguishedName()).stream().filter(t -> t.isAdvice()==advise).collect(Collectors.toList());
 	}
+
+	@Override public void addCatalogScopeTrigger(CatalogActionTrigger trigger, CatalogDescriptor catalog){
+        // Como almacenar triggers?
+        List<CatalogActionTrigger> triggers = catalogScope.get(catalog.getDistinguishedName());
+        if(triggers==null){
+            triggers = new ArrayList<>(2);
+            catalogScope.put(catalog.getDistinguishedName(),triggers);
+        }
+        triggers.add(trigger);
+    }
+
 
 	@Override
 	public void invokeTrigger(Map<String, String> properties, CatalogActionContext context, CatalogTrigger trigger)
