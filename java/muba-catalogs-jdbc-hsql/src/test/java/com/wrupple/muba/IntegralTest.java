@@ -14,11 +14,9 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.ApplicationModule;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Host;
-import com.wrupple.muba.event.domain.Person;
-import com.wrupple.muba.event.domain.SessionContext;
-import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.chain.PublishEvents;
+import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
@@ -119,6 +117,10 @@ public class IntegralTest extends AbstractTest{
 
         CatalogEventListenerManifest listenerManifest = injector.getInstance(CatalogEventListenerManifest.class);
         switchs.getIntentInterpret().registerService(listenerManifest, injector.getInstance(CatalogEventHandler.class),injector.getInstance(CatalogEventInterpret.class));
+
+
+        BroadcastServiceManifest broadcastManifest = injector.getInstance(BroadcastServiceManifest.class);
+        switchs.getIntentInterpret().registerService(broadcastManifest, injector.getInstance(PublishEvents.class),injector.getInstance(BroadcastInterpret.class));
 
 
     }

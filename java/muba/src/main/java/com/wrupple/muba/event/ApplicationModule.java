@@ -6,8 +6,10 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.event.server.chain.command.impl.JavaSentenceNativeInterface;
+import com.wrupple.muba.event.server.chain.command.impl.PublishEventsImpl;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.event.server.domain.impl.PersistentCatalogEntityImpl;
 import com.wrupple.muba.event.server.service.*;
@@ -46,7 +48,7 @@ public class ApplicationModule extends AbstractModule {
 		 * Commands
 		 */
 		bind(EventDispatcher.class).to(EventDispatcherImpl.class);
-		bind(SentenceNativeInterface.class).to(JavaSentenceNativeInterface.class);
+        bind(PublishEvents.class).to(PublishEventsImpl.class);
 		/*bind(EventRegistry.class).to(EventRegistryImpl.class);
 		 * Services
 		 */
@@ -61,7 +63,7 @@ public class ApplicationModule extends AbstractModule {
         bind(FieldAccessStrategy.class).to(JavaFieldAccessStrategy.class);
         bind(FilterNativeInterface.class).to(JavaFilterNativeInterfaceImpl.class);
         bind(LargeStringFieldDataAccessObject.class).to(LargeStringFieldDataAccessObjectImpl.class);
-
+        bind(SentenceNativeInterface.class).to(JavaSentenceNativeInterface.class);
     }
 
     @Provides

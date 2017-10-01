@@ -158,8 +158,6 @@ public class CatalogModule extends AbstractModule {
 		bind(CatalogUpdateTransaction.class).to(CatalogUpdateTransactionImpl.class);
 		bind(CatalogDeleteTransaction.class).to(CatalogDeleteTransactionImpl.class);
 
-		bind(PublishEvents.class).to(PublishEventsImpl.class);
-
 		bind(EntryDeleteTrigger.class).to(EntryDeleteTriggerImpl.class);
 		bind(FieldDescriptorUpdateTrigger.class).to(FieldDescriptorUpdateTriggerImpl.class);
 		bind(CatalogDescriptorUpdateTrigger.class).to(CatalogDescriptorUpdateTriggerImpl.class);

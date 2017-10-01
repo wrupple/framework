@@ -1,0 +1,15 @@
+package com.wrupple.muba.event.domain;
+
+import org.apache.commons.chain.Context;
+
+/**
+ * Created by japi on 30/09/17.
+ */
+public interface BroadcastContext extends ServiceContext{
+
+    final String CURRENT_EVENT="catalog.event.processing";
+    final String CONCERNED_CLIENTS = "catalog.event.concerned";
+    EventBroadcastQueueElement getEventValue();
+
+    void setElement(EventBroadcastQueueElement contract);
+}

@@ -19,7 +19,6 @@ package com.wrupple.muba.catalogs.server.service;
         import com.wrupple.muba.catalogs.CatalogTestModule;
         import com.wrupple.muba.catalogs.domain.*;
         import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
-        import com.wrupple.muba.event.server.chain.EventSuscriptionChain;
         import com.wrupple.muba.catalogs.server.chain.command.*;
         import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
         import com.wrupple.muba.event.server.service.FieldAccessStrategy;
