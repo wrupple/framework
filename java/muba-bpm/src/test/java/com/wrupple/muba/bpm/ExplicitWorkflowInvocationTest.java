@@ -3,9 +3,12 @@ package com.wrupple.muba.bpm;
 import static org.easymock.EasyMock.anyObject;
 import static org.junit.Assert.assertTrue;
 
+import com.wrupple.muba.bpm.domain.Booking;
+import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.event.EventBus;
 
 import com.wrupple.muba.MubaTest;
+import org.junit.Test;
 
 
 /**
@@ -49,6 +52,8 @@ public class ExplicitWorkflowInvocationTest extends MubaTest {
 	 * (task.getProducedField())
 	 * 
 	 * @throws Exception
+	 *
+	 */
 
 	@Test
 	public void submitBookingData() throws Exception {
@@ -109,7 +114,7 @@ public class ExplicitWorkflowInvocationTest extends MubaTest {
 	//
 	//
 		runtimeContext.reset();
-		BusinessEvent submit;
+		BusinessIntent submit;
 		runtimeContext.setServiceContract(submit);
 		runtimeContext.setSentence(rootActivity, synthesizeTrackingObject);
 		HumanActivityTracking tracking = runtimeContext.getServiceContext();

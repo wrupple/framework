@@ -5,7 +5,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
-import com.wrupple.muba.catalogs.domain.CatalogEventListenerManifest;
+import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
@@ -115,7 +115,7 @@ public class IntegralTest extends AbstractTest{
         CatalogActionFilterManifest preService = injector.getInstance(CatalogActionFilterManifest.class);
         switchs.getIntentInterpret().registerService(preService, injector.getInstance(CatalogActionFilterEngine.class),injector.getInstance(CatalogActionFilterInterpret.class));
 
-        CatalogEventListenerManifest listenerManifest = injector.getInstance(CatalogEventListenerManifest.class);
+        CatalogIntentListenerManifest listenerManifest = injector.getInstance(CatalogIntentListenerManifest.class);
         switchs.getIntentInterpret().registerService(listenerManifest, injector.getInstance(CatalogEventHandler.class),injector.getInstance(CatalogEventInterpret.class));
 
 

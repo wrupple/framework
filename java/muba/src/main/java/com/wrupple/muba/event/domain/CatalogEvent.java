@@ -7,7 +7,7 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
  * @author japi
  *
  */
-public interface CatalogIntent extends Intent,HasCatalogKey {
+public interface CatalogEvent extends Event,HasCatalogKey {
 
 
     public final String DELETE_ACTION = "delete";

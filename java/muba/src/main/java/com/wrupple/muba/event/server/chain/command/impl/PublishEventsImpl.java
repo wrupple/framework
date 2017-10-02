@@ -1,9 +1,9 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.BroadcastContext;
-import com.wrupple.muba.event.domain.EventBroadcastQueueElement;
-import com.wrupple.muba.event.domain.Host;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.event.server.chain.PublishEvents;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.generic.LookupCommand;
@@ -31,11 +31,11 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
 
     @Override
     public boolean execute(Context ctx) throws Exception {
+        BroadcastContext context = (BroadcastContext) ctx;
+        EventBroadcastQueueElement queueElement=context.getEventValue();
+        List<FilterCriteria> explicitObservers = queueElement.getObserversValues();
+        Event event = queueElement.getEventValue();
 
-
-
-
-        CatalogActionContext context = (CatalogActionContext) ctx;
         Collection<CatalogPeer> concernedClients = (Collection<CatalogPeer>) context
                 .get(EventSuscriptionChain.CONCERNED_CLIENTS);
         CatalogChangeEvent event = (CatalogChangeEvent) context.get(EventSuscriptionChain.CURRENT_EVENT);
@@ -71,8 +71,6 @@ public class PublishEventsImpl  extends LookupCommand   implements PublishEvents
             }
         }
 
-        BroadcastContext context = (BroadcastContext) c;
-        EventBroadcastQueueElement queueElement=context.getEventValue();
         System.err.println("[Publish Request Events]");
 
         // UPDATE CLIENT'S ACTIVITY STATUS

@@ -17,8 +17,8 @@ import java.util.Arrays;
 public class IntentResolverServiceManifestImpl extends ServiceManifestImpl implements IntentResolverServiceManifest {
 
     @Inject
-    public IntentResolverServiceManifestImpl( @Named(ImplicitIntent.CATALOG)CatalogDescriptor contractDescriptorValue) {
+    public IntentResolverServiceManifestImpl(@Named(ImplicitIntent.CATALOG)CatalogDescriptor contractDescriptorValue) {
         super(IntentResolverServiceManifest.SERVICE_NAME, "1.0", contractDescriptorValue, Arrays.asList(
-                ImplicitIntent.CATALOG_FIELD,ImplicitIntent.OUTOUT_CATALOG));
+                ImplicitIntent.CATALOG_FIELD, ImplicitIntent.OUTOUT_CATALOG));
     }
 }

@@ -3,16 +3,16 @@ package com.wrupple.muba.event.domain;
 import java.util.List;
 
 public class EventBroadcastQueueElementImpl extends CatalogEntryImpl implements EventBroadcastQueueElement {
-    private  Intent eventValue;
+    private Event eventValue;
     private List<FilterCriteria> observersValues;
 
     @Override
-    public Intent getEventValue() {
+    public Event getEventValue() {
         return eventValue;
     }
 
     @Override
-    public void setEventValue(Intent eventValue) {
+    public void setEventValue(Event eventValue) {
         this.eventValue = eventValue;
     }
 

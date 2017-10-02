@@ -2,11 +2,11 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.BusinessIntent;
 import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.chain.Context;
@@ -43,7 +43,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     @Override
     public boolean execute(Context ctx) throws Exception {
         RuntimeContext requestContext = (RuntimeContext) ctx;
-        BusinessEvent contractExplicitIntent = (BusinessEvent) requestContext.getServiceContract();
+        BusinessIntent contractExplicitIntent = (BusinessIntent) requestContext.getServiceContract();
         ApplicationContext context = requestContext.getServiceContext();
 
         BeanUtils.copyProperties(context,contractExplicitIntent);

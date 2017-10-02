@@ -12,10 +12,10 @@ import java.util.List;
 @Singleton
 public class InferNextTaskImpl implements InferNextTask {
 
-    private final Provider<WorkflowFinishedEvent> eventProvider;
+    private final Provider<WorkflowFinishedIntent> eventProvider;
 
     @Inject
-    public InferNextTaskImpl(Provider<WorkflowFinishedEvent> eventProvider) {
+    public InferNextTaskImpl(Provider<WorkflowFinishedIntent> eventProvider) {
         this.eventProvider = eventProvider;
     }
 
@@ -23,11 +23,11 @@ public class InferNextTaskImpl implements InferNextTask {
     public boolean execute(Context ctx) throws Exception {
 
         BusinessContext context = (BusinessContext) ctx;
-        BusinessEvent contractExplicitIntent = (BusinessEvent) context.getRuntimeContext().getServiceContract();
+        BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
         ApplicationContext applicationState = context.getRuntimeContext().getConvertedResult();
 
          /*
-            BusinessEventImpl bookingRequest = new BusinessEventImpl();
+            BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
         bookingRequest.setHandle(item.getId());
         bookingRequest.setEntry(booking.getId());
         bookingRequest.setState(null);
@@ -47,7 +47,7 @@ public class InferNextTaskImpl implements InferNextTask {
             // PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
             //state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
 
-            WorkflowFinishedEvent event = eventProvider.get();
+            WorkflowFinishedIntent event = eventProvider.get();
 
             event.setCatalog((String) applicationState.getTaskDescriptorValue().getCatalog());
             String command = applicationState.getApplicationValue().getExit();

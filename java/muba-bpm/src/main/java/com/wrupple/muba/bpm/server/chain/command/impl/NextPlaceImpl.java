@@ -10,7 +10,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.WorkflowFinishedEvent;
+import com.wrupple.muba.bpm.domain.WorkflowFinishedIntent;
 import com.wrupple.muba.desktop.client.services.command.NextPlace;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
@@ -48,7 +48,7 @@ public class NextPlaceImpl implements com.wrupple.muba.bpm.server.chain.command.
 	public boolean execute(Context ctx) throws Exception {
 
 		RuntimeContext context = (RuntimeContext) ctx;
-		WorkflowFinishedEvent event = (WorkflowFinishedEvent) context.getServiceContract();
+		WorkflowFinishedIntent event = (WorkflowFinishedIntent) context.getServiceContract();
 		ApplicationState state= (ApplicationState) event.getState();
 
         Workflow currentItem = state.getApplicationValue();

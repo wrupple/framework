@@ -28,7 +28,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
     public boolean execute(Context ctx) throws Exception {
 
         BusinessContext context = (BusinessContext) ctx;
-        BusinessEvent contractExplicitIntent = (BusinessEvent) context.getRuntimeContext().getServiceContract();
+        BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
         ApplicationContext applicationState = context.getRuntimeContext().getConvertedResult();
         ProcessTaskDescriptor task = applicationState.getTaskDescriptorValue();
         String producedField = task.getOutputField();

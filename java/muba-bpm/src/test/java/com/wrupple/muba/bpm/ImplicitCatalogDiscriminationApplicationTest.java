@@ -5,12 +5,12 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
+import com.wrupple.muba.bpm.domain.impl.BusinessIntentImpl;
 import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.command.WorkflowEventInterpret;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
-import com.wrupple.muba.bpm.domain.impl.BusinessEventImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
@@ -220,7 +220,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
         log.trace("[-Create Booking Handling Application Context-]");
 
         //item+booking;
-        BusinessEventImpl bookingRequest = new BusinessEventImpl();
+        BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
         bookingRequest.setHandle(item.getId());
         bookingRequest.setEntry(booking.getId());
         bookingRequest.setState(null /*this means create a new activity context, otherwise the context would be retrived*/);
@@ -260,7 +260,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
 
         log.info("post solution of first task to the business engine");
 
-        bookingRequest = new BusinessEventImpl();
+        bookingRequest = new BusinessIntentImpl();
         bookingRequest.setEntryValue(driver);
         //we explicitly avoid exposing the applicationId to test service location bookingRequest.setState((Long) activityState.getId());
 

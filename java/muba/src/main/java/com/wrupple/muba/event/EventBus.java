@@ -21,13 +21,13 @@ public interface EventBus
 
     EventRegistry getIntentInterpret();
 
-    void broadcastEvent(Intent event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
+    void broadcastEvent(Event event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
 
     boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception;
 
-    <T> T fireEvent(Intent implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception;
+    <T> T fireEvent(Event implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception;
 
-    <T> T fireEvent(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception;
+    <T> T fireEvent(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception;
 
 	public UserTransaction getTransaction();
 

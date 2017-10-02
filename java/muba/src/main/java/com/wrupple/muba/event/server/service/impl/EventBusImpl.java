@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -98,7 +97,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
     @Override
-    public void broadcastEvent(Intent event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
+    public void broadcastEvent(Event event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
         EventBroadcastQueueElement queued = queueElementProvider.get();
         queued.setEventValue(event);
         queued.setObserversValues(explicitlySuscriptedObservers);
@@ -111,13 +110,13 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
 
-    public boolean fireHandler(ExplicitIntent event, SessionContext session,RuntimeContext parentTimeline) throws Exception {
+    public boolean fireHandler(ExplicitIntent event, SessionContext session, RuntimeContext parentTimeline) throws Exception {
         RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
         return fireHandlerWithRuntime(event,runtimeContext);
     }
 
     @Override
-    public <T> T fireEvent(Intent implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception {
+    public <T> T fireEvent(Event implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception {
         return fireonRuntimeline(implicitRequestContract,parent.getSession(),handlerCriterion,parent);
     }
 
@@ -130,11 +129,11 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
     @Override
-    public <T> T fireEvent(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
+    public <T> T fireEvent(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
        return fireonRuntimeline(implicitRequestContract,session,handlerCriterion,null);
     }
 
-    public <T> T fireonRuntimeline(Intent implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion,RuntimeContext parentTimeline) throws Exception {
+    public <T> T fireonRuntimeline(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline) throws Exception {
         List<ServiceManifest> manifests = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
 
         if(manifests==null || manifests.isEmpty()){

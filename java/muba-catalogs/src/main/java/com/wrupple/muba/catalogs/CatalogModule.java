@@ -14,15 +14,8 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
-import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
-import com.wrupple.muba.event.server.service.FilterNativeInterface;
-import com.wrupple.muba.event.server.service.ObjectNativeInterface;
-import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
-import com.wrupple.muba.event.server.service.impl.JavaFilterNativeInterfaceImpl;
-import com.wrupple.muba.event.server.service.impl.JavaObjectNativeInterface;
-import com.wrupple.muba.event.server.service.impl.LargeStringFieldDataAccessObjectImpl;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.LongConverter;
@@ -34,8 +27,6 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.event.server.chain.command.impl.PublishEventsImpl;
 import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
@@ -47,7 +38,6 @@ import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValid
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.Deleters;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
-import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
 import com.wrupple.muba.catalogs.server.service.QueryReaders;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
@@ -68,7 +58,7 @@ public class CatalogModule extends AbstractModule {
 	     */
         bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
         bind(CatalogActionFilterManifest.class).to(CatalogActionFilterManifestImpl.class);
-        bind(CatalogEventListenerManifest.class).to(CatalogEventListenerManifestImpl.class);
+        bind(CatalogIntentListenerManifest.class).to(CatalogIntentListenerManifestImpl.class);
 
         bind(CatalogEngine.class).to(CatalogEngineImpl.class);
         bind(CatalogActionFilterEngine.class).to(CatalogActionFilterEngineImpl.class);

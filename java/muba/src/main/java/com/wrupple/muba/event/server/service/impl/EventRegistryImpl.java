@@ -193,7 +193,7 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
     @Override
-    public ExplicitIntent resolveIntent(Intent implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
+    public ExplicitIntent resolveIntent(Event implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
         if (serviceManifest != null) {
             String output =implicitRequestContract instanceof ImplicitIntent ?  ((ImplicitIntent)implicitRequestContract).getOutputCatalog() :null;
             if (output == null) {
@@ -206,7 +206,7 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
 
-    private ExplicitIntent createIntent(RuntimeContext context, Intent intent, ServiceManifest serviceManifest) {
+    private ExplicitIntent createIntent(RuntimeContext context, Event intent, ServiceManifest serviceManifest) {
 
         List<String> pathTokens = generatePathTokens(serviceManifest);
         //TODO Business Event or User Event

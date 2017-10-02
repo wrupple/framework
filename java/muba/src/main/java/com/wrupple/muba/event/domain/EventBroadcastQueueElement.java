@@ -3,13 +3,15 @@ package com.wrupple.muba.event.domain;
 
 import java.util.List;
 
-public interface EventBroadcastQueueElement extends Intent{
+public interface EventBroadcastQueueElement extends Event {
 
     String CATALOG = "EventBroadcastQueueElement";
 
-    Intent getEventValue();
+    Event getEventValue();
 
-    void setEventValue(Intent event);
+    void setEventValue(Event event);
 
     void setObserversValues(List<FilterCriteria> explicitlySuscriptedObservers);
+
+    List<FilterCriteria> getObserversValues();
 }

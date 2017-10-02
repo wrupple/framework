@@ -8,7 +8,7 @@ import com.wrupple.muba.event.domain.ImplicitIntent;
  * @author japi
  *
  */
-public interface Notification extends BusinessEvent,ImplicitIntent{
+public interface Notification extends BusinessIntent,ImplicitIntent {
 
 	String CATALOG = "Notification";
 

@@ -6,6 +6,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.event.domain.ImplicitIntent;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.*;
@@ -15,7 +16,6 @@ import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.chain.impl.BusinessEngineImpl;
-import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.impl.BusinessPluginImpl;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
@@ -78,7 +78,7 @@ public class BusinessModule  extends AbstractModule {
     @Named(ImplicitIntent.CATALOG)
     public CatalogDescriptor intent(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(ImplicitIntentImpl.class, ImplicitIntent.CATALOG, "Intent",
+        CatalogDescriptor r = builder.fromClass(ImplicitIntentImpl.class, ImplicitIntent.CATALOG, "Event",
                 -990091, null);
         r.setClazz(ImplicitIntentImpl.class);
         return r;

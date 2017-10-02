@@ -1,16 +1,16 @@
 package com.wrupple.muba.bpm.domain.impl;
 
+import com.wrupple.muba.bpm.domain.BusinessIntent;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.event.domain.annotations.CatalogKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 /**
  * Created by japi on 12/08/17.
  */
-public class BusinessEventImpl extends ManagedObjectImpl implements BusinessEvent {
+public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessIntent {
     @CatalogKey(
             foreignCatalog = ApplicationState.CATALOG
     )

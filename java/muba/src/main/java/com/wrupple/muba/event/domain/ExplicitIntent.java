@@ -1,10 +1,8 @@
 package com.wrupple.muba.event.domain;
 
-import com.wrupple.muba.event.domain.reserved.HasCatalogId;
-
 import java.util.List;
 
-public interface ExplicitIntent extends Intent{
+public interface ExplicitIntent extends Event {
 
 	final String HANDLE_FIELD = "sentence";
     String CATALOG = "ExplicitIntent";

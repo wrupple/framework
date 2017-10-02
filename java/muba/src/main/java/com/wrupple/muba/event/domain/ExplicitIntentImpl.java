@@ -1,6 +1,5 @@
 package com.wrupple.muba.event.domain;
 
-import javax.validation.constraints.Null;
 import java.util.Arrays;
 import java.util.List;
 

@@ -11,7 +11,7 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
 
 @Singleton
-public class WebEventServiceManifestImpl extends CatalogServiceManifestImpl implements com.wrupple.muba.bpm.domain.WebEventServiceManifest {
+public class WebEventServiceManifestImpl extends CatalogServiceManifestImpl implements WebIntentServiceManifest {
 
 	@Inject
 	public WebEventServiceManifestImpl(@Named(CatalogActionRequest.CATALOG) CatalogDescriptor descriptor, CatalogRequestInterpret requestInterpret,

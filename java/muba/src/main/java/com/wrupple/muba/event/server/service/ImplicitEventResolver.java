@@ -40,7 +40,7 @@ public interface ImplicitEventResolver {
 
     public ExplicitIntent resolveIntent(ImplicitIntent intent, RuntimeContext context) throws Exception;
 
-    public ExplicitIntent resolveIntent(Intent implicitRequestContract, ServiceManifest manifest, RuntimeContext parentTimeline);
+    public ExplicitIntent resolveIntent(Event implicitRequestContract, ServiceManifest manifest, RuntimeContext parentTimeline);
 
 
     CatalogFactory getDictionaryFactory();

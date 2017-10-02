@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.server.domain;
 
-import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.IntentResolverContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.chain.impl.ContextBase;
 
 /**

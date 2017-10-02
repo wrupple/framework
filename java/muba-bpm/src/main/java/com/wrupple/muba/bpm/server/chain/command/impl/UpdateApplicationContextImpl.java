@@ -1,9 +1,9 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.bpm.domain.BusinessIntent;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.BusinessEvent;
 import com.wrupple.muba.bpm.server.chain.command.UpdateApplicationContext;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import org.apache.commons.chain.Context;
@@ -16,7 +16,7 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
     public boolean execute(Context  ctx) throws Exception {
         BusinessContext context = (BusinessContext) ctx;
         if(context.isChanged()){
-            BusinessEvent contractExplicitIntent = (BusinessEvent) context.getRuntimeContext().getServiceContract();
+            BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
             ApplicationState applicationState = context.getRuntimeContext().getConvertedResult();
 
             applicationState.setEntryValue((CatalogEntry) context.getRuntimeContext().getServiceContract());
