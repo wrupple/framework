@@ -2,6 +2,8 @@ package com.wrupple.muba.event.domain;
 
 import org.apache.commons.chain.Context;
 
+import java.util.Collection;
+
 /**
  * Created by japi on 30/09/17.
  */
@@ -12,4 +14,10 @@ public interface BroadcastContext extends ServiceContext{
     EventBroadcastQueueElement getEventValue();
 
     void setElement(EventBroadcastQueueElement contract);
+
+    BroadcastContext setRuntimeContext(RuntimeContext requestContext);
+
+    void addConcernedPeers(Collection<? extends Host> results);
+
+    Collection<Host> getConcernedPeers();
 }
