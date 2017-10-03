@@ -10,8 +10,6 @@ import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 
 public class CatalogTestModule extends AbstractModule {
-	
-	
 
 	@Override
 	protected void configure() {
@@ -19,8 +17,6 @@ public class CatalogTestModule extends AbstractModule {
 		bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
 		
 	}
-
-	
 
 
 	@Provides
@@ -32,7 +28,5 @@ public class CatalogTestModule extends AbstractModule {
 		CatalogPlugin[] plugins = new CatalogPlugin[] { user };
 		return plugins;
 	}
-
-	
 
 }

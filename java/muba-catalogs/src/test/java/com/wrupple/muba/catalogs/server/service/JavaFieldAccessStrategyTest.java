@@ -58,7 +58,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
             WriteOutput mockWriter = mock(WriteOutput.class);
             WriteAuditTrails mockLogger = mock(WriteAuditTrails.class);
              peerValue= mock(Host.class);
-            EventSuscriptionChain chainMock = mock(EventSuscriptionChain.class);
 
             DataCreationCommand mockCreate = mock(DataCreationCommand.class);
             DataQueryCommand mockQuery = mock(DataQueryCommand.class);
@@ -75,7 +74,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
             bind(WriteAuditTrails.class).toInstance(mockLogger);
             bind(WriteOutput.class).toInstance(mockWriter);
-            bind(EventSuscriptionChain.class).toInstance(chainMock);
 
 
             bind(FormatDictionary.class).toInstance(mock(FormatDictionary.class));

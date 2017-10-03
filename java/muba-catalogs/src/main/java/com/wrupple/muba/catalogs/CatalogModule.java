@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.domain.CatalogEvent;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.*;

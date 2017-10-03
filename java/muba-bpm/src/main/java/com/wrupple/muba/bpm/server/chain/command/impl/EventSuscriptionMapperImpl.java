@@ -28,7 +28,7 @@ public class EventSuscriptionMapperImpl  implements EventSuscriptionMapper {
     @Override
     public boolean execute(Context ctx) throws Exception {
         BroadcastContext context = (BroadcastContext) ctx;
-        EventBroadcastQueueElement queueElement=context.getEventValue();
+        BroadcastEvent queueElement=context.getEventValue();
         List<FilterCriteria> explicitObservers = queueElement.getObserversValues();
         Event event = queueElement.getEventValue();
 

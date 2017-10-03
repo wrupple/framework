@@ -1,98 +1,64 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
-import com.wrupple.muba.event.domain.reserved.HasEntryId;
-import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
-import org.apache.commons.chain.generic.LookupCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.util.*;
+import java.util.stream.Stream;
 
 @Singleton
-public class PublishEventsImpl extends LookupCommand   implements PublishEvents {
+public class PublishEventsImpl    implements PublishEvents {
+    protected static final Logger log = LoggerFactory.getLogger(PublishEventsImpl.class);
 
-	public static boolean ENABLE_IMPLICIT_SUSCRIPTIONS = true;
+    private final boolean parallel;
+    private final Provider<BroadcastQueueAppend> queueProvider;
 
-	@Inject
-	public PublishEventsImpl(CatalogFactory factory) {
-		super(factory);
-		super.setNameKey(PublishEvents.CHANNEL_DICTIONARY);
-		super.setCatalogName(PublishEvents.CHANNEL_DICTIONARY);
+    @Inject
+	public PublishEventsImpl(@Named("event.parallel") Boolean parallel,  Provider<BroadcastQueueAppend> queueProvider) {
+		super();
+		this.parallel = parallel.booleanValue();
+        this.queueProvider = queueProvider;
 	}
-
-
-
 
     @Override
     public boolean execute(Context ctx) throws Exception {
         BroadcastContext context = (BroadcastContext) ctx;
-        EventBroadcastQueueElement queueElement=context.getEventValue();
-        List<FilterCriteria> explicitObservers = queueElement.getObserversValues();
-        Event event = queueElement.getEventValue();
-
-
-        System.err.println("[Publish Request Events]");
-
+        BroadcastEvent queueElement=context.getEventValue();
+        EventBus eventBus = context.getRuntimeContext().getEventBus();
+        log.debug("<PublishEventsImpl>");
+        log.debug("Broadcast event {}",queueElement);
         // UPDATE CLIENT'S ACTIVITY STATUS
 
-        Collection<Host> concernedClients = context.getConcernedPeers();
+        Stream<Host> concernedClients = parallel?context.getConcernedPeersValues().parallelStream():context.getConcernedPeersValues().stream();
 
 
-        //FIXME a hosts channel determines what broadcast queue to place the event in
-
-        Host client = (Host) context.getRuntimeContext().getSession().getPeerValue();
-
-        // String remembermeToken = peer.getPublicKey();
-
-        if (client != null) {
-            if (client.getSubscriptionStatus() != null
-                    && client.getSubscriptionStatus().intValue() != Host.STATUS_ONLINE) {
-                client.setSubscriptionStatus(Host.STATUS_ONLINE);
-
+        concernedClients.forEach((Host host) -> {
+            BroadcastQueueAppend queue = queueProvider.get();
+            queue.setHostValue(host);
+            queue.setQueuedElementValue(queueElement);
+            queue.setCatalog(queueElement.getEventValue().getCatalogType());
+            try {
+                log.debug("Append to broadcast channel of host {}",host);
+                eventBus.fireEvent(queue, context.getRuntimeContext(), null);
+            } catch (Exception e) {
+                log.error("failed to append event to host broadcast queue",e);
             }
-        }
+            //return queue;
+        });
 
-        List<CatalogEvent> broadcastable = context.getRootAncestor().getEvents();
-
-        // BROADCAST EVENT'S TO CONCERNED CLIENTS
-
-        if (broadcastable != null && !broadcastable.isEmpty()) {
-            Collection<Host> concernedClients;
-            for (CatalogEvent data : broadcastable) {
-
-                // push to online clients
-                concernedClients = getConcernedClients(data, context);
-                Session session = context.getCatalogManager().access().newSession(null);
-                if (concernedClients != null) {
-                    publishImplicitEvents(data, concernedClients,context,session);
-                }
-
-            }
-        }
+        log.debug("</PublishEventsImpl>");
 
         return CONTINUE_PROCESSING;
 
     }
 
-
-
-	private void publishImplicitEvents(CatalogEvent event, Collection<Host> concernedClients,CatalogActionContext context, Session session) throws Exception {
-		boolean goAhead = actionRequiresNotifying(event.getName());
-		if (goAhead && concernedClients!=null  &&! concernedClients.isEmpty() ){
-			for(Host client : concernedClients){
-				context.put(EventSuscriptionChain.CONCERNED_CLIENTS, client);
-				context.put(EventSuscriptionChain.CURRENT_EVENT, event);
-				context.put(CHANNEL_DICTIONARY, context.getCatalogManager().getDenormalizedFieldValue(client,Host.CHANNEL_FIELD, session, context));
-				super.execute(context);
-			}
-		}
-	}
 
 	
 	/*

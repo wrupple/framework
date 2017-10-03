@@ -1,18 +1,19 @@
 package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.DataEvent;
 
 import java.util.List;
 
 /**
- * 
+ * Fired after an action is commited
  * acts kind of like a compressed version of vegetate's CatalogAction
  * request
  * 
  * @author japi
  *
  */
-public interface CatalogEvent extends com.wrupple.muba.event.domain.CatalogEvent,HasLiveContext{
+public interface CatalogEvent extends DataEvent,HasLiveContext{
 
 	String CATALOG = "CatalogEvent";
 

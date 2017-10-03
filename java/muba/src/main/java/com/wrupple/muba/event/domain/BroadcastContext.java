@@ -1,7 +1,5 @@
 package com.wrupple.muba.event.domain;
 
-import org.apache.commons.chain.Context;
-
 import java.util.Collection;
 
 /**
@@ -11,13 +9,13 @@ public interface BroadcastContext extends ServiceContext{
 
     final String CURRENT_EVENT="catalog.event.processing";
     final String CONCERNED_CLIENTS = "catalog.event.concerned";
-    EventBroadcastQueueElement getEventValue();
+    BroadcastEvent getEventValue();
 
-    void setElement(EventBroadcastQueueElement contract);
+    void setEventValue(BroadcastEvent contract);
 
     BroadcastContext setRuntimeContext(RuntimeContext requestContext);
 
     void addConcernedPeers(Collection<? extends Host> results);
 
-    Collection<Host> getConcernedPeers();
+    Collection<Host> getConcernedPeersValues();
 }

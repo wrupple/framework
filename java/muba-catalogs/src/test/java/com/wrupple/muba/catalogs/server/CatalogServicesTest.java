@@ -53,7 +53,6 @@ public class CatalogServicesTest extends MubaTest {
 
 	protected DataDeleteCommand mockDelete;
 
-	protected EventSuscriptionChain chainMock;
 
 	class CatalogServicesTestModule extends AbstractModule {
 
@@ -66,7 +65,6 @@ public class CatalogServicesTest extends MubaTest {
 			mockWriter = mock(WriteOutput.class);
 			mockLogger = mock(WriteAuditTrails.class);
 			peerValue = mock(Host.class);
-			chainMock = mock(EventSuscriptionChain.class);
              mockCreate = mock(DataCreationCommand.class);
              mockQuery = mock(DataQueryCommand.class);
              mockRead = mock(DataReadCommand.class);
@@ -84,7 +82,6 @@ public class CatalogServicesTest extends MubaTest {
 
 			bind(WriteAuditTrails.class).toInstance(mockLogger);
 			bind(WriteOutput.class).toInstance(mockWriter);
-			bind(EventSuscriptionChain.class).toInstance(chainMock);
 			/*
 			 * COMMANDS
 			 */
@@ -136,7 +133,6 @@ public class CatalogServicesTest extends MubaTest {
 	@Before
 	public void setUp() throws Exception {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
 

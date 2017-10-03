@@ -17,6 +17,7 @@ import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
@@ -36,11 +37,12 @@ public class IntegralTest extends AbstractTest{
 
     protected WriteOutput mockWriter;
 
+    protected EventSuscriptionMapper mockSuscriptor;
+
     protected WriteAuditTrails mockLogger;
 
     protected Host peerValue;
 
-    protected EventSuscriptionChain chainMock;
 
     class IntegralTestModule extends AbstractModule {
 
@@ -60,10 +62,11 @@ public class IntegralTest extends AbstractTest{
             mockWriter = mock(WriteOutput.class);
             mockLogger = mock(WriteAuditTrails.class);
             peerValue = mock(Host.class);
-            chainMock = mock(EventSuscriptionChain.class);
+            mockSuscriptor = mock(EventSuscriptionMapper.class);
             bind(WriteAuditTrails.class).toInstance(mockLogger);
             bind(WriteOutput.class).toInstance(mockWriter);
-            bind(EventSuscriptionChain.class).toInstance(chainMock);
+            bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
+
 			/*
 			 * COMMANDS
 			 */

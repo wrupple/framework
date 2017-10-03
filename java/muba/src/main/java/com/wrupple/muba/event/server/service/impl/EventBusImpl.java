@@ -44,10 +44,10 @@ public class EventBusImpl extends ContextBase implements EventBus {
     private final FilterNativeInterface filterer;
 
     private final IntrospectionStrategy instrospector;
-    private final Provider<EventBroadcastQueueElement> queueElementProvider;
+    private final Provider<BroadcastEvent> queueElementProvider;
 
     @Inject
-	public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named(ServiceManifest.CATALOG) CatalogDescriptor handleField, FieldAccessStrategy instrospector, Provider<EventBroadcastQueueElement> queueElementProvider) {
+	public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named(ServiceManifest.CATALOG) CatalogDescriptor handleField, FieldAccessStrategy instrospector, Provider<BroadcastEvent> queueElementProvider) {
 		super();
 		this.parallel=parallel;
 		this.process=process;
@@ -98,7 +98,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
 
     @Override
     public void broadcastEvent(Event event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
-        EventBroadcastQueueElement queued = queueElementProvider.get();
+        BroadcastEvent queued = queueElementProvider.get();
         queued.setEventValue(event);
         queued.setObserversValues(explicitlySuscriptedObservers);
         fireEvent(queued,runtimeContext,null/*use all broadcast handlers*/);

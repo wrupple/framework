@@ -100,9 +100,7 @@ public class HSQLTest extends AbstractTest {
 
 			WriteOutput mockWriter = mock(WriteOutput.class);
 			WriteAuditTrails mockLogger = mock(WriteAuditTrails.class);
-			EventSuscriptionChain mockSuscriptorChain = mock(EventSuscriptionChain.class);
 
-			bind(EventSuscriptionChain.class).toInstance(mockSuscriptorChain);
 			bind(WriteAuditTrails.class).toInstance(mockLogger);
 			bind(WriteOutput.class).toInstance(mockWriter);
 

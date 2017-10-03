@@ -1,11 +1,10 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.BroadcastContext;
-import com.wrupple.muba.event.domain.EventBroadcastQueueElement;
+import com.wrupple.muba.event.domain.BroadcastEvent;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -33,9 +32,9 @@ public class BroadcastInterpretImpl implements BroadcastInterpret {
     @Override
     public boolean execute(Context ctx) throws Exception {
         RuntimeContext requestContext = (RuntimeContext) ctx;
-        EventBroadcastQueueElement contract = (EventBroadcastQueueElement) requestContext.getServiceContract();
+        BroadcastEvent contract = (BroadcastEvent) requestContext.getServiceContract();
         BroadcastContext context = requestContext.getServiceContext();
-        context.setElement(contract);
+        context.setEventValue(contract);
         return concernedInterests.execute(context);
     }
 }

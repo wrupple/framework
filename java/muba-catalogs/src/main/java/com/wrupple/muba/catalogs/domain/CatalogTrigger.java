@@ -1,9 +1,10 @@
 package com.wrupple.muba.catalogs.domain;
 
+import com.wrupple.muba.event.domain.DataEvent;
 import com.wrupple.muba.event.domain.reserved.HasProperties;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
-public interface CatalogTrigger extends com.wrupple.muba.event.domain.CatalogEvent, HasStakeHolder,HasProperties {
+public interface CatalogTrigger extends DataEvent, HasStakeHolder,HasProperties {
 	
 	String SERIALIZED = "serializedEntry";
 

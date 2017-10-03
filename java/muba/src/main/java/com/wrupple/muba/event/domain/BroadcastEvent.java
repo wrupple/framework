@@ -3,9 +3,9 @@ package com.wrupple.muba.event.domain;
 
 import java.util.List;
 
-public interface EventBroadcastQueueElement extends Event {
+public interface BroadcastEvent extends Event {
 
-    String CATALOG = "EventBroadcastQueueElement";
+    String CATALOG = "BroadcastEvent";
 
     Event getEventValue();
 

@@ -2,7 +2,7 @@ package com.wrupple.muba.event.domain;
 
 import java.util.List;
 
-public class EventBroadcastQueueElementImpl extends CatalogEntryImpl implements EventBroadcastQueueElement {
+public class BroadcastEventImpl extends CatalogEntryImpl implements BroadcastEvent {
     private Event eventValue;
     private List<FilterCriteria> observersValues;
 
@@ -27,7 +27,7 @@ public class EventBroadcastQueueElementImpl extends CatalogEntryImpl implements 
 
     @Override
     public String getCatalogType() {
-        return EventBroadcastQueueElement.CATALOG;
+        return BroadcastEvent.CATALOG;
     }
 
     @Override
