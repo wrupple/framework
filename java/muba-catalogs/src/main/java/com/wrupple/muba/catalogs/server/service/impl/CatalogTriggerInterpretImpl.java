@@ -1,42 +1,69 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.validation.ConstraintViolation;
-
+import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
+import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.TransactionHistory;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.CatalogTrigger;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
-import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.validation.ConstraintViolation;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private static final Logger log = LoggerFactory.getLogger(CatalogTriggerInterpretImpl.class);
 
-	private final CatalogServiceManifest manifest;
+	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
+	private final Map<String,List<CatalogActionTrigger>> catalogScope;
 
 	@Inject
-	public CatalogTriggerInterpretImpl(CatalogServiceManifest manifest, 
-			CatalogDeserializationService deserializer) {
+	public CatalogTriggerInterpretImpl(Provider<CatalogServiceManifest> manifestP,
+                                       CatalogDeserializationService deserializer) {
 		super();
-		this.manifest = manifest;
+		this.manifestP = manifestP;
 		this.deserializer = deserializer;
+		this.catalogScope = new HashMap<>();
+    }
+
+	/**
+	 * before == trigger.isAdvice()
+	 * @param context
+	 * @param advise
+	 * @return
+	 */
+	@Override public List<CatalogActionTrigger> getTriggersValues(CatalogActionContext context, boolean advise){
+        List<CatalogActionTrigger> posibleTriggers = catalogScope.
+                get(context.getCatalogDescriptor().getDistinguishedName());
+	    if(posibleTriggers==null){
+	        return null;
+        }else{
+            return posibleTriggers.
+                    stream().
+                    filter(t -> t.isAdvice()==advise).
+                    collect(Collectors.toList());
+        }
+
 	}
+
+	@Override public void addCatalogScopeTrigger(CatalogActionTrigger trigger, CatalogDescriptor catalog){
+        // Como almacenar triggers?
+        log.debug("[new {} scoped trigger] {}",catalog.getDistinguishedName(),trigger);
+        List<CatalogActionTrigger> triggers = catalogScope.get(catalog.getDistinguishedName());
+        if(triggers==null){
+            triggers = new ArrayList<>(2);
+            catalogScope.put(catalog.getDistinguishedName(),triggers);
+        }
+        triggers.add(trigger);
+    }
+
 
 	@Override
 	public void invokeTrigger(Map<String, String> properties, CatalogActionContext context, CatalogTrigger trigger)
@@ -51,8 +78,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		Long stakeHolder = null;
 		if (trigger.isRunAsStakeHolder()) {
 			stakeHolder = (Long) trigger.getStakeHolder();
-
-			context.getExcecutionContext().getSession().setStakeHolder(stakeHolder);
+				//FIXME if trigger fails context is changed stake holders
+			context.getRuntimeContext().getSession().setStakeHolder(stakeHolder);
 		}
 		String targetCatalogId = trigger.getCatalog();
 		context.setCatalog(targetCatalogId);
@@ -72,8 +99,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			}
 
 			if (entryIdPointer != null) {
-				Session session = context.getCatalogManager().newSession((CatalogEntry) context.getEntryValue());
-				entryIdPointer = synthethizeKeyValue(entryIdPointer, context, session,
+                Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
+                entryIdPointer = synthethizeKeyValue(entryIdPointer, context, instrospection,
 						targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()));
 				context.setEntry(entryIdPointer);
 			}
@@ -81,12 +108,12 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 				if (rollback) {
 					try {
-						if (context.getExcecutionContext().getSession().hasPermissionsToProcessContext(context,
-								manifest)) {
+						if (context.getRuntimeContext().getSession().hasPermissionsToProcessContext(context,
+								manifestP.get())) {
 
 							log.debug("[EXCECUTING TRIGGER {}] CONTEXT= {} ", command, context);
 							command.execute(context);
-							Set<ConstraintViolation<?>> aggregate = context.getExcecutionContext().getConstraintViolations();
+							Set<ConstraintViolation<?>> aggregate = context.getRuntimeContext().getConstraintViolations();
 							if (aggregate != null && !aggregate.isEmpty()) {
 								log.error("Constraint validations encountered");
 								throw new IllegalArgumentException("Constraint validations encountered");
@@ -98,7 +125,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 						if (rollback) {
 							throw e;
 						} else {
-							context.getExcecutionContext()
+							context.getRuntimeContext()
 									.addWarning("Trigger failed silently : " + e.getLocalizedMessage());
 						}
 					}
@@ -111,22 +138,22 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		} finally {
 			if (stakeHolder != null) {
-				context.getExcecutionContext().getSession().releaseAuthority();
+				context.getRuntimeContext().getSession().releaseAuthority();
 			}
 
 		}
 	}
 
-	private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Session session,
+	private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,
 			FieldDescriptor field) throws Exception {
 		if (entryIdPointer instanceof String) {
-			return context.getCatalogManager().synthethizeFieldValue((String) entryIdPointer, context);
+			return context.getCatalogManager().synthethizeFieldValue(((String) entryIdPointer).split("\\."), context);
 		} else {
 			return entryIdPointer;
 		}
 	}
 
-	@Override
+	/*@Override
 	public void configureContext(CatalogActionContext context, CatalogTrigger trigger, Long domain,
 			TransactionHistory transaction) throws Exception {
 
@@ -144,33 +171,33 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		context.setDomain(domain);
 		context.setCatalog(targetCatalogId);
-		context.setAction(targetAction);
+		context.setName(targetAction);
 		context.setEntry(entryIdPointer);
 		context.setEntryValue(seed);
 		log.trace("[CONFIGURE TRIGGER {} ] {} ", trigger, context);
 
-	}
+	}*/
 
 	private CatalogEntry synthethize(CatalogEntry synthesizedEntry, CatalogDescriptor targetCatalog,
 			CatalogActionContext context, Map<String, String> properties) throws Exception {
 
 		context.setCatalog(targetCatalog.getDistinguishedName());
 
-		Session session = context.getCatalogManager().newSession(synthesizedEntry);
-		Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
+        Instrospection instrospection = context.getCatalogManager().access().newSession(synthesizedEntry);
+        Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
 		String fieldId;
 		String token;
 		Object fieldValue;
-		Session lowSession = context.getCatalogManager().newSession((CatalogEntry) context.getEntryValue());
+        Instrospection lowInstrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
 
 		for (FieldDescriptor field : fields) {
 			fieldId = field.getFieldId();
 			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isEphemeral()) {
 				token = properties.get(fieldId);
 				if (token != null) {
-					fieldValue = context.getCatalogManager().synthethizeFieldValue(token, context);
-					context.getCatalogManager().setPropertyValue(targetCatalog, field, synthesizedEntry, fieldValue, session);
-				}
+					fieldValue = context.getCatalogManager().synthethizeFieldValue(token.split(" "), context);
+                    context.getCatalogManager().access().setPropertyValue(field, synthesizedEntry, fieldValue, instrospection);
+                }
 			}
 
 		}

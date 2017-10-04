@@ -17,11 +17,8 @@ import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.desktop.client.activity.widgets.FilterOptionSelectionView;
 import com.wrupple.muba.desktop.client.activity.widgets.toolbar.FilterToolbarImpl;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -63,10 +60,10 @@ public class FilterCriteriaValueInputProcess extends
 			if(field.isKey() && field.getForeignCatalogName()!=null){
 				String catalog = field.getForeignCatalogName();
 				ContentManager<JsCatalogEntry> cm = cms.getContentManager(catalog);
-				Process<JsTransactionActivityContext, JsTransactionActivityContext> process = cm.getSelectionProcess(contextServices, true, false);
+				Process<JsTransactionApplicationContext, JsTransactionApplicationContext> process = cm.getSelectionProcess(contextServices, true, false);
 				addAll(process);
 				add(new BuildCriteriaFromUserSelection());
-				JsTransactionActivityContext regreso = JsTransactionActivityContext.createObject().cast();
+				JsTransactionApplicationContext regreso = JsTransactionApplicationContext.createObject().cast();
 				saveFieldData(regreso,field);
 				onDone.setResultAndFinish(regreso);
 			}else{
@@ -85,10 +82,10 @@ public class FilterCriteriaValueInputProcess extends
 		
 	}
 	
-	 class BuildCriteriaFromUserSelection implements State<JsTransactionActivityContext,JsFilterCriteria>{
+	 class BuildCriteriaFromUserSelection implements State<JsTransactionApplicationContext,JsFilterCriteria>{
 
 		@Override
-		public void start(JsTransactionActivityContext result,
+		public void start(JsTransactionApplicationContext result,
 				StateTransition<JsFilterCriteria> onDone, EventBus bus) {
 			JsCatalogEntry output = result.getUserOutput();
 			if(output!=null){
@@ -134,12 +131,12 @@ public class FilterCriteriaValueInputProcess extends
 		
 	}
 
-	protected native void saveFieldData(JsTransactionActivityContext regreso,
+	protected native void saveFieldData(JsTransactionApplicationContext regreso,
 			FieldDescriptor field) /*-{
 		regreso.fieldDescriptorCriteriaData=field;
 	}-*/;
 	
-	protected native JsFieldDescriptor getFieldData(JsTransactionActivityContext regreso) /*-{
+	protected native JsFieldDescriptor getFieldData(JsTransactionApplicationContext regreso) /*-{
 		return regreso.fieldDescriptorCriteriaData;
 	}-*/;
 

@@ -13,9 +13,6 @@ public interface UrlParser {
 
 	final String PRIVATE_CATALOG_ID_PARAMETER = "$" + HasCatalogId.FIELD;
 	final String PRIVATE_CATALOG_ENTRY_PARAMETER = "$" + HasEntryId.FIELD;
-	final String NEXT_APPLICATION_ITEM = "next";
-	final String EXPLICIT_APPLICATION_ITEM = "explicit";
-	final String GOTO_OUTPUT_ITEM = "goTo";
 	final String TOKEN_SEPARATOR = "/";
 	// by default task define a catalogId as a static persistent property, if a
 	// task has a variable catalog, then it must define custom set of tokens

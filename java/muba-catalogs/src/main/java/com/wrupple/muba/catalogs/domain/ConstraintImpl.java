@@ -2,7 +2,8 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.Constraint;
 
 public class ConstraintImpl extends CatalogEntryImpl implements Constraint {
 	private static final long serialVersionUID = -3579585044610207044L;

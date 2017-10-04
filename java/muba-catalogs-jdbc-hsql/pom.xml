@@ -9,15 +9,14 @@
 	<name> HSQLDB support for muba-catalogs</name>
 	<description>Enforces programs written to always have an efect on the state of the user data. Allows such data to be validated, localized, seft deleted, friendly named, cached, and be worgroup or user owned</description>
 	<properties>
-		<muba.version>1.0</muba.version>
-		<guice.version>3.0</guice.version>
+		<guice.version>4.1.0</guice.version>
 	</properties>
 	<dependencies>
 
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>muba-catalogs-jdbc</artifactId>
-			<version>${muba.version}</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -41,7 +40,7 @@
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>validation-bval</artifactId>
-			<version>${muba.version}</version>
+			<version>1.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -66,9 +65,6 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-
-
-
 
 
 	</dependencies>

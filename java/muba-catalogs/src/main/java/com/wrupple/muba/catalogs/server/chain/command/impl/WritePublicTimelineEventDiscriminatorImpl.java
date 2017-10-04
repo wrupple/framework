@@ -1,18 +1,17 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 @Singleton
 public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTimelineEventDiscriminator {
@@ -33,11 +32,11 @@ public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTim
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogEntry node = (CatalogEntry) context.getEntryValue();
-		Session session = context.getCatalogManager().newSession(node);
-		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		context.getCatalogManager().setPropertyValue(catalog, getDiscriminatorField(), node, node.getId(), session);
-		context.getCatalogManager().setPropertyValue(catalog, getCatalogField(), node, catalog.getId(), session);
-		return CONTINUE_PROCESSING;
+        Instrospection instrospection = context.getCatalogManager().access().newSession(node);
+        CatalogDescriptor catalog = context.getCatalogDescriptor();
+        context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), instrospection);
+        context.getCatalogManager().access().setPropertyValue(getCatalogField(), node, catalog.getId(), instrospection);
+        return CONTINUE_PROCESSING;
 	}
 
 	@Override

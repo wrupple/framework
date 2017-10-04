@@ -2,8 +2,8 @@ package com.wrupple.muba.catalogs.server.service;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.ServiceManifest;
-import com.wrupple.muba.bootstrap.domain.SessionContext;
+import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.SessionContext;
 
 public interface ContextRewriter {
 

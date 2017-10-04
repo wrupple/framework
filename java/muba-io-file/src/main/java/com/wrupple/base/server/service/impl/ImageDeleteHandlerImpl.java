@@ -9,8 +9,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
+import com.wrupple.muba.event.domain.CatalogEntry;
 
 @Singleton
 public class ImageDeleteHandlerImpl implements ImageDeleteHandler {

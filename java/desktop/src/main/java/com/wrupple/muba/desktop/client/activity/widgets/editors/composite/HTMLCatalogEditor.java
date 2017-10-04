@@ -15,11 +15,11 @@ import com.wrupple.muba.cms.domain.WruppleDomainHTMLPage;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.AsynchonousHtmlWidget;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -111,7 +111,7 @@ public class HTMLCatalogEditor extends CompositeCatalogEditor<JsCatalogEntry> {
 
 	@Override
 	public void initialize(String catalog, CatalogAction mode, EventBus bus, ProcessContextServices processServices, JavaScriptObject properties,
-			JsTransactionActivityContext contextProcessParameters) {
+			JsTransactionApplicationContext contextProcessParameters) {
 		String htmlPageId = GWTUtils.getAttribute(properties, WruppleDomainHTMLPage.CATALOG);
 
 		main.initialize(htmlPageId, null);

@@ -32,7 +32,7 @@ import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.presentation.ContentStyleDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.RemoteStorageUnit;
 import com.wrupple.vegetate.client.services.StorageManager;
 
@@ -149,7 +149,7 @@ public class GoogleIndexedPointMapWidget extends AbstractContentBrowser
 
 	@Override
 	public void setRuntimeParams(String newParam, JavaScriptObject properties,
-			EventBus bus, JsTransactionActivityContext contextParameters,
+			EventBus bus, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices) {
 		setCumulative("true");
 		if (geoService != null) {

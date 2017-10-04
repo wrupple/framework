@@ -34,7 +34,7 @@ import com.wrupple.muba.desktop.client.services.logic.MultipartFormActionUrlServ
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.PersistentImageMetadata;
 
 public class CatalogFileUpload extends Composite implements HasValue<String> {
@@ -45,7 +45,7 @@ public class CatalogFileUpload extends Composite implements HasValue<String> {
 			UiBinder<Widget, CatalogFileUpload> {
 	}
 	
-	private class NewImageSelected extends DataCallback<JsTransactionActivityContext>{
+	private class NewImageSelected extends DataCallback<JsTransactionApplicationContext>{
 
 		@Override
 		public void execute() {
@@ -186,9 +186,9 @@ public class CatalogFileUpload extends Composite implements HasValue<String> {
 	@UiHandler("selectAnother")
 	public void changeImage(ClickEvent ev) {
 		ContentManager<JsCatalogEntry> imageManager = cms.getContentManager(PersistentImageMetadata.CATALOG);
-		Process<JsTransactionActivityContext, JsTransactionActivityContext> imageSelectionProcess = imageManager.getSelectionProcess(contextServices, false, false);
-		JsTransactionActivityContext input=JsTransactionActivityContext.createObject().cast();
-		StateTransition<JsTransactionActivityContext> callback=new NewImageSelected();
+		Process<JsTransactionApplicationContext, JsTransactionApplicationContext> imageSelectionProcess = imageManager.getSelectionProcess(contextServices, false, false);
+		JsTransactionApplicationContext input= JsTransactionApplicationContext.createObject().cast();
+		StateTransition<JsTransactionApplicationContext> callback=new NewImageSelected();
 		contextServices.getProcessManager().processSwitch(imageSelectionProcess, selectAnother.getText(), input, callback, contextServices);
 	}
 

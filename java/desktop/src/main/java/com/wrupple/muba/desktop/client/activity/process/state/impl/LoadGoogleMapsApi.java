@@ -9,7 +9,7 @@ import com.google.gwt.maps.client.LoadApi.LoadLibrary;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.activity.process.state.LoadMapsApi;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class LoadGoogleMapsApi implements LoadMapsApi {
 
@@ -18,7 +18,7 @@ public class LoadGoogleMapsApi implements LoadMapsApi {
 	public static String PARAMETERS;/*"key=MY_API_KEY" */
 
 	@Override
-	public void start(final JsTransactionActivityContext parameter, final StateTransition<JsTransactionActivityContext> onDone, EventBus bus) {
+	public void start(final JsTransactionApplicationContext parameter, final StateTransition<JsTransactionApplicationContext> onDone, EventBus bus) {
 		if (done) {
 			onDone.setResultAndFinish(parameter);
 		} else {

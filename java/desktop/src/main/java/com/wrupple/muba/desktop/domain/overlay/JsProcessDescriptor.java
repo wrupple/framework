@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
-import com.wrupple.muba.bpm.domain.ProcessDescriptor;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 
 @SuppressWarnings("serial")

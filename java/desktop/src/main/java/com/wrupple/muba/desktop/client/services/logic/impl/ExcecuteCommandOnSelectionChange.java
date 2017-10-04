@@ -5,19 +5,19 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ExcecuteCommandOnSelectionChange implements Handler {
 
 	private final EventBus eventBus;
 	private final String command;
-	private final JsTransactionActivityContext contextParameters;
+	private final JsTransactionApplicationContext contextParameters;
 	private final ProcessContextServices contextServices;
 	private JavaScriptObject selectionProperties;
 
 	public ExcecuteCommandOnSelectionChange(JavaScriptObject selectionProperties,
 			 String command, EventBus eventBus,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices) {
 		this.command = command;
 		this.selectionProperties = selectionProperties;

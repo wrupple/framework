@@ -12,12 +12,12 @@ import javax.validation.ConstraintViolation;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.server.service.ObjectMapper;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.FormatResultSet;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
@@ -42,10 +42,10 @@ public class FormatResultSetImpl implements FormatResultSet {
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 
-		String action = (String) c.get(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
+		String action = (String) c.get(CatalogActionRequest.NAME_FIELD);
 
-		List<String> warnings = context.getExcecutionContext().resetWarnings();
-		Set<ConstraintViolation<?>> constraintViolations = context.getExcecutionContext().getConstraintViolations();
+		List<String> warnings = context.getRuntimeContext().resetWarnings();
+		Set<ConstraintViolation<?>> constraintViolations = context.getRuntimeContext().getConstraintViolations();
 		List<CatalogColumnResultSet> responseList = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 
@@ -68,7 +68,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 		}
 
 		long responseTimestamp = System.currentTimeMillis();
-		PrintWriter out = context.getExcecutionContext().getScopedWriter(context);
+		PrintWriter out = context.getRuntimeContext().getScopedWriter(context);
 		encodePrimaryKeys(responseList);
 		if (responseList == null || responseList.isEmpty()) {
 			warnings.add(EMPTY_RESPONSE);
@@ -79,7 +79,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 		LengthReportingWriter wrapper = new LengthReportingWriter(out);
 		mapper.writeValue(wrapper, responseContract);
 		long length = wrapper.getLength();
-		context.getExcecutionContext().setTotalResponseSize(length);
+		context.getRuntimeContext().setTotalResponseSize(length);
 		return CONTINUE_PROCESSING;
 	}
 

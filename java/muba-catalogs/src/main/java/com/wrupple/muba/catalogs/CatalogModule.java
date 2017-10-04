@@ -8,116 +8,42 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.inject.Singleton;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.domain.CatalogEvent;
+import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.server.chain.command.impl.*;
+import com.wrupple.muba.catalogs.server.domain.*;
+import com.wrupple.muba.catalogs.server.service.impl.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.LongConverter;
-import org.apache.commons.chain.CatalogFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.bootstrap.domain.Person;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
-import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogPeer;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.Constraint;
-import com.wrupple.muba.catalogs.domain.ConstraintImpl;
-import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.catalogs.domain.ContentRevision;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.LocalizedString;
-import com.wrupple.muba.catalogs.domain.NamespaceContext;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
-import com.wrupple.muba.catalogs.domain.Trash;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogActionTriggerHandler;
-import com.wrupple.muba.catalogs.server.chain.command.CommitCatalogAction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
-import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
-import com.wrupple.muba.catalogs.server.chain.command.FieldDescriptorUpdateTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
-import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
-import com.wrupple.muba.catalogs.server.chain.command.IncreaseVersionNumber;
-import com.wrupple.muba.catalogs.server.chain.command.PublishEvents;
-import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
-import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
-import com.wrupple.muba.catalogs.server.chain.command.TrashDeleteTrigger;
-import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
-import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CommitCatalogActionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogCreateTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogDeleteTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogDescriptorUpdateTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogEngineImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogReadTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogRequestInterpretImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogUpdateTransactionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CompleteCatalogGraphImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.EntryDeleteTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.ExplicitDataJoinImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.FieldDescriptorUpdateTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.GarbageCollectionImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitDataJoinImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.IncreaseVersionNumberImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.PublishEventsImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.RestoreTrashImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.TimestamperImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.TrashDeleteTriggerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.UpdateTreeLevelIndexImpl;
-import com.wrupple.muba.catalogs.server.chain.command.impl.WritePublicTimelineEventDiscriminatorImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogPeerImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.TrashDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogKeyConstraintValidator;
-import com.wrupple.muba.catalogs.server.service.CatalogNormalizationConstraintValidator;
+import com.wrupple.muba.event.server.service.KeyDomainValidator;
+import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValidator;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.Deleters;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
-import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
 import com.wrupple.muba.catalogs.server.service.QueryReaders;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.Writers;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogActionRequestValidatorImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogDescriptorBuilderImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogKeyConstraintValidatorImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogManagerImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogNormalizationConstraintValidatorImpl;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogTriggerInterpretImpl;
-import com.wrupple.muba.catalogs.server.service.impl.DeletersImpl;
-import com.wrupple.muba.catalogs.server.service.impl.EntryCreatorsImpl;
-import com.wrupple.muba.catalogs.server.service.impl.LargeStringFieldDataAccessObjectImpl;
-import com.wrupple.muba.catalogs.server.service.impl.NamespaceContextImpl;
-import com.wrupple.muba.catalogs.server.service.impl.PrimaryKeyReadersImpl;
-import com.wrupple.muba.catalogs.server.service.impl.QueryReadersImpl;
-import com.wrupple.muba.catalogs.server.service.impl.UserCatalogPluginImpl;
-import com.wrupple.muba.catalogs.server.service.impl.WritersImpl;
 
 /**
  * @author japi
@@ -127,6 +53,21 @@ public class CatalogModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+
+	    /*
+	     * Event Handlers
+	     */
+        bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
+        bind(CatalogActionFilterManifest.class).to(CatalogActionFilterManifestImpl.class);
+        bind(CatalogIntentListenerManifest.class).to(CatalogIntentListenerManifestImpl.class);
+
+        bind(CatalogEngine.class).to(CatalogEngineImpl.class);
+        bind(CatalogActionFilterEngine.class).to(CatalogActionFilterEngineImpl.class);
+        bind(CatalogEventHandler.class).to(CatalogEventHandlerImpl.class);
+
+        bind(CatalogRequestInterpret.class).to(CatalogRequestInterpretImpl.class);
+        bind(CatalogActionFilterInterpret.class).to(CatalogActionFilterInterpretImpl.class);
+        bind(CatalogEventInterpret.class).to(CatalogEventInterpretImpl.class);
 		/*
 		 * workarounds / replacement classes
 		 */
@@ -137,6 +78,7 @@ public class CatalogModule extends AbstractModule {
 		// 2014-01-18T00:35:03.463Z
 		String datePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+		bind(Integer.class).annotatedWith(Names.named("catalog.storage.secure")).toInstance(6);
 		bind(String.class).annotatedWith(Names.named("template.token.splitter")).toInstance("\\.");
 		Pattern pattern = Pattern.compile(rawPattern);
 		bind(Pattern.class).annotatedWith(Names.named("template.pattern")).toInstance(pattern);
@@ -148,7 +90,7 @@ public class CatalogModule extends AbstractModule {
 		bind(Boolean.class).annotatedWith(Names.named("catalog.followGraph")).toInstance(true);
 		bind(Integer.class).annotatedWith(Names.named("catalog.read.preloadCatalogGraph")).toInstance(0);
 
-		bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);
+
 		bind(UserCatalogPlugin.class).to(UserCatalogPluginImpl.class);
 
 		bind(String.class).annotatedWith(Names.named("catalog.ancestorKeyField")).toInstance("superAncestorHIdentity");
@@ -167,15 +109,19 @@ public class CatalogModule extends AbstractModule {
 		bind(Class.class).annotatedWith(Names.named(FieldDescriptor.CATALOG_ID)).toInstance(FieldDescriptorImpl.class);
 		bind(Class.class).annotatedWith(Names.named(CatalogDescriptor.CATALOG_ID))
 				.toInstance(CatalogDescriptorImpl.class);
-		bind(Class.class).annotatedWith(Names.named(CatalogActionRequest.CATALOG))
-				.toInstance(CatalogActionRequestImpl.class);
-		bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogActionRequest.CATALOG))
+                .toInstance(CatalogActionRequestImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogActionCommit.CATALOG))
+                .toInstance(CatalogActionCommitImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogEvent.CATALOG))
+                .toInstance(CatalogEventImpl.class);
+
 		/*
 		 * CONFIGURATION
 		 */
 
 		bind(NamespaceContext.class).to(NamespaceContextImpl.class);
-
+        bind(CatalogActionCommit.class).to(CatalogActionCommitImpl.class);
 		bind(CatalogDescriptor.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
 				.to(DistributiedLocalizedEntryDescriptor.class);
 		bind(CatalogDescriptor.class).annotatedWith(Names.named(LocalizedString.CATALOG))
@@ -195,18 +141,13 @@ public class CatalogModule extends AbstractModule {
 		/*
 		 * Commands
 		 */
-		bind(CatalogEngine.class).to(CatalogEngineImpl.class);
-		bind(CatalogRequestInterpret.class).to(CatalogRequestInterpretImpl.class);
+
 		bind(CommitCatalogAction.class).to(CommitCatalogActionImpl.class);
 
 		bind(CatalogCreateTransaction.class).to(CatalogCreateTransactionImpl.class);
 		bind(CatalogReadTransaction.class).to(CatalogReadTransactionImpl.class);
 		bind(CatalogUpdateTransaction.class).to(CatalogUpdateTransactionImpl.class);
 		bind(CatalogDeleteTransaction.class).to(CatalogDeleteTransactionImpl.class);
-
-		bind(PublishEvents.class).to(PublishEventsImpl.class);
-
-		bind(CatalogActionTriggerHandler.class).to(CatalogActionTriggerHandlerImpl.class);
 
 		bind(EntryDeleteTrigger.class).to(EntryDeleteTriggerImpl.class);
 		bind(FieldDescriptorUpdateTrigger.class).to(FieldDescriptorUpdateTriggerImpl.class);
@@ -228,16 +169,15 @@ public class CatalogModule extends AbstractModule {
 
 		bind(CatalogTriggerInterpret.class).to(CatalogTriggerInterpretImpl.class);
 
-		bind(LargeStringFieldDataAccessObject.class).to(LargeStringFieldDataAccessObjectImpl.class);
-
-		bind(CatalogKeyConstraintValidator.class).to(CatalogKeyConstraintValidatorImpl.class);
-		bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
+		bind(KeyDomainValidator.class).to(KeyDomainValidatorImpl.class);
 
 		bind(SystemCatalogPlugin.class).to(CatalogManagerImpl.class);
 		bind(CatalogDescriptorBuilder.class).to(CatalogDescriptorBuilderImpl.class);
 
 		bind(CatalogNormalizationConstraintValidator.class).to(CatalogNormalizationConstraintValidatorImpl.class);
 		bind(CatalogActionRequestValidator.class).to(CatalogActionRequestValidatorImpl.class);
+
+
 	}
 
 	/*
@@ -257,9 +197,9 @@ public class CatalogModule extends AbstractModule {
 	@Provides
 	@Singleton
 	@Inject
-	@Named(CatalogPeer.CATALOG)
+	@Named(Host.CATALOG)
 	public CatalogDescriptor catalogPeer(CatalogDescriptorBuilder builder) {
-		CatalogDescriptor r = builder.fromClass(CatalogPeerImpl.class, CatalogPeer.CATALOG, "Peers", -1911193, null);
+		CatalogDescriptor r = builder.fromClass(HostImpl.class, Host.CATALOG, "Peers", -1911193, null);
 		return r;
 	}
 
@@ -336,6 +276,33 @@ public class CatalogModule extends AbstractModule {
 		return r;
 	}
 
+
+
+
+    @Provides
+    @Inject
+    @Singleton
+    @Named(CatalogEvent.CATALOG)
+    public CatalogDescriptor eventCatalog(@Named(CatalogEvent.CATALOG) Class clazz,
+                                          CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(CatalogEventImpl.class, CatalogEvent.CATALOG,
+                "Catalog Event", -13939395, null);
+        r.setClazz(clazz);
+        return r;
+    }
+
+    @Provides
+    @Inject
+    @Singleton
+    @Named(CatalogActionCommit.CATALOG)
+    public CatalogDescriptor actionCommit(@Named(CatalogActionCommit.CATALOG) Class clazz,
+                                           CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(CatalogActionCommitImpl.class, CatalogActionCommit.CATALOG,
+                "Catalog Commit", -13939394, null);
+        r.setClazz(clazz);
+        return r;
+    }
+
 	@Provides
 	@Inject
 	@Singleton
@@ -343,7 +310,7 @@ public class CatalogModule extends AbstractModule {
 	public CatalogDescriptor actionRequest(@Named(CatalogActionRequest.CATALOG) Class clazz,
 			CatalogDescriptorBuilder builder) {
 		CatalogDescriptor r = builder.fromClass(CatalogActionRequestImpl.class, CatalogActionRequest.CATALOG,
-				"Catalog Action", -13939393, null);
+				"Catalog Request", -13939393, null);
 		r.setClazz(clazz);
 		return r;
 	}

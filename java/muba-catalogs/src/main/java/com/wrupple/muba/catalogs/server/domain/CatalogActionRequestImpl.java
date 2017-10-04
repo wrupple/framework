@@ -2,10 +2,10 @@ package com.wrupple.muba.catalogs.server.domain;
 
 import javax.validation.constraints.NotNull;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.annotations.AvailableCommand;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.annotations.AvailableCommand;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 
 @ValidCatalogActionRequest
@@ -16,9 +16,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	private CatalogEntry entryValue;
 
 	private FilterDataImpl filter;
-	@NotNull
-	@AvailableCommand(dictionary=CatalogActionRequest.CATALOG_ACTION_PARAMETER)
-	private String action;
+
 	@AvailableCommand(dictionary=CatalogActionRequest.CATALOG_FIELD)
 	private String format;
 	private String entry;
@@ -28,6 +26,8 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	
 	private String domain;
 	private Long id,image;
+	@NotNull
+	@AvailableCommand(dictionary=NAME_FIELD)
 	private String  name;
 	private boolean anonymouslyVisible;
 	private boolean followReferences;
@@ -83,7 +83,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		super();
 		this.entryValue = catalogEntry;
 		this.filter = (FilterDataImpl) filterData;
-		this.action = action;
+		this.name = action;
 		this.format = format;
 		this.entry = entry;
 		this.catalog = catalog;
@@ -96,7 +96,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		super();
 		this.entryValue = catalogEntry;
 		this.filter = filter;
-		this.action = action;
+		this.name = action;
 		this.format = format;
 		this.entry = entry;
 		this.catalog = catalog;
@@ -133,13 +133,6 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		this.filter = filter;
 	}
 
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
 
 	public String getFormat() {
 		return format;
@@ -168,7 +161,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
 	@Override
 	public String toString() {
-		return "CatalogActionRequestImpl [catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + action
+		return "CatalogActionRequestImpl [catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + name
 				+ ", format=" + format + ", entry=" + entry + ", catalog=" + catalog + ", domain=" + getDomain() + "]";
 	}
 

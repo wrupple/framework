@@ -4,9 +4,9 @@ import javax.inject.Provider;
 
 import com.wrupple.muba.bpm.client.activity.process.state.CommitUserTransaction;
 import com.wrupple.muba.bpm.client.activity.process.state.StartUserTransaction;
-import com.wrupple.muba.bpm.client.activity.process.state.UserInteractionState;
 import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.TransactionAssembler;
+import com.wrupple.muba.bpm.server.chain.command.UserInteractionState;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 public  class AbstractTransactionAssembler implements TransactionAssembler {
 

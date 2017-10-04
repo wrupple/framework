@@ -35,7 +35,7 @@ public class DesktopActivityMapperImpl implements DesktopActivityMapper {
 		}
 		
 		GWTUtils.setAttribute(configuration, "activity", desktopPlace.getActivityUri());
-		//ApplicationItem rootPlace = getRootPlace(desktopPlace);
+		//Workflow rootPlace = getRootPlace(desktopPlace);
 		Activity a = this.activityMap.getConfigured(configuration, null, null, null);
 		return a;
 	}

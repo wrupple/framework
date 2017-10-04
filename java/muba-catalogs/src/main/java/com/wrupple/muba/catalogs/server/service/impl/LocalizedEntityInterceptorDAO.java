@@ -1,20 +1,13 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Singleton;
-
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import javax.inject.Singleton;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 
@@ -58,7 +51,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		// what catalog is this localized entity pointing to?
 		context.getCatalogManager().getRead().execute(localize);
 		CatalogDescriptor pointsTo = localize.getEntryResult();
-		Session session = context.getCatalogManager().newSession(pointsTo);
+		Instrospection instrospection = context.getCatalogManager().access().newSession(pointsTo);
 
 		// what strategy does the referenced catalog use to localize it's
 		// entities
@@ -66,7 +59,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		if (0 == strategy /* CONSOLIDATED */) {
 			// this is the special case we need to intercept
 			String catalogId = pointsTo.getDistinguishedName();
-			session.resample(o);
+			instrospection.resample(o);
 
 			// read localized field values
 			List<String> values = (List<String>) o.getProperties();

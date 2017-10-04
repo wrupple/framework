@@ -15,7 +15,7 @@ import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.factory.ServiceDictionary;
 import com.wrupple.muba.desktop.client.factory.dictionary.DictionaryRegistry;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 @Singleton
 public class ServicePickerCellProvider implements CatalogFormFieldProvider {
@@ -33,7 +33,7 @@ public class ServicePickerCellProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<? extends Object> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		
 		if(CatalogAction.READ==mode){

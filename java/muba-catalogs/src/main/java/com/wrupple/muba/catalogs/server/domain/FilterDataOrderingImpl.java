@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.server.domain;
 
 import java.io.Serializable;
 
-import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
+import com.wrupple.muba.event.domain.FilterDataOrdering;
 
 public class FilterDataOrderingImpl implements Serializable, FilterDataOrdering{
 	/**

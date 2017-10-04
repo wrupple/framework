@@ -20,7 +20,7 @@ import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldPro
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class MultiTextProvider implements CatalogFormFieldProvider {
@@ -38,7 +38,7 @@ public class MultiTextProvider implements CatalogFormFieldProvider {
 	}
 
 	@Override
-	public Cell<JsArrayString> createCell(final EventBus bus, final ProcessContextServices contextServices, final JsTransactionActivityContext contextParameters,
+	public Cell<JsArrayString> createCell(final EventBus bus, final ProcessContextServices contextServices, final JsTransactionApplicationContext contextParameters,
 			final JavaScriptObject formDescriptor, FieldDescriptor desc, CatalogAction mode) {
 		final  JsFieldDescriptor d=(JsFieldDescriptor) desc;
 		Provider<Process<JsArrayString, JsArrayString>> processProvider = new Provider<Process<JsArrayString, JsArrayString>>() {

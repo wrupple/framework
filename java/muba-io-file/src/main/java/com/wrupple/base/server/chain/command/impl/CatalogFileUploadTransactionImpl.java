@@ -17,7 +17,7 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import com.wrupple.muba.bootstrap.domain.CatalogKey;
+import com.wrupple.muba.event.domain.CatalogKey;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;

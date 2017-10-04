@@ -13,7 +13,7 @@ import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.presentation.AbstractForeignRelationWidgetHandle;
 import com.wrupple.muba.desktop.client.services.presentation.ForeignRelationWidgetHandle;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class SliderRelationHandle extends AbstractForeignRelationWidgetHandle implements
@@ -60,7 +60,7 @@ public class SliderRelationHandle extends AbstractForeignRelationWidgetHandle im
 
 
 	@Override
-	public void init(FieldDescriptor field, JavaScriptObject fieldProperties, JsTransactionActivityContext contextParameters,
+	public void init(FieldDescriptor field, JavaScriptObject fieldProperties, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices, RelationshipDelegate delegate, GenericDataProvider dataProvider, CatalogAction mode) {
 		
 	}

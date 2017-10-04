@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -13,16 +14,19 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
-import com.wrupple.muba.ChocoRunnerTestModule;
-import com.wrupple.muba.bootstrap.domain.*;
-import com.wrupple.muba.bpm.domain.*;
+import com.wrupple.muba.ChocoSolverTestModule;
+import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.bpm.domain.EquationSystemSolution;
+import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
-import com.wrupple.muba.bpm.server.chain.TaskRunnerEngine;
+import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.EventSuscriptionChain;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +36,9 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bootstrap.BootstrapModule;
-import com.wrupple.muba.bootstrap.server.domain.SessionContextImpl;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.ApplicationModule;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -57,8 +61,11 @@ import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataWritingComman
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 
-
-public class ResolveIntent extends MubaTest {
+/*
+ * GreatestAnomalyRangePicker
+ * AdjustErrorByDriverDistance
+ */
+public class SolveEquationSystem extends MubaTest {
 	/*
 	 * mocks
 	 */
@@ -67,7 +74,7 @@ public class ResolveIntent extends MubaTest {
 
     protected WriteAuditTrails mockLogger;
 
-    protected CatalogPeer peerValue;
+    protected Host peerValue;
 
     protected EventSuscriptionChain chainMock;
 
@@ -76,6 +83,7 @@ public class ResolveIntent extends MubaTest {
         @Override
         protected void configure() {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
+            bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
             // this makes JDBC the default storage unit
             bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
             bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
@@ -86,7 +94,7 @@ public class ResolveIntent extends MubaTest {
             // mocks
             mockWriter = mock(WriteOutput.class);
             mockLogger = mock(WriteAuditTrails.class);
-            peerValue = mock(CatalogPeer.class);
+            peerValue = mock(Host.class);
             chainMock = mock(EventSuscriptionChain.class);
             bind(WriteAuditTrails.class).toInstance(mockLogger);
             bind(WriteOutput.class).toInstance(mockWriter);
@@ -128,20 +136,19 @@ public class ResolveIntent extends MubaTest {
 
     }
 
-    public ResolveIntent() {
-        init(new RunnerTestModule(), new ChocoRunnerTestModule(), new SingleUserModule(),new ChocoSolverModule(),new TaskRunnerModule(),new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new BootstrapModule());
+    public SolveEquationSystem() {
+        init(new RunnerTestModule(), new ChocoSolverTestModule(), new SingleUserModule(),new ChocoSolverModule(),new SolverModule(),new HSQLDBModule(), new JDBCModule(),
+                new ValidationModule(), new CatalogModule(), new ApplicationModule());
     }
 
     @Override
-    protected void registerServices(Validator v, ValidationGroupProvider g, ApplicationContext switchs) {
+    protected void registerServices(Validator v, ValidationGroupProvider g, EventBus switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-        switchs.registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class));
-        switchs.registerContractInterpret(catalogServiceManifest, injector.getInstance(CatalogRequestInterpret.class));
+        switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 
-        RunnerServiceManifest runnerServiceManifest = injector.getInstance(RunnerServiceManifest.class);
-        switchs.registerService(runnerServiceManifest, injector.getInstance(TaskRunnerEngine.class));
-        switchs.registerContractInterpret(runnerServiceManifest, injector.getInstance(ActivityRequestInterpret.class));
+
+        SolverServiceManifest solverServiceManifest = injector.getInstance(SolverServiceManifest.class);
+        switchs.getIntentInterpret().registerService(solverServiceManifest, injector.getInstance(SolverEngine.class),injector.getInstance(ActivityRequestInterpret.class));
     }
 
 
@@ -150,56 +157,18 @@ public class ResolveIntent extends MubaTest {
         expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(CatalogPeer.STATUS_ONLINE);
+        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
 
-        excecutionContext = injector.getInstance(ExcecutionContext.class);
-        // expectations
-
-        replayAll();
-
+        runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 
-    public void optimalDriver4Hire() throws Exception {
-        //TODO best driver depending on capacity and available vehicles nearby
-        ProcessTaskDescriptor problem = prepareDriverEnviroment();
-        log.info("[-post a solver request to the runner engine-]");
-        excecutionContext.setServiceContract(problem);
-        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME,
-                // x * y = 4
-                ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
-                // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")"
-        );
 
-        excecutionContext.process();
+/*
+ * GreatestAnomalyRangePicker
+ * AdjustErrorByDriverDistance
+ */
 
-        Driver solution = excecutionContext.getConvertedResult();
-
-        assertTrue(solution!=null);
-    }
-    /*
-     * GreatestAnomalyRangePicker
-     * AdjustErrorByDriverDistance
-     */
-    public void optimalDriver4Ride() throws Exception {
-        //TODO resolve a booking intent to a tracking object (ActivityContext)
-        ProcessTaskDescriptor problem = prepareRideEnviroment();
-        log.info("[-post a solver request to the runner engine-]");
-        excecutionContext.setServiceContract(problem);
-        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME,
-                // x * y = 4
-                ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
-                // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")"
-        );
-
-        excecutionContext.process();
-
-       ActivityContext context = excecutionContext.getServiceContext();
-
-        assertTrue(context.getUserSelectionValues()!=null);
-    }
     /**
      * <ol>
      * <li>create math problem catalog (with inheritance)</li>
@@ -211,73 +180,75 @@ public class ResolveIntent extends MubaTest {
      */
     @Test
     public void equationSolverTest() throws Exception {
-        ProcessTaskDescriptor problem = prepareEquationActivity();
-        log.info("[-post a solver request to the runner engine-]");
-        excecutionContext.setServiceContract(problem);
-        excecutionContext.setSentence(RunnerServiceManifest.SERVICE_NAME,
-                // x * y = 4
-                ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
-                // x + y < 5
-                ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", "<", "int:5",")"
+        CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
+
+        // expectations
+
+        replayAll();
+
+        log.info("[-Register EquationSystemSolution catalog type-]");
+
+        //FIXME stack overflow when no parent is specified, ok when consolidated?
+        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
+                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG,
+                        ContentNode.class.getSimpleName(), -1l, null));
+        CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
+        catalogRequest.setEntryValue(solutionContract);
+
+        runtimeContext.setServiceContract(catalogRequest);
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
+
+        runtimeContext.process();
+
+        CatalogActionContext catalogContext = runtimeContext.getServiceContext();
+
+        solutionContract = catalogContext.getEntryResult();
+
+        runtimeContext.reset();
+        log.info("[-create a task with problem constraints-]");
+        ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
+        problem.setDistinguishedName("equation system");
+        problem.setName("equation system");
+        problem.setCatalog(EquationSystemSolution.CATALOG);
+        problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
+        problem.setSentence(
+                Arrays.asList(
+                        // x * y = 4
+                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                        // x + y < 5
+                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
+                )
         );
 
-        excecutionContext.process();
+        catalogRequest = new CatalogActionRequestImpl();
+        catalogRequest.setEntryValue(problem);
 
-        EquationSystemSolution solution = excecutionContext.getConvertedResult();
+        runtimeContext.setServiceContract(catalogRequest);
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
+
+        runtimeContext.process();
+        catalogContext = runtimeContext.getServiceContext();
+
+        problem = catalogContext.getEntryResult();
+
+        runtimeContext.reset();
+        log.info("[-post a solver request to the runner engine-]");
+        runtimeContext.setServiceContract(problem);
+        //TODO maybe CONSTRAINT is a child of solver
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME/*, FIXME allow constrains to be posted in service request sentence
+                        // x + y < 5
+                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"*/);
+
+        runtimeContext.process();
+
+        EquationSystemSolution solution = runtimeContext.getConvertedResult();
 
         assertTrue(solution.getX()==2);
 
         assertTrue(solution.getY()==2);
 
-    }
-
-    private ProcessTaskDescriptor prepareEquationActivity() throws Exception {
-        CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-
-        log.info("[-Register EquationSystemSolution catalog type-]");
-
-        CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
-                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG,
-                        ContentNode.class.getSimpleName(), -1l, null));
-
-        CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
-        catalogRequest.setEntryValue(solutionContract);
-
-        excecutionContext.setServiceContract(catalogRequest);
-        excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-
-        excecutionContext.process();
-
-        CatalogActionContext catalogContext = excecutionContext.getServiceContext();
-
-        solutionContract = catalogContext.getEntryResult();
-
-        excecutionContext.reset();
-        log.info("[-create a task with problem constraints-]");
-        ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
-        problem.setDistinguishedName("my first problem");
-        problem.setName("my first problem");
-        problem.setCatalog(EquationSystemSolution.CATALOG);
-        problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
-       /* problem.setSentence(
-                Arrays.asList()
-        );*/
-
-        catalogRequest = new CatalogActionRequestImpl();
-        catalogRequest.setEntryValue(problem);
-
-        excecutionContext.setServiceContract(catalogRequest);
-        excecutionContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-                CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
-
-        excecutionContext.process();
-        catalogContext = excecutionContext.getServiceContext();
-
-        problem = catalogContext.getEntryResult();
-
-        excecutionContext.reset();
-        return problem;
     }
 
 }

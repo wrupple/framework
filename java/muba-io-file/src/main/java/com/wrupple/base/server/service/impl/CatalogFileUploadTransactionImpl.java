@@ -14,7 +14,7 @@ import javax.inject.Named;
 import org.apache.commons.chain.Context;
 
 import com.wrupple.base.domain.PersistentCatalogEntityImpl;
-import com.wrupple.muba.bootstrap.domain.CatalogKey;
+import com.wrupple.muba.event.domain.CatalogKey;
 import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogFileUploadTransaction;
 

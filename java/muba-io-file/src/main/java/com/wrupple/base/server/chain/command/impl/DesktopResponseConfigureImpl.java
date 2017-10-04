@@ -37,7 +37,7 @@ public class DesktopResponseConfigureImpl implements DesktopResponseConfigure {
 		if (properties.getEnableLiveDesktop()) {
 			//DomainRegistryDAO preferencesDao;
 			long domainId = context.getDomain();
-			long personid = context.getExcecutionContext().getSession().getUserUniqueId();
+			long personid = context.getRuntimeContext().getSession().getUserUniqueId();
 			/*if (preferencesDao.getEnableLiveDesktop(domainId, personid)) {
 				String channelToken;
 				BPMClientData desktopSession;

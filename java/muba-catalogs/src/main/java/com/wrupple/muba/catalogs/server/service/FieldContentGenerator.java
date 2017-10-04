@@ -2,11 +2,11 @@ package com.wrupple.muba.catalogs.server.service;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.server.chain.command.UserCommand;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.server.chain.command.UserCommand;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Instrospection;
 
 /**
  * 
@@ -28,7 +28,7 @@ public interface FieldContentGenerator {
 	 * @param dao (optional) foreign catalog access object in case this field declares a foreign catalog.
 	 * @return
 	 */
-	public List<? extends CatalogEntry> fetchFieldContents(Session accesor, CatalogDescriptor descriptor,FieldDescriptor localField,
-			CatalogDescriptor foreignCatalogDescriptor,UserCommand dao) throws Exception;
+	public List<? extends CatalogEntry> fetchFieldContents(Instrospection accesor, CatalogDescriptor descriptor, FieldDescriptor localField,
+                                                           CatalogDescriptor foreignCatalogDescriptor, UserCommand dao) throws Exception;
 
 }

@@ -24,7 +24,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 
 public class CMSToolbar extends WruppleActivityToolbarBase implements Toolbar {
@@ -46,7 +46,7 @@ public class CMSToolbar extends WruppleActivityToolbarBase implements Toolbar {
 	}
 
 	public void initialize(final JsTaskToolbarDescriptor toolbarDescriptor, final JsProcessTaskDescriptor parameter,
-			final JsTransactionActivityContext contextParameters, final EventBus bus, final ProcessContextServices contextServices) {
+                           final JsTransactionApplicationContext contextParameters, final EventBus bus, final ProcessContextServices contextServices) {
 		super.initialize(toolbarDescriptor, parameter, contextParameters, bus, contextServices);
 
 		StateTransition<JsProcessTaskDescriptor> callback = new DataCallback<JsProcessTaskDescriptor>() {

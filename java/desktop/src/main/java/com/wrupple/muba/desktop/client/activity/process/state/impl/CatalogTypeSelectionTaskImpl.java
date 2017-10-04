@@ -27,7 +27,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogIdentification;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 
 public class CatalogTypeSelectionTaskImpl extends ResizeComposite implements CatalogTypeSelectionTask {
@@ -60,7 +60,7 @@ public class CatalogTypeSelectionTaskImpl extends ResizeComposite implements Cat
 			}
 		}
 		JavaScriptObject configuration = constanst.getIconBrowser("175", String.valueOf(175*5),CatalogDescriptor.CATALOG_ID,null);
-		JsTransactionActivityContext contextParameters=JsTransactionActivityContext.createObject().cast();
+		JsTransactionApplicationContext contextParameters= JsTransactionApplicationContext.createObject().cast();
 		ContentBrowser browser = browserMap.getConfigured(configuration, context, bus, contextParameters);
 		final SingleSelectionModel<JsCatalogEntry> selectionModel= new SingleSelectionModel<JsCatalogEntry>();
 		selectionModel.addSelectionChangeHandler(new Handler() {

@@ -2,19 +2,15 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.TransactionHistory;
-import com.wrupple.muba.bootstrap.domain.UserContext;
-import com.wrupple.muba.bootstrap.domain.reserved.HasParent;
-import com.wrupple.muba.bootstrap.domain.reserved.HasResult;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.ServiceContext;
+import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.HasParentValue;
+import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public interface CatalogActionContext
-		extends UserContext, HasParent<CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
+		extends ServiceContext, HasParentValue<Object,CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
 
 	final String CATALOG = "CatalogActionContext";
 	
@@ -22,13 +18,7 @@ public interface CatalogActionContext
 
 	public SystemCatalogPlugin getCatalogManager();
 
-	CatalogActionContext getRootAncestor();
-
 	TransactionHistory getTransactionHistory();
-
-	public void addBroadcastable(CatalogChangeEvent data);
-
-	public List<CatalogChangeEvent> getEvents();
 
 	public CatalogDescriptor getCatalogDescriptor() throws RuntimeException;
 	
@@ -45,8 +35,6 @@ public interface CatalogActionContext
 	public List<CatalogEntry> getOldValues();
 
 	public void addResuls(List<CatalogEntry> result);
-
-	public void setAction(String readAction);
 
 	public void setFilter(FilterData fd);
 
@@ -65,5 +53,5 @@ public interface CatalogActionContext
 
 	void setNamespace(String domain) throws Exception;
 
-
+	public CatalogActionContext spawnChild();
 }

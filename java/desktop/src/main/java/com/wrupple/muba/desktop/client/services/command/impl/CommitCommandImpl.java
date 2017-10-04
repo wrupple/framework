@@ -6,19 +6,19 @@ import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.services.command.CommitCommand;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class CommitCommandImpl implements CommitCommand {
 
-	private StateTransition<JsTransactionActivityContext> callback;
+	private StateTransition<JsTransactionApplicationContext> callback;
 	private ProcessContextServices processContext;
-	private JsTransactionActivityContext processParameters;
+	private JsTransactionApplicationContext processParameters;
 
 	@Override
 	public void prepare(String command, JavaScriptObject commandProperties,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
-			StateTransition<JsTransactionActivityContext> callback) {
+			JsTransactionApplicationContext processParameters,
+			StateTransition<JsTransactionApplicationContext> callback) {
 		this.callback = callback;
 		this.processContext=processContext;
 		
@@ -33,7 +33,7 @@ public class CommitCommandImpl implements CommitCommand {
 
 	@Override
 	public void execute() {
-		StateTransition<JsTransactionActivityContext> contextCallback = processContext.getNestedTaskPresenter().getUserInteractionTaskCallback();
+		StateTransition<JsTransactionApplicationContext> contextCallback = processContext.getNestedTaskPresenter().getUserInteractionTaskCallback();
 		if(contextCallback==callback){
 			//they are not usually the same... but they might be
 			contextCallback.setResultAndFinish(processParameters);

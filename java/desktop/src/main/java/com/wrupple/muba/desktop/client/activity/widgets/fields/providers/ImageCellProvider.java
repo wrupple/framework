@@ -12,7 +12,7 @@ import com.wrupple.muba.desktop.client.activity.process.CanvasDrawingProcess;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.EncodedImageCell;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class ImageCellProvider implements CatalogFormFieldProvider {
@@ -30,7 +30,7 @@ public class ImageCellProvider implements CatalogFormFieldProvider {
 
 
 	@Override
-	public Cell<? extends Object> createCell(EventBus bus, ProcessContextServices contextServices, JsTransactionActivityContext contextParameters,
+	public Cell<? extends Object> createCell(EventBus bus, ProcessContextServices contextServices, JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		return new EncodedImageCell(bus, contextServices, contextParameters, d, mode, nestedProcessProvider, d.getName(), template);
 	}

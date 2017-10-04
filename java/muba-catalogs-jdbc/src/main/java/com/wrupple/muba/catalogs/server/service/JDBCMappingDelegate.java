@@ -9,8 +9,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 
 public interface JDBCMappingDelegate {
 

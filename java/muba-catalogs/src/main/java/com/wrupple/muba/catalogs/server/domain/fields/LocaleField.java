@@ -1,8 +1,8 @@
 package com.wrupple.muba.catalogs.server.domain.fields;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.HasLocale;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.HasLocale;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
 public class LocaleField extends FieldDescriptorImpl {
 

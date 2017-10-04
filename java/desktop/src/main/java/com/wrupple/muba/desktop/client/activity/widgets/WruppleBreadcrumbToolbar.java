@@ -40,7 +40,7 @@ import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 
 public class WruppleBreadcrumbToolbar extends Composite implements BreadcrumbToolbar {
@@ -254,7 +254,7 @@ public class WruppleBreadcrumbToolbar extends Composite implements BreadcrumbToo
 	}
 
 	@Override
-	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 			EventBus bus, ProcessContextServices contextServices) {
 		// TODO Auto-generated method stub
 
@@ -267,7 +267,7 @@ public class WruppleBreadcrumbToolbar extends Composite implements BreadcrumbToo
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 		// TODO Auto-generated method stub
 
 	}

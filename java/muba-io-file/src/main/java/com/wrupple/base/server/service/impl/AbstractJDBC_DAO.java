@@ -25,7 +25,7 @@ import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import com.wrupple.muba.catalogs.server.domain.CatalogExcecutionContext;
 import com.wrupple.muba.catalogs.server.service.CatalogDataAccessObject;
 import com.wrupple.muba.desktop.server.service.CatalogTableNameService;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.FilterCriteria;

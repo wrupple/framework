@@ -14,7 +14,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class CurrentPlaceCommandImpl implements CurrentPlaceCommand {
 
@@ -29,7 +29,7 @@ public class CurrentPlaceCommandImpl implements CurrentPlaceCommand {
 
 	@Override
 	public void prepare(String command, JavaScriptObject properties, EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext contextParameters, StateTransition<JsTransactionActivityContext> callback) {
+                        JsTransactionApplicationContext contextParameters, StateTransition<JsTransactionApplicationContext> callback) {
 		this.pc = processContext.getPlaceController();
 		this.targetActivity = ((DesktopPlace) pc.getWhere()).getTokens();
 		this.output = contextParameters.getUserOutput();

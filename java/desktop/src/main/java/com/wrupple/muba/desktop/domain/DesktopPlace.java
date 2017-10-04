@@ -49,7 +49,7 @@ public class DesktopPlace extends Place implements Serializable {
 	private List<String> taskTokens;
 
 	/**
-	 * Creates a new ApplicationItem
+	 * Creates a new Workflow
 	 */
 	protected DesktopPlace() {
 		super();

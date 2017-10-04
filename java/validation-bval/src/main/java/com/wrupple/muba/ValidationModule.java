@@ -17,11 +17,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.wrupple.muba.bootstrap.server.service.AvailableCommandValidator;
-import com.wrupple.muba.bootstrap.server.service.ContextAwareValidator;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
-import com.wrupple.muba.bootstrap.server.service.impl.AvailableCommandValidatorImpl;
-import com.wrupple.muba.bootstrap.server.service.impl.DefaultValidationGroupProvider;
+import com.wrupple.muba.event.server.service.AvailableCommandValidator;
+import com.wrupple.muba.event.server.service.ContextAwareValidator;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.server.service.impl.AvailableCommandValidatorImpl;
+import com.wrupple.muba.event.server.service.impl.DefaultValidationGroupProvider;
 import com.wrupple.muba.catalogs.server.service.impl.ConstraintValidatorFactoryImpl;
 import com.wrupple.muba.catalogs.server.service.impl.ContextAwareValidatorImpl;
 

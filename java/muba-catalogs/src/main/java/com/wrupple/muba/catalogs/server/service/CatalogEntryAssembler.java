@@ -2,10 +2,10 @@ package com.wrupple.muba.catalogs.server.service;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionResult;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 
 public interface CatalogEntryAssembler {
 	public <T extends CatalogEntry> List<T> processResultSet(CatalogColumnResultSet resultSet, CatalogDescriptor catalogid)  throws Exception;

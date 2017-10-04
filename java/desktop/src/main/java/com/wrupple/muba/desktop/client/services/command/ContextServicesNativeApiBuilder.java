@@ -9,7 +9,7 @@ import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.HumanActivityContextServices;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FilterData;
 
 public class ContextServicesNativeApiBuilder {
@@ -28,7 +28,7 @@ public class ContextServicesNativeApiBuilder {
 	}
 
 	protected native JavaScriptObject createTransactionCallbackFunction(
-			StateTransition<JsTransactionActivityContext> callback) /*-{
+			StateTransition<JsTransactionApplicationContext> callback) /*-{
 		return $entry(function(x) {
 			callback.@com.wrupple.muba.desktop.client.activity.process.state.StateTransition::setResultAndFinish(*)(x);
 			});

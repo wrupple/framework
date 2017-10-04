@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gwt.http.client.UrlBuilder;
 import com.wrupple.muba.bpm.domain.DomainSystemProperties;
-import com.wrupple.muba.bpm.domain.ProcessDescriptor;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;

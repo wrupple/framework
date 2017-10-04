@@ -1,11 +1,8 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.bootstrap.domain.reserved.Versioned;
+import com.wrupple.muba.event.domain.reserved.*;
 
-public interface ContentRevision extends HasStakeHolder, HasCatalogId, HasEntryId,Versioned,ContentNode {
+public interface ContentRevision extends HasStakeHolder,HasCatalogKey,Versioned,ContentNode {
 
 	String CATALOG = "ContentRevision";
 

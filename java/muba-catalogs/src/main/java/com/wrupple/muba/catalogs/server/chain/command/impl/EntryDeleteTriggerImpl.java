@@ -1,22 +1,20 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.List;
+import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.domain.Trash;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
+import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
+import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-
-import org.apache.commons.chain.Context;
-
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.Trash;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import java.util.List;
 
 @Singleton
 public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
@@ -41,19 +39,19 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 		if (oldValues == null) {
 			oldValues = context.getResults();
 		}
-		Session session = null;
+		Instrospection instrospection = null;
 		Boolean trashed;
 
 		CatalogActionContext trashContext = null;
 		for (CatalogEntry e : oldValues) {
 			if (trashContext == null) {
-				session = context.getCatalogManager().newSession(e);
-				trashContext = context.getCatalogManager().spawn(context);
+                instrospection = context.getCatalogManager().access().newSession(e);
+                trashContext = context.getCatalogManager().spawn(context);
 
-				trashContext.setAction(CatalogActionRequest.CREATE_ACTION);
+				trashContext.setName(CatalogActionRequest.CREATE_ACTION);
 			}
-			trashed = (Boolean) context.getCatalogManager().getPropertyValue(catalog, field, e, null, session);
-			if (trashed != null && trashed) {
+            trashed = (Boolean) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
+            if (trashed != null && trashed) {
 				Trash trashItem = trashp.get();
 				trashItem.setName(e.getName());
 				trashItem.setEntry(

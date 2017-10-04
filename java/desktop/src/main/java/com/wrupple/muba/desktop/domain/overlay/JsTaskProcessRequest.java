@@ -28,11 +28,11 @@ public final class JsTaskProcessRequest extends JavaScriptObject implements
 	}-*/;
 
 	@Override
-	public native JsTransactionActivityContext getActivityContext() /*-{
+	public native JsTransactionApplicationContext getActivityContext() /*-{
 		return this.activityContext;
 	}-*/;
 
-	public native void setActivityContext(JsTransactionActivityContext ctx)/*-{
+	public native void setActivityContext(JsTransactionApplicationContext ctx)/*-{
 		this.activityContext = ctx;
 	}-*/;
 

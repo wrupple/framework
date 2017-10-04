@@ -41,7 +41,7 @@ public class GenericValueCell extends  AbstractDelegatingEditableField<JsCatalog
 		 * but this interfrs with elimination of Relations on GenericFieldFactory /  ForeignValueRelationEditor
 		 * 
 		 * String catalog = super.fieldDescriptor.getForeignCatalogName();
-		ContentManager<JsCatalogEntry> manager = cms.getContentManager(catalog);
+		FormatManager<JsCatalogEntry> manager = cms.getContentManager(catalog);
 		Process editingProcess = manager.getEditingProcess(Mode.READ, getBus(), contextServices);
 		return editingProcess;*/
 		return null;

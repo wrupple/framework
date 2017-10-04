@@ -2,12 +2,13 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.HasCatalogId;
-import com.wrupple.muba.bootstrap.domain.reserved.HasDistinguishedName;
-import com.wrupple.muba.bootstrap.domain.reserved.HasProperties;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
+import com.wrupple.muba.event.domain.reserved.HasOutput;
+import com.wrupple.muba.event.domain.reserved.HasProperties;
 
-public interface ProcessTaskDescriptor extends CatalogEntry,HasCatalogId,HasDistinguishedName,HasProperties{
+public interface ProcessTaskDescriptor extends CatalogEntry,HasOutput,HasCatalogId,HasDistinguishedName,HasProperties{
 	
 	String CATALOG = "TaskDescriptor";
 	String COMMAND_FIELD = "machineTaskCommandName";
@@ -23,11 +24,7 @@ public interface ProcessTaskDescriptor extends CatalogEntry,HasCatalogId,HasDist
 	public List<Long> getUserActions();
 
 	String getTransactionType();
-	
-	/**
-	 * @return saveToField
-	 */
-	String getProducedField();
+
 	/**
 	 * 
 	 * @return
@@ -39,4 +36,7 @@ public interface ProcessTaskDescriptor extends CatalogEntry,HasCatalogId,HasDist
 	
 	List<String> getUrlTokens();
 
+    void setDistinguishedName(String driverPick);
+
+	void setTransactionType(String selectCommand);
 }

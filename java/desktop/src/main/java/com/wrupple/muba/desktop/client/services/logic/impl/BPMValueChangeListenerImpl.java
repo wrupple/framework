@@ -12,12 +12,12 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDelegate;
 import com.wrupple.muba.desktop.client.services.command.CommitCommand;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.TaskValueChangeListener;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 import com.wrupple.vegetate.domain.FilterData;
@@ -39,7 +39,7 @@ public class BPMValueChangeListenerImpl implements TaskValueChangeListener {
 	private ProcessContextServices context;
 	private EventBus eventBus;
 	private JavaScriptObject properties;
-	private JsTransactionActivityContext parameter;
+	private JsTransactionApplicationContext parameter;
 
 	@Inject
 	public BPMValueChangeListenerImpl(CatalogEvaluationDelegate delegate,
@@ -100,8 +100,8 @@ public class BPMValueChangeListenerImpl implements TaskValueChangeListener {
 
 	@Override
 	public void setContext(String catalog,
-			JsTransactionActivityContext parameter, ProcessContextServices context,
-			JavaScriptObject properties, EventBus eventBus) {
+                           JsTransactionApplicationContext parameter, ProcessContextServices context,
+                           JavaScriptObject properties, EventBus eventBus) {
 		this.catalog = catalog;
 		this.context = context;
 		this.eventBus = eventBus;
@@ -111,7 +111,7 @@ public class BPMValueChangeListenerImpl implements TaskValueChangeListener {
 
 	protected void callCommit() {
 		String command = getCommand();
-		StateTransition<JsTransactionActivityContext> c = DataCallback
+		StateTransition<JsTransactionApplicationContext> c = DataCallback
 				.nullCallback();
 		context.getServiceBus().excecuteCommand(command, properties, eventBus,
 				context, parameter, c);
@@ -198,7 +198,7 @@ public class BPMValueChangeListenerImpl implements TaskValueChangeListener {
 		criteria.setOperator(operator);
 		String value = rule.substring(length, rule.length());
 
-		this.conversionService.convertToPersistentDatabaseValue(value, field,
+		this.conversionService.setAsPersistentValue(value, field,
 				criteria);
 		rewriteValue(field.getFieldId(), criteria);
 		return criteria;

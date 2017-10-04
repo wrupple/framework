@@ -2,9 +2,9 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import java.util.List;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.catalogs.domain.DistributiedLocalizedEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.DistributiedLocalizedEntry;
 
 public class LocalizedEntityWrapper implements DistributiedLocalizedEntry {
 	private static final long serialVersionUID = 4051797443336293564L;
@@ -105,6 +105,10 @@ public class LocalizedEntityWrapper implements DistributiedLocalizedEntry {
 
 	@Override
 	public void setEntry(Object id) {
+	}
+
+	public CatalogEntry getEntryValue() {
+		return entity;
 	}
 
 	@Override

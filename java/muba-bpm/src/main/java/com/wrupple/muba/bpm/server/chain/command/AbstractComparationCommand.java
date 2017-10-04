@@ -3,30 +3,26 @@ package com.wrupple.muba.bpm.server.chain.command;
 import java.util.Collection;
 import java.util.Date;
 
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Instrospection;
 
 public abstract class AbstractComparationCommand implements Command {
 
-	protected final SystemCatalogPlugin accesor;
 
-	public AbstractComparationCommand(SystemCatalogPlugin accesor) {
-		super();
-		this.accesor = accesor;
-	}
 
 	@Override
 	public final boolean execute(Context c) throws Exception {
 		CatalogActionContext context = ((CatalogActionContext) c);
 
+		FieldAccessStrategy accesor = context.getCatalogManager().access();
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		CatalogEntry old = context.getOldValue();
 		CatalogEntry neew = (CatalogEntry) context.getEntryValue();
@@ -35,9 +31,9 @@ public abstract class AbstractComparationCommand implements Command {
 		Object finalValue, initialValue;
 		String codedFinalValue, codedInitialValue;
 		boolean accesible = old instanceof HasAccesablePropertyValues;
-		Session session = null;
+		Instrospection instrospection = null;
 		if (!accesible) {
-			session = accesor.newSession(old);
+			instrospection = accesor.newSession(old);
 		}
 		for (FieldDescriptor field : fields) {
 			if (!field.isMultiple() && field.isWriteable()) {
@@ -45,8 +41,8 @@ public abstract class AbstractComparationCommand implements Command {
 					initialValue = ((HasAccesablePropertyValues) old).getPropertyValue(field.getFieldId());
 					finalValue = ((HasAccesablePropertyValues) neew).getPropertyValue(field.getFieldId());
 				} else {
-					initialValue = accesor.getPropertyValue(catalog, field, old, null, session);
-					finalValue = accesor.getPropertyValue(catalog, field, neew, null, session);
+					initialValue = accesor.getPropertyValue(field, old, null, instrospection);
+					finalValue = accesor.getPropertyValue(field, neew, null, instrospection);
 				}
 
 				if (!(initialValue == null && finalValue == null)
@@ -67,7 +63,7 @@ public abstract class AbstractComparationCommand implements Command {
 						codedFinalValue = finalValue == null ? null : String.valueOf(finalValue);
 						codedInitialValue = initialValue == null ? null : String.valueOf(initialValue);
 					}
-					compare(codedFinalValue, codedInitialValue, initialValue, finalValue, field, context);
+					compare(codedFinalValue, codedInitialValue, initialValue, finalValue, field,catalog, context);
 				}
 			}
 		}
@@ -76,6 +72,6 @@ public abstract class AbstractComparationCommand implements Command {
 	}
 
 	protected abstract void compare(String codedFinalValue, String codedInitialValue, Object initialValue,
-			Object finalValue, FieldDescriptor field, CatalogActionContext context) throws Exception;
+			Object finalValue, FieldDescriptor field,CatalogDescriptor catalog, CatalogActionContext context) throws Exception;
 
 }

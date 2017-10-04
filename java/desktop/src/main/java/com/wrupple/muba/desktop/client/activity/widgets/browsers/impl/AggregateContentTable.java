@@ -12,7 +12,7 @@ import com.wrupple.muba.desktop.client.services.logic.CatalogEntryKeyProvider;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.presentation.TableLayoutDelegate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class AggregateContentTable extends AbstractContentBrowser {
 
@@ -29,7 +29,7 @@ public class AggregateContentTable extends AbstractContentBrowser {
 
 	@Override
 	public void setRuntimeParams(String catalog, JavaScriptObject properties,
-			EventBus bus, JsTransactionActivityContext contextParameters,
+			EventBus bus, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices) {
 		setCumulative("true");
 		

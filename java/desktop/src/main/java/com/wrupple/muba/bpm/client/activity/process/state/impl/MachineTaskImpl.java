@@ -8,7 +8,7 @@ import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class MachineTaskImpl implements MachineTask {
 	
@@ -32,8 +32,8 @@ public class MachineTaskImpl implements MachineTask {
 	}
 
 	@Override
-	public void start(final JsTransactionActivityContext parameter,
-			final StateTransition<JsTransactionActivityContext> onDone, EventBus bus) {
+	public void start(final JsTransactionApplicationContext parameter,
+                      final StateTransition<JsTransactionApplicationContext> onDone, EventBus bus) {
 		parameter.setCurrentTaskIndex(parameter.getCurrentTaskIndex()+1);
 		parameter.setTaskDescriptor(activityDescriptor);
 		String command = activityDescriptor.getMachineTaskCommandName();
@@ -43,7 +43,7 @@ public class MachineTaskImpl implements MachineTask {
 		//FIXME some commands don't call the callback ever, assert all commands do!!! create a timer? or something to resume?
 		
 		
-		StateTransition<JsTransactionActivityContext> callback=new DataCallback<JsTransactionActivityContext>() {
+		StateTransition<JsTransactionApplicationContext> callback=new DataCallback<JsTransactionApplicationContext>() {
 
 			@Override
 			public void execute() {

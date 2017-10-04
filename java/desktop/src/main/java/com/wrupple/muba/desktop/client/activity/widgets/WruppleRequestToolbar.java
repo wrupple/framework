@@ -24,19 +24,23 @@ import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.VegetateUserException;
+
+import javax.inject.Named;
 
 public class WruppleRequestToolbar extends Composite implements RequestToolbar {
 
 	FlowPanel main;
 	private StorageManager sm;
+	private int unknownUserError;
 
 	@Inject
-	public WruppleRequestToolbar(StorageManager sm) {
+	public WruppleRequestToolbar(StorageManager sm, @Named("com.wrupple.errors.unknownUser") Integer unknownUser) {
 		super();
 		this.sm = sm;
+		this.unknownUserError=unknownUser;
 		main = new FlowPanel();
 		initWidget(main);
 		main.addStyleName("wrupple-request-toolbar");
@@ -68,7 +72,7 @@ public class WruppleRequestToolbar extends Composite implements RequestToolbar {
 	public void onRequestFailed(VegetateRequestFailureEvent e) {
 		int errorCode = e.getExceptionOverlay() == null ? 0 : e.getExceptionOverlay().getErrorCode();
 		int requestId = e.getRequestNumber();
-		if (errorCode ==VegetateUserException.USER_UNKNOWN) {
+		if (errorCode ==unknownUser) {
 			//FIXME Toolbar should not hable exceptions, but let others catch the failure events
 		} else {
 			String exceptionMessage = getExceptionMessage(e);
@@ -125,7 +129,7 @@ public class WruppleRequestToolbar extends Composite implements RequestToolbar {
 	}
 
 	@Override
-	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 			EventBus bus, ProcessContextServices contextServices) {
 
 	}
@@ -136,7 +140,7 @@ public class WruppleRequestToolbar extends Composite implements RequestToolbar {
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 
 	}
 

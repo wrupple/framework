@@ -6,21 +6,17 @@
 	<artifactId>muba-runner-human</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
-	<name>User interface implementation of a task runner</name>s
+	<name>User interface implementation of a task runner</name>
 	<properties>
 		<muba.version>1.0</muba.version>
-		<guice.version>3.0</guice.version>
-		<servlet.api>3.1.0</servlet.api>
+		<guice.version>4.1.0</guice.version>
 	</properties>
 	<dependencies>
-
-
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>muba-runner</artifactId>
 			<version>${muba.version}</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>com.google.inject</groupId>

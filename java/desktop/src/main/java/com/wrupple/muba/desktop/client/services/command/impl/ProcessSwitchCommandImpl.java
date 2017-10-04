@@ -21,7 +21,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 public class ProcessSwitchCommandImpl implements ProcessSwitchCommand {
 
 	class ProcessAssembledCallback
@@ -58,18 +58,18 @@ public class ProcessSwitchCommandImpl implements ProcessSwitchCommand {
 		
 	}
 	protected TransactionalActivityAssembly assembly;
-	private StateTransition<JsTransactionActivityContext> callback;
+	private StateTransition<JsTransactionApplicationContext> callback;
 	private String processId;
 	private String task.getProducedField();
 	private ProcessContextServices contextServices;
-	private JsTransactionActivityContext nueva;
+	private JsTransactionApplicationContext nueva;
 	private EventBus eventBus;
 
 	private JavaScriptObject processInstance;
 	private DesktopTheme theme;
-	private JsTransactionActivityContext processParameters;
+	private JsTransactionApplicationContext processParameters;
 	private ContentManagementSystem cms;
-	private Process<JsTransactionActivityContext, JsTransactionActivityContext> assembledProcess;
+	private Process<JsTransactionApplicationContext, JsTransactionApplicationContext> assembledProcess;
 
 	@Inject
 	public ProcessSwitchCommandImpl(TransactionalActivityAssembly assembly,DesktopTheme theme, ContentManagementSystem cms) {
@@ -83,8 +83,8 @@ public class ProcessSwitchCommandImpl implements ProcessSwitchCommand {
 	@Override
 	public void prepare(String command, JavaScriptObject commandProperties,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
-			StateTransition<JsTransactionActivityContext> callback) {
+			JsTransactionApplicationContext processParameters,
+			StateTransition<JsTransactionApplicationContext> callback) {
 		task.getProducedField()=null;
 		//FIXME this property should be set by action not task
 		task.getProducedField() = GWTUtils.getAttribute(commandProperties, "task.getProducedField()Nested");
@@ -116,7 +116,7 @@ public class ProcessSwitchCommandImpl implements ProcessSwitchCommand {
 		}
 		
 		
-		nueva = JsTransactionActivityContext.createObject().cast();
+		nueva = JsTransactionApplicationContext.createObject().cast();
 		//FIXME read target entry id for update, and read actions
 		String rawPropertiesToCopy = GWTUtils.getAttribute(commandProperties, "propertiesFromCurrentContext");
 		if(rawPropertiesToCopy!=null){

@@ -17,7 +17,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 
 public abstract class UserInteractionWidgetImpl<T extends JavaScriptObject,R> extends ResizeComposite implements
@@ -99,7 +99,7 @@ public abstract class UserInteractionWidgetImpl<T extends JavaScriptObject,R> ex
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParameters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParameters) {
 		this.properties=properties;//rewrite options, rather
 		onBeforeRecofigure(properties, contextServices, eventBus, contextParameters);
 		
@@ -112,11 +112,11 @@ public abstract class UserInteractionWidgetImpl<T extends JavaScriptObject,R> ex
 
 	protected abstract void onAfterReconfigure(PanelTransformationConfig properties2,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters);
+			JsTransactionApplicationContext contextParameters);
 
 
 
 	protected abstract void onBeforeRecofigure(PanelTransformationConfig properties2,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) ;
+			JsTransactionApplicationContext contextParameters) ;
 }

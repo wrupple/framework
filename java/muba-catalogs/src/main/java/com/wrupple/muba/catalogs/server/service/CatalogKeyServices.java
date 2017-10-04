@@ -2,8 +2,8 @@ package com.wrupple.muba.catalogs.server.service;
 
 import java.util.List;
 
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 
 public interface CatalogKeyServices {
 

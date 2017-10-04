@@ -17,13 +17,8 @@ import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
 import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
 import com.wrupple.muba.desktop.client.services.presentation.ToolbarAssemblyDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
-import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 
 public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
@@ -39,8 +34,8 @@ public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
 
 	@Override
 	public void assebleToolbars(final ContentPanel transactionPanel, final TakesValue<?> mainTrasaction, final JsProcessTaskDescriptor parameter,
-			final JavaScriptObject taskDescriptorProps, final JsTransactionActivityContext activityContext, final EventBus bus, final ProcessContextServices context,
-			final JsApplicationItem currentPlace) {
+                                final JavaScriptObject taskDescriptorProps, final JsTransactionApplicationContext activityContext, final EventBus bus, final ProcessContextServices context,
+                                final JsApplicationItem currentPlace) {
 
 		JsArray<JsTaskToolbarDescriptor> toolbars = parameter.getToolbarsValuesArray();
 
@@ -73,8 +68,8 @@ public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
 	}
 
 	private void buildTOolbars(JavaScriptObject taskDescriptorProps, JsArray<JsTaskToolbarDescriptor> toolbars, ContentPanel transactionView,
-			TakesValue<?> mainTrasaction, JsProcessTaskDescriptor parameter, EventBus bus, ProcessContextServices context,
-			JsTransactionActivityContext contextParamenters, JsApplicationItem currentPlace) {
+                               TakesValue<?> mainTrasaction, JsProcessTaskDescriptor parameter, EventBus bus, ProcessContextServices context,
+                               JsTransactionApplicationContext contextParamenters, JsApplicationItem currentPlace) {
 
 		JsTaskToolbarDescriptor toolbarDescriptor;
 		if (toolbars != null) {
@@ -87,8 +82,8 @@ public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
 	}
 
 	private void processToolbar(JsTaskToolbarDescriptor toolbarDescriptor, JavaScriptObject taskDescriptorProps, ContentPanel transactionView,
-			JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParamenters, EventBus bus, ProcessContextServices context,
-			TakesValue<?> mainTrasaction, JsApplicationItem currentPlace, boolean redraw) {
+                                JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParamenters, EventBus bus, ProcessContextServices context,
+                                TakesValue<?> mainTrasaction, JsApplicationItem currentPlace, boolean redraw) {
 		String type = toolbarDescriptor.getType();
 		String delegateTask = toolbarDescriptor.getTaskAsString();
 		JavaScriptObject properties = toolbarDescriptor.getPropertiesObject();

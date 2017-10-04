@@ -19,8 +19,8 @@ import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.FieldColumnRelation;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.process.state.impl.CsvRecordImportState.FieldImportData;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
-import com.wrupple.muba.desktop.client.services.logic.impl.FieldConversionStrategyImpl;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
+import com.wrupple.muba.desktop.client.services.logic.impl.GWTFieldConversionStrategyImpl;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.impl.SimpleFilterableDataProvider;
 import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
@@ -299,7 +299,7 @@ public class CsvRecordFieldWriter implements State<FieldImportData, FieldImportD
 								 * a search criteria
 								 */
 								rawForeignValue = parameter.getRecord().get(mapping.getColumn());
-								value = conversionService.convertToPersistentDatabaseValue(rawForeignValue, fieldGroupMember);
+								value = conversionService.convertToPersistentValue(rawForeignValue, fieldGroupMember);
 								if (value == null) {
 									// ignore
 								} else {
@@ -411,7 +411,7 @@ public class CsvRecordFieldWriter implements State<FieldImportData, FieldImportD
 	private void addCriteria(FilterData filters, String mappedField, Object value) {
 		JsFilterCriteria criteria = JsFilterCriteria.newFilterCriteria();
 		criteria.setOperator(FilterData.EQUALS);
-		FieldConversionStrategyImpl.setAttribute(criteria, CatalogEntry.ID_FIELD, value);
+		GWTFieldConversionStrategyImpl.setAttribute(criteria, CatalogEntry.ID_FIELD, value);
 		pushCriteria(criteria);
 		criteria.pushToPath(mappedField);
 		filters.addFilter(criteria);
@@ -431,13 +431,13 @@ public class CsvRecordFieldWriter implements State<FieldImportData, FieldImportD
 			if (parameter.getRawValues() == null) {
 				GWTUtils.setAttributeJava(parameter.getEntry(), field.getFieldId(), null);
 			} else {
-				conversionService.convertToPersistentDatabaseValue(parameter.getRawValues(), field, parameter.getEntry());
+				conversionService.setAsPersistentValue(parameter.getRawValues(), field, parameter.getEntry());
 			}
 		} else {
 			if (rawValue == null) {
 				GWTUtils.setAttributeJava(parameter.getEntry(), field.getFieldId(), null);
 			} else {
-				conversionService.convertToPersistentDatabaseValue(rawValue, field, parameter.getEntry());
+				conversionService.setAsPersistentValue(rawValue, field, parameter.getEntry());
 			}
 		}
 		onDone.setResultAndFinish(parameter);

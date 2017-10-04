@@ -12,14 +12,14 @@ import com.wrupple.muba.desktop.client.factory.dictionary.ExternalAPILoaderMap;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class InitializeActivityContextImpl implements InitializeActivityContext {
 
 	
 	private JsApplicationItem item;
 	private ExternalAPILoaderMap apiMap;
-	private boolean[] resolved;
+	//private boolean[] resolved;
 	private ProcessContextServices context;
 
 	@Inject
@@ -29,9 +29,9 @@ public class InitializeActivityContextImpl implements InitializeActivityContext 
 	}
 
 	@Override
-	public void start(DesktopPlace parameter, StateTransition<JsTransactionActivityContext> onDone, EventBus bus) {
+	public void start(DesktopPlace parameter, StateTransition<JsTransactionApplicationContext> onDone, EventBus bus) {
 		
-		JsTransactionActivityContext nueva = JsTransactionActivityContext.createObject().cast();
+		JsTransactionApplicationContext nueva = JsTransactionApplicationContext.createObject().cast();
 		nueva.setApplicationItem(item);
 		
 		JavaScriptObject appProperties = item.getPropertiesObject();
@@ -39,17 +39,17 @@ public class InitializeActivityContextImpl implements InitializeActivityContext 
 		if (rawAPINames == null) {
 			onDone.setResultAndFinish(nueva);
 		} else {
-			State<JsTransactionActivityContext, JsTransactionActivityContext>[] states = getAPILoadingStates(rawAPINames, appProperties, bus, nueva);
+			State<JsTransactionApplicationContext, JsTransactionApplicationContext>[] states = getAPILoadingStates(rawAPINames, appProperties, bus, nueva);
 			start(nueva, onDone, bus, states);
 		}
 
 	}
 
-	private State<JsTransactionActivityContext, JsTransactionActivityContext>[] getAPILoadingStates(String rawAPINames, JavaScriptObject appProperties,
-			EventBus bus, JsTransactionActivityContext nueva) {
+	private State<JsTransactionApplicationContext, JsTransactionApplicationContext>[] getAPILoadingStates(String rawAPINames, JavaScriptObject appProperties,
+                                                                                                          EventBus bus, JsTransactionApplicationContext nueva) {
 		String[] names = rawAPINames.split(",");
-		State<JsTransactionActivityContext, JsTransactionActivityContext>[] regreso = new State[names.length];
-		State<JsTransactionActivityContext, JsTransactionActivityContext> temp;
+		State<JsTransactionApplicationContext, JsTransactionApplicationContext>[] regreso = new State[names.length];
+		State<JsTransactionApplicationContext, JsTransactionApplicationContext> temp;
 		String name;
 		for (int i = 0; i < names.length; i++) {
 			name = names[i];
@@ -63,11 +63,11 @@ public class InitializeActivityContextImpl implements InitializeActivityContext 
 		return regreso;
 	}
 
-	class Resolver extends DataCallback<JsTransactionActivityContext> {
+	class Resolver extends DataCallback<JsTransactionApplicationContext> {
 		final int index;
-		final StateTransition<JsTransactionActivityContext> onDone;
+		final StateTransition<JsTransactionApplicationContext> onDone;
 
-		public Resolver(int index, StateTransition<JsTransactionActivityContext> onDone) {
+		public Resolver(int index, StateTransition<JsTransactionApplicationContext> onDone) {
 			this.index = index;
 			this.onDone = onDone;
 		}
@@ -85,13 +85,13 @@ public class InitializeActivityContextImpl implements InitializeActivityContext 
 
 	}
 
-	public void start(JsTransactionActivityContext parameter, StateTransition<JsTransactionActivityContext> onDone, EventBus bus,
-			State<JsTransactionActivityContext, JsTransactionActivityContext>[] states) {
+	public void start(JsTransactionApplicationContext parameter, StateTransition<JsTransactionApplicationContext> onDone, EventBus bus,
+                      State<JsTransactionApplicationContext, JsTransactionApplicationContext>[] states) {
 		if (this.resolved != null) {
 			throw new IllegalArgumentException();
 		}
 		this.resolved = new boolean[states.length];
-		State<JsTransactionActivityContext, JsTransactionActivityContext> state;
+		State<JsTransactionApplicationContext, JsTransactionApplicationContext> state;
 		for (int i = 0; i < states.length; i++) {
 			state = states[i];
 			state.start(parameter, new Resolver(i, onDone), bus);

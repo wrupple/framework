@@ -7,7 +7,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 
 /**
@@ -38,10 +38,10 @@ public interface ServiceDictionary<T> extends UserAssistanceProvider {
 	 *            id of the Widget Creator
 	 * @return new Instance of the widget
 	 */
-	public T getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventBus bus, JsTransactionActivityContext ctx);
+	public T getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventBus bus, JsTransactionApplicationContext ctx);
 	
 	void reconfigure(PanelTransformationConfig properties,
-			T wruppleActivityToolbarBase, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParameters);
+			T wruppleActivityToolbarBase, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParameters);
 	
 	public Set<String> keySet();
 	

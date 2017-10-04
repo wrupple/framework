@@ -1,27 +1,25 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogKey;
+import com.wrupple.muba.event.domain.FilterCriteria;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.reserved.HasEntryId;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
+import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogKey;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.reserved.HasEntryId;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Singleton
 public class DiscriminateEntriesImpl implements CatalogReadTransaction {
@@ -59,16 +57,16 @@ public class DiscriminateEntriesImpl implements CatalogReadTransaction {
 		HashMap<Long, CatalogEntry> discriminatedMap = new HashMap<Long, CatalogEntry>(size);
 
 		Long disciminator;
-		Session session = null;
+		Instrospection instrospection = null;
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		FieldDescriptor field = catalog.getFieldDescriptor(discriminatingField);
 		log.trace("[BUILD DISCRIMINATOR MAP]");
 		for (CatalogEntry e : members) {
-			if (session == null) {
-				session = context.getCatalogManager().newSession(e);
-			}
-			disciminator = (Long) context.getCatalogManager().getPropertyValue(catalog, field, e, null, session);
-			discriminatedMap.put(disciminator, e);
+			if (instrospection == null) {
+                instrospection = context.getCatalogManager().access().newSession(e);
+            }
+            disciminator = (Long) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
+            discriminatedMap.put(disciminator, e);
 		}
 		// IN THE SAME ORDER AS DISCRIMINATORS, this only works for long primary
 		// keys, as you might imagine

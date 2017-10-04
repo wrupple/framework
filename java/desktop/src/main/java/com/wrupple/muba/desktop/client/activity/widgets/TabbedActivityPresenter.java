@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class TabbedActivityPresenter extends ResizeComposite implements ProcessPresenter {
 
@@ -73,7 +73,7 @@ public class TabbedActivityPresenter extends ResizeComposite implements ProcessP
 		SimpleLayoutPanel outputFeature;
 
 		private ContentPanel userContent;
-		private StateTransition<JsTransactionActivityContext> serInteractionTaskCallback;
+		private StateTransition<JsTransactionApplicationContext> serInteractionTaskCallback;
 
 		public Feature() {
 			label = new Label();
@@ -115,12 +115,12 @@ public class TabbedActivityPresenter extends ResizeComposite implements ProcessP
 		}
 
 		@Override
-		public void setUserInteractionTaskCallback(StateTransition<JsTransactionActivityContext> onDone) {
+		public void setUserInteractionTaskCallback(StateTransition<JsTransactionApplicationContext> onDone) {
 			this.serInteractionTaskCallback=onDone;
 		}
 
 		@Override
-		public StateTransition<JsTransactionActivityContext> getUserInteractionTaskCallback() {
+		public StateTransition<JsTransactionApplicationContext> getUserInteractionTaskCallback() {
 			return serInteractionTaskCallback;
 		}
 

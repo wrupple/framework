@@ -18,7 +18,7 @@ import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class CheckBoxCellProvider implements CatalogFormFieldProvider {
 	private static final SafeHtml INPUT_CHECKED = SafeHtmlUtils
@@ -43,7 +43,7 @@ public class CheckBoxCellProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<Boolean> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		String trueCustomImage = null;
 		String falseCustomImage = null;

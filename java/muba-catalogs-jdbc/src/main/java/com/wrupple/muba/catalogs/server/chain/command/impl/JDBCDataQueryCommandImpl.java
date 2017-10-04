@@ -12,23 +12,19 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.FilterDataOrdering;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataQueryCommand;
 import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl.MultipleFieldResultsHandler;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.event.domain.Instrospection;
 
 @Singleton
 public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
@@ -174,7 +170,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 		String foreignTableName;
 		List<Object> fieldValues;
 		String queryL;
-		Session session = null;
+		Instrospection instrospection = null;
 		MultipleFieldResultsHandler handler = null;
 		for (FieldDescriptor field : fields) {
 			if (field.isMultiple() && !field.isEphemeral()) {
@@ -192,15 +188,15 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 					log.trace("[DB secondary query] {} ", queryL);
 
 					for (CatalogEntry o : results) {
-						if (session == null) {
-							session = context.getCatalogManager().newSession(o);
+						if (instrospection == null) {
+							instrospection = context.getCatalogManager().access().newSession(o);
 						}
 						log.trace("[DB secondary query for] {} ", o.getId());
 						// FIXME this is terrible, at lest use prepared
 						// statements??
 						fieldValues = runner.query(queryL, handler, o.getId());
 						log.trace("[DB results for {}] {}", o.getId(), fieldValues == null ? 0 : fieldValues.size());
-						context.getCatalogManager().setPropertyValue(catalogDescriptor, field, o, fieldValues, session);
+						context.getCatalogManager().access().setPropertyValue(field, o, fieldValues, instrospection);
 					}
 				}
 

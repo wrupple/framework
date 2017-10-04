@@ -6,11 +6,11 @@
 	<artifactId>muba-catalogs-jdbc-mysql</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
-	<name> HSQLDB support for muba-catalogs</name>
+	<name> MySQL support for muba-catalogs</name>
 	<description>Enforces programs written to always have an efect on the state of the user data. Allows such data to be validated, localized, seft deleted, friendly named, cached, and be worgroup or user owned</description>
 	<properties>
 		<muba.version>1.0</muba.version>
-		<guice.version>3.0</guice.version>
+		<guice.version>4.1.0</guice.version>
 	</properties>
 	<dependencies>
 		<dependency>

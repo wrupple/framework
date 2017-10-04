@@ -12,15 +12,15 @@ import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpr
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FilterData;
 
 public class PlaceInterpretCommand implements CommandService {
 
 	CatalogPlaceInterpret interpret;
 	ProcessContextServices context;
-	private StateTransition<JsTransactionActivityContext> onDone;
-	private JsTransactionActivityContext parameter;
+	private StateTransition<JsTransactionApplicationContext> onDone;
+	private JsTransactionApplicationContext parameter;
 	
 	@Inject
 	public PlaceInterpretCommand(CatalogPlaceInterpret interpret) {
@@ -48,8 +48,8 @@ public class PlaceInterpretCommand implements CommandService {
 	@Override
 	public void prepare(String command, JavaScriptObject commandProperties,
 			EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters,
-			StateTransition<JsTransactionActivityContext> callback) {
+			JsTransactionApplicationContext processParameters,
+			StateTransition<JsTransactionApplicationContext> callback) {
 		this.parameter=processParameters;
 		this.onDone=callback;
 		this.context=processContext;

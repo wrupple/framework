@@ -3,8 +3,8 @@ package com.wrupple.muba.catalogs.server.domain.fields;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
 public class PrimaryKeyField extends FieldDescriptorImpl {
 	private static final long serialVersionUID = -3306030117910181235L;

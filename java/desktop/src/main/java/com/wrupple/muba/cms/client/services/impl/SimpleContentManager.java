@@ -32,11 +32,8 @@ import com.wrupple.muba.desktop.client.services.logic.ProcessSwitchCommand;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
-import com.wrupple.muba.desktop.domain.overlay.JsWruppleActivityAction;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class SimpleContentManager<V extends JavaScriptObject> implements ContentManager<V> {
 
@@ -61,25 +58,25 @@ public class SimpleContentManager<V extends JavaScriptObject> implements Content
 
 
 	@Override
-	public HumanTaskProcessor<V,V> getCreateTransaction(JsTransactionActivityContext contextParameters, JavaScriptObject properties, EventBus bus,
-			ProcessContextServices contextServices) {
+	public HumanTaskProcessor<V,V> getCreateTransaction(JsTransactionApplicationContext contextParameters, JavaScriptObject properties, EventBus bus,
+                                                        ProcessContextServices contextServices) {
 		return assembleEditorWidget(getCatalog(), properties, bus, contextServices, CatalogAction.CREATE, contextParameters);
 	}
 
 	@Override
-	public HumanTaskProcessor<V,V> getReadTransaction(JsTransactionActivityContext contextParameters, JavaScriptObject properties, EventBus bus,
-			ProcessContextServices contextServices) {
+	public HumanTaskProcessor<V,V> getReadTransaction(JsTransactionApplicationContext contextParameters, JavaScriptObject properties, EventBus bus,
+                                                      ProcessContextServices contextServices) {
 		return assembleEditorWidget(getCatalog(), properties, bus, contextServices, CatalogAction.READ, contextParameters);
 	}
 
 	@Override
-	public HumanTaskProcessor<V,V> getUpdateTransaction(JsTransactionActivityContext contextParameters, JavaScriptObject properties, EventBus bus,
-			ProcessContextServices contextServices) {
+	public HumanTaskProcessor<V,V> getUpdateTransaction(JsTransactionApplicationContext contextParameters, JavaScriptObject properties, EventBus bus,
+                                                        ProcessContextServices contextServices) {
 		return assembleEditorWidget(getCatalog(), properties, bus, contextServices, CatalogAction.UPDATE, contextParameters);
 	}
 
 	public CatalogEditor assembleEditorWidget(String catalog, JavaScriptObject properties, EventBus bus, ProcessContextServices services, CatalogAction mode,
-			JsTransactionActivityContext processContextParams) {
+			JsTransactionApplicationContext processContextParams) {
 
 		CatalogEditor<JsCatalogEntry> editor = editorMap.getConfigured(properties, services, bus, processContextParams);
 
@@ -92,8 +89,8 @@ public class SimpleContentManager<V extends JavaScriptObject> implements Content
 	}
 
 	@Override
-	public HumanTaskProcessor<JsArray<V>,JsFilterData> getSelectTransaction(JsTransactionActivityContext ctx, JavaScriptObject properties, EventBus bus,
-			ProcessContextServices services) {
+	public HumanTaskProcessor<JsArray<V>,JsFilterData> getSelectTransaction(JsTransactionApplicationContext ctx, JavaScriptObject properties, EventBus bus,
+                                                                            ProcessContextServices services) {
 
 		final ContentBrowser widget = catalogEntryBrowserMap.getConfigured(properties, services, bus, ctx);
 
@@ -106,9 +103,9 @@ public class SimpleContentManager<V extends JavaScriptObject> implements Content
 	}
 
 	@Override
-	public com.wrupple.muba.bpm.client.services.Process<JsTransactionActivityContext, JsTransactionActivityContext> getEditingProcess(CatalogAction mode,
-			EventBus bus, ProcessContextServices contextServices) {
-		com.wrupple.muba.bpm.client.services.Process<JsTransactionActivityContext, JsTransactionActivityContext> regreso = new SequentialProcess<JsTransactionActivityContext, JsTransactionActivityContext>();
+	public com.wrupple.muba.bpm.client.services.Process<JsTransactionApplicationContext, JsTransactionApplicationContext> getEditingProcess(CatalogAction mode,
+                                                                                                                                            EventBus bus, ProcessContextServices contextServices) {
+		com.wrupple.muba.bpm.client.services.Process<JsTransactionApplicationContext, JsTransactionApplicationContext> regreso = new SequentialProcess<JsTransactionApplicationContext, JsTransactionApplicationContext>();
 		TransactionalActivityAssembly processAssembly = processAssemblyProvider.get();
 		JsArray<JsWruppleActivityAction> actions = JavaScriptObject.createArray().cast();
 		JsWruppleActivityAction tempAction = getCommitAction(theme.ok(), "Commit");
@@ -133,9 +130,9 @@ public class SimpleContentManager<V extends JavaScriptObject> implements Content
 	}
 
 	@Override
-	public Process<JsTransactionActivityContext, JsTransactionActivityContext> getSelectionProcess(ProcessContextServices contextServices, boolean multiple,
-			boolean creationAction) {
-		com.wrupple.muba.bpm.client.services.Process<JsTransactionActivityContext, JsTransactionActivityContext> regreso = new SequentialProcess<JsTransactionActivityContext, JsTransactionActivityContext>();
+	public Process<JsTransactionApplicationContext, JsTransactionApplicationContext> getSelectionProcess(ProcessContextServices contextServices, boolean multiple,
+                                                                                                         boolean creationAction) {
+		com.wrupple.muba.bpm.client.services.Process<JsTransactionApplicationContext, JsTransactionApplicationContext> regreso = new SequentialProcess<JsTransactionApplicationContext, JsTransactionApplicationContext>();
 		TransactionalActivityAssembly processAssembly = processAssemblyProvider.get();
 
 		JsArray<JsProcessTaskDescriptor> processSteps = defaultzSelectionProcess(multiple, creationAction, theme, managedCatalog);

@@ -17,11 +17,8 @@ import com.wrupple.muba.desktop.client.services.command.CatalogCommandService;
 import com.wrupple.muba.desktop.client.services.command.ContextServicesNativeApiBuilder;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
-import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -36,7 +33,7 @@ public class CatalogCommandServiceImpl extends ContextServicesNativeApiBuilder i
 		super(placeInterpret, assembly);
 		this.cds = cds;
 	}
-	class CreateCallBack extends DataCallback<JsTransactionActivityContext> {
+	class CreateCallBack extends DataCallback<JsTransactionApplicationContext> {
 		StorageManager sm;
 
 		public CreateCallBack(StorageManager sm) {
@@ -74,7 +71,7 @@ public class CatalogCommandServiceImpl extends ContextServicesNativeApiBuilder i
 	}
 	
 
-	class UpdateCallBack extends DataCallback<JsTransactionActivityContext> {
+	class UpdateCallBack extends DataCallback<JsTransactionApplicationContext> {
 		StorageManager sm;
 
 		public UpdateCallBack(StorageManager sm) {
@@ -91,9 +88,9 @@ public class CatalogCommandServiceImpl extends ContextServicesNativeApiBuilder i
 	}
 
 	private ProcessContextServices context;
-	private StateTransition<JsTransactionActivityContext> callback;
+	private StateTransition<JsTransactionApplicationContext> callback;
 	private EventBus bus;
-	private JsTransactionActivityContext processParameters;
+	private JsTransactionApplicationContext processParameters;
 
 	private String action;
 	private String type;
@@ -105,7 +102,7 @@ public class CatalogCommandServiceImpl extends ContextServicesNativeApiBuilder i
 
 	@Override
 	public void prepare(String command, JavaScriptObject properties, EventBus eventBus, ProcessContextServices processContext,
-			JsTransactionActivityContext processParameters, StateTransition<JsTransactionActivityContext> callback) {
+                        JsTransactionApplicationContext processParameters, StateTransition<JsTransactionApplicationContext> callback) {
 		this.type = processParameters.getTaskDescriptor().getCatalogId();
 		this.properties = properties;
 		this.processParameters = processParameters;
@@ -176,7 +173,7 @@ public class CatalogCommandServiceImpl extends ContextServicesNativeApiBuilder i
 		return processParameters.getFilterData();
 	}
 
-	private void getEntry(StateTransition<JsTransactionActivityContext> onDone, CatalogDescriptor descriptor) {
+	private void getEntry(StateTransition<JsTransactionApplicationContext> onDone, CatalogDescriptor descriptor) {
 		// TODO this should be a service map
 		if (providerField != null) {
 			
@@ -235,11 +232,11 @@ public class CatalogCommandServiceImpl extends ContextServicesNativeApiBuilder i
 		}
 	}
 
-	private native void setAttrivute(JsCatalogEntry userOutput, String fieldId, JsTransactionActivityContext processParameters, String string) /*-{
+	private native void setAttrivute(JsCatalogEntry userOutput, String fieldId, JsTransactionApplicationContext processParameters, String string) /*-{
 		useroutput[fieldId] = processParameters[string];
 	}-*/;
 
-	private void invokeJavaScriptFactoryexecute(String functionName, StateTransition<JsTransactionActivityContext> onDone) {
+	private void invokeJavaScriptFactoryexecute(String functionName, StateTransition<JsTransactionApplicationContext> onDone) {
 		JavaScriptObject contextServices = createContextServices(services);
 		JavaScriptObject callbackFunction = createTransactionCallbackFunction(onDone);
 		invoke(functionName, processParameters, contextServices, callbackFunction);

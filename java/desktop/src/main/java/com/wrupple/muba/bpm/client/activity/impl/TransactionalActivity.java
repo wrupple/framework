@@ -36,7 +36,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.RemoteStorageUnit;
 import com.wrupple.vegetate.client.services.StorageManager;
 
@@ -207,7 +207,7 @@ public class TransactionalActivity extends AbstractSequentialActivity implements
 
 							@Override
 							public void execute() {
-								JsTransactionActivityContext i = JsTransactionActivityContext.createObject().cast();
+								JsTransactionApplicationContext i = JsTransactionApplicationContext.createObject().cast();
 								StateTransition<JavaScriptObject> o = DataCallback.nullCallback();
 								pm.processSwitch(result, applicationItem.getName(), i, o, result.getContext());
 

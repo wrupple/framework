@@ -19,8 +19,8 @@ import org.apache.bval.model.MetaProperty;
 import org.apache.bval.model.Validation;
 import org.apache.bval.util.AccessStrategy;
 
-import com.wrupple.muba.bootstrap.server.service.ContextAwareValidator;
-import com.wrupple.muba.bootstrap.server.service.PropertyValidationContext;
+import com.wrupple.muba.event.server.service.ContextAwareValidator;
+import com.wrupple.muba.event.server.service.PropertyValidationContext;
 
 @Singleton
 public class ContextAwareValidatorImpl implements ContextAwareValidator {

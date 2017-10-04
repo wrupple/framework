@@ -56,7 +56,7 @@ import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FilterData;
 
 public abstract class AbstractContentBrowser extends ResizeComposite implements ContentBrowser {
@@ -79,7 +79,7 @@ public abstract class AbstractContentBrowser extends ResizeComposite implements 
 	private int previousCumulativeItemCount;
 
 	String postSortField;
-	protected JsTransactionActivityContext contextParameters;
+	protected JsTransactionApplicationContext contextParameters;
 	protected ProcessContextServices contextServices;
 	private String notificationsDue;
 	private CatalogEntryBrowserMap browserMap;
@@ -197,7 +197,7 @@ public abstract class AbstractContentBrowser extends ResizeComposite implements 
 	}
 
 	@Override
-	public void setRuntimeParams(String catalog, JavaScriptObject properties, EventBus bus, JsTransactionActivityContext contextParameters,
+	public void setRuntimeParams(String catalog, JavaScriptObject properties, EventBus bus, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices) {
 		this.eventBus = bus;
 		this.contextParameters = contextParameters;
@@ -441,7 +441,7 @@ public abstract class AbstractContentBrowser extends ResizeComposite implements 
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 		properties.setWidget(widget);
 		browserMap.reconfigure(properties, this, contextServices, eventBus, contextParameters);
 		if (properties.getFireReset()) {

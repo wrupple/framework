@@ -13,7 +13,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
 
-public interface StorageManager extends CatalogTokenInterpret{
+public interface StorageManager {
 
 	public interface Unit<V> {
 

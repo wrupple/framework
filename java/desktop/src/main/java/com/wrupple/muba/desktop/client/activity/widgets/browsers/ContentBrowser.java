@@ -8,7 +8,7 @@ import com.wrupple.muba.bpm.client.activity.widget.HumanTaskProcessor;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public interface ContentBrowser extends HumanTaskProcessor<JsArray<JsCatalogEntry>, JsFilterData>,
 		HasData<JsCatalogEntry>{
@@ -19,7 +19,7 @@ public interface ContentBrowser extends HumanTaskProcessor<JsArray<JsCatalogEntr
 	String NO_PAGER = "none";
 
 	void setRuntimeParams(String catalog, JavaScriptObject properties,
-			EventBus bus, JsTransactionActivityContext contextParameters,
+			EventBus bus, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices);
 	
 	public void setCustomJoins(String customJoins) ;

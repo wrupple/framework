@@ -17,14 +17,14 @@ import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.event.domain.Instrospection;
 
 @Singleton
 public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
@@ -111,7 +111,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		Collection<FieldDescriptor> fields = catalogDescriptor.getFieldsValues();
 		String foreignTableName;
 		List<Object> fieldValues;
-		Session session = null;
+		Instrospection instrospection = null;
 		MultipleFieldResultsHandler handler = null;
 		for (FieldDescriptor field : fields) {
 			if (field.isMultiple() && !field.isEphemeral()) {
@@ -128,10 +128,10 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 					handler.setField(field);
 					log.trace("[DB secondary read] {}  id={}", builder.toString(), id);
 					fieldValues = runner.query(builder.toString(), handler, id);
-					if (session == null) {
-						session = context.getCatalogManager().newSession(r);
+					if (instrospection == null) {
+						instrospection = context.getCatalogManager().access().newSession(r);
 					}
-					context.getCatalogManager().setPropertyValue(catalogDescriptor, field, r, fieldValues, session);
+					context.getCatalogManager().access().setPropertyValue(field, r, fieldValues, instrospection);
 				}
 			}
 		}

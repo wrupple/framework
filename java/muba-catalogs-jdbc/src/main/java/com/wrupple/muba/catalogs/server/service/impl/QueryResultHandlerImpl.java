@@ -9,21 +9,21 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntity;
-import com.wrupple.muba.catalogs.domain.PersistentCatalogEntityImpl;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.PersistentCatalogEntity;
+import com.wrupple.muba.event.server.domain.impl.PersistentCatalogEntityImpl;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
 
 public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> implements QueryResultHandler {
 	protected Logger log = LoggerFactory.getLogger(QueryResultHandlerImpl.class);
@@ -70,7 +70,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 	class CatalogRowProcessor extends BasicRowProcessor {
 
 		private CatalogDescriptor catalog;
-		private Session session;
+		private Instrospection instrospection;
 
 		public CatalogRowProcessor(CatalogDescriptor catalog) {
 			this.catalog = catalog;
@@ -111,8 +111,8 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 			}catch(IllegalAccessException e){
 				throw new IllegalArgumentException("cannot instantiate " + type);
 			}
-			if (session == null) {
-				session = cms.newSession((CatalogEntry) result);
+			if (instrospection == null) {
+				instrospection = cms.access().newSession((CatalogEntry) result);
 			}
 			FieldDescriptor field;
 			for (int i = 1; i <= cols; i++) {
@@ -125,8 +125,8 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				field = catalog.getFieldDescriptor(delegate.getFieldNameForColumn(columnName,false));
 				if (field != null) {
 					try {
-						cms.setPropertyValue(catalog, field, (CatalogEntry) result,
-								delegate.handleColumnField(rs,field, field.getDataType(), i, format), session);
+						cms.access().setPropertyValue(field, (CatalogEntry) result,
+								delegate.handleColumnField(rs,field, field.getDataType(), i, format), instrospection);
 					} catch (Exception e) {
 						throw new IllegalArgumentException(e);
 					}

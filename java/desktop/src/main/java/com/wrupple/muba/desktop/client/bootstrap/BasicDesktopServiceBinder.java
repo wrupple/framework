@@ -165,7 +165,7 @@ import com.wrupple.muba.desktop.client.services.logic.CatalogCache;
 import com.wrupple.muba.desktop.client.services.logic.CatalogEntryKeyProvider;
 import com.wrupple.muba.desktop.client.services.logic.ConfigurationConstants;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.FilterCriteriaFieldDelegate;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
@@ -188,7 +188,7 @@ import com.wrupple.muba.desktop.client.services.logic.impl.CatalogPlaceInterpret
 import com.wrupple.muba.desktop.client.services.logic.impl.ConfigurationConstantsImpl;
 import com.wrupple.muba.desktop.client.services.logic.impl.DesktopActivityMapperImpl;
 import com.wrupple.muba.desktop.client.services.logic.impl.DesktopPlaceHistoryMapperImpl;
-import com.wrupple.muba.desktop.client.services.logic.impl.FieldConversionStrategyImpl;
+import com.wrupple.muba.desktop.client.services.logic.impl.GWTFieldConversionStrategyImpl;
 import com.wrupple.muba.desktop.client.services.logic.impl.FilterCriteriaFieldDelegateImpl;
 import com.wrupple.muba.desktop.client.services.logic.impl.GenericFieldFactoryImpl;
 import com.wrupple.muba.desktop.client.services.logic.impl.GenericTableLayoutDelegate;
@@ -617,7 +617,7 @@ public class BasicDesktopServiceBinder extends AbstractGinModule {
 		// know how to parse CSV (the default export format)
 		bind(CSVWriter.class).to(CSVWriterImpl.class);
 		bind(CSVParser.class).to(CSVParserImpl.class);
-		bind(FieldConversionStrategy.class).to(FieldConversionStrategyImpl.class);
+		bind(FieldConversionStrategy.class).to(GWTFieldConversionStrategyImpl.class);
 		bind(URLFilterDataSerializationService.class).to(URLFilterDataSerializationServiceImpl.class);
 		bind(CatalogServiceSerializer.class).to(CatalogServiceSerializerImpl.class);
 		bind(CatalogEntryKeyProvider.class).to(CatalogEntryKeyProviderImpl.class);

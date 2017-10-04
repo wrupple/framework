@@ -1,8 +1,10 @@
 package com.wrupple.muba.catalogs.server.domain.fields;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
+
+import static com.wrupple.muba.event.domain.PersistentCatalogEntity.IMAGE_FIELD;
 
 public class ImageField extends FieldDescriptorImpl {
 
@@ -17,9 +19,9 @@ public class ImageField extends FieldDescriptorImpl {
 		setFilterable(true);
 		setKey(true);
 		setCatalog(PersistentImageMetadata.CATALOG);
-		setFieldId(PersistentImageMetadata.IMAGE_FIELD);
+		setFieldId(IMAGE_FIELD);
 		setMultiple(false);
-		setName(PersistentImageMetadata.IMAGE_FIELD);
+		setName(IMAGE_FIELD);
 		setSortable(false);
 		setSummary(true);
 		setWriteable(true);

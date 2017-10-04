@@ -16,7 +16,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class DateCellProvider implements CatalogFormFieldProvider {
 
@@ -120,7 +120,7 @@ public class DateCellProvider implements CatalogFormFieldProvider {
 	@Override
 	public Cell<String> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor,final FieldDescriptor d, CatalogAction mode) {
 		// DesktopLoadingStateHolder.datePattern
 		final Cell<Date> wrapped;

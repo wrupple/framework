@@ -14,28 +14,25 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.server.service.CatalogManager;
-import com.wrupple.muba.catalogs.domain.Constraint;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogField;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldDefault;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldFormula;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldProperties;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldWidget;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogKey;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogValue;
-import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
-import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldDefault;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldFormula;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldProperties;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldWidget;
+import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.ImageField;
 import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+
+import static com.wrupple.muba.event.domain.PersistentCatalogEntity.IMAGE_FIELD;
 
 @Singleton
 public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
@@ -234,7 +231,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 							fieldDescriptor.setSummary(summary);
 							fieldDescriptor.setWriteable(writeable);
 						}
-					} else if (id.equals(PersistentImageMetadata.IMAGE_FIELD)) {
+					} else if (id.equals(IMAGE_FIELD)) {
 						fieldDescriptor = new ImageField();
 						if (widget != null) {
 							fieldDescriptor.setWidget(widget);

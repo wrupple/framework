@@ -13,13 +13,13 @@ import javax.transaction.UserTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ContractDescriptor;
-import com.wrupple.muba.bootstrap.domain.TransactionHistory;
-import com.wrupple.muba.bootstrap.domain.UserContext;
-import com.wrupple.muba.bootstrap.server.chain.command.UserCommand;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ContractDescriptor;
+import com.wrupple.muba.event.domain.TransactionHistory;
+import com.wrupple.muba.event.domain.ServiceContext;
+import com.wrupple.muba.event.server.chain.command.UserCommand;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.impl.UndoBasedTransactionDelegate;
 import com.wrupple.muba.catalogs.server.service.impl.UndoBasedTransactionDelegate.UndoToken;
 
@@ -64,7 +64,7 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 		try {
 			history.rollback();
 		} catch (Exception e) {
-			// context.getExcecutionContext().getSession().getRequestContext().addWarning("unable to
+			// context.getRuntimeContext().getSession().getRequestContext().addWarning("unable to
 			// completely rollback catalog action");
 		}
 
@@ -82,25 +82,25 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 		localTransaction.setTransactionTimeout(arg0);
 	}
 	@Override
-	public <T extends CatalogEntry> void didRead(UserContext catalog, List<T> r, UserCommand dao) {
+	public <T extends CatalogEntry> void didRead(ServiceContext catalog, List<T> r, UserCommand dao) {
 		history.didRead(r, dao, (CatalogActionContext)catalog);
 	}
 	@Override
-	public <T extends CatalogEntry> void didRead(UserContext catalog, T r, UserCommand dao) {
+	public <T extends CatalogEntry> void didRead(ServiceContext catalog, T r, UserCommand dao) {
 		history.didRead((CatalogActionContext)catalog, r, dao);
 	}
 	@Override
-	public <T extends CatalogEntry> void didCreate(UserContext catalog, CatalogEntry regreso,
+	public <T extends CatalogEntry> void didCreate(ServiceContext catalog, CatalogEntry regreso,
 			UserCommand createDao) {
 		history.didCreate((CatalogActionContext)catalog, regreso, createDao);
 	}
 	@Override
-	public <T extends CatalogEntry> void didUpdate(UserContext catalog, T original, T outDatedEntry,
+	public <T extends CatalogEntry> void didUpdate(ServiceContext catalog, T original, T outDatedEntry,
 			UserCommand dao) {
 		history.didUpdate((CatalogActionContext)catalog, original, outDatedEntry, dao);
 	}
 	@Override
-	public <T extends CatalogEntry> void didDelete(UserContext catalog, T r, UserCommand dao) {
+	public <T extends CatalogEntry> void didDelete(ServiceContext catalog, T r, UserCommand dao) {
 		history.didDelete((CatalogActionContext)catalog, r, dao);
 	}
 	@Override

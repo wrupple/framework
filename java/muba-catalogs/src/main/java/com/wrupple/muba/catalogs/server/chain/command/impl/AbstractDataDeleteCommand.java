@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.UserContext;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataDeleteCommand;
@@ -19,7 +19,7 @@ public abstract class AbstractDataDeleteCommand implements DataDeleteCommand {
 
 
 	@Override
-	public void undo(UserContext ctx) throws Exception {
+	public void undo(ServiceContext ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogEntry entry = context.getEntryResult();
 		context.setEntry(entry.getId());

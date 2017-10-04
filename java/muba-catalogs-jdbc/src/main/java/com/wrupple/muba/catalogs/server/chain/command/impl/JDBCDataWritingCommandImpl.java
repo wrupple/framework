@@ -15,16 +15,16 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.reserved.Versioned;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.reserved.Versioned;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataWritingCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.event.domain.Instrospection;
 
 @Singleton
 public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implements JDBCDataWritingCommand{
@@ -51,10 +51,10 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		CatalogEntry originalEntry = context.getCatalogManager().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
+		CatalogEntry originalEntry = context.getCatalogManager().access().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
 
 		CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
-		Session session = context.getCatalogManager().newSession(originalEntry);
+		Instrospection instrospection = context.getCatalogManager().access().newSession(originalEntry);
 
 		updatedEntry.setDomain((Long) originalEntry.getDomain());
 		Object id = context.getEntry();
@@ -74,8 +74,8 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().getPropertyValue(descriptor, field, updatedEntry, null, session);
-				context.getCatalogManager().setPropertyValue(descriptor, field, originalEntry, fieldValue, session);
+				fieldValue = context.getCatalogManager().access().getPropertyValue(field, updatedEntry, null, instrospection);
+				context.getCatalogManager().access().setPropertyValue(field, originalEntry, fieldValue, instrospection);
 				if (field.isMultiple() && !field.isEphemeral()) {
 					// also update (delete and create) and create multiple
 					// fields
@@ -120,8 +120,8 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		params.add(id);
 
 		if (descriptor.isVersioned()) {
-			Long version = (Long) context.getCatalogManager().getPropertyValue(descriptor, descriptor.getFieldDescriptor(Versioned.FIELD),
-					context.getOldValue(), null, session);
+			Long version = (Long) context.getCatalogManager().access().getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
+					context.getOldValue(), null, instrospection);
 			builder.append(" && ");
 			builder.append(Versioned.FIELD);
 			builder.append("=?");

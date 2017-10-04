@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.bootstrap.server.service.ObjectMapper;
+import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 
 public class GenericResponseWriterImpl implements Command {
@@ -22,7 +22,7 @@ public class GenericResponseWriterImpl implements Command {
 	@Override
 	public boolean execute(Context context) throws Exception {
 		Object parameter = context.get(contextParameter);
-		PrintWriter out = ((CatalogActionContext) context).getExcecutionContext().getScopedWriter(context);
+		PrintWriter out = ((CatalogActionContext) context).getRuntimeContext().getScopedWriter(context);
 		om.writeValue(out, parameter);
 		return CONTINUE_PROCESSING;
 	}

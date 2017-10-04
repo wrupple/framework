@@ -10,7 +10,7 @@ import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpr
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.UrlParser;
 
 public class AbstractStartUserTransaction implements StartUserTransaction {
@@ -26,7 +26,7 @@ public class AbstractStartUserTransaction implements StartUserTransaction {
 	}
 
 	@Override
-	public void start(JsTransactionActivityContext context, StateTransition<JsTransactionActivityContext> onDone, EventBus bus) {
+	public void start(JsTransactionApplicationContext context, StateTransition<JsTransactionApplicationContext> onDone, EventBus bus) {
 		context.setTaskDescriptor(taskDescriptor);
 		context.setCurrentTaskIndex(context.getCurrentTaskIndex() + 1);
 		DesktopPlace currentPlace = (DesktopPlace) contextServices.getPlaceController().getWhere();

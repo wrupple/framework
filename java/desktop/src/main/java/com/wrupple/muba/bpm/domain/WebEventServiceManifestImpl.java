@@ -4,14 +4,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
 
 @Singleton
-public class WebEventServiceManifestImpl extends CatalogServiceManifestImpl implements com.wrupple.muba.bpm.domain.WebEventServiceManifest {
+public class WebEventServiceManifestImpl extends CatalogServiceManifestImpl implements WebIntentServiceManifest {
 
 	@Inject
 	public WebEventServiceManifestImpl(@Named(CatalogActionRequest.CATALOG) CatalogDescriptor descriptor, CatalogRequestInterpret requestInterpret,
@@ -55,7 +55,7 @@ public class WebEventServiceManifestImpl extends CatalogServiceManifestImpl impl
 				throw new IllegalArgumentException("invalid webhook");
 			}
 
-			HttpServletRequest req = requestContext.getServletContext().getExcecutionContext();
+			HttpServletRequest req = requestContext.getServletContext().getRuntimeContext();
 			if (serializedContext == null) {
 				throw new NullPointerException("event with no payload");
 

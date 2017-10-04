@@ -21,8 +21,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.SimpleTextC
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public class NamedCatalogPickerProvider implements CatalogFormFieldProvider{
@@ -43,7 +42,7 @@ public class NamedCatalogPickerProvider implements CatalogFormFieldProvider{
 	@Override
 	public Cell<String> createCell(EventBus bus,
 			ProcessContextServices contextServices,
-			JsTransactionActivityContext contextParameters,
+			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
 		this.contextParameters=contextServices;
 		if(mode==CatalogAction.READ){

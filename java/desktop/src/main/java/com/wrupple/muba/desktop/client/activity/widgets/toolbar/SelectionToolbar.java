@@ -20,7 +20,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.MultipleSelect
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class SelectionToolbar extends WruppleActivityToolbarBase {
 
@@ -45,7 +45,7 @@ public class SelectionToolbar extends WruppleActivityToolbarBase {
 	
 
 	@Override
-	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+	public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 			EventBus bus, ProcessContextServices contextServices) {
 		super.initialize(toolbarDescriptor, parameter, contextParameters, bus, contextServices);
 		try{

@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+
 import java.util.HashMap;
 import java.util.List;
 

@@ -1,24 +1,22 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
+import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
+import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
+import org.apache.commons.chain.Context;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.apache.commons.chain.Context;
-
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
-import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
-import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 
 @Singleton
 public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin {
@@ -36,9 +34,9 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 			return CONTINUE_PROCESSING;
 		}
 		List<CatalogEntry> result = context.getResults();
-		Session session = context.getCatalogManager().newSession(result.get(0));
-		CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
-				(String) context.getCatalog(), context, session);
+        Instrospection instrospection = context.getCatalogManager().access().newSession(result.get(0));
+        CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
+				(String) context.getCatalog(), context, instrospection);
 		FilterData filter = context.getFilter();
 		if (filter != null) {
 			resultSet.setCursor(filter.getCursor());
@@ -49,15 +47,15 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 		regreso.add(resultSet);
 		context.put(CompleteCatalogGraph.JOINED_DATA, regreso);
 
-		joinWithGivenJoinData(result, context.getCatalogDescriptor(), joins, context, filterMap, session);
+		joinWithGivenJoinData(result, context.getCatalogDescriptor(), joins, context, filterMap, instrospection);
 		return CONTINUE_PROCESSING;
 	}
 
 	@Override
 	protected void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog, List<CatalogEntry> joins,
-			CatalogDescriptor joinCatalog, CatalogActionContext context, Session session) throws Exception {
+			CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospection instrospection) throws Exception {
 		CatalogColumnResultSet resultSet = super.createResultSet(joins, joinCatalog, joinCatalog.getDistinguishedName(),
-				context, session);
+				context, instrospection);
 		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
 				.get(CompleteCatalogGraph.JOINED_DATA);
 		joinsThusFar.add(resultSet);

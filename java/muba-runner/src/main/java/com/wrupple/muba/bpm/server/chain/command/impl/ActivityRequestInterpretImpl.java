@@ -1,10 +1,8 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bpm.domain.ActivityContext;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.*;
-import com.wrupple.muba.bpm.server.service.TaskRunnerPlugin;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ChainBase;
@@ -17,31 +15,25 @@ import javax.inject.Provider;
  */
 public class ActivityRequestInterpretImpl extends ChainBase implements ActivityRequestInterpret {
 
-    private final Provider<ActivityContext> activityContextProvider;
+    private final Provider<ApplicationContext> activityContextProvider;
 
 
     @Inject
     public ActivityRequestInterpretImpl(
-                                        Provider<ActivityContext> activityContextProvider,
+                                        Provider<ApplicationContext> activityContextProvider,
                                         // 1. Create a Model inside plugin the context references it by dn (InitializeActivityContext)
-                                        LoadTask load,
-                                        // 2. Create variables, by default use all variables defined in task
-                                        DetermineSolutionFieldsDomain defineVariablesPossibilitySpace,
-                                        // 3. Post constraints
-                                        DefineSolutionCriteria defineProblem
+                                        LoadTask load
                                         ){
         super(new Command []{
-                load,
-                defineVariablesPossibilitySpace,
-                defineProblem
+                load
         });
 
         this.activityContextProvider=activityContextProvider;
     }
 
     @Override
-    public Context materializeBlankContext(ExcecutionContext requestContext) {
-        ActivityContext r = activityContextProvider.get();
+    public Context materializeBlankContext(RuntimeContext requestContext) {
+        ApplicationContext r = activityContextProvider.get();
         r.setExcecutionContext(requestContext);
         return r;
     }

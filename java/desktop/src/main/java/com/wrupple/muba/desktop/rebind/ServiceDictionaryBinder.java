@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -40,7 +41,6 @@ import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.PropertyValueAvisor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.CatalogKey;
 
@@ -178,7 +178,7 @@ public class ServiceDictionaryBinder {
 
 					source.println("@Override");
 					source.println("public void configure(" + genericType
-							+ " object,JavaScriptObject configuration,ProcessContextServices services, EventBus bus,JsTransactionActivityContext ctx) {");
+							+ " object,JavaScriptObject configuration,ProcessContextServices services, EventRegistry bus,JsTransactionApplicationContext ctx) {");
 					source.print(specificType);
 					source.print(" regreso = (");
 					source.print(specificType);
@@ -214,7 +214,7 @@ public class ServiceDictionaryBinder {
 					source.println("}");
 
 					source.println("public " + genericType
-							+ " get(final JavaScriptObject configuration, ProcessContextServices services, EventBus bus, JsTransactionActivityContext ctx) { ");
+							+ " get(final JavaScriptObject configuration, ProcessContextServices services, EventRegistry bus, JsTransactionApplicationContext ctx) { ");
 					source.indent();
 					source.print(specificType);
 					source.println(" regreso= get();");
@@ -268,7 +268,7 @@ public class ServiceDictionaryBinder {
 
 				// TODO pass a String prefix Argument to read property value?
 				source.println("public " + genericType
-						+ " getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventBus bus, JsTransactionActivityContext ctx) {");
+						+ " getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventRegistry bus, JsTransactionApplicationContext ctx) {");
 				source.indent();
 				// read property
 				source.print("String propValue =  JSOHelper.getAttribute(configuration,\"");
@@ -325,7 +325,7 @@ public class ServiceDictionaryBinder {
 				source.println("@Override");
 				source.print("public void reconfigure(PanelTransformationConfig configuration,");
 				source.print(genericType);
-				source.println(" regreso,ProcessContextServices contextServices, EventBus eventBus,JsTransactionActivityContext contextParameters) {");
+				source.println(" regreso,ProcessContextServices contextServices, EventRegistry eventBus,JsTransactionApplicationContext contextParameters) {");
 				source.indent();
 				source.println("String mathingValue = JSOHelper.getAttribute(configuration, \"" + configurationPropertyName + "\");");
 				checkInitialization(source);
@@ -589,7 +589,7 @@ public class ServiceDictionaryBinder {
 							source.print(", bus");
 						} else if (JavaScriptObject.class.getCanonicalName().equals(param.getParameterizedQualifiedSourceName())) {
 							source.print(", configuration");
-						} else if (JsTransactionActivityContext.class.getCanonicalName().equals(param.getParameterizedQualifiedSourceName())) {
+						} else if (JsTransactionApplicationContext.class.getCanonicalName().equals(param.getParameterizedQualifiedSourceName())) {
 							source.print(", ctx");
 						}
 					}
@@ -613,7 +613,7 @@ public class ServiceDictionaryBinder {
 							source.print(", bus");
 						} else if (JavaScriptObject.class.getCanonicalName().equals(param.getParameterizedQualifiedSourceName())) {
 							source.print(", configuration");
-						} else if (JsTransactionActivityContext.class.getCanonicalName().equals(param.getParameterizedQualifiedSourceName())) {
+						} else if (JsTransactionApplicationContext.class.getCanonicalName().equals(param.getParameterizedQualifiedSourceName())) {
 							source.print(", ctx");
 						}
 					}
@@ -683,7 +683,7 @@ public class ServiceDictionaryBinder {
 		composer.addImport(JavaScriptObject.class.getCanonicalName());
 		composer.addImport(EventBus.class.getCanonicalName());
 		composer.addImport(PanelTransformationConfig.class.getCanonicalName());
-		composer.addImport(JsTransactionActivityContext.class.getCanonicalName());
+		composer.addImport(JsTransactionApplicationContext.class.getCanonicalName());
 		composer.addImport(ProcessContextServices.class.getCanonicalName());
 		composer.addImport(JsArrayString.class.getCanonicalName());
 		composer.addImplementedInterface(classType.getSimpleSourceName());

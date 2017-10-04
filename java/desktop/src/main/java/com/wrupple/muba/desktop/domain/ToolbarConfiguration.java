@@ -21,7 +21,7 @@ import com.wrupple.muba.desktop.client.event.EntryUpdatedEvent;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public class ToolbarConfiguration {
 	
@@ -39,7 +39,7 @@ public class ToolbarConfiguration {
 
 
 		@Override
-		public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters) {
+		public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 			((Toolbar) getWrapped()).applyAlterations(properties, contextServices, eventBus, contextParamenters);
 		}
 
@@ -57,7 +57,7 @@ public class ToolbarConfiguration {
 
 
 		@Override
-		public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionActivityContext contextParameters,
+		public void initialize(JsTaskToolbarDescriptor toolbarDescriptor, JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParameters,
 				EventBus bus, ProcessContextServices contextServices) {
 			((Toolbar) getWrapped()).initialize(toolbarDescriptor, parameter, contextParameters, bus, contextServices);
 		}

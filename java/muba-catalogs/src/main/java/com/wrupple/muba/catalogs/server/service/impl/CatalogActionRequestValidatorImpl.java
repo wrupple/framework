@@ -10,26 +10,22 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogActionRequest;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.CatalogKey;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.FilterCriteria;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.HasAccesablePropertyValues;
-import com.wrupple.muba.bootstrap.server.service.ContextAwareValidator;
-import com.wrupple.muba.bootstrap.server.service.PropertyValidationContext;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.service.ContextAwareValidator;
+import com.wrupple.muba.event.server.service.PropertyValidationContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.domain.HasConstrains;
-import com.wrupple.muba.catalogs.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.reserved.HasConstrains;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
-import com.wrupple.muba.catalogs.server.service.LargeStringFieldDataAccessObject;
+import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogActionRequestValidatorImpl implements CatalogActionRequestValidator {
@@ -37,7 +33,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	protected static final Logger log = LoggerFactory.getLogger(CatalogActionRequestValidatorImpl.class);
 
 	private final SystemCatalogPlugin dictionary;
-	private final Provider<ExcecutionContext> exp;
+	private final Provider<RuntimeContext> exp;
 	private final ContextAwareValidator delegate;
 	/*
 	 * secondary services
@@ -46,7 +42,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final LargeStringFieldDataAccessObject lsdao;
 
 	@Inject
-	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<ExcecutionContext> exp,
+	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<RuntimeContext> exp,
 			SystemCatalogPlugin cms, LargeStringFieldDataAccessObject lsdao) {
 		this.lsdao = lsdao;
 		this.exp = exp;
@@ -67,7 +63,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		boolean report = true;
 		log.debug("[VALIDATE CATALOG ACTION REQUEST]");
 
-		String action = req.getAction();
+		String action = req.getName();
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();
 		String catalog = (String) req.getCatalog();
 		String domain = (String) req.getDomain();
@@ -207,7 +203,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, String domain) {
 		if (descriptor == null) {
 
-			ExcecutionContext system = this.exp.get();
+			RuntimeContext system = this.exp.get();
 			CatalogActionContext context = dictionary.spawn(system);
 			try {
 				context.setNamespace(domain);
@@ -279,7 +275,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	}
 
 	private Annotation[] buildAnnotation(HasConstrains source, FieldDescriptor field) {
-		List<com.wrupple.muba.catalogs.domain.Constraint> constraints = source.getConstraintsValues();
+		List<Constraint> constraints = source.getConstraintsValues();
 		boolean key = field != null & dictionary.isJoinableValueField(field)
 				&& field.isKey() /* not ephemerals */;
 		boolean normalized = field != null && field.getDefaultValueOptions() != null;
@@ -307,7 +303,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			j++;
 		}
 
-		com.wrupple.muba.catalogs.domain.Constraint constraint;
+		Constraint constraint;
 		if (constraints != null) {
 			Annotation rannotation;
 			for (int i = 0; i < size; i++) {

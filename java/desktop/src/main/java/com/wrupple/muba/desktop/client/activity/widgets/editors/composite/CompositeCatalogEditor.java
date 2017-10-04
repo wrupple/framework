@@ -29,17 +29,17 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delega
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.StringJSOadapter;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.client.services.logic.FieldConversionStrategy;
+import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
-import com.wrupple.muba.desktop.client.services.logic.impl.FieldConversionStrategyImpl;
+import com.wrupple.muba.desktop.client.services.logic.impl.GWTFieldConversionStrategyImpl;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
@@ -55,7 +55,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 	private String catalogParentId;
 	protected ProcessContextServices processServices;
 	protected JavaScriptObject properties;
-	protected JsTransactionActivityContext contextProcessParameters;
+	protected JsTransactionApplicationContext contextProcessParameters;
 	private FieldChangeHandler collectFieldChangeEvents;
 	private boolean collectFieldValuesFromPlace;
 	
@@ -84,7 +84,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 	@Override
 	protected void onAfterReconfigure(PanelTransformationConfig properties,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		
 	}
 
@@ -92,7 +92,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 	@Override
 	protected void onBeforeRecofigure(PanelTransformationConfig properties,
 			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionActivityContext contextParameters) {
+			JsTransactionApplicationContext contextParameters) {
 		this.catalogService = contextServices.getStorageManager();
 		this.dm=contextServices.getDesktopManager();
 	}
@@ -103,7 +103,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 		}
 		assert attr != null : "Object Attribute cannot be null!";
 
-		return strategy.convertToUserReadableValue(attr, elem, includeCriteria);
+		return strategy.convertToPresentableValue(attr, elem, includeCriteria);
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 		}
 		for (String fieldid : fieldNames) {
 			fieldValue = getFieldValue(fieldid);
-			FieldConversionStrategyImpl.setAttribute(value, fieldid, fieldValue);
+			GWTFieldConversionStrategyImpl.setAttribute(value, fieldid, fieldValue);
 		}
 		currentEntry = value;
 		((JsCatalogEntry) currentEntry).setCatalog(getCatalog().getCatalogId());
@@ -138,7 +138,7 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 			return null;
 		}else{
 			Object fieldValue = field.getValue();
-			fieldValue = conversionService.convertToPersistentDatabaseValue(fieldValue, fdescriptor);
+			fieldValue = conversionService.convertToPersistentValue(fieldValue, fdescriptor);
 			return fieldValue;
 		}
 	}
@@ -290,18 +290,10 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 		}
 	}
 
-	@Override
-	public void setFieldValue(String fieldId, JSONValue rawValue) {
-		HasValue<Object> fieldWidget = fields.get(fieldId);
-		if (fieldWidget != null) {
-			Object value = conversionService.convertToUserReadableValue(rawValue);
-			fieldWidget.setValue(value);
-		}
-	}
 
 	@Override
 	public void initialize(String catalog, CatalogAction mode, EventBus bus, ProcessContextServices processServices, JavaScriptObject properties,
-			JsTransactionActivityContext contextProcessParameters) {
+			JsTransactionApplicationContext contextProcessParameters) {
 		setCatalogid(catalog);
 		this.mode = mode;
 		this.bus = bus;

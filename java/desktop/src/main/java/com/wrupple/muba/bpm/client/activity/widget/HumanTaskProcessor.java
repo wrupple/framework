@@ -8,7 +8,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.event.HandlesCatalogEvents;
 import com.wrupple.muba.desktop.client.services.logic.TaskProcessor;
 import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 public interface HumanTaskProcessor<T extends JavaScriptObject,R> extends TaskProcessor<T>,
 HandlesCatalogEvents,HasValueChangeHandlers<R> , IsWidget{
@@ -23,5 +23,5 @@ HandlesCatalogEvents,HasValueChangeHandlers<R> , IsWidget{
 	 * @param eventBus TODO
 	 * @param contextParamenters TODO
 	 */
-	void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionActivityContext contextParamenters);
+	void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters);
 }

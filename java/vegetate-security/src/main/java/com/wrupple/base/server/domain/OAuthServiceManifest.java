@@ -7,7 +7,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.VegetateAuthenticationToken;
 import com.wrupple.muba.catalogs.domain.ServiceManifest;
 import com.wrupple.muba.catalogs.server.domain.VegetateAuthenticationTokenDescriptor;

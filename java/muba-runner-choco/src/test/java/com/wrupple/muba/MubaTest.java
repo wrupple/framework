@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.wrupple.muba.bootstrap.domain.ApplicationContext;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
 public abstract class MubaTest extends EasyMockSupport {
 
@@ -29,17 +29,17 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	protected Injector injector;
 
-	protected ExcecutionContext excecutionContext;
+	protected RuntimeContext runtimeContext;
 
 
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices(injector.getInstance(Validator.class), injector.getInstance(ValidationGroupProvider.class), injector.getInstance(ApplicationContext.class));
+		registerServices(injector.getInstance(Validator.class), injector.getInstance(ValidationGroupProvider.class), injector.getInstance(EventBus.class));
 
 	}
 
-	protected abstract void registerServices(Validator v, ValidationGroupProvider g,ApplicationContext switchs);
+	protected abstract void registerServices(Validator v, ValidationGroupProvider g,EventBus switchs);
 
 	protected abstract void setUp() throws Exception;
 

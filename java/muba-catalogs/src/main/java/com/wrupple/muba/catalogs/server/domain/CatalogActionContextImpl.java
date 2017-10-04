@@ -6,16 +6,12 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.impl.ContextBase;
 
-import com.wrupple.muba.bootstrap.domain.CatalogChangeEvent;
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
-import com.wrupple.muba.bootstrap.domain.ExcecutionContext;
-import com.wrupple.muba.bootstrap.domain.FilterData;
-import com.wrupple.muba.bootstrap.domain.SessionContext;
-import com.wrupple.muba.bootstrap.domain.TransactionHistory;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
@@ -29,11 +25,12 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	/*
 	 * SYSTEM CONTEXT
 	 */
+
 	private final SystemCatalogPlugin catalogManager;
 
 	private final NamespaceContext namespace;
 
-	private final ExcecutionContext excecutionContext;
+	private final RuntimeContext runtimeContext;
 
 	private final CatalogActionContext parentValue;
 	/* usually use the root ancestor of the catalog context */
@@ -55,14 +52,13 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	private Object entryValue, entry;
 	private FilterDataImpl filter;
 	@NotNull
-	private String action, catalog;
+	private String name, catalog;
 	// dont change the name of this variable see RequestTokenizer
 	private long totalRequestSize;
 	/*
 	 * OUTPUT
 	 */
 	private List<CatalogEntry> oldValues;
-	private List<CatalogChangeEvent> events;
 
 	private List<CatalogEntry> results;
 	private CatalogResultSet resultSet;
@@ -71,20 +67,19 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	// not injectable, always construct with CatalogManager.spawn
 	public CatalogActionContextImpl(SystemCatalogPlugin manager, NamespaceContext domainContext,
-			ExcecutionContext requestContext, CatalogActionContext parentValue) {
+                                    RuntimeContext requestContext, CatalogActionContext parentValue) {
 		this.catalogManager = manager;
 		if(requestContext==null){
 			throw new NullPointerException("Must provide an excecution context");
 		}
-		this.excecutionContext = requestContext;
+		this.runtimeContext = requestContext;
 		this.namespace = domainContext;
 		this.parentValue = parentValue;
 		if (parentValue != null) {
-			events = new ArrayList<CatalogChangeEvent>(2);
 			setEntry(parentValue.getEntry());
 			setEntryValue(parentValue.getEntryValue());
 			setCatalog((String) parentValue.getCatalog());
-			setAction(parentValue.getAction());
+			setAction(parentValue.getName());
 			setFilter(parentValue.getFilter());
             setFollowReferences(parentValue.getFollowReferences());
 			setDomain((Long) parentValue.getDomain());
@@ -188,16 +183,16 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public String getAction() {
-		return action;
+		return getName();
 	}
 
 	public void setAction(String action) {
-		this.action = action;
+		setName(action);
 	}
 
 	@Override
 	public String getFormat() {
-		return getExcecutionContext().getFormat();
+		return getRuntimeContext().getFormat();
 	}
 
 	public Object getEntry() {
@@ -235,12 +230,12 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public SessionContext getSession() {
-		return this.excecutionContext.getSession();
+		return this.runtimeContext.getSession();
 	}
 
 	@Override
 	public String toString() {
-		return "[catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + action + ", format=" + getFormat()
+		return "[catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + name + ", format=" + getFormat()
 				+ ", entry=" + entry + ", catalog=" + catalog + ", domain=" + getDomain() + "]";
 	}
 
@@ -257,19 +252,19 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public String getLocale() {
-		return excecutionContext.deduceLocale(getNamespaceContext());
+		return runtimeContext.deduceLocale(getNamespaceContext());
 	}
 
 	public void setLocale(String locale) {
-		excecutionContext.setLocale(locale);
+		runtimeContext.setLocale(locale);
 	}
 
-	public ExcecutionContext getExcecutionContext() {
-		return excecutionContext;
+	public RuntimeContext getRuntimeContext() {
+		return runtimeContext;
 	}
 
 	@Override
-	public CatalogActionContext getParent() {
+	public CatalogActionContext getParentValue() {
 		if (parentValue == this) {
 			return null;
 		}
@@ -278,16 +273,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	@Override
 	public CatalogActionContext getRootAncestor() {
-		CatalogActionContext ancestor = getParent();
-		if (ancestor == null) {
-			ancestor = this;
-		} else {
-			while (ancestor.getParent() != null) {
-				ancestor = ancestor.getParent();
-			}
-		}
-
-		return ancestor;
+		return CatalogEntryImpl.getRootAncestor(this);
 	}
 
 
@@ -349,12 +335,12 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	@Override
 	public void setName(String name) {
-
+this.name=name;
 	}
 
 	@Override
 	public String getName() {
-		return String.valueOf(id);
+		return name;
 	}
 
 	@Override
@@ -382,36 +368,10 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		}
 	}
 
-	public void addBroadcastable(CatalogChangeEvent data) {
-		CatalogActionContext ans = getRootAncestor();
-		if(ans==this){
-			if (data != null) {
-				if (data.getEntry() != null) {
-					
-					if(events==null){
-						events = new ArrayList<CatalogChangeEvent>(5);
-					}
-					events.add(data);
-				}
-			}
-		}else{
-			ans.addBroadcastable(data);
-		}
-		
-	}
-
-	public List<CatalogChangeEvent> getEvents() {
-		CatalogActionContext ans = getRootAncestor();
-		if(ans==this){
-			return events;
-		}else{
-			return ans.getEvents();
-		}
-	}
 
 	private TransactionHistory assertTransaction() {
 		if (transaction == null) {
-			transaction = new CatalogUserTransactionImpl(getExcecutionContext().getTransaction());
+			transaction = new CatalogUserTransactionImpl(getRuntimeContext().getEventBus().getTransaction());
 		}
 		return transaction;
 	}
@@ -435,5 +395,10 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	@Override
 	public void setResult(CatalogEntry catalogEntry) {
 		setResults((List) Collections.singletonList(catalogEntry));
+	}
+
+	@Override
+	public Object getParent() {
+		return getParentValue()==null? null:getParentValue().getId();
 	}
 }

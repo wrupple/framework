@@ -14,16 +14,16 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.bootstrap.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataCreationCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.SQLCompatibilityDelegate;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin.Session;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.catalogs.server.service.impl.JDBCSingleLongKeyResultHandler;
 
 @Singleton
@@ -71,7 +71,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		CatalogEntry e = (CatalogEntry) context.getEntryValue();
 		e.setDomain((Long) context.getDomain());
 		log.trace("[Will create Entry] {} in domain {}", e,e.getDomain());
-		Session session = context.getCatalogManager().newSession(e);
+		Instrospection instrospection = context.getCatalogManager().access().newSession(e);
 		Object id = null;
 
 		Collection<FieldDescriptor> fields = catalogDescriptor.getFieldsValues();
@@ -94,7 +94,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {
-					fieldValue = context.getCatalogManager().getPropertyValue(catalogDescriptor, field, e, null, session);
+					fieldValue = context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
 					if (paramz.size() > 0) {
 						values.append(",");
 						builder.append(",");
@@ -162,7 +162,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && field.isMultiple() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().getPropertyValue(catalogDescriptor, field, e, null, session);
+				fieldValue = context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
 				if (fieldValue != null) {
 					foreignTableName = tableNames.getTableNameForCatalogField(context, catalogDescriptor, field);
 					if (foreignTableName != null) {

@@ -7,7 +7,6 @@ import com.google.gwt.core.client.JsArray;
 import com.wrupple.muba.bpm.client.activity.ActivityProcess;
 import com.wrupple.muba.bpm.client.activity.process.state.State;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.domain.ProcessDescriptor;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;

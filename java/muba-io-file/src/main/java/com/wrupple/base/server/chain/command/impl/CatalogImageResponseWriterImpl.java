@@ -43,7 +43,7 @@ public class CatalogImageResponseWriterImpl implements CatalogImageResponseWrite
 		CatalogExcecutionContext context = (CatalogExcecutionContext) c;
 		String downloadActionToken = (String) context.get(CatalogActionRequest.FORMAT_PARAMETER);
 		if (downloadActionToken == null) {
-			String targetAction = (String) context.get(CatalogActionRequest.CATALOG_ACTION_PARAMETER);
+			String targetAction = (String) context.get(CatalogActionRequest.NAME_FIELD);
 			Command ccc = dictionary.getCommand(targetAction);
 			if (ccc == null) {
 				return defaultCommand.get().execute(context);

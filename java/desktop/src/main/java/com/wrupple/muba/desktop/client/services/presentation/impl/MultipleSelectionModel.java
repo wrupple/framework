@@ -14,7 +14,7 @@ import com.wrupple.muba.desktop.client.services.logic.CatalogEntryKeyProvider;
 import com.wrupple.muba.desktop.client.services.logic.impl.ExcecuteCommandOnSelectionChange;
 import com.wrupple.muba.desktop.client.services.presentation.BrowserSelectionModel;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionActivityContext;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.UserInteractionStateModifier;
 
 public class MultipleSelectionModel extends MultiSelectionModel<JsCatalogEntry> implements BrowserSelectionModel {
@@ -28,7 +28,7 @@ public class MultipleSelectionModel extends MultiSelectionModel<JsCatalogEntry> 
 	}
 
 	@Override
-	public void setSelectionHandler(String command, JavaScriptObject selectionProperties, EventBus eventBus, JsTransactionActivityContext contextParameters,
+	public void setSelectionHandler(String command, JavaScriptObject selectionProperties, EventBus eventBus, JsTransactionApplicationContext contextParameters,
 			ProcessContextServices contextServices) {
 		GWT.log("[Selection Model] selectionHandler ="+command);
 		if("void".equals(command)){
