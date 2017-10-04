@@ -4,10 +4,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceManifest;
-import com.wrupple.muba.event.domain.reserved.HasChildren;
-import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
-import com.wrupple.muba.event.domain.reserved.HasEntryId;
-import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.*;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 
 import java.util.List;
@@ -17,7 +14,7 @@ import java.util.List;
  * The reference to this contract is found in the runtineContext
  *
  */
-public interface ApplicationState extends HasDistinguishedName,ManagedObject,HasEntryId,HasParent<Long>,HasChildren<Long> {
+public interface ApplicationState extends HasDistinguishedName,ManagedObject,HasEntryId,HasParentValue<Long,ApplicationState>,HasChildrenValues<Long,ApplicationState> {
 
      String CATALOG = "ApplicationState";
 

@@ -66,7 +66,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 							  ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
 							  @Named(Workflow.CATALOG) Provider<CatalogDescriptor> appItem,
 							  // @Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
-							  @Named(Notification.CATALOG) Provider<CatalogDescriptor> notificationProvider,
+							  @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
 							  // @Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
 							  @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
 		this.SECURE_STORAGE = secureStorageIndex;
@@ -86,7 +86,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) {
 		if (Workflow.CATALOG.equals(catalogId)) {
 			return appItem.get();
-		} else if (Notification.CATALOG.equals(catalogId)) {
+		} else if (WorkRequest.CATALOG.equals(catalogId)) {
 			return notificationProvider.get();
 		}/* else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
 			return clientProvider.get();
@@ -102,7 +102,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 				"/static/img/notification.png"));
 		names.add(new CatalogIdentificationImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
 		names.add(new CatalogIdentificationImpl(Workflow.CATALOG, "Process", "/static/img/process.png"));
-		names.add(new CatalogIdentificationImpl(Notification.CATALOG, Notification.CATALOG,
+		names.add(new CatalogIdentificationImpl(WorkRequest.CATALOG, WorkRequest.CATALOG,
 				"/static/img/notification.png"));
 		// organization catalog as visible?
 	}

@@ -27,7 +27,6 @@ import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.catalogs.CatalogModule;
@@ -39,7 +38,7 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import java.util.Arrays;
 
 
-public class ImplicitCatalogDiscriminationApplicationTest  extends MubaTest {
+public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
 
     public ImplicitCatalogDiscriminationApplicationTest() {

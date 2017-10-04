@@ -63,12 +63,12 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(Notification.CATALOG)
+    @Named(WorkRequest.CATALOG)
     public CatalogDescriptor notification(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(NotificationImpl.class, Notification.CATALOG, "Notification",
+        CatalogDescriptor r = builder.fromClass(WorkRequestImpl.class, WorkRequest.CATALOG, "WorkRequest",
                 -990091, null);
-        r.setClazz(NotificationImpl.class);
+        r.setClazz(WorkRequestImpl.class);
         return r;
     }
 

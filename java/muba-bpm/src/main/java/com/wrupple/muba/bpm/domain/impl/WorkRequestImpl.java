@@ -1,12 +1,12 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.bpm.domain.Notification;
+import com.wrupple.muba.bpm.domain.WorkRequest;
 
 /**
  * Created by japi on 12/08/17.
  */
-public class NotificationImpl extends BusinessIntentImpl implements Notification{
+public class WorkRequestImpl extends BusinessIntentImpl implements WorkRequest {
     private Long source;
     private String sourceType;
     private CatalogEntry sourcevalue;

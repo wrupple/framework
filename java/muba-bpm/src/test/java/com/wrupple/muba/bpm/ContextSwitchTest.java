@@ -1,6 +1,5 @@
 package com.wrupple.muba.bpm;
 
-import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
@@ -27,6 +26,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Command;
@@ -39,31 +39,22 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
-public class ContextSwitchTest extends MubaTest {
+public class ContextSwitchTest extends BPMTest {
 
 
-    public ContextSwitchTest() {
-        init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(),new ChocoSolverModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new ApplicationModule());
-    }
-
-    @Override
-    protected void registerServices(EventRegistry switchs) {
-        BusinessServiceManifest bpm = injector.getInstance(BusinessServiceManifest.class);
-
-        switchs.registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
-
-        WorkflowServiceManifest taskManger = injector.getInstance(WorkflowServiceManifest.class);
-
-        switchs.registerService(taskManger, injector.getInstance(WorkflowEngine.class), injector.getInstance(WorkflowEventInterpret.class),bpm);
-
-        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
-
-    }
+    /**
+     *
+     *
+     * //comprar el taxi mas cercano, libre con mejor rating //input:
+     * Booking-quote-Invoice-HasListing{ paymentMethod, location } //output:
+     * tracking
+     *
+     * Test the tracking state changes in accordance to the task excecuted
+     * (task.getProducedField())
+     *
+     * @throws Exception
+     *
+     */
 
     @Before
     public void setUp() throws Exception {
@@ -192,7 +183,6 @@ public class ContextSwitchTest extends MubaTest {
         runtimeContext.reset();
 
         expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
 

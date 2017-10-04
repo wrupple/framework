@@ -8,10 +8,11 @@ import com.wrupple.muba.event.domain.ImplicitIntent;
  * @author japi
  *
  */
-public interface Notification extends BusinessIntent,ImplicitIntent {
+public interface WorkRequest extends BusinessIntent,ImplicitIntent {
 
-	String CATALOG = "Notification";
+	String CATALOG = "WorkRequest";
 
+	/*
     Long getSource();
 	
 	String getSourceType();
@@ -23,6 +24,6 @@ public interface Notification extends BusinessIntent,ImplicitIntent {
     String getTargetType();
 
     CatalogEntry getTargetValue();
-	
+	*/
 
 }
