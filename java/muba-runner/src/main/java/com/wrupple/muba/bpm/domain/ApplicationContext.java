@@ -9,12 +9,16 @@ import org.apache.commons.chain.Context;
 /**
  * Created by japi on 11/05/17.
  */
-public interface ApplicationContext extends ApplicationState,ServiceContext {
+public interface ApplicationContext extends ServiceContext {
     final String CATALOG = "ApplicationContext";
 
     ProcessManager getProcessManager();
 
     ApplicationContext setRuntimeContext(RuntimeContext requestContext);
+
+    ApplicationState getStateValue();
+
+    void setStateValue(ApplicationState state);
 
     //EventBus available througg RuntimeContext
 

@@ -34,7 +34,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     @Override
     public boolean execute(Context ctx) throws Exception {
         final ApplicationContext context = (ApplicationContext) ctx;
-        ProcessTaskDescriptor request = context.getTaskDescriptorValue();
+        ProcessTaskDescriptor request = context.getStateValue().getTaskDescriptorValue();
 
         log.info("Resolving problem model");
         Model model = plugin.getSolver().resolveSolverModel(context);

@@ -31,7 +31,6 @@ public class SolverModule extends AbstractModule {
         bind(SynthesizeSolutionEntry.class).to(SynthesizeSolutionEntryImpl.class);
         bind(SelectSolution.class).to(SelectSolutionImpl.class);
 
-        bind(LoadTask.class).to(LoadTaskImpl.class).in(Singleton.class);
         bind(ActivityRequestInterpret.class).to(ActivityRequestInterpretImpl.class).in(Singleton.class);
         bind(SolverServiceManifest.class).to(SolverServiceManifestImpl.class).in(Singleton.class);
         bind(SolverCatalogPlugin.class).to(SolverCatalogPluginImpl.class).in(Singleton.class);

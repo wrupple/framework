@@ -1,5 +1,8 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
+import com.wrupple.muba.bpm.server.service.ProcessManager;
+
+/*
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -37,18 +40,16 @@ import com.wrupple.vegetate.client.services.impl.ProcessVegetateChannelImpl;
 import com.wrupple.vegetate.domain.VegetatePeer;
 import com.wrupple.vegetate.domain.VegetateServiceManifest;
 import com.wrupple.vegetate.shared.services.PeerManager;
-
+*/
 public class SequentialProcessManager implements ProcessManager {
-
+/*
 	private static final String PROCESS_USER_AREA_CLASS = "application-content-area";
 
 	private ServiceMap commandRegistry;
 	private OutputHandlerMap outputHandlerRegistry;
 	private DictionaryRegistry serviceLocator;
 
-	/*
-	 * SERVICES
-	 */
+	//Services
 	private final ServiceBus serviceBus;
 	private final DesktopManager desktopManager;
 	private final ContentManagementSystem contentManager;
@@ -99,11 +100,9 @@ public class SequentialProcessManager implements ProcessManager {
 		bus.fireEvent(new ContextSwitchEvent(context, activityProcess));
 		activityProcess.start((DesktopPlace) placeController.getWhere(), new SimpleActivityTransition(placeController), bus);
 	}
+*/
 
-	/**
-	 * 
-	 * 
-	 */
+/*
 	@Override
 	public <I, O> void processSwitch(Process<I, O> newProcess, String localizedName, I input, final StateTransition<O> callback,
 			ProcessContextServices oldContext) {
@@ -221,7 +220,7 @@ public class SequentialProcessManager implements ProcessManager {
 	}
 	private native void setCommand(JavaScriptObject properties,  String command) /*-{
 		properties.command=command;
-	}-*/;
+	}-*//*;
 
 	public void excecuteCommand( CommandService service, JavaScriptObject properties,
 								 EventBus eventBus, ProcessContextServices processContext,
@@ -252,5 +251,5 @@ public class SequentialProcessManager implements ProcessManager {
 			throw new IllegalArgumentException("not a registered service dictionary: "+dictionary);
 		}
 		return regreso;
-	}
+	}*/
 }

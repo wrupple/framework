@@ -37,10 +37,10 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
         log.info("Synthesize solution...");
-        CatalogDescriptor solutionDescriptor = context.getSolutionDescriptor();
+        CatalogDescriptor solutionDescriptor = context.getStateValue().getSolutionDescriptor();
         CatalogEntry solution = catalog.access().synthesize(solutionDescriptor);
 
-        List<VariableDescriptor> variableDescriptors = context.getSolutionVariables();
+        List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariables();
 
         log.trace("solution has {} variables",variableDescriptors.size());
 

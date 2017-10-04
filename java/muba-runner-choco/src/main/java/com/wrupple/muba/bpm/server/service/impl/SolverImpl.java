@@ -123,7 +123,7 @@ public class SolverImpl implements Solver {
     }
 
     private Model createSolverModel(ApplicationContext context) {
-        Model model = new Model(context.getDistinguishedName());
+        Model model = new Model(context.getStateValue().getDistinguishedName());
         return model;
     }
 }

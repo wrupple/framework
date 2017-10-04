@@ -1,5 +1,8 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.*;
@@ -13,20 +16,14 @@ import javax.inject.Provider;
 /**
  * Created by japi on 11/05/17.
  */
-public class ActivityRequestInterpretImpl extends ChainBase implements ActivityRequestInterpret {
+public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
 
     private final Provider<ApplicationContext> activityContextProvider;
 
 
     @Inject
     public ActivityRequestInterpretImpl(
-                                        Provider<ApplicationContext> activityContextProvider,
-                                        // 1. Create a Model inside plugin the context references it by dn (InitializeActivityContext)
-                                        LoadTask load
-                                        ){
-        super(new Command []{
-                load
-        });
+                                        Provider<ApplicationContext> activityContextProvider){
 
         this.activityContextProvider=activityContextProvider;
     }
@@ -34,8 +31,39 @@ public class ActivityRequestInterpretImpl extends ChainBase implements ActivityR
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
         ApplicationContext r = activityContextProvider.get();
-        r.setExcecutionContext(requestContext);
-        return r;
+
+        return r.setRuntimeContext(requestContext);
     }
 
+    @Override
+    public boolean execute(Context ctx) throws Exception {
+        RuntimeContext requestContext = (RuntimeContext) ctx;
+        ApplicationContext context = requestContext.getServiceContext();
+        ApplicationState state = context.getStateValue();
+        if(state==null){
+            if(requestContext.getServiceContract() instanceof ApplicationState){
+                state = (ApplicationState) requestContext.getServiceContract();
+            }else{
+                state = new ApplicationStateImpl();
+            }
+            context.setStateValue(state);
+        }
+
+
+        ProcessTaskDescriptor request = context.getStateValue().getTaskDescriptorValue();
+        if(request==null){
+            //FIXME this implies the service contract will always be a task descriptor
+            request = (ProcessTaskDescriptor) requestContext.getServiceContract();
+            if(request==null){
+                //TODO task plugin is used as a shorthand for the more verbose catalog engine
+
+                //TODO get task descriptor (from token¡?)
+                throw new NullPointerException("there is no task definition");
+            }
+            context.getStateValue().setTaskDescriptorValue(request);
+        }
+
+
+        return CONTINUE_PROCESSING;
+    }
 }

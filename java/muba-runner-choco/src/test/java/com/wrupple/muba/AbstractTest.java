@@ -1,32 +1,31 @@
 package com.wrupple.muba;
 
-import javax.validation.Validator;
-
-import org.easymock.EasyMockRule;
-import org.easymock.EasyMockSupport;
-import org.junit.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
+import org.easymock.EasyMockRule;
+import org.easymock.EasyMockSupport;
+import org.junit.Rule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class MubaTest extends EasyMockSupport {
+import javax.validation.Validator;
+
+public abstract class AbstractTest extends EasyMockSupport {
 
 
 	static {
 		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
 	}
 
-	protected Logger log = LoggerFactory.getLogger(MubaTest.class);
+	protected Logger log = LoggerFactory.getLogger(AbstractTest.class);
 
 	@Rule
 	public EasyMockRule rule = new EasyMockRule(this);
-
+	
 	protected Injector injector;
 
 	protected RuntimeContext runtimeContext;
@@ -38,10 +37,8 @@ public abstract class MubaTest extends EasyMockSupport {
 		registerServices(injector.getInstance(Validator.class), injector.getInstance(ValidationGroupProvider.class), injector.getInstance(EventBus.class));
 
 	}
-
+	
 	protected abstract void registerServices(Validator v, ValidationGroupProvider g,EventBus switchs);
-
-	protected abstract void setUp() throws Exception;
 
 
 

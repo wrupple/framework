@@ -38,14 +38,14 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
     @Override
     public boolean execute(Context ctx) throws Exception {
         final ApplicationContext context = (ApplicationContext) ctx;
-        ProcessTaskDescriptor request = context.getTaskDescriptorValue();
+        ProcessTaskDescriptor request = context.getStateValue().getTaskDescriptorValue();
 
         final Solver solver = plugin.getSolver();
         log.debug("Resolving Solution Type");
         String solutionType =(String) request.getCatalog();
         CatalogActionContext catalogContext= catalogPlugin.spawn(context.getRuntimeContext());
         CatalogDescriptor solutionDescriptor = catalogPlugin.getDescriptorForName(solutionType,catalogContext);
-        context.setSolutionDescriptor(solutionDescriptor);
+        context.getStateValue().setSolutionDescriptor(solutionDescriptor);
 
         //by default, all fields are eligible for solving
         Collection<FieldDescriptor> fieldValues = solutionDescriptor.getFieldsValues();
@@ -54,7 +54,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
                 filter(field -> solver.isEligible(field,context)).
                 map(field -> solver.createVariable(field,context)).
                 collect(Collectors.toList());
-        context.setSolutionVariables(variables);
+        context.getStateValue().setSolutionVariables(variables);
 
         return CONTINUE_PROCESSING;
     }

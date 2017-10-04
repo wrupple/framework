@@ -5,14 +5,11 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.Validator;
 
 public abstract class AbstractTest extends EasyMockSupport {
 
