@@ -22,6 +22,8 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
 
     @Override
     public boolean execute(Context ctx) throws Exception {
+        log.debug("<{}>",this.getClass().getSimpleName());
+
         JavaNativeInterfaceContext context = (JavaNativeInterfaceContext) ctx;
 
         if(context.sentenceIterator.hasNext()){
@@ -85,6 +87,8 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
 
 
         }
+        log.debug("</{}>",this.getClass().getSimpleName());
+
         return CONTINUE_PROCESSING;
     }
 

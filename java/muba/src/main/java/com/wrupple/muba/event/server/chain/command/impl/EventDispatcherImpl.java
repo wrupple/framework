@@ -47,7 +47,9 @@ public class EventDispatcherImpl implements EventDispatcher {
 
 	@Override
 	public boolean execute(Context context) throws Exception {
-		RuntimeContext requestContext = (RuntimeContext) context;
+        log.debug("<{}>",this.getClass().getSimpleName());
+
+        RuntimeContext requestContext = (RuntimeContext) context;
 		Set<ConstraintViolation<?>> violations = null;
 		Object contract = requestContext.getServiceContract();
 		String key, value;
@@ -64,13 +66,13 @@ public class EventDispatcherImpl implements EventDispatcher {
 				violations = (Set) validator.validate(requestContext, groups);
 				requestContext.setConstraintViolations(violations);
 				if (!(violations == null || violations.isEmpty())) {
-					log.warn("excecution request encountered constraint violations ");
+					log.error("excecution request encountered constraint violations ");
 					if (log.isTraceEnabled()) {
 						for (ConstraintViolation<?> v : violations) {
 							log.trace("{}", v.getMessage());
 						}
 					}
-					return PROCESSING_COMPLETE;
+                    throw new IllegalArgumentException();
 				}
 			}
 		} else {
@@ -118,6 +120,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 							log.debug("\t{} : {}",v.getPropertyPath(),v.getMessage());
 						}
 					}
+                    log.debug("</{}>",this.getClass().getSimpleName());
 					return PROCESSING_COMPLETE;
 				}
 			}
@@ -133,14 +136,18 @@ public class EventDispatcherImpl implements EventDispatcher {
 						.getCatalog(ParentServiceManifest.NAME)
 						.getCommand(requestContext.getServiceManifest().getServiceId());
 				log.debug("delegating to service handler {}", serviceHandler);
-				return serviceHandler.execute(requestContext.getServiceContext());
+				boolean r = serviceHandler.execute(requestContext.getServiceContext());
+				log.debug("</{}>",this.getClass().getSimpleName());
+				return r;
 			} else {
 				log.error("could not understand contract");
+				log.debug("</{}>",this.getClass().getSimpleName());
 				return PROCESSING_COMPLETE;
 			}
 
 		} else {
 			log.error("Permission to process request denied");
+			log.debug("</{}>",this.getClass().getSimpleName());
 			return PROCESSING_COMPLETE;
 		}
 	}

@@ -4,10 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.*;
-import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
-import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.Trash;
+import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
@@ -20,6 +17,9 @@ import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
+import org.apache.commons.chain.Command;
+import org.apache.commons.chain.Context;
+import org.junit.Before;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,6 +28,9 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expect;
 
 public class IntegralTest extends AbstractTest{
 
@@ -127,5 +130,17 @@ public class IntegralTest extends AbstractTest{
 
 
     }
+
+    @Before
+    public void setUp() throws Exception {
+        expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+        expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
+        expect(mockSuscriptor.execute(anyObject(Context.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+
+        runtimeContext = injector.getInstance(RuntimeContext.class);
+        log.trace("NEW TEST EXCECUTION CONTEXT READY");
+    }
+
 
 }

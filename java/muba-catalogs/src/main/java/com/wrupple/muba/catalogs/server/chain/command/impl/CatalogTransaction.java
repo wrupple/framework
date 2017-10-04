@@ -34,6 +34,7 @@ public class CatalogTransaction {
         context.setName(action);
         preprocessEvent.setLiveContext(context);
         preprocessEvent.setRequestValue((CatalogActionRequest) context.getRuntimeContext().getServiceContract());
+        preprocessEvent.setDomain((Long) context.getDomain());
         context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
 
     }
@@ -57,6 +58,7 @@ public class CatalogTransaction {
             people.pushToPath(HasStakeHolder.STAKE_HOLDER_FIELD);
             observers = Collections.singletonList(people);
         }
+        event.setDomain((Long) context.getDomain());
 
         context.getRuntimeContext().getEventBus().broadcastEvent(event,context.getRuntimeContext(),observers);
 

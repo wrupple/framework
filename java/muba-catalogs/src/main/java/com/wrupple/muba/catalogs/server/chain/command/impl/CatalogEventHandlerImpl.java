@@ -23,15 +23,19 @@ public class CatalogEventHandlerImpl extends CatalogActionTriggerHandlerImpl imp
 
     @Override
     public boolean execute(Context ctx) throws Exception {
+        log.trace("<{}>",this.getClass().getSimpleName());
         CatalogActionContext context= (CatalogActionContext) ctx;
         //Advise = false (AFTER)
         CatalogDescriptor catalog = context.getCatalogDescriptor();
         // AFTER
         try {
-            return extecute(context, false);
+            boolean r = extecute(context, false);
+            log.trace("</{}>",this.getClass().getSimpleName());
+            return r;
         } catch (Exception e) {
             log.error("[FATAL TRIGGER ERROR]", e);
             throw new RuntimeException(e);
         }
+
     }
 }

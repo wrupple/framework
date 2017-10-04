@@ -165,9 +165,9 @@ public class EventRegistryImpl implements EventRegistry {
 
         List<String> pathTokens = new ArrayList<String>();
 
-        //TODO this way each individual service version has it's own security path, and only the default version is reachable via contract alone... that MAY not be what we want
+        //TODO this way each individual service version has it's own security path, and only the default version is reachable via contract alone... that MAY not be what we want, fixme to expose all versions?
         while(currentNode.getParentValue()!=null){
-            pathTokens.add(currentNode.getVersionDistinguishedName());
+            pathTokens.add(currentNode.getDistinguishedName());
             currentNode = currentNode.getParentValue();
         }
 
@@ -194,6 +194,7 @@ public class EventRegistryImpl implements EventRegistry {
 
     @Override
     public ExplicitIntent resolveIntent(Event implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
+        log.trace("will resolve implicit handler for {}",implicitRequestContract);
         if (serviceManifest != null) {
             String output =implicitRequestContract instanceof ImplicitIntent ?  ((ImplicitIntent)implicitRequestContract).getOutputCatalog() :null;
             if (output == null) {
@@ -202,6 +203,7 @@ public class EventRegistryImpl implements EventRegistry {
                FIXME support output type discrimination
             }*/
         }
+        log.warn("could not find implicit handler for event");
         return null;
     }
 
@@ -212,6 +214,7 @@ public class EventRegistryImpl implements EventRegistry {
         //TODO Business Event or User Event
         ExplicitIntentImpl event = new ExplicitIntentImpl( );
         event.setSentence(pathTokens);
+        event.setState(intent);
         return event;
     }
 

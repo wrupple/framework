@@ -40,11 +40,22 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	 * @return
 	 */
 	@Override public List<CatalogActionTrigger> getTriggersValues(CatalogActionContext context, boolean advise){
-		return catalogScope.get(context.getCatalogDescriptor().getDistinguishedName()).stream().filter(t -> t.isAdvice()==advise).collect(Collectors.toList());
+        List<CatalogActionTrigger> posibleTriggers = catalogScope.
+                get(context.getCatalogDescriptor().getDistinguishedName());
+	    if(posibleTriggers==null){
+	        return null;
+        }else{
+            return posibleTriggers.
+                    stream().
+                    filter(t -> t.isAdvice()==advise).
+                    collect(Collectors.toList());
+        }
+
 	}
 
 	@Override public void addCatalogScopeTrigger(CatalogActionTrigger trigger, CatalogDescriptor catalog){
         // Como almacenar triggers?
+        log.debug("[new {} scoped trigger] {}",catalog.getDistinguishedName(),trigger);
         List<CatalogActionTrigger> triggers = catalogScope.get(catalog.getDistinguishedName());
         if(triggers==null){
             triggers = new ArrayList<>(2);

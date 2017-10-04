@@ -41,7 +41,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 	
 	@Override
 	public boolean execute(Context cxt) throws Exception {
-		log.trace("[COMMIT CREATE ACTION START]");
+		log.trace("<{}>",this.getClass().getSimpleName());
 		CatalogActionContext context = (CatalogActionContext) cxt;
 
 		// must have been deserialized by this point
@@ -107,7 +107,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         log.debug("</CatalogActionEvent-Broadcast>");
 
 		context.setResults(Collections.singletonList(regreso));
-		log.trace("[COMMIT CREATE ACTION END] created: {}", regreso);
+		log.trace("</{}>",this.getClass().getSimpleName());
 		return CONTINUE_PROCESSING;
 	}
 

@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 
+import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.service.*;
@@ -51,106 +52,21 @@ import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.impl.UserCatalogPluginImpl;
 
-public class HSQLTest extends AbstractTest {
+public class HSQLTest extends IntegralTest {
 
 
-	public HSQLTest() {
-		init(new CRUDModule(), new CatalogModule(), new SingleUserModule(), new JDBCHSQLTestModule(),
-				new HSQLDBModule(), new JDBCModule(), new ValidationModule(), new ApplicationModule());
-
-	}
-	
-
-	@Override
-	protected void registerServices(Validator v, ValidationGroupProvider g, EventBus switchs) {
-		CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-		switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
-	}
-
-	/*
-	 * mocks
-	 */
-
-	private class CRUDModule extends AbstractModule {
-
-		@Override
-		protected void configure() {
-			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
-			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-
-			bind(Integer.class).annotatedWith(Names.named("catalog.missingTableErrorCode")).toInstance(
-					org.hsqldb.error.ErrorCode.X_42501 * -1/* 1146 in MySQL */);
-
-			// this makes JDBC the default storage unit
-			bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
-			bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
-			bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
-			bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
-			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
-			// no intercepting necessary
-			bind(CatalogReaderInterceptor.class).to(NonOperativeCatalogReaderInterceptor.class);
-
-			/*
-			 * garbage dependencies
-			 */
-			bind(UserCatalogPlugin.class).to(UserCatalogPluginImpl.class);
-			bind(CatalogFileUploadTransaction.class).toInstance(mock(CatalogFileUploadTransaction.class));
-			bind(CatalogFileUploadUrlHandlerTransaction.class)
-					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
-
-			WriteOutput mockWriter = mock(WriteOutput.class);
-			WriteAuditTrails mockLogger = mock(WriteAuditTrails.class);
-
-			bind(WriteAuditTrails.class).toInstance(mockLogger);
-			bind(WriteOutput.class).toInstance(mockWriter);
-
-            bind(FormatDictionary.class).toInstance(mock(FormatDictionary.class));
-
-		}
-
-		@Provides
-		@Inject
-		@Singleton
-		public SessionContext sessionContext(@Named("host") String peer) {
-			long stakeHolder = 1;
-			Person stakeHolderValue = mock(Person.class);
-			Host peerValue = mock(Host.class);
-			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
-		}
-
-		@Provides
-		public UserTransaction localTransaction() {
-			return mock(UserTransaction.class);
-		}
-
-		@Provides
-		public Trash trash() {
-			return mock(Trash.class);
-		}
-
-		@Provides
-		public CatalogDeserializationService catalogDeserializationService() {
-			return mock(CatalogDeserializationService.class);
-		}
-	}
-
-	CatalogDescriptor catalog;
-	CatalogActionContext context;
-
-	@Before
-	public void setUp() throws Exception {
-		RuntimeContext excecution = injector.getInstance(RuntimeContext.class);
-		SystemCatalogPlugin manager = injector.getInstance(SystemCatalogPlugin.class);
-		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-		context = manager.spawn(excecution);
-		catalog = builder.fromClass(Argument.class, "Argument", "Argument", -49723l, null);
-		context.setCatalogDescriptor(catalog);
-		context.setDomain(CatalogEntry.PUBLIC_ID);
-		log.trace("NEW TEST EXCECUTION CONTEXT READY");
-	}
 
 	@Test
 	public void filters() throws Exception {
+
+		RuntimeContext excecution = injector.getInstance(RuntimeContext.class);
+		SystemCatalogPlugin manager = injector.getInstance(SystemCatalogPlugin.class);
+		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
+		CatalogActionContext context = manager.spawn(excecution);
+		CatalogDescriptor catalog = builder.fromClass(Argument.class, "Argument", "Argument", -49723l, null);
+		context.setCatalogDescriptor(catalog);
+		context.setDomain(CatalogEntry.PUBLIC_ID);
+		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 
 		String TRES = "TRES";
 		String FIVE = "five";

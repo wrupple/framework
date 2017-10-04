@@ -18,16 +18,6 @@ import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 public class CatalogEngineTest extends IntegralTest {
 
-	@Before
-	public void setUp() throws Exception {
-		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
-		expect(mockSuscriptor.execute(anyObject(Context.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-
-		runtimeContext = injector.getInstance(RuntimeContext.class);
-		log.trace("NEW TEST EXCECUTION CONTEXT READY");
-	}
 
 	/**
 	 * <ol>

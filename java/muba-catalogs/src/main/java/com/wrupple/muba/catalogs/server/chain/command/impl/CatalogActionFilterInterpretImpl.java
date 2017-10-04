@@ -3,11 +3,16 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogActionFilterInterpret;
+import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.chain.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CatalogActionFilterInterpretImpl implements CatalogActionFilterInterpret {
+    protected static final Logger log = LoggerFactory.getLogger(CatalogActionFilterInterpretImpl.class);
+
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
 
@@ -22,6 +27,7 @@ public class CatalogActionFilterInterpretImpl implements CatalogActionFilterInte
 
     @Override
     public boolean execute(Context ctx) throws Exception {
+        log.trace("<{}>",this.getClass().getSimpleName());
         /*
 
         NOTHING TO DO
@@ -31,7 +37,7 @@ public class CatalogActionFilterInterpretImpl implements CatalogActionFilterInte
         CatalogActionContext context = requestContext.getServiceContext();
 
         */
-
+        log.trace("</{}>",this.getClass().getSimpleName());
         return CONTINUE_PROCESSING;
     }
 }

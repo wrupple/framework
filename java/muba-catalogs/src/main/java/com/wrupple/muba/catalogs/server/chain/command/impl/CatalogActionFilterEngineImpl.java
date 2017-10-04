@@ -23,6 +23,9 @@ public class CatalogActionFilterEngineImpl extends CatalogActionTriggerHandlerIm
 
     @Override
     public boolean execute(Context c) throws Exception {
-        return extecute((CatalogActionContext) c, true);
+        log.trace("<{}>",this.getClass().getSimpleName());
+        boolean e= extecute((CatalogActionContext) c, true);
+        log.trace("</{}>",this.getClass().getSimpleName());
+        return e;
     }
 }

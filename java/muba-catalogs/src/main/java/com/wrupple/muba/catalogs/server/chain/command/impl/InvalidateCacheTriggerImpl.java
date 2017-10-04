@@ -12,11 +12,14 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigger {
-	
-	private final CatalogResultCache cache;
+    protected static final Logger log = LoggerFactory.getLogger(DataJoiner.class);
+
+    private final CatalogResultCache cache;
 	
 	@Inject
 	public InvalidateCacheTriggerImpl(CatalogResultCache cache) {
@@ -26,6 +29,7 @@ public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigge
 
 	@Override
 	public boolean execute(Context c) throws Exception {
+		log.trace("<{}>",this.getClass().getSimpleName());
 		CatalogActionContext context = (CatalogActionContext) c;
 		List<HasCatalogId> e= (List)context.getResults();
 		if(e==null){
@@ -34,7 +38,7 @@ public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigge
 		for(HasCatalogId i :e){
 			cache.delete(context, SystemCatalogPlugin.DOMAIN_METADATA, i.getCatalog());
 		}
-		
+		log.trace("</{}>",this.getClass().getSimpleName());
 		return CONTINUE_PROCESSING;
 	}
 

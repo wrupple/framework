@@ -151,13 +151,13 @@ public class EventBusImpl extends ContextBase implements EventBus {
                             return filterer.matchAgainstFilters(handler, handlerCriterion, handleField, introspector);
                         }
                     }).
-                    map(manifest -> intentInterpret.resolveIntent(implicitRequestContract, manifest, parentTimeline)).
-                    collect(Collectors.toList());
+                    map(manifest -> intentInterpret.resolveIntent(implicitRequestContract, manifest, parentTimeline)).filter(explicitIntent -> explicitIntent!=null )
+                    .collect(Collectors.toList());
 
 
             if(handlers==null || handlers.isEmpty()){
                 log.error("No known handlers for event {}",implicitRequestContract);
-                return (T) implicitRequestContract;
+                throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
             } else if(handlers.size()==1){
                 ExplicitIntent call = handlers.get(0);
                 fireHandler(call,session,parentTimeline);
