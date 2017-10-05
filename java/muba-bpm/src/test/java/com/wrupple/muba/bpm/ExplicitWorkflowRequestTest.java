@@ -17,6 +17,7 @@ import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.DataEvent;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +29,6 @@ import java.util.List;
  * FIXME Test ExplicitOutputPlaceImpl
  */
 public class ExplicitWorkflowRequestTest extends BPMTest {
-    private static final String COUNT = "";
 
 
     //FIXME this tests catching ApplicationUpdateEvent And firing a workflow (History change event?)
@@ -36,12 +36,15 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
     @Before
     public void createApplication() throws Exception {
         ProcessTaskDescriptorImpl count = new ProcessTaskDescriptorImpl();
-        count.setName(COUNT);
         count.setCatalog(Statistics.CATALOG);
         count.setName(DataEvent.WRITE_ACTION);
+        //TODO SUBQUERY solver service appends, resolving variables if necesary, excecutes sql and attempts to resolve fields from result set
         count.setSentence(Arrays.asList(
-                "sql",
-                "SELECT COUNT(*) AS "+Statistics.COUNT_FIELD+" FROM ${qualifiedNameOf(ctx:entry.catalog)}"));
+                "SUBQUERY",
+                "SELECT",
+                "'${task.catalog}' AS "+ HasCatalogId.CATALOG_FIELD,
+                "COUNT(*) AS "+Statistics.COUNT_FIELD,
+                "FROM","${task.catalog}"));
         /*
          problem.setSentence(
                 Arrays.asList(
@@ -97,11 +100,11 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         wrupple.fireEvent(catalogActionRequest,session,null);
         //create it programatically to save a step
 
-		WorkRequestImpl notification = new WorkRequestImpl();
-		notification.setOutputCatalog(Statistics.CATALOG);
-		notification.setCatalog(Statistics.CATALOG);
-        notification.setEntry(statistics.getId());
-        wrupple.fireEvent(notification,session,null);
+		WorkRequestImpl inboxNotification = new WorkRequestImpl();
+		inboxNotification.setOutputCatalog(Statistics.CATALOG);
+		inboxNotification.setCatalog(Statistics.CATALOG);
+        inboxNotification.setEntry(statistics.getId());
+        wrupple.fireEvent(inboxNotification,session,null);
 
         catalogActionRequest.setCatalog(Statistics.CATALOG);
         catalogActionRequest.setEntry(statistics.getId());
