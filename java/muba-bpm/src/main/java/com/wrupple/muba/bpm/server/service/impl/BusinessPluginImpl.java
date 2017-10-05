@@ -65,9 +65,9 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	public BusinessPluginImpl(ValueChangeListener changeListener,
 							  ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
 							  @Named(Workflow.CATALOG) Provider<CatalogDescriptor> appItem,
-							  // @Named(VegetateAuthenticationToken.CATALOG) Provider<CatalogDescriptor> authTokenDescriptor,
+							  // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
 							  @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
-							  // @Named(Host.CATALOG) Provider<CatalogDescriptor> clientProvider,
+							  // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
 							  @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
 		this.SECURE_STORAGE = secureStorageIndex;
 		this.notificationProvider = notificationProvider;
@@ -90,7 +90,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			return notificationProvider.get();
 		}/* else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
 			return clientProvider.get();
-		} else if (VegetateAuthenticationToken.CATALOG.equals(catalogId)) {
+		} else if (VegetateAuthenticationToken.CATALOG_TIMELINE.equals(catalogId)) {
 			return authTokenDescriptor.get();
 		}*/
 		return null;

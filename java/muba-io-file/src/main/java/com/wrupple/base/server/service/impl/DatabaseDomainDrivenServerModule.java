@@ -173,7 +173,7 @@ public class DatabaseDomainDrivenServerModule extends AbstractDatabaseDrivenServ
 				}
 
 				ancestry.eldestParent = parentCatalogId;
-				if (ContentNode.CATALOG.equals(parentCatalogId)) {
+				if (ContentNode.CATALOG_TIMELINE.equals(parentCatalogId)) {
 					ancestry.isTimeline = true;
 				}
 				if (regreso.getParent() == null) {

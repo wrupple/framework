@@ -24,7 +24,7 @@ public class DomainRolePermissionCatalogDescriptor extends CatalogDescriptorImpl
 		// FIXME validate role to assert role is from transaction's domain,
 		// Session Context knows how
 		// TODO field.setKey(true);
-		// field.setForeignCatalogName(DomainRole.CATALOG);
+		// field.setForeignCatalogName(DomainRole.CATALOG_TIMELINE);
 		fields.put(field.getFieldId(), field);
 
 		field = new FieldDescriptorImpl();

@@ -17,7 +17,7 @@ import javax.inject.Singleton;
 public class BusinessEngineImpl extends ChainBase implements BusinessEngine {
 
 
-    /*recibo BusinessContextImpl necesito sacar un ApplicationState*/
+    /*recibo ApplicationContextImpl necesito sacar un ApplicationState*/
     @Singleton
     public BusinessEngineImpl( CommitSubmission commit, InferNextTask fwd, UpdateApplicationContext update) {
         super(new Command[]{ commit, fwd,update});

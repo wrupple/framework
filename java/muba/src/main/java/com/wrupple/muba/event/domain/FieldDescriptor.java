@@ -101,8 +101,7 @@ public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,H
 	public String getCommand();
 
 	public boolean isLocalized();
-	
-	public String getFormula();
+
 
 	/**
 	 * 
@@ -126,4 +125,6 @@ public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,H
 
 
 	public void setDefaultValueOptions(List<String> asList);
+
+	List<String> getSentence();
 }

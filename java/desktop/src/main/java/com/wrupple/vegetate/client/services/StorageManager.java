@@ -50,7 +50,7 @@ public interface StorageManager {
 
 
 	/*
-	 * CATALOG DESCRIPTION
+	 * CATALOG_TIMELINE DESCRIPTION
 	 */
 	void loadCatalogDescriptor(String host, String domain, final String catalogId, final StateTransition<CatalogDescriptor> onDone);
 	

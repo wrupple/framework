@@ -61,7 +61,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 		}
 
 		/*
-		 * CATALOG THIS REQUEST'S ACTION POINTS TO
+		 * CATALOG_TIMELINE THIS REQUEST'S ACTION POINTS TO
 		 */
 
 		CatalogDescriptor catalogDescriptor = interpret.get().getDescriptorForName(pressumedCatalogId, context.getDomain());

@@ -7,7 +7,7 @@ public interface ContentNode extends CatalogEntry, HasTimestamp {
 
 	// FIXME RENAME NUMERIC_ID ID to CONTENT_NODE
 	Long NUMERIC_ID = -1l;
-	String CATALOG = "TimelineEvent";
+	String CATALOG_TIMELINE = "TimelineEvent";
 	String CHILDREN_TREE_LEVEL_INDEX="childrenTreeLevelIndex";
 	String DISCRIMINATING_INDEX = "discriminatingIndex";
 	/*

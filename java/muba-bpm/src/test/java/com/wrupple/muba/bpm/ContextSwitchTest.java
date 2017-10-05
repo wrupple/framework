@@ -1,34 +1,17 @@
 package com.wrupple.muba.bpm;
 
-import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.domain.impl.BusinessIntentImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
-import com.wrupple.muba.bpm.server.chain.BusinessEngine;
-import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
-import com.wrupple.muba.bpm.server.chain.SolverEngine;
-import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
-import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.WorkflowEventInterpret;
-import com.wrupple.muba.catalogs.CatalogModule;
-import com.wrupple.muba.catalogs.HSQLDBModule;
-import com.wrupple.muba.catalogs.JDBCModule;
-import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
@@ -144,23 +127,7 @@ public class ContextSwitchTest extends BPMTest {
 
         log.trace("[-create a pool of drivers to resolve the booking-]");
 
-        Driver driver;
-        for(int i = 0 ; i < 10 ; i++){
-            driver = new Driver();
-            //thus, best driver will have a location of 6, or 8 because 7 will not be available
-            driver.setLocation(i);
-            driver.setAvailable(i%2==0);
-
-            action.setEntryValue(driver);
-
-            runtimeContext.setServiceContract(action);
-            runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-                    CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
-
-            runtimeContext.process();
-
-            runtimeContext.reset();
-        }
+        super.createMockDrivers();
 
         log.trace("[-Create a Booking-]");
 
@@ -213,7 +180,7 @@ public class ContextSwitchTest extends BPMTest {
         BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
         bookingRequest.setHandle(item.getId());
         bookingRequest.setEntry(booking.getId());
-        bookingRequest.setState(null /*this means create a new activity context, otherwise the context would be retrived*/);
+        bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
 
 
         //BOOKING IS SAVED AS entry value (result) on the initial application state
@@ -252,7 +219,7 @@ public class ContextSwitchTest extends BPMTest {
 
         bookingRequest = new BusinessIntentImpl();
         bookingRequest.setEntryValue(driver);
-        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setState((Long) activityState.getId());
+        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setStateValue((Long) activityState.getId());
 
         //BOOKING IS SAVED AS entry value (result) on the initial application state
         runtimeContext.setServiceContract(bookingRequest);

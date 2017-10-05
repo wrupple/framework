@@ -7,6 +7,8 @@ import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.event.domain.annotations.CatalogKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
+import java.util.List;
+
 /**
  * Created by japi on 12/08/17.
  */
@@ -27,31 +29,28 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
             foreignCatalog = Workflow.CATALOG
     )
     private Long handle;
-
-    //Request Contract
+    private Object entry;
     private CatalogEntry entryValue;
-
-    private Long entry;
-
     private String catalog;
+    private Object result;
+    private Exception error;
+    private List<String> sentence;
 
-    @Override
     public Long getState() {
         return state;
     }
 
-    public void setState(Long state) {
-        this.state = state;
+    @Override
+    public Object getEntry() {
+        return entry;
     }
 
-    public ApplicationState getStateValue() {
-        return stateValue;
+    @Override
+    public void setEntry(Object entry) {
+        this.entry = entry;
     }
 
-    public void setStateValue(ApplicationState stateValue) {
-        this.stateValue = stateValue;
-    }
-
+    @Override
     public CatalogEntry getEntryValue() {
         return entryValue;
     }
@@ -60,18 +59,62 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
         this.entryValue = entryValue;
     }
 
-    @Override
-    public Long getEntry() {
-        return entry;
+    public void setState(Long state) {
+        this.state = state;
     }
 
     @Override
-    public void setEntry(Object id) {
-        this.entry= (Long) id;
+    public ApplicationState getStateValue() {
+        return stateValue;
     }
 
-    public void setEntry(Long entry) {
-        this.entry = entry;
+    @Override
+    public void setStateValue(Object applicationState) {
+        setStateValue((ApplicationState)applicationState);
+    }
+
+    @Override
+    public <T> T getConvertedResult() {
+        return (T) getResult();
+    }
+
+
+    public Exception getError() {
+        return error;
+    }
+
+    @Override
+    public void setError(Exception error) {
+        this.error = error;
+    }
+
+    @Override
+    public List<String> getSentence() {
+        return sentence;
+    }
+
+    public void setSentence(List<String> sentence) {
+        this.sentence = sentence;
+    }
+
+    public void setStateValue(ApplicationState stateValue) {
+        this.stateValue = stateValue;
+    }
+
+    public Workflow getHandleValue() {
+        return handleValue;
+    }
+
+    public void setHandleValue(Workflow handleValue) {
+        this.handleValue = handleValue;
+    }
+
+    public Long getHandle() {
+        return handle;
+    }
+
+    public void setHandle(Long handle) {
+        this.handle = handle;
     }
 
     @Override
@@ -84,20 +127,12 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
         this.catalog = catalog;
     }
 
-    public Workflow getHandleValue() {
-        return handleValue;
-    }
-
-    public void setHandleValue(Workflow handleValue) {
-        this.handleValue = handleValue;
+    public Object getResult() {
+        return result;
     }
 
     @Override
-    public Long getHandle() {
-        return handle;
-    }
-
-    public void setHandle(Long handle) {
-        this.handle = handle;
+    public void setResult(Object result) {
+        this.result = result;
     }
 }

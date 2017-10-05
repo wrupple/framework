@@ -33,7 +33,7 @@ public class BusinessModule  extends AbstractModule {
         bind(BusinessServiceManifest.class).to(BusinessServiceManifestImpl.class);
         bind(BusinessEngine.class).to(BusinessEngineImpl.class);
         bind(BusinessRequestInterpret.class).to(BusinessRequestInterpretImpl.class);
-        bind(BusinessContext.class).to(BusinessContextImpl.class);
+        bind(ApplicationContext.class).to(ApplicationContextImpl.class);
 
         bind(IntentResolverServiceManifest.class).to(IntentResolverServiceManifestImpl.class);
         bind(IntentResolverEngine.class).to(IntentResolverEngineImpl.class);

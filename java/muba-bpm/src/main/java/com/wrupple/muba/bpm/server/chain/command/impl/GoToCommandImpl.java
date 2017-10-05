@@ -28,7 +28,7 @@ public class GoToCommandImpl implements GoToCommand {
 	public boolean execute(Context ctx) {
 		RuntimeContext context = (RuntimeContext) ctx;
 		WorkflowFinishedIntent event = (WorkflowFinishedIntent) context.getServiceContract();
-		ApplicationState state= (ApplicationState) event.getState();
+		ApplicationState state= (ApplicationState) event.getStateValue();
 
 		//Workflow currentItem = state.getApplicationValue();
         CatalogEntry output = state.getEntryValue();

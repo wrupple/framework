@@ -48,7 +48,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
         BeanUtils.copyProperties(context,contractExplicitIntent);
 
-        Long existingApplicationState = (Long) contractExplicitIntent.getState();
+        Long existingApplicationState = (Long) contractExplicitIntent.getStateValue();
 
         ApplicationState applicationContext;
         CatalogActionRequestImpl request= new CatalogActionRequestImpl();

@@ -1,15 +1,11 @@
 package com.wrupple.muba.catalogs.server.chain;
 
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.event.domain.*;
-import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
@@ -39,7 +35,7 @@ public class CatalogEngineTest extends IntegralTest {
 		replayAll();
 
 		CatalogDescriptor problemContract = builder.fromClass(MathProblem.class, MathProblem.class.getSimpleName(),
-				"Math Problem", 0, builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG,
+				"Math Problem", 0, builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG_TIMELINE,
 						ContentNode.class.getSimpleName(), -1l, null));
         FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
         assertTrue( solutionFieldDescriptor!= null);
@@ -118,11 +114,11 @@ public class CatalogEngineTest extends IntegralTest {
 		log.debug("-check if child was created-");
 		runtimeContext.reset();
 
-		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, ContentNode.CATALOG,
+		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, ContentNode.CATALOG_TIMELINE,
 				CatalogActionRequest.READ_ACTION, null, null, null, FilterDataUtils.newFilterData());
 		runtimeContext.setServiceContract(contract);
 		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-				CatalogActionRequest.LOCALE_FIELD, ContentNode.CATALOG, CatalogActionRequest.READ_ACTION);
+				CatalogActionRequest.LOCALE_FIELD, ContentNode.CATALOG_TIMELINE, CatalogActionRequest.READ_ACTION);
 
 		runtimeContext.process();
 

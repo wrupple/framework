@@ -49,7 +49,7 @@ public class NextPlaceImpl implements com.wrupple.muba.bpm.server.chain.command.
 
 		RuntimeContext context = (RuntimeContext) ctx;
 		WorkflowFinishedIntent event = (WorkflowFinishedIntent) context.getServiceContract();
-		ApplicationState state= (ApplicationState) event.getState();
+		ApplicationState state= (ApplicationState) event.getStateValue();
 
         Workflow currentItem = state.getApplicationValue();
         currentItem = findNextTreeNode(currentItem);

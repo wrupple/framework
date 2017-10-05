@@ -19,6 +19,7 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
      String CATALOG = "ApplicationState";
 
     ServiceManifest getHandleValue();
+    void setHandleValue(ServiceManifest applicationItemValue);
 
      FilterData getFilterData();
 

@@ -3,10 +3,7 @@ package com.wrupple.muba.bpm;
 import com.google.inject.*;
 import com.google.inject.name.Names;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bpm.domain.BusinessServiceManifest;
-import com.wrupple.muba.bpm.domain.IntentResolverServiceManifest;
-import com.wrupple.muba.bpm.domain.SolverServiceManifest;
-import com.wrupple.muba.bpm.domain.WorkflowServiceManifest;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
@@ -21,6 +18,7 @@ import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
@@ -57,14 +55,34 @@ public abstract class BPMTest extends AbstractTest {
 	 * mocks
 	 */
 
-	protected WriteOutput mockWriter;
+	private WriteOutput mockWriter;
 
-	protected WriteAuditTrails mockLogger;
+	private WriteAuditTrails mockLogger;
 
-	protected Host peerValue;
+	private Host peerValue;
+	protected EventBus wrupple;
+	protected SessionContext session;
+
+    protected void createMockDrivers() throws Exception {
+		Driver driver;
+        CatalogActionRequestImpl catalogActionRequest;
+		for(int i = 0 ; i < 10 ; i++){
+			driver = new Driver();
+			//thus, best driver will have a location of 6, or 8 because 7 will not be available
+			driver.setLocation(i);
+			driver.setAvailable(i%2==0);
+
+            catalogActionRequest= new CatalogActionRequestImpl();
+            catalogActionRequest.setCatalog(Driver.CATALOG);
+            catalogActionRequest.setEntryValue(driver);
+            catalogActionRequest.setName(DataEvent.CREATE_ACTION);
+            wrupple.fireEvent(catalogActionRequest,session,null);
+
+		}
+	}
 
 
-	class IntegralTestModule extends AbstractModule {
+    class IntegralTestModule extends AbstractModule {
 
 		@Override
 		protected void configure() {
@@ -190,8 +208,8 @@ public abstract class BPMTest extends AbstractTest {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
-
-		runtimeContext = injector.getInstance(RuntimeContext.class);
+		session = injector.getInstance(SessionContext.class);
+		wrupple = injector.getInstance(EventBus.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}
 

@@ -41,7 +41,7 @@ public class DesktopResponseConfigureImpl implements DesktopResponseConfigure {
 			/*if (preferencesDao.getEnableLiveDesktop(domainId, personid)) {
 				String channelToken;
 				BPMClientData desktopSession;
-				CatalogDataAccessObject<BPMClientData> dsm = daoFactory.getOrAssembleDataSource(BPMClientData.CATALOG, context, BPMClientData.class);
+				CatalogDataAccessObject<BPMClientData> dsm = daoFactory.getOrAssembleDataSource(BPMClientData.CATALOG_TIMELINE, context, BPMClientData.class);
 				if (rememberMeToken == null) {
 					// new client or a long unseen one
 					desktopSession = socketManager.createDesktopSession(domainId, personid);

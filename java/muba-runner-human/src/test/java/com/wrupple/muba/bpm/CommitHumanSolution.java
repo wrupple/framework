@@ -208,7 +208,7 @@ public class CommitHumanSolution extends MubaTest {
 
         //FIXME stack overflow when no parent is specified, ok when consolidated?
         CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
-                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG,
+                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG_TIMELINE,
                         ContentNode.class.getSimpleName(), -1l, null));
 
         CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();

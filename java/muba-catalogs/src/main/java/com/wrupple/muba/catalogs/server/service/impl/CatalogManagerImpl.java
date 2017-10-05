@@ -268,7 +268,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		log.trace("assemble catalog descriptor FOR KEY {} ", value);
 		CatalogDescriptor regreso = null;
 		if (value == -1) {
-			regreso = builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG, ContentNode.class.getSimpleName(),
+			regreso = builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG_TIMELINE, ContentNode.class.getSimpleName(),
 					-1l, null);
 		}
 
@@ -400,7 +400,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				}
 			}
 			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()
-					&& ContentNode.CATALOG.equals(catalog.getGreatAncestor())) {
+					&& ContentNode.CATALOG_TIMELINE.equals(catalog.getGreatAncestor())) {
 
                 addTrigger_catalogScope(timestamp,catalog);
 				List<FilterDataOrdering> sorts = catalog.getAppliedSorts();
@@ -983,9 +983,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	public boolean isFileField(FieldDescriptor field) {
 		String catalog = field.getCatalog();
 		return (field.isKey() && catalog != null
-				&& (catalog.equals(PersistentImageMetadata.CATALOG) ))/* FIXME or contained in format dictionary || catalog.equals(WrupleSVGDocument.CATALOG)
-				|| catalog.equals(WruppleFileMetadata.CATALOG) || catalog.equals(WruppleAudioMetadata.CATALOG)
-				|| catalog.equals(WruppleVideoMetadata.CATALOG)))*/;
+				&& (catalog.equals(PersistentImageMetadata.CATALOG) ))/* FIXME or contained in format dictionary || catalog.equals(WrupleSVGDocument.CATALOG_TIMELINE)
+				|| catalog.equals(WruppleFileMetadata.CATALOG_TIMELINE) || catalog.equals(WruppleAudioMetadata.CATALOG_TIMELINE)
+				|| catalog.equals(WruppleVideoMetadata.CATALOG_TIMELINE)))*/;
 	}
 
 

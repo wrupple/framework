@@ -25,8 +25,6 @@ public abstract class AbstractTest extends EasyMockSupport {
 	
 	protected Injector injector;
 
-	protected RuntimeContext runtimeContext;
-
 
 
 	public final  void init(Module... modules) {

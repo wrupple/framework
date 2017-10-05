@@ -95,7 +95,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 					}
 
 				} else if (field.isEphemeral()) {
-					if (field.getFormula() == null) {
+					if (field.getSentence() == null) {
 						log.trace("Working many to one relationship {}", field.getFieldId());
 
 						reservedField = context.getCatalogManager().getIncomingForeignJoinableFieldId(joinCatalog,mainCatalog.getDistinguishedName());

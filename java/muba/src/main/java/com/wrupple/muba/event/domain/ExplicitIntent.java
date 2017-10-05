@@ -14,9 +14,9 @@ public interface ExplicitIntent extends Event {
 	 * worker session to recover
 	 * @return (Application State Id, TaskId) if the input was an activity booking id , the output would be an activity tracking id
 	 */
-	Object getState();
+	Object getStateValue();
 
-	void setState(Object applicationState);
+	void setStateValue(Object applicationState);
 
 	<T > T getConvertedResult();
 

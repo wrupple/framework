@@ -35,13 +35,13 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 	private String widget;
 	@CatalogFieldWidget(widget="catalogPicker")
 	private String catalog;
-	private String fieldId,description,help, name, defaultValue, command, formula;
+	private String fieldId,description,help, name, defaultValue, command;
 
 	@CatalogField(ignore=true)
 	private String ownerCatalogId;
 	
 
-	private List<String> defaultValueOptions, properties;
+	private List<String> defaultValueOptions, properties, sentence;
 
 	@CatalogKey(foreignCatalog=Constraint.CATALOG_ID)
 	private List<Long> constraints;
@@ -122,12 +122,12 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 		return dataType;
 	}
 
-	public String getFormula() {
-		return formula;
+	public List<String> getSentence() {
+		return sentence;
 	}
 
-	public void setFormula(String formula) {
-		this.formula = formula;
+	public void setSentence(List<String> sentence) {
+		this.sentence = sentence;
 	}
 
 	/**

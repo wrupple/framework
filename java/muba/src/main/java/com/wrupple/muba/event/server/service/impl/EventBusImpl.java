@@ -122,7 +122,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
 
     private boolean fireHandlerWithRuntime(ExplicitIntent event, RuntimeContext runtimeContext) throws Exception {
         runtimeContext.setSentence(event.getSentence());
-        runtimeContext.setServiceContract(event.getState());
+        runtimeContext.setServiceContract(event.getStateValue());
         boolean regreso = resume(runtimeContext);
         event.setResult(runtimeContext.getResult());
         return regreso;

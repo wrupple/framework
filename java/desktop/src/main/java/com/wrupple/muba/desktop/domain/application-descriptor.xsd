@@ -75,7 +75,7 @@
 		<xs:sequence>
 			<xs:element name="service" type="xs:string" maxOccurs="1"
 				minOccurs="1" />
-			<xs:element name="state" type="notification-state"
+			<xs:element name="stateValue" type="notification-stateValue"
 				maxOccurs="unbounded" minOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
@@ -95,7 +95,7 @@
 				maxOccurs="unbounded" minOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="notification-state">
+	<xs:complexType name="notification-stateValue">
 		<xs:sequence>
 			<xs:element name="status" type="xs:string" />
 			<xs:element name="icon" type="xs:string" />

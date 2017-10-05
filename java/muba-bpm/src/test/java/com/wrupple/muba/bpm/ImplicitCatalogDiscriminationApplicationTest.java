@@ -222,7 +222,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
         bookingRequest.setHandle(item.getId());
         bookingRequest.setEntry(booking.getId());
-        bookingRequest.setState(null /*this means create a new activity context, otherwise the context would be retrived*/);
+        bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
 
 
         //BOOKING IS SAVED AS entry value (result) on the initial application state
@@ -261,7 +261,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         bookingRequest = new BusinessIntentImpl();
         bookingRequest.setEntryValue(driver);
-        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setState((Long) activityState.getId());
+        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setStateValue((Long) activityState.getId());
 
         //BOOKING IS SAVED AS entry value (result) on the initial application state
         runtimeContext.setServiceContract(bookingRequest);

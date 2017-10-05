@@ -13,7 +13,7 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
      */
     private String catalog;
     private Object result;
-    private Object state;
+    private Object stateValue;
     private Exception error;
     private List<String> sentence;
 
@@ -46,13 +46,13 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
     }
 
     @Override
-    public Object getState() {
-        return state;
+    public Object getStateValue() {
+        return stateValue;
     }
 
     @Override
-    public void setState(Object state) {
-        this.state = state;
+    public void setStateValue(Object stateValue) {
+        this.stateValue = stateValue;
     }
 
     @Override

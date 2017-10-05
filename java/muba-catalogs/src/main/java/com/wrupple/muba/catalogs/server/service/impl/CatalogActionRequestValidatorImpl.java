@@ -61,7 +61,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		// had to be done this way because security violations occur when
 		// using reflection on the apache chain context map
 		boolean report = true;
-		log.debug("[VALIDATE CATALOG ACTION REQUEST]");
+		log.debug("[VALIDATE CATALOG_TIMELINE ACTION REQUEST]");
 
 		String action = req.getName();
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();

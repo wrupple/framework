@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldDefault;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldFormula;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldSentence;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldProperties;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldWidget;
@@ -67,8 +67,8 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 		FieldDescriptorImpl[] descriptors = new FieldDescriptorImpl[cll.size()];
 
-		String id, name, widget, foreignCatalog, defaultValue, formulaValue;
-		String[] defaultValueOptions, properties;
+		String id, name, widget, foreignCatalog, defaultValue;
+		String[] defaultValueOptions, properties,formulaValue;
 		boolean multiple, key, ephemeral, ignore, sortable, filterable, createable, writeable, detailable, summary,
 				localized;
 
@@ -83,7 +83,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 		CatalogFieldValues defaultValues;
 		CatalogKey foreignKey;
 		CatalogValue foreignValue;
-		CatalogFieldFormula formula;
+		CatalogFieldSentence formula;
 		CatalogFieldWidget widgetAnnot;
 		CatalogFieldProperties props;
 
@@ -114,7 +114,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			defaultValues = field.getAnnotation(CatalogFieldValues.class);
 			foreignKey = field.getAnnotation(CatalogKey.class);
 			foreignValue = field.getAnnotation(CatalogValue.class);
-			formula = field.getAnnotation(CatalogFieldFormula.class);
+			formula = field.getAnnotation(CatalogFieldSentence.class);
 			widgetAnnot = field.getAnnotation(CatalogFieldWidget.class);
 			props = field.getAnnotation(CatalogFieldProperties.class);
 
@@ -199,7 +199,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setDefaultValue(defaultValue);
 						fieldDescriptor.setDetailable(detailable);
 						fieldDescriptor.setFilterable(filterable);
-						fieldDescriptor.setFormula(formulaValue);
+						fieldDescriptor.setSentence(Arrays.asList(formulaValue));
 						fieldDescriptor.setLocalized(localized);
 						fieldDescriptor.setSortable(sortable);
 						fieldDescriptor.setSummary(summary);
@@ -225,7 +225,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 							fieldDescriptor.setDefaultValue(defaultValue);
 							fieldDescriptor.setDetailable(detailable);
 							fieldDescriptor.setFilterable(filterable);
-							fieldDescriptor.setFormula(formulaValue);
+							fieldDescriptor.setSentence(Arrays.asList(formulaValue));
 							fieldDescriptor.setLocalized(localized);
 							fieldDescriptor.setSortable(sortable);
 							fieldDescriptor.setSummary(summary);
@@ -249,7 +249,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setDefaultValue(defaultValue);
 						fieldDescriptor.setDetailable(detailable);
 						fieldDescriptor.setFilterable(filterable);
-						fieldDescriptor.setFormula(formulaValue);
+						fieldDescriptor.setSentence(Arrays.asList(formulaValue));
 						fieldDescriptor.setLocalized(localized);
 						fieldDescriptor.setSortable(sortable);
 						fieldDescriptor.setSummary(summary);
@@ -290,7 +290,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setDefaultValue(defaultValue);
 						fieldDescriptor.setDetailable(detailable);
 						fieldDescriptor.setFilterable(filterable);
-						fieldDescriptor.setFormula(formulaValue);
+						fieldDescriptor.setSentence(Arrays.asList(formulaValue));
 						fieldDescriptor.setLocalized(localized);
 						fieldDescriptor.setSortable(sortable);
 						fieldDescriptor.setSummary(summary);

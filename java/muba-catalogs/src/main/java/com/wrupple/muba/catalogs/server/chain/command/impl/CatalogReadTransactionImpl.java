@@ -68,7 +68,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		CatalogActionContext context = (CatalogActionContext) x;
 		String catalogId = (String) context.getCatalog();
 		if (catalogId == null) {
-			log.trace("[GET AVAILABLE CATALOG LIST]");
+			log.trace("[GET AVAILABLE CATALOG_TIMELINE LIST]");
 			// list all domain catalogs
 			context.setResults(context.getCatalogManager().getAvailableCatalogs(context));
 			return CONTINUE_PROCESSING;
@@ -81,7 +81,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
         if (targetEntryId == null) {
 			FilterData filter = context.getFilter();
 			if (filter == null) {
-				log.trace("[ASSEMBLE CATALOG DESCRIPTOR]");
+				log.trace("[ASSEMBLE CATALOG_TIMELINE DESCRIPTOR]");
 				// get full catalog descriptor
 
 				context.setResults(Collections.singletonList(catalog));

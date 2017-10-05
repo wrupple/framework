@@ -14,7 +14,7 @@ import org.apache.commons.chain.Context;
 public class UpdateApplicationContextImpl implements UpdateApplicationContext {
     @Override
     public boolean execute(Context  ctx) throws Exception {
-        BusinessContext context = (BusinessContext) ctx;
+        ApplicationContext context = (ApplicationContext) ctx;
         if(context.isChanged()){
             BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
             ApplicationState applicationState = context.getRuntimeContext().getConvertedResult();

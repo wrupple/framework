@@ -14,7 +14,7 @@ public class ContentNodeImpl extends CatalogEntryImpl implements ContentNode {
 
 	@Override
 	public String getCatalogType() {
-		return CATALOG;
+		return CATALOG_TIMELINE;
 	}
 
 	@Override
