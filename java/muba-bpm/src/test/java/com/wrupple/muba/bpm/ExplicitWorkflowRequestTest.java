@@ -108,11 +108,15 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 	public void consumeJobsFromInbox() throws Exception {
         Statistics statistics=new Statistics();
         statistics.setCatalog(Driver.CATALOG);
-        CatalogActionRequestImpl catalogActionRequest = new CatalogActionRequestImpl();
+        BusinessIntent intent = new CatalogActionRequestImpl();
+        /*FIXME to isolate explicit workflow invocation in as the subject of this test: alter this hosts application state to point to create activity and task
+        - fire business intent to commit that last action, which should result in application state pointing to the next activity (count)
+        - update is fired and handler starts count workflow, as event bus is synchrounous
+        - when thread returns statistics should be updated (assertion)
         catalogActionRequest.setCatalog(Statistics.CATALOG);
         catalogActionRequest.setEntryValue(statistics);
         catalogActionRequest.setName(DataEvent.CREATE_ACTION);
-        wrupple.fireEvent(catalogActionRequest,session,null);
+        wrupple.fireEvent(catalogActionRequest,session,null);*/
         //TODO commit last (and only) create action from a first activity TEST output handler invocation of an explicit workflow
 
 
