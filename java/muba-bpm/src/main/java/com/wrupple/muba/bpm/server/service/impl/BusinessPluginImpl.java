@@ -7,6 +7,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.domain.Person;
@@ -58,23 +59,27 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
     private final Provider<CatalogDescriptor> notificationProvider;
 
+    private final CatalogTriggerInterpret triggerInterpret;
+
 	private final int SECURE_STORAGE;
-	private final Command[] actions;
+	private final Command[] catalogActions;
+
 
 	@Inject
 	public BusinessPluginImpl(ValueChangeListener changeListener,
-							  ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
-							  @Named(Workflow.CATALOG) Provider<CatalogDescriptor> appItem,
-							  // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
-							  @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
-							  // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
-							  @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
-		this.SECURE_STORAGE = secureStorageIndex;
+                              ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
+                              @Named(Workflow.CATALOG) Provider<CatalogDescriptor> appItem,
+                              // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
+                              @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
+                              // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
+                              CatalogTriggerInterpret triggerInterpret, @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
+        this.triggerInterpret = triggerInterpret;
+        this.SECURE_STORAGE = secureStorageIndex;
 		this.notificationProvider = notificationProvider;
 
 		this.appItem=appItem;
 
-		actions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
+		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
 	}
 
 	@Override
@@ -98,8 +103,9 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 	@Override
 	public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) {
+		/* FIXME use in EventSuscriptionMapper
 		names.add(new CatalogIdentificationImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
-				"/static/img/notification.png"));
+				"/static/img/notification.png"));*/
 		names.add(new CatalogIdentificationImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
 		names.add(new CatalogIdentificationImpl(Workflow.CATALOG, "Process", "/static/img/process.png"));
 		names.add(new CatalogIdentificationImpl(WorkRequest.CATALOG, WorkRequest.CATALOG,
@@ -108,7 +114,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	}
 
 	@Override
-	public void postProcessCatalogDescriptor(CatalogDescriptor catalog) {
+	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) {
 		FieldDescriptor stakeHolderField = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
 		CatalogActionTriggerImpl e;
 		if (stakeHolderField != null && !stakeHolderField.isMultiple()
@@ -122,21 +128,23 @@ public class BusinessPluginImpl implements BusinessPlugin {
 				e.setHandler(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
-				catalog.addTrigger(e);
+                triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+
 				e = new CatalogActionTriggerImpl();
 				e.setAction(1);
 				e.setAdvice(true);
 				e.setHandler(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
-				catalog.addTrigger(e);
+                triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+
 				e = new CatalogActionTriggerImpl();
 				e.setAction(2);
 				e.setAdvice(true);
 				e.setHandler(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
-				catalog.addTrigger(e);
+                triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
 			}
 
 			stakeHolderField.setWriteable(false);
@@ -147,7 +155,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			e.setHandler(StakeHolderTrigger.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
-			catalog.addTrigger(e);
+            triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
 			// asi como los triggers se agregan, modificadores de permisos
 			// especificos, alteran los filtros o la visibilidad de una entrada
 			// ((CatalogDescriptor) catalog).setStakeHolderProtected(true);
@@ -158,7 +166,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			e.setHandler(ValueChangeAudit.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
-			catalog.addTrigger(e);
+            triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
 
 			e = new CatalogActionTriggerImpl();
 			e.setAction(1);
@@ -166,9 +174,9 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			e.setHandler(ValueChangeListener.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
-			catalog.addTrigger(e);
+            triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
 
-			// FIXME writing (or reading require signed authentication)
+			// FIXME writing (or reading require signed private key authentication)
 
 
 		}
@@ -181,10 +189,10 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	}
 
 	@Override
-	public Command[] getActions() {
+	public Command[] getCatalogActions() {
 
 
-		return actions;
+		return catalogActions;
 	}
 
 }

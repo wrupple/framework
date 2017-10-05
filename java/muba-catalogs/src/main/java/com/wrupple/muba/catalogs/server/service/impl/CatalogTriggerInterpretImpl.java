@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
@@ -22,15 +22,15 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
-	private final Map<String,List<CatalogActionTrigger>> catalogScope;
+    private final TriggerStorageStrategy storage;
 
 	@Inject
 	public CatalogTriggerInterpretImpl(Provider<CatalogServiceManifest> manifestP,
-                                       CatalogDeserializationService deserializer) {
+                                       CatalogDeserializationService deserializer, TriggerStorageStrategy storage) {
 		super();
 		this.manifestP = manifestP;
 		this.deserializer = deserializer;
-		this.catalogScope = new HashMap<>();
+        this.storage = storage;
     }
 
 	/**
@@ -40,29 +40,18 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	 * @return
 	 */
 	@Override public List<CatalogActionTrigger> getTriggersValues(CatalogActionContext context, boolean advise){
-        List<CatalogActionTrigger> posibleTriggers = catalogScope.
-                get(context.getCatalogDescriptor().getDistinguishedName());
-	    if(posibleTriggers==null){
-	        return null;
-        }else{
-            return posibleTriggers.
-                    stream().
-                    filter(t -> t.isAdvice()==advise).
-                    collect(Collectors.toList());
-        }
+        return storage.getTriggersValues(context,advise);
 
 	}
 
 	@Override public void addCatalogScopeTrigger(CatalogActionTrigger trigger, CatalogDescriptor catalog){
-        // Como almacenar triggers?
-        log.debug("[new {} scoped trigger] {}",catalog.getDistinguishedName(),trigger);
-        List<CatalogActionTrigger> triggers = catalogScope.get(catalog.getDistinguishedName());
-        if(triggers==null){
-            triggers = new ArrayList<>(2);
-            catalogScope.put(catalog.getDistinguishedName(),triggers);
-        }
-        triggers.add(trigger);
+        storage.addCatalogScopeTrigger(trigger,catalog);
     }
+
+	@Override
+	public void addNamespaceScopeTrigger(CatalogActionTrigger trigger, CatalogDescriptor catalog, CatalogActionContext context) {
+        storage.addNamespaceScopeTrigger(trigger,catalog,context);
+	}
 
 
 	@Override

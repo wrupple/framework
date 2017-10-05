@@ -20,7 +20,6 @@ public interface ApplicationContext extends ServiceContext {
 
     void setStateValue(ApplicationState state);
 
-    //EventBus available througg RuntimeContext
 
    /* StorageManager getStorageManager();
 

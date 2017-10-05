@@ -35,4 +35,11 @@ public interface Workflow extends ServiceManifest,HasOutput{
 
     <T extends ProcessTaskDescriptor> List<T> getProcessValues();
 
+    /**
+     *
+     * @return explicitly links next activity to start when this finishes
+     */
+    Workflow getExplicitSuccessorValue();
+
+    boolean isClearOutput();
 }

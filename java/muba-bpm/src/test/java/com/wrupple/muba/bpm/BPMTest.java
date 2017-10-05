@@ -199,7 +199,22 @@ public abstract class BPMTest extends AbstractTest {
          */
 
         switchs.getIntentInterpret().registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
+/*
+ BusinessServiceManifest bpm = injector.getInstance(BusinessServiceManifest.class);
 
+        switchs.registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
+
+        WorkflowServiceManifest taskManger = injector.getInstance(WorkflowServiceManifest.class);
+
+        switchs.registerService(taskManger, injector.getInstance(WorkflowEngine.class), injector.getInstance(WorkflowEventInterpret.class),bpm);
+
+        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
+
+        switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
+
+        switchs.registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
+
+ */
 
     }
 
@@ -208,6 +223,7 @@ public abstract class BPMTest extends AbstractTest {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
+
 		session = injector.getInstance(SessionContext.class);
 		wrupple = injector.getInstance(EventBus.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");

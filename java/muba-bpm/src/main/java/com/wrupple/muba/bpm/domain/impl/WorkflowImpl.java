@@ -14,10 +14,33 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
     private Long peer;
     private String description,outputField,exit,cancel,error;
     private List<Long> dependencies,process;
+    private Workflow explicitSuccessorValue;
+    private boolean clearOutput;
 
     private List<ProcessTaskDescriptor> processValues;
 
     @Override
+    public Workflow getExplicitSuccessorValue() {
+        return explicitSuccessorValue;
+    }
+
+    public void setExplicitSuccessorValue(Workflow explicitSuccessorValue) {
+        this.explicitSuccessorValue = explicitSuccessorValue;
+    }
+
+    @Override
+    public boolean isClearOutput() {
+        return clearOutput;
+    }
+
+    public void setClearOutput(boolean clearOutput) {
+        this.clearOutput = clearOutput;
+    }
+
+
+
+    @Override
+
     public Long getPeer() {
         return peer;
     }

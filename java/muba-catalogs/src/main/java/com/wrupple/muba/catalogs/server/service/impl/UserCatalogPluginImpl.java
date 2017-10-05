@@ -95,13 +95,13 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 	}
 
 	@Override
-	public Command[] getActions() {
+	public Command[] getCatalogActions() {
 		//
 		return null;
 	}
 
 	@Override
-	public void postProcessCatalogDescriptor(CatalogDescriptor c) {
+	public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context) {
 
 	}
 

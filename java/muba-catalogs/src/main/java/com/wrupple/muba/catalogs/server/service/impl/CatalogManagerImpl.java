@@ -181,7 +181,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 		Command[] actions;
 		for(CatalogPlugin plugin: plugins){
-			actions = plugin.getActions();
+			actions = plugin.getCatalogActions();
 			if(actions!=null){
 				for(Command action:actions){
 					addCommand(action.getClass().getSimpleName(),action);
@@ -298,12 +298,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 						FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-				addTrigger_catalogScope(trigger,regreso);
+				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 				trigger = new CatalogActionTriggerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-                addTrigger_catalogScope(trigger,regreso);
+				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 				return regreso;
 			} else if (CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = catalogProvider.get();
@@ -311,12 +311,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 						CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-                addTrigger_catalogScope(trigger,regreso);
+				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 				trigger = new CatalogActionTriggerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-                addTrigger_catalogScope(trigger,regreso);
+				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 			} else if (Host.CATALOG.equals(catalogId)) {
 				regreso = peerProvider.get();
 			} else if (DistributiedLocalizedEntry.CATALOG.equals(catalogId)) {
@@ -333,12 +333,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 						true, null, null, null);
 				trigger.setFailSilence(false);
 				trigger.setStopOnFail(false);
-                addTrigger_catalogScope(trigger,regreso);
+				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 				trigger = new CatalogActionTriggerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
 						null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
-                addTrigger_catalogScope(trigger,regreso);
+				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 			} else if (ContentNode.NUMERIC_ID.equals(catalogId)) {
 				regreso = builder.fromClass(ContentNodeImpl.class, ContentNode.class.getSimpleName(),
 						CatalogEntry.class.getSimpleName(), -1l, null);
@@ -366,10 +366,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		}
 	}
 
-	private void addTrigger_catalogScope(CatalogActionTrigger trigger, CatalogDescriptor catalog) {
-	    //counter to .getTriggersValues(context,advise);
-        triggerInterpret.addCatalogScopeTrigger(trigger, catalog);
-	}
+
 
 	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context,
 			CatalogResultCache cache) throws RuntimeException {
@@ -383,12 +380,14 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				// MUST HAVE VERSION FIELD
 				catalog.putField(new VersionFields());
 			}
-            addTrigger_catalogScope(getVersioningTrigger(),catalog);
+            triggerInterpret.addNamespaceScopeTrigger(getVersioningTrigger(), catalog,context);
+
 		}
 
 		if (catalog.isRevised()) {
-            addTrigger_catalogScope(getRevisionTrigger(catalog),catalog);
-		}
+            triggerInterpret.addNamespaceScopeTrigger(getRevisionTrigger(catalog), catalog,context);
+
+        }
 		if (catalog.getParent() != null) {
 			if (catalog.getGreatAncestor() == null) {
 				// find great ancestor
@@ -402,8 +401,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()
 					&& ContentNode.CATALOG_TIMELINE.equals(catalog.getGreatAncestor())) {
 
-                addTrigger_catalogScope(timestamp,catalog);
-				List<FilterDataOrdering> sorts = catalog.getAppliedSorts();
+                triggerInterpret.addNamespaceScopeTrigger(timestamp, catalog,context);
+
+                List<FilterDataOrdering> sorts = catalog.getAppliedSorts();
 				FilterDataOrderingImpl index;
 				if (sorts == null) {
 					sorts = new ArrayList<FilterDataOrdering>(5);
@@ -423,7 +423,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				if (catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null
 						&& catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null) {
 					log.debug("catalog is public timeline");
-                    addTrigger_catalogScope(afterCreateHandledTimeline(),catalog);
+                    triggerInterpret.addNamespaceScopeTrigger(afterCreateHandledTimeline(), catalog,context);
 				}
 
 				if (catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX) != null && field != null
@@ -431,15 +431,14 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 					index = new FilterDataOrderingImpl(ContentNode.CHILDREN_TREE_LEVEL_INDEX, true);
 					sorts.add(index);
 					// INDEXED TREE
-
-                    addTrigger_catalogScope(beforeIndexedTreeCreate(),catalog);
+                    triggerInterpret.addNamespaceScopeTrigger(beforeIndexedTreeCreate(), catalog,context);
 				}
 			}
 		}
 
 		for (CatalogPlugin interpret2 : plugins) {
 			log.trace("POST process {} IN {}", name, interpret2);
-			interpret2.postProcessCatalogDescriptor(catalog);
+			interpret2.postProcessCatalogDescriptor(catalog, context);
 		}
 		if (catalog.getHost() == null) {
 			log.trace("locally bound catalog {} @ {}", name, host);
@@ -467,7 +466,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 	@Override
-	public void postProcessCatalogDescriptor(CatalogDescriptor regreso) {
+	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) {
 
 		CatalogActionTriggerImpl trigger;
 
@@ -475,9 +474,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
-        addTrigger_catalogScope(trigger,regreso);
+        triggerInterpret.addNamespaceScopeTrigger(trigger, catalog,context);
 
-		FieldDescriptor field = regreso.getFieldDescriptor(Trash.TRASH_FIELD);
+		FieldDescriptor field = catalog.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
 
 			trigger = new CatalogActionTriggerImpl(1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
@@ -485,7 +484,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			trigger.setFailSilence(true);
 			trigger.setStopOnFail(true);
 
-            addTrigger_catalogScope(trigger,regreso);
+
+            triggerInterpret.addNamespaceScopeTrigger(trigger, catalog,context);
+
 		}
 
 	}
@@ -595,7 +596,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
     @Override
-    public Command[] getActions() {
+    public Command[] getCatalogActions() {
 	    //get all registered actions?
         return null;
     }

@@ -2,8 +2,10 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.google.inject.Provider;
 import com.wrupple.muba.bpm.domain.*;
+import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
+import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
 import com.wrupple.muba.bpm.server.chain.command.InferNextTask;
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogCreateTransactionImpl;
+import com.wrupple.muba.bpm.server.chain.command.NextPlace;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,17 +56,24 @@ public class InferNextTaskImpl implements InferNextTask {
             WorkflowFinishedIntent event = eventProvider.get();
 
             event.setCatalog((String) applicationState.getStateValue().getTaskDescriptorValue().getCatalog());
-            String command = applicationState.getStateValue().getApplicationValue().getExit();
+            String command = item.getExit();
             if(command==null){
-                command=null;
+                if(item.getExplicitSuccessorValue()==null){
+                    command= WorkflowEngine.NEXT_APPLICATION_ITEM;
+                }else{
+                    command = ExplicitOutputPlace.COMMAND;
+                }
+
             }
+
+            event.setName(command);
             event.setResult(applicationState.getStateValue().getEntryValue());
             event.setStateValue(applicationState);
 
             log.info("firing workflow finished event to survey output Handlers");
             applicationState.getRuntimeContext().getEventBus().fireEvent(event,context.getRuntimeContext(),null);
 
-            applicationState.getStateValue().setHandleValue(event.getApplicationItemValue());
+            applicationState.getStateValue().setHandleValue(event.getHandleValue());
             nextTask= event.getTaskDescriptorValue();
 
         }

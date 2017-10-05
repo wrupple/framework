@@ -7,6 +7,7 @@ import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkRequestImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
+import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
@@ -35,11 +36,11 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 
     @Before
     public void createApplication() throws Exception {
-        ProcessTaskDescriptorImpl count = new ProcessTaskDescriptorImpl();
-        count.setCatalog(Statistics.CATALOG);
-        count.setName(DataEvent.WRITE_ACTION);
+        ProcessTaskDescriptorImpl task = new ProcessTaskDescriptorImpl();
+        task.setCatalog(Statistics.CATALOG);
+        task.setName(DataEvent.WRITE_ACTION);
         //TODO SUBQUERY solver service appends, resolving variables if necesary, excecutes sql and attempts to resolve fields from result set
-        count.setSentence(Arrays.asList(
+        task.setSentence(Arrays.asList(
                 "SUBQUERY",
                 "SELECT",
                 "'${task.catalog}' AS "+ HasCatalogId.CATALOG_FIELD,
@@ -56,16 +57,30 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         );
          */
 
-        List<ProcessTaskDescriptor> processValues = Arrays.asList(count);
         WorkflowImpl application = new WorkflowImpl();
         application.setName("Count");
-        application.setProcessValues(processValues);
+        application.setProcessValues( Arrays.asList(task));
 
         CatalogActionRequestImpl catalogActionRequest = new CatalogActionRequestImpl();
         catalogActionRequest.setCatalog(Statistics.CATALOG);
         catalogActionRequest.setEntryValue(application);
         catalogActionRequest.setName(DataEvent.CREATE_ACTION);
+        catalogActionRequest.setFollowReferences(true);
         wrupple.fireEvent(catalogActionRequest,session,null);
+
+        task = new ProcessTaskDescriptorImpl();
+        task.setCatalog(Statistics.CATALOG);
+        task.setName(DataEvent.CREATE_ACTION);
+
+        application = new WorkflowImpl();
+        application.setName("Create");
+        application.setProcessValues( Arrays.asList(task));
+        application.setExit(ExplicitOutputPlace.COMMAND);
+
+        catalogActionRequest.setEntryValue(application);
+
+        application=wrupple.fireEvent(catalogActionRequest,session,null);
+
 
 
         super.createMockDrivers();
@@ -98,7 +113,8 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         catalogActionRequest.setEntryValue(statistics);
         catalogActionRequest.setName(DataEvent.CREATE_ACTION);
         wrupple.fireEvent(catalogActionRequest,session,null);
-        //create it programatically to save a step
+        //TODO commit last (and only) create action from a first activity TEST output handler invocation of an explicit workflow
+
 
 		WorkRequestImpl inboxNotification = new WorkRequestImpl();
 		inboxNotification.setOutputCatalog(Statistics.CATALOG);
@@ -106,10 +122,9 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         inboxNotification.setEntry(statistics.getId());
         wrupple.fireEvent(inboxNotification,session,null);
 
-        catalogActionRequest.setCatalog(Statistics.CATALOG);
-        catalogActionRequest.setEntry(statistics.getId());
-        catalogActionRequest.setName(DataEvent.READ_ACTION);
-        statistics= wrupple.fireEvent(catalogActionRequest,session,null);
+
+        ApplicationState applicationState = inboxNotification.getStateValue();
+        statistics = (Statistics) applicationState.getEntryValue();
 
         assertTrue("statistics not updated",statistics.getCount().longValue()>0);
 

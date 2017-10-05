@@ -1,26 +1,11 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
-import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.WorkflowFinishedIntent;
-import com.wrupple.muba.desktop.client.services.command.NextPlace;
-import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.Workflow;
-import com.wrupple.muba.desktop.domain.overlay.JsNotification;
-import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceManifest;
-import com.wrupple.vegetate.client.services.StorageManager;
-import com.wrupple.vegetate.domain.CatalogDescriptor;
 import org.apache.commons.chain.Context;
 
 import java.util.List;
@@ -51,9 +36,9 @@ public class NextPlaceImpl implements com.wrupple.muba.bpm.server.chain.command.
 		WorkflowFinishedIntent event = (WorkflowFinishedIntent) context.getServiceContract();
 		ApplicationState state= (ApplicationState) event.getStateValue();
 
-        Workflow currentItem = state.getApplicationValue();
+        Workflow currentItem = (Workflow) state.getHandleValue();
         currentItem = findNextTreeNode(currentItem);
-		state.setApplicationValue(currentItem);
+		state.setHandleValue(currentItem);
 
 
 		return CONTINUE_PROCESSING;
@@ -79,17 +64,17 @@ public class NextPlaceImpl implements com.wrupple.muba.bpm.server.chain.command.
 
 			} else {
 				// siblings
-				children = currentItemParent.getChildItemsValuesArray();
-				for (int i = 0; i < children.length(); i++) {
+				children = currentItemParent.getChildrenValues();
+				for (int i = 0; i < children.size(); i++) {
 					if (currentItem == children.get(i)) {
-						if ((i + 1) < children.length()) {
+						if ((i + 1) < children.size()) {
 							// next brother
-							return children.get(i + 1);
+							return (Workflow) children.get(i + 1);
 						} else {
 							// item is the last child of it's parent.
 
 							// default to go back to the parent
-							return currentItemParent;
+							return (Workflow) currentItemParent;
 							/*
 							 * another option would be to find the parents first
 							 * child or next brother like so: if
@@ -104,7 +89,7 @@ public class NextPlaceImpl implements com.wrupple.muba.bpm.server.chain.command.
 			}
 
 		} else {
-			return children.get(0);
+			return (Workflow) children.get(0);
 		}
 		throw new NullPointerException("Unable to determine next activity");
 

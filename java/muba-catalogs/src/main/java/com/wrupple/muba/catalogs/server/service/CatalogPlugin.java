@@ -34,7 +34,7 @@ public interface CatalogPlugin  {
 	
 	ValidationExpression[] getValidations();
 
-	Command[] getActions();
+	Command[] getCatalogActions();
 	
 	/*
 	 * catalog manager polls catalog plugins for catalog actions and descriptors
@@ -43,5 +43,5 @@ public interface CatalogPlugin  {
 	 */
 	void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) throws Exception;
 	
-	public void postProcessCatalogDescriptor(CatalogDescriptor c);
+	public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context);
 }

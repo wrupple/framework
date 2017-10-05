@@ -199,7 +199,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setDefaultValue(defaultValue);
 						fieldDescriptor.setDetailable(detailable);
 						fieldDescriptor.setFilterable(filterable);
-						fieldDescriptor.setSentence(Arrays.asList(formulaValue));
+						fieldDescriptor.setSentence(formulaValue==null?null:Arrays.asList(formulaValue));
 						fieldDescriptor.setLocalized(localized);
 						fieldDescriptor.setSortable(sortable);
 						fieldDescriptor.setSummary(summary);
@@ -225,7 +225,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 							fieldDescriptor.setDefaultValue(defaultValue);
 							fieldDescriptor.setDetailable(detailable);
 							fieldDescriptor.setFilterable(filterable);
-							fieldDescriptor.setSentence(Arrays.asList(formulaValue));
+							fieldDescriptor.setSentence(formulaValue==null?null:Arrays.asList(formulaValue));
 							fieldDescriptor.setLocalized(localized);
 							fieldDescriptor.setSortable(sortable);
 							fieldDescriptor.setSummary(summary);
@@ -249,7 +249,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setDefaultValue(defaultValue);
 						fieldDescriptor.setDetailable(detailable);
 						fieldDescriptor.setFilterable(filterable);
-						fieldDescriptor.setSentence(Arrays.asList(formulaValue));
+						fieldDescriptor.setSentence(formulaValue==null?null:Arrays.asList(formulaValue));
 						fieldDescriptor.setLocalized(localized);
 						fieldDescriptor.setSortable(sortable);
 						fieldDescriptor.setSummary(summary);
@@ -290,7 +290,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setDefaultValue(defaultValue);
 						fieldDescriptor.setDetailable(detailable);
 						fieldDescriptor.setFilterable(filterable);
-						fieldDescriptor.setSentence(Arrays.asList(formulaValue));
+						fieldDescriptor.setSentence(formulaValue==null?null:Arrays.asList(formulaValue));
 						fieldDescriptor.setLocalized(localized);
 						fieldDescriptor.setSortable(sortable);
 						fieldDescriptor.setSummary(summary);

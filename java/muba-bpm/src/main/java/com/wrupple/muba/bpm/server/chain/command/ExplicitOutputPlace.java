@@ -1,9 +1,5 @@
 package com.wrupple.muba.bpm.server.chain.command;
 
-import com.wrupple.muba.desktop.client.services.logic.OutputHandler;
-import com.wrupple.muba.desktop.shared.services.UrlParser;
-
-
 /**
  * Output Handler:
  * 
@@ -18,7 +14,7 @@ import com.wrupple.muba.desktop.shared.services.UrlParser;
  */
 public interface ExplicitOutputPlace extends OutputHandler {
 	
-	String COMMAND = UrlParser.EXPLICIT_APPLICATION_ITEM;
+	String COMMAND = "explicit";
 	String URL_PARAMETER_POSTFIX = "_urlParameter";
 	
 	String CONTEXT_PROPERTY_POSTFIX = "_contextProperty";

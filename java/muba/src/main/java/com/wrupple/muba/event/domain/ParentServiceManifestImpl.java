@@ -29,7 +29,16 @@ public class ParentServiceManifestImpl extends ServiceManifestImpl implements Pa
 		super(NAME, "1.0",  new ContractDescriptorImpl(TOKENS, CatalogEntry.class),(List) Arrays.asList(TOKENS));
 	
 	}
-	
+
+	public ParentServiceManifestImpl(String distinguishedName, ContractDescriptor catalogValue, List<String> grammar) {
+		super(distinguishedName, catalogValue, grammar);
+
+	}
+
+	public ParentServiceManifestImpl(String distinguishedName, String versionDistinguishedName, ContractDescriptor catalogValue, List<String> grammar) {
+		super(distinguishedName, versionDistinguishedName, catalogValue, grammar);
+	}
+
 	@Override
 	public ServiceManifest getFallbackService() {
 

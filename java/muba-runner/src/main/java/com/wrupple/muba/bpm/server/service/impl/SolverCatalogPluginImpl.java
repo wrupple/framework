@@ -60,7 +60,7 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
     }
 
     @Override
-    public Command[] getActions() {
+    public Command[] getCatalogActions() {
         return null;
     }
 
@@ -75,7 +75,7 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
     }
 
     @Override
-    public void postProcessCatalogDescriptor(CatalogDescriptor c) {
+    public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context) {
 
     }
 

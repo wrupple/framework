@@ -38,6 +38,7 @@ public class EventSuscriptionMapperImpl  implements EventSuscriptionMapper {
             entry = (CatalogEntry) ((HasEntryId)entry).getEntryValue();
         }
         //FIXME read explicitly suscribed observers from event? (does observer dat belong in the event?)
+        //FIXME read explicit suscriptors from ExplicitEventSuscription catalog? (in BusinessPluginImpl)
         //FIXME Spawn Catalog context with system privileges:
         // if event stake holder has no permissions to see Observer or it's host, then the event wont get broadcasted to those poeple
         CatalogActionContext catalogContext = catalog.spawn(context.getRuntimeContext());

@@ -1,5 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.BusinessIntent;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -15,7 +16,6 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
     @Override
     public boolean execute(Context  ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
-        if(context.isChanged()){
             BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
             ApplicationState applicationState = context.getRuntimeContext().getConvertedResult();
 
@@ -27,9 +27,11 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setEntry(applicationState.getId());
             request.setEntryValue(applicationState);
+
+        applicationState=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
+
             //commit
-            context.getRuntimeContext().setResult(context.getRuntimeContext().spawnProcess(request));
-        }
+            context.getRuntimeContext().setResult(applicationState/* request.getEntryValue()*/);
         return CONTINUE_PROCESSING;
     }
 }

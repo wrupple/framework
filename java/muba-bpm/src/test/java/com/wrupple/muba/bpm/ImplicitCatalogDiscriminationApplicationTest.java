@@ -41,33 +41,12 @@ import java.util.Arrays;
 public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
 
-    public ImplicitCatalogDiscriminationApplicationTest() {
-        init( new BPMTestModule(),new BusinessModule(), new SingleUserModule(),new ChocoSolverModule(), new SolverModule(), new HSQLDBModule(), new JDBCModule(),
-                new ValidationModule(), new CatalogModule(), new ApplicationModule());
-    }
-
-    @Override
-    protected void registerServices(EventRegistry switchs) {
-        BusinessServiceManifest bpm = injector.getInstance(BusinessServiceManifest.class);
-
-        switchs.registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
-
-        WorkflowServiceManifest taskManger = injector.getInstance(WorkflowServiceManifest.class);
-
-        switchs.registerService(taskManger, injector.getInstance(WorkflowEngine.class), injector.getInstance(WorkflowEventInterpret.class),bpm);
-
-        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
-
-    }
+    private RuntimeContext runtimeContext;
 
     @Before
     public void setUp() throws Exception {
 
-
+         runtimeContext = injector.getInstance(RuntimeContext.class);
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
         log.trace("[-register catalogs-]");
 
@@ -190,10 +169,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         runtimeContext.reset();
         
-        expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(chainMock.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
+      
 
 
         runtimeContext = injector.getInstance(RuntimeContext.class);

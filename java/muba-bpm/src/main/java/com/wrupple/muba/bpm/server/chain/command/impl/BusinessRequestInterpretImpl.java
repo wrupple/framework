@@ -71,7 +71,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
             request.setName(CatalogActionRequest.READ_ACTION);
         }
 
-        applicationContext=context.getRuntimeContext().getEventBus().fireEvent().spawnProcess(request);
+        applicationContext=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
 
         context.getRuntimeContext().setResult(applicationContext);
 

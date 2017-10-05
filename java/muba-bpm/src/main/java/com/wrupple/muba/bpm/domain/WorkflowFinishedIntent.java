@@ -6,7 +6,7 @@ public interface WorkflowFinishedIntent extends ManagedObject, ExplicitIntent {
 
     final String CATALOG = "WorkflowFinishedIntent";
 
-    Workflow getApplicationItemValue();
+    Workflow getHandleValue();
 
     ProcessTaskDescriptor getTaskDescriptorValue();
 }

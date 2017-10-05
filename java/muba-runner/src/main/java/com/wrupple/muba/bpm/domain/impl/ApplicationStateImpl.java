@@ -16,7 +16,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private ServiceManifest handleValue;
     private FilterData filterData;
     private Long application;
-    private Workflow applicationValue;
+
     private Long taskDescriptor;
     private Long parent;
     private Object entry;
@@ -105,16 +105,6 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
 
     public void setApplication(Long application) {
         this.application = application;
-    }
-
-    @Override
-    public Workflow getApplicationValue() {
-        return applicationValue;
-    }
-
-    @Override
-    public void setApplicationValue(Workflow applicationValue) {
-        this.applicationValue = applicationValue;
     }
 
     @Override

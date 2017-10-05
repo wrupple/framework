@@ -29,6 +29,11 @@ public class FieldValueChangeImpl extends CatalogEntryImpl implements FieldValue
         setEntry((String)id);
     }
 
+    @Override
+    public Object getEntryValue() {
+        return null;
+    }
+
     public void setEntry(String entry) {
         this.entry = entry;
     }

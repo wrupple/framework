@@ -25,8 +25,6 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
      Long getApplication();
 
-     Workflow getApplicationValue();
-
     Long getTaskDescriptor();
 
     ProcessTaskDescriptor getTaskDescriptorValue();
@@ -64,8 +62,6 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
     void setDraft(boolean b);
 
     void setTaskDescriptor(Object id);
-
-    void setApplicationValue(Workflow workflowValue);
 
     // public void setLayoutUnit(String s);
 
