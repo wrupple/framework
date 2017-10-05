@@ -48,34 +48,30 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
         BeanUtils.copyProperties(context,contractExplicitIntent);
 
-        Long existingApplicationState = (Long) contractExplicitIntent.getStateValue();
+        ApplicationState applicationContext = (ApplicationState) contractExplicitIntent.getStateValue();
+        if(applicationContext==null){
+            Object existingApplicationStateId = contractExplicitIntent.getState();
 
-        ApplicationState applicationContext;
-        CatalogActionRequestImpl request= new CatalogActionRequestImpl();
-        //FIXME create/read application context of the right type
-        request.setCatalog(ApplicationState.CATALOG);
-        if(existingApplicationState==null){
-            //create new application state
-            applicationContext= new ApplicationStateImpl();
-            try{
-                BeanUtils.copyProperties(applicationContext,contractExplicitIntent);
-            }catch(IllegalAccessException|InvocationTargetException e){
-                log.warn("error while copying contract properties to new application context",e);
+
+
+            if(existingApplicationStateId==null){
+                //create new application state
+                applicationContext= context.getProcessManager().acquireContext(contractExplicitIntent,requestContext);
+
+            }else{
+                //recover application state
+                CatalogActionRequestImpl request= new CatalogActionRequestImpl();
+                //FIXME create/read application context of the right type
+                request.setCatalog(ApplicationState.CATALOG);
+                request.setEntry(existingApplicationStateId);
+                request.setName(CatalogActionRequest.READ_ACTION);
+
+                applicationContext=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
             }
 
-            request.setEntryValue(applicationContext);
-            request.setName(CatalogActionRequest.CREATE_ACTION);
-        }else{
-            //recover application state
-            request.setEntry(existingApplicationState);
-            request.setName(CatalogActionRequest.READ_ACTION);
+
         }
-
-        applicationContext=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
-
-        context.getRuntimeContext().setResult(applicationContext);
-
-
+        context.setStateValue(applicationContext);
 
         return CONTINUE_PROCESSING;
     }
