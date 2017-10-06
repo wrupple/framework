@@ -8,34 +8,53 @@ import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkRequestImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
-import com.wrupple.muba.catalogs.domain.CatalogAction;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.catalogs.domain.ContentNode;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.EventBus;
 
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
 import com.wrupple.muba.event.domain.DataEvent;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 
 /**
  * FIXME Test ExplicitOutputPlaceImpl
  */
 public class ExplicitWorkflowRequestTest extends BPMTest {
+    private WorkflowImpl createStatisticsApplication;
 
 
     //FIXME this tests catching ApplicationUpdateEvent And firing a workflow (History change event?)
 
-    @Before
-    public void createApplication() throws Exception {
+    private void createApplication() throws Exception {
+
+        CatalogActionRequestImpl catalogActionRequest = new CatalogActionRequestImpl();
+
+        CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
+
+        log.info("[-Register Statistics catalog type-]");
+
+        //FIXME stack overflow when no parent is specified, ok when consolidated?
+        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(Statistics.class, Statistics.CATALOG,
+                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG_TIMELINE,
+                        ContentNode.class.getSimpleName(), -1l, null));
+        catalogActionRequest.setEntryValue(solutionContract);
+
+
+        catalogActionRequest.setEntryValue(solutionContract);
+        catalogActionRequest.setName(DataEvent.CREATE_ACTION);
+        catalogActionRequest.setFollowReferences(true);
+        catalogActionRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
+        wrupple.fireEvent(catalogActionRequest,session,null);
+
+
         ProcessTaskDescriptorImpl task = new ProcessTaskDescriptorImpl();
         task.setCatalog(Statistics.CATALOG);
         task.setName(DataEvent.WRITE_ACTION);
@@ -57,29 +76,26 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         );
          */
 
-        WorkflowImpl application = new WorkflowImpl();
-        application.setName("Count");
-        application.setProcessValues( Arrays.asList(task));
-
-        CatalogActionRequestImpl catalogActionRequest = new CatalogActionRequestImpl();
-        catalogActionRequest.setCatalog(Statistics.CATALOG);
-        catalogActionRequest.setEntryValue(application);
-        catalogActionRequest.setName(DataEvent.CREATE_ACTION);
-        catalogActionRequest.setFollowReferences(true);
-        wrupple.fireEvent(catalogActionRequest,session,null);
+        WorkflowImpl count = new WorkflowImpl();
+        count.setName("Count");
+        count.setProcessValues( Arrays.asList(task));
 
         task = new ProcessTaskDescriptorImpl();
         task.setCatalog(Statistics.CATALOG);
         task.setName(DataEvent.CREATE_ACTION);
 
-        application = new WorkflowImpl();
+        WorkflowImpl application = new WorkflowImpl();
         application.setName("Create");
         application.setProcessValues( Arrays.asList(task));
-        application.setExit(ExplicitOutputPlace.COMMAND);
-
-        catalogActionRequest.setEntryValue(application);
+        //////////////////////////////////////////////////////////////////
+        //                  TEST (configuration state) SUBJECT          //
+        //////////////////////////////////////////////////////////////////
+        application.setExplicitSuccessorValue(count);
+        catalogActionRequest = new CatalogCreateRequestImpl(application,Workflow.CATALOG);
 
         application=wrupple.fireEvent(catalogActionRequest,session,null);
+
+        this.createStatisticsApplication =application;
 
 
 
@@ -106,19 +122,22 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 
 	@Test
 	public void consumeJobsFromInbox() throws Exception {
+        createApplication();
+        ProcessManager bpm = injector.getInstance(ProcessManager.class);
+        ApplicationState applicationState = injector.getInstance(ApplicationState.class);
+        applicationState.setHandleValue(createStatisticsApplication);
+        applicationState.setTaskIndex(0);
+        applicationState= bpm.acquireContext(applicationState,session);
+
         Statistics statistics=new Statistics();
         statistics.setCatalog(Driver.CATALOG);
-        BusinessIntent intent = new CatalogActionRequestImpl();
-        /*FIXME to isolate explicit workflow invocation in as the subject of this test: alter this hosts application state to point to create activity and task
-        - fire business intent to commit that last action, which should result in application state pointing to the next activity (count)
-        - update is fired and handler starts count workflow, as event bus is synchrounous
-        - when thread returns statistics should be updated (assertion)
-        catalogActionRequest.setCatalog(Statistics.CATALOG);
-        catalogActionRequest.setEntryValue(statistics);
-        catalogActionRequest.setName(DataEvent.CREATE_ACTION);
-        wrupple.fireEvent(catalogActionRequest,session,null);*/
-        //TODO commit last (and only) create action from a first activity TEST output handler invocation of an explicit workflow
+        BusinessIntent intent =injector.getInstance(BusinessIntent.class);
+        applicationState.setEntryValue(statistics);
+        intent.setStateValue(applicationState);
 
+        //fire business intent to commit that last action, which should result in application state pointing to the next activity (count)
+        //update is fired and handler starts count workflow, as event bus is synchrounous
+        wrupple.fireEvent(intent,session,null);
 
 		WorkRequestImpl inboxNotification = new WorkRequestImpl();
 		inboxNotification.setOutputCatalog(Statistics.CATALOG);
@@ -126,8 +145,8 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         inboxNotification.setEntry(statistics.getId());
         wrupple.fireEvent(inboxNotification,session,null);
 
-
-        ApplicationState applicationState = inboxNotification.getStateValue();
+        // when thread returns statistics should be updated (assertion)
+        applicationState = inboxNotification.getStateValue();
         statistics = (Statistics) applicationState.getEntryValue();
 
         assertTrue("statistics not updated",statistics.getCount().longValue()>0);

@@ -1,5 +1,7 @@
 package com.wrupple.muba.event.domain;
 
+import org.apache.commons.chain.Catalog;
+
 import java.util.List;
 
 public interface ExplicitIntent extends Event {
@@ -19,7 +21,7 @@ public interface ExplicitIntent extends Event {
 
 	Object getState();
 
-	void setStateValue(Object applicationState);
+	void setStateValue(CatalogEntry applicationState);
 
 	<T > T getConvertedResult();
 

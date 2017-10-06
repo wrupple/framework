@@ -5,7 +5,6 @@ import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
 import com.wrupple.muba.bpm.server.chain.command.InferNextTask;
-import com.wrupple.muba.bpm.server.chain.command.NextPlace;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +17,10 @@ import java.util.List;
 public class InferNextTaskImpl implements InferNextTask {
     protected static final Logger log = LoggerFactory.getLogger(InferNextTaskImpl.class);
 
-    private final Provider<WorkflowFinishedIntent> eventProvider;
+    private final Provider<WorkCompleteEvent> eventProvider;
 
     @Inject
-    public InferNextTaskImpl(Provider<WorkflowFinishedIntent> eventProvider) {
+    public InferNextTaskImpl(Provider<WorkCompleteEvent> eventProvider) {
         this.eventProvider = eventProvider;
     }
 
@@ -53,7 +52,7 @@ public class InferNextTaskImpl implements InferNextTask {
             // PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
             //state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
 
-            WorkflowFinishedIntent event = eventProvider.get();
+            WorkCompleteEvent event = eventProvider.get();
 
             event.setCatalog((String) applicationState.getStateValue().getTaskDescriptorValue().getCatalog());
             String command = item.getExit();
@@ -68,7 +67,7 @@ public class InferNextTaskImpl implements InferNextTask {
 
             event.setName(command);
             event.setResult(applicationState.getStateValue().getEntryValue());
-            event.setStateValue(applicationState);
+            event.setStateValue(applicationState.getStateValue());
 
             log.info("firing workflow finished event to survey output Handlers");
             applicationState.getRuntimeContext().getEventBus().fireEvent(event,context.getRuntimeContext(),null);

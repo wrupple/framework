@@ -100,8 +100,11 @@ public class EventDispatcherImpl implements EventDispatcher {
 					} else {
 						value = null;
 					}
-					log.trace("service grammar defined contract key {}={}", key, value);
-					PropertyUtils.setProperty(contract, key, value);
+					if(value!=null){
+						log.trace("service grammar defined contract key {}={}", key, value);
+						PropertyUtils.setProperty(contract, key, value);
+					}
+
 				} else {
 					log.warn("token \"{}\" from service grammar was not recognized by contract and was ignored ");
 				}

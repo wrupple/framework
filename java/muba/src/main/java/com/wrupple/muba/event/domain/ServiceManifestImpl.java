@@ -14,6 +14,7 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 	private List<Long> children;
 	private List<ServiceManifest> childrenValues;
 	private List<String> childrenPaths;
+	private Long parent;
     private ServiceManifest parentValue;
 
     public ServiceManifestImpl() {
@@ -76,7 +77,7 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 		return versionDistinguishedName;
 	}
 
-	public void setServiceVersion(String serviceVersion) {
+	public void setVersionDistinguishedName(String serviceVersion) {
 		this.versionDistinguishedName = serviceVersion;
 	}
 
@@ -90,8 +91,12 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
         this.parentValue=serviceManifest;
     }
 
-    public void setContractDescriptor(ContractDescriptor contractDescriptor) {
+    public void setCatalogValue(ContractDescriptor contractDescriptor) {
 		this.catalogValue = contractDescriptor;
+	}
+
+	public void setGrammar(List<String> grammar) {
+		this.grammar = grammar;
 	}
 
 	@Override
@@ -135,10 +140,6 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
         return parentValue;
     }
 
-    @Override
-    public Long getParent() {
-        return (Long) getParentValue().getId();
-    }
 
 	@Override
 	public ServiceManifest getRootAncestor() {
@@ -177,4 +178,14 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 	public void setProperties(List<String> properties) {
 		this.properties = properties;
 	}
+
+
+    @Override
+    public Long getParent() {
+        return parent;
+    }
+
+    public void setParent(Long parent) {
+        this.parent = parent;
+    }
 }

@@ -3,6 +3,8 @@ package com.wrupple.muba;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
+import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
+import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
 import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
@@ -24,6 +26,7 @@ public class ChocoSolverTestModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
         bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
     }
 

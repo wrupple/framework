@@ -141,7 +141,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
             throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
 
         }else{
-
+            log.trace("[Count of matching services] {}",manifests.size());
             Instrospection introspector=instrospector.newSession(manifests.get(0));
             List<ExplicitIntent> handlers =  manifests.stream().
                     filter(handler -> {
@@ -159,10 +159,12 @@ public class EventBusImpl extends ContextBase implements EventBus {
                 log.error("No known handlers for event {}",implicitRequestContract);
                 throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
             } else if(handlers.size()==1){
+                log.info("[single handler invocation]");
                 ExplicitIntent call = handlers.get(0);
                 fireHandler(call,session,parentTimeline);
                 return call.getConvertedResult();
             }else if(parallel){
+                log.info("[parallel invocation of handlers]");
                 List<Object> results=  handlers.parallelStream().map(handler -> {
                     try {
                         fireHandler(handler,session,parentTimeline);
@@ -177,7 +179,9 @@ public class EventBusImpl extends ContextBase implements EventBus {
             }else{
                 RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
                 for(ExplicitIntent handler : handlers){
+                    log.info("[sequential invocation of handler] {}",handler);
                     if( fireHandlerWithRuntime(handler,runtimeContext)!= Command.CONTINUE_PROCESSING){
+                        log.warn("[handler broke sequential invocation chain] {}",handler);
                         break;
                     }
                 }

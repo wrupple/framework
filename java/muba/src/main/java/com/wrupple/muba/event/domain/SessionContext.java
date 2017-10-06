@@ -6,13 +6,9 @@ import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
-public interface SessionContext extends Context, HasStakeHolder {
+public interface SessionContext extends Context {
 
-	String getPeer();
-
-	Host getPeerValue();
-
-	Person getStakeHolderValue();
+	Session getSessionValue();
 
 	<T> T getStakeHolderPrincipal(Class<T> clazz);
 
@@ -27,13 +23,6 @@ public interface SessionContext extends Context, HasStakeHolder {
 
 	boolean hasPermission(String string);
 
-	Long getStakeHolder();
 
-	/**
-	 * @return hand picked by the session's stakeHolder, does't mean the
-	 *         stakeHolder has authority in the domain, just means that's the
-	 *         domain currently in
-	 */
-	Long getDomain();
-
+    void setStakeHolder(Long stakeHolder);
 }

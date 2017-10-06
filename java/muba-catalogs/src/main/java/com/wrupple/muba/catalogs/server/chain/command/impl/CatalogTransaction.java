@@ -40,7 +40,7 @@ public class CatalogTransaction {
     }
 
     public void postProcess(CatalogActionContext context,String catalog,String action, CatalogEntry regreso) throws Exception {
-        CatalogEvent event=new CatalogEventImpl((Long) context.getRuntimeContext().getSession().getDomain(), catalog,action, regreso);
+        CatalogEvent event=new CatalogEventImpl((Long) context.getDomain(), catalog,action, regreso);
         event.setLiveContext(context);
         if(context.getOldValues()!=null){
             event.setOldValues(context.getOldValues());

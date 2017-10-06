@@ -81,10 +81,12 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 	@Before
 	public void prepare() {
-        Host peerValue = createNiceMock(Host.class);
-        Person person = createNiceMock(Person.class);
+
         // http://stackoverflow.com/questions/4796172/is-there-a-way-to-get-users-uid-on-linux-machine-using-java
-        session = new SessionContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
+		//new SessionContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
+		Session sessionValue=createNiceMock(Session.class);;
+		session = new SessionContextImpl(sessionValue);
+
 	}
 
 	@Test

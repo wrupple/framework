@@ -18,6 +18,8 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
      String CATALOG = "ApplicationState";
 
+     void setSession(Object sessionid);
+
     ServiceManifest getHandleValue();
     void setHandleValue(ServiceManifest applicationItemValue);
 

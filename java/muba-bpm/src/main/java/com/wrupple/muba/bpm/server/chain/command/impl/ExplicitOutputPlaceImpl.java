@@ -1,8 +1,8 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.WorkCompleteEvent;
 import com.wrupple.muba.bpm.domain.Workflow;
-import com.wrupple.muba.bpm.domain.WorkflowFinishedIntent;
 import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
 import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.Context;
@@ -14,7 +14,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 	@Override
 	public boolean execute(Context ctx) throws Exception {
 		RuntimeContext context = (RuntimeContext) ctx;
-		WorkflowFinishedIntent event = (WorkflowFinishedIntent) context.getServiceContract();
+		WorkCompleteEvent event = (WorkCompleteEvent) context.getServiceContract();
 		ApplicationState state= (ApplicationState) event.getStateValue();
 
         Workflow nextItem = findNextTreeNode(event, state);
@@ -25,7 +25,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 		return CONTINUE_PROCESSING;
 	}
 
-	private Workflow findNextTreeNode(WorkflowFinishedIntent event,ApplicationState currentState ) {
+	private Workflow findNextTreeNode(WorkCompleteEvent event, ApplicationState currentState ) {
         Workflow currentItem = (Workflow) currentState.getHandleValue();
 
 

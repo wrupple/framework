@@ -8,6 +8,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 
+import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
+import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 
@@ -23,7 +25,7 @@ public class JDBCHSQLTestModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-
+		bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
 		bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
 		
 	}

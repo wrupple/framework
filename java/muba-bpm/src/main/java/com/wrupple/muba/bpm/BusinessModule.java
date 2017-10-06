@@ -6,8 +6,15 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
+import com.wrupple.muba.bpm.server.chain.impl.WorkflowEngineImpl;
 import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.bpm.server.service.impl.ProcessManagerImpl;
+import com.wrupple.muba.catalogs.domain.ContentNode;
 import com.wrupple.muba.event.domain.ImplicitIntent;
+import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.*;
@@ -30,21 +37,62 @@ public class BusinessModule  extends AbstractModule {
     protected void configure() {
         bind(Integer.class).annotatedWith(Names.named("com.wrupple.errors.unknownUser")).toInstance(0);
 
+        /*
+        API
+         */
+        bind(ProcessManager.class).to(ProcessManagerImpl.class);
+        /*
+        Service
+         */
         bind(BusinessServiceManifest.class).to(BusinessServiceManifestImpl.class);
-        bind(BusinessEngine.class).to(BusinessEngineImpl.class);
-        bind(BusinessRequestInterpret.class).to(BusinessRequestInterpretImpl.class);
-        bind(ApplicationContext.class).to(ApplicationContextImpl.class);
-
         bind(IntentResolverServiceManifest.class).to(IntentResolverServiceManifestImpl.class);
-        bind(IntentResolverEngine.class).to(IntentResolverEngineImpl.class);
-        bind(IntentResolverRequestInterpret.class).to(IntentResolverRequestInterpretImpl.class);
+        bind(WorkflowServiceManifest.class).to(WorkflowServiceManifestImpl.class);
+
+        /*
+        Context
+         */
+
+        bind(ApplicationContext.class).to(ApplicationContextImpl.class);
         bind(IntentResolverContext.class).to(IntentResolverContextImpl.class);
+
+        /*
+        Interprets
+         */
+        bind(BusinessRequestInterpret.class).to(BusinessRequestInterpretImpl.class);
+        bind(IntentResolverRequestInterpret.class).to(IntentResolverRequestInterpretImpl.class);
+        //used by BroadcastInterpretImpl
+        bind(EventSuscriptionMapper.class).to(EventSuscriptionMapperImpl.class);
+
+        /*
+        Engines
+         */
+        bind(IntentResolverEngine.class).to(IntentResolverEngineImpl.class);
+        bind(BusinessEngine.class).to(BusinessEngineImpl.class);
+        bind(WorkflowEngine.class).to(WorkflowEngineImpl.class);
+
+        /*
+        Commands
+         */
+        bind(CommitSubmission.class).to(CommitSubmissionImpl.class);
+        bind(InferNextTask.class).to(InferNextTaskImpl.class);
+        bind(UpdateApplicationContext.class).to(UpdateApplicationContextImpl.class);
+        bind(ExplicitOutputPlace.class).to(ExplicitOutputPlaceImpl.class);
+        bind(GoToCommand.class).to(GoToCommandImpl.class);
+        bind(NextPlace.class).to(NextPlaceImpl.class);
+        /*
+        Services
+         */
 
         bind(EventRegistry.class).to(EventRegistryImpl.class);
         bind(BusinessPlugin.class).to(BusinessPluginImpl.class);
         bind(StakeHolderTrigger.class).to(StakeHolderTriggerImpl.class);
         bind(ValueChangeAudit.class).to(ValueChangeAuditImpl.class);
         bind(ValueChangeListener.class).to(ValueChangeListenerImpl.class);
+        /*
+         *
+         */
+        bind(ApplicationState.class).to(ApplicationStateImpl.class);
+        bind(WorkCompleteEvent.class).to(WorkCompleteEventImpl.class);
     }
 
     @Provides
@@ -52,9 +100,9 @@ public class BusinessModule  extends AbstractModule {
     @Inject
     @Named(Workflow.CATALOG)
     public CatalogDescriptor activity(
-            CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Activity",
-                -990090, null);
+            CatalogDescriptorBuilder builder, @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest) {
+        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Workflow",
+                -900190, serviceManifest);
         r.setClazz(WorkflowImpl.class);
         return r;
     }
@@ -75,12 +123,36 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
+    @Named(WorkCompleteEvent.CATALOG)
+    public CatalogDescriptor done(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
+            CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(WorkCompleteEventImpl.class, WorkCompleteEvent.CATALOG, "Work Completed",
+                -990091, timeline);
+        r.setClazz(WorkRequestImpl.class);
+        return r;
+    }
+
+    @Provides
+    @Singleton
+    @Inject
     @Named(ImplicitIntent.CATALOG)
     public CatalogDescriptor intent(
             CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(ImplicitIntentImpl.class, ImplicitIntent.CATALOG, "Event",
-                -990091, null);
+                -990092, null);
         r.setClazz(ImplicitIntentImpl.class);
+        return r;
+    }
+
+    @Provides
+    @Singleton
+    @Inject
+    @Named(ApplicationState.CATALOG)
+    public CatalogDescriptor application(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
+            CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(ApplicationStateImpl.class, ApplicationState.CATALOG, "Thread",
+                -990093, timeline);
+        r.setClazz(ApplicationStateImpl.class);
         return r;
     }
 

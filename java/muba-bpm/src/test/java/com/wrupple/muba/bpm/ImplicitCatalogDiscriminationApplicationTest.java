@@ -2,38 +2,18 @@ package com.wrupple.muba.bpm;
 
 
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
 import com.wrupple.muba.bpm.domain.impl.BusinessIntentImpl;
-import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
-import com.wrupple.muba.bpm.server.chain.command.WorkflowEventInterpret;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
-import com.wrupple.muba.bpm.server.chain.BusinessEngine;
-import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
-import com.wrupple.muba.bpm.server.chain.SolverEngine;
-import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.server.service.EventRegistry;
-import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.ApplicationModule;
-import com.wrupple.muba.catalogs.CatalogModule;
-import com.wrupple.muba.catalogs.HSQLDBModule;
-import com.wrupple.muba.catalogs.JDBCModule;
-import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 
 import java.util.Arrays;
 

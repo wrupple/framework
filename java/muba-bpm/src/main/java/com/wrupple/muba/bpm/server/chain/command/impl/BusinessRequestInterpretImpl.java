@@ -56,7 +56,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
             if(existingApplicationStateId==null){
                 //create new application state
-                applicationContext= context.getProcessManager().acquireContext(contractExplicitIntent,requestContext);
+                applicationContext= context.getProcessManager().acquireContext(contractExplicitIntent,requestContext.getSession());
 
             }else{
                 //recover application state

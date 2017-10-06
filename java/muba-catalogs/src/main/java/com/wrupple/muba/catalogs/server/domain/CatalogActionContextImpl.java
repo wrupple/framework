@@ -93,6 +93,9 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 
 	@Override
 	public NamespaceContext getNamespaceContext() {
+		if(namespace==null){
+			throw new IllegalStateException("no namespace in context");
+		}
 		return namespace;
 	}
 
@@ -101,7 +104,7 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 	}
 
 	public long getPersonId() throws Exception {
-		return (Long) getSession().getStakeHolder();
+		return (Long) getSession().getSessionValue().getStakeHolder();
 	}
 
 	public void setEntryValue(Object entry) {
@@ -218,6 +221,9 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 		if (catalog == null) {
 			catalog = catalogDescriptor == null ? null : catalogDescriptor.getDistinguishedName();
 		}
+		if(catalog==null){
+		    throw new NullPointerException("catalog context points to no working catalog");
+        }
 		return catalog;
 	}
 
@@ -306,7 +312,9 @@ public class CatalogActionContextImpl extends ContextBase implements CatalogActi
 			getNamespaceContext().setId(CatalogEntry.PUBLIC_ID, this);
 		} else if (CatalogEntry.DOMAIN_TOKEN.equals(domain)) {
 
-			getNamespaceContext().setId(getSession().getDomain(), this);
+			getNamespaceContext().setId((Long) getSession().
+                    getSessionValue().
+                    getDomain(), this);
 
 		} else {
 			getNamespaceContext().setId((Long) getCatalogManager().decodePrimaryKeyToken(domain), this);

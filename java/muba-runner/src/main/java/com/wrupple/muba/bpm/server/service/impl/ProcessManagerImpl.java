@@ -1,8 +1,17 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
+import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.SessionContext;
 
-/*
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+
+/*SequentialProcessManger imports
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -41,8 +50,26 @@ import com.wrupple.vegetate.domain.VegetatePeer;
 import com.wrupple.vegetate.domain.VegetateServiceManifest;
 import com.wrupple.vegetate.shared.services.PeerManager;
 */
-public class SequentialProcessManager implements ProcessManager {
-/*
+@Singleton
+public class ProcessManagerImpl implements ProcessManager {
+
+    private final SystemCatalogPlugin catalog;
+    private final Provider<ApplicationState> applicationStateProvider;
+
+    @Inject
+    public ProcessManagerImpl(SystemCatalogPlugin catalog, Provider<ApplicationState> applicationStateProvider) {
+        this.catalog = catalog;
+        this.applicationStateProvider = applicationStateProvider;
+    }
+
+    @Override
+    public ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, SessionContext thread) {
+        ApplicationState newState = applicationStateProvider.get();
+        newState.setSession(thread.getSessionValue().getId());
+        CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState,ApplicationState.CATALOG);
+        return newState;
+    }
+/* Sequential Process Manager
 	private static final String PROCESS_USER_AREA_CLASS = "application-content-area";
 
 	private ServiceMap commandRegistry;
@@ -61,7 +88,7 @@ public class SequentialProcessManager implements ProcessManager {
 	private ProcessVegetateChannel bpm;
 
 	@Inject
-	public SequentialProcessManager(OutputHandlerMap outputHandlerRegistry,
+	public SequentialProcessManagerImpl(OutputHandlerMap outputHandlerRegistry,
                                     ServiceMap services,DictionaryRegistry serviceLocator,ActivityPresenterMap presenterMap, PlaceController placeController, StorageManager storageManager,
 			ContentManagementSystem contentManager, DesktopManager desktopManager, PeerManager peerManager, ServiceBus serviceBus) {
 		super();

@@ -80,6 +80,9 @@ public class EventRegistryImpl implements EventRegistry {
             list = new ArrayList<>(2);
             serviceDictionary.put(catalog,list);
         }
+        if(list.contains(manifest)){
+            throw new IllegalStateException("duplicate registration of service");
+        }
         list.add(manifest);
         log.trace("[NEW IMPLICIT TYPE HANDLER] {}->{}",catalog,manifest);
     }

@@ -56,6 +56,7 @@ public class IntegralTest extends AbstractTest{
     protected WriteAuditTrails mockLogger;
 
     protected Host peerValue;
+    private Session stakeHolderValue;
 
 
     class IntegralTestModule extends AbstractModule {
@@ -72,6 +73,8 @@ public class IntegralTest extends AbstractTest{
             bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
 
             // mocks
+
+             stakeHolderValue = createNiceMock(Session.class);
             mockProcessManager=mock(ProcessManager.class);
             mockWriter = mock(WriteOutput.class);
             mockLogger = mock(WriteAuditTrails.class);
@@ -94,11 +97,8 @@ public class IntegralTest extends AbstractTest{
         @Provides
         @Inject
         @Singleton
-        public SessionContext sessionContext(@Named("host") String peer) {
-            long stakeHolder = 1;
-            Person stakeHolderValue = mock(Person.class);
-
-            return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
+        public SessionContext sessionContext() {
+            return new SessionContextImpl(stakeHolderValue);
         }
 
         @Provides
@@ -164,6 +164,7 @@ public class IntegralTest extends AbstractTest{
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
         expect(mockSuscriptor.execute(anyObject(Context.class))).andStubReturn(Command.CONTINUE_PROCESSING);
+        expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
 
         runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");

@@ -3,6 +3,9 @@ package com.wrupple.muba.bpm.domain.impl;
 import com.wrupple.muba.event.domain.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 import java.util.List;
 
@@ -13,10 +16,17 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
 
     private Long peer;
     private String description,outputField,exit,cancel,error;
-    private List<Long> dependencies,process;
+    private List<Long> dependencies;
+    @CatalogKey(foreignCatalog = Workflow.CATALOG)
+    private Long explicitSuccessor;
+    @CatalogField(ignore = true)
+    @CatalogValue(foreignCatalog = Workflow.CATALOG)
     private Workflow explicitSuccessorValue;
     private boolean clearOutput;
-
+    @CatalogKey(foreignCatalog = ProcessTaskDescriptor.CATALOG)
+    private List<Long> process;
+    @CatalogField(ignore = true)
+    @CatalogValue(foreignCatalog = ProcessTaskDescriptor.CATALOG)
     private List<ProcessTaskDescriptor> processValues;
 
     @Override
@@ -121,5 +131,13 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
     @Override
     public void setOutputField(String outputField) {
         this.outputField = outputField;
+    }
+
+    public Long getExplicitSuccessor() {
+        return explicitSuccessor;
+    }
+
+    public void setExplicitSuccessor(Long explicitSuccessor) {
+        this.explicitSuccessor = explicitSuccessor;
     }
 }

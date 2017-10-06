@@ -131,7 +131,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             try {
                 value = doGetAccesibleProperty(object, fieldId);
             } catch (ClassCastException e) {
-                log.debug("Catalog Property Instrospection Changed State");
+                log.debug("Catalog Property Instrospection Changed State",e);
                 instrospection.setAccesible(false);
                 value = nativeInterface.getWrappedValue(fieldId, instrospection, object, true);
             }
@@ -142,7 +142,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
             } catch (Throwable e) {
 
-                log.debug("Catalog Property Instrospection Changed State");
+                log.debug("Catalog Property Instrospection Changed State",e);
                 instrospection.setAccesible(true);
                 value = doGetAccesibleProperty(object, fieldId);
             }

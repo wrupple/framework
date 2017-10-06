@@ -85,7 +85,11 @@ public class TriggerStorageStrategyImpl implements TriggerStorageStrategy {
 
         log.debug("[adding trigger in namespace] {}",catalog.getDistinguishedName(),context.getNamespaceContext().getId());
 
-        Map<String,List<CatalogActionTrigger>> catalogScope = namespaceScope.get(context.getNamespaceContext().getId());;
+        Map<String,List<CatalogActionTrigger>> catalogScope = namespaceScope.get(context.getNamespaceContext().getId());
+        if(catalogScope==null){
+            catalogScope= new HashMap<>(2);
+            namespaceScope.put(context.getNamespaceContext().getId(),catalogScope);
+        }
         addCatalogScopeTrigger(trigger,catalog,catalogScope);
 
     }

@@ -12,12 +12,15 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
+import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
+import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.CatalogTestModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import org.apache.commons.chain.Command;
 import org.junit.Before;
 
@@ -52,6 +55,7 @@ public class CatalogServicesTest extends MubaTest {
 	protected DataWritingCommand mockwrite;
 
 	protected DataDeleteCommand mockDelete;
+	private EventSuscriptionMapper mockSuscriptor;
 
 
 	class CatalogServicesTestModule extends AbstractModule {
@@ -60,6 +64,7 @@ public class CatalogServicesTest extends MubaTest {
 		protected void configure() {
 			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
 			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
+			bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
 
 			// mocks
 			mockWriter = mock(WriteOutput.class);
@@ -70,7 +75,8 @@ public class CatalogServicesTest extends MubaTest {
              mockRead = mock(DataReadCommand.class);
              mockwrite = mock(DataWritingCommand.class);
              mockDelete = mock(DataDeleteCommand.class);
-
+			mockSuscriptor = mock(EventSuscriptionMapper.class);
+			bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
 
 			// this makes JDBC the default storage unit
 			bind(DataCreationCommand.class).toInstance(mockCreate);
@@ -96,11 +102,10 @@ public class CatalogServicesTest extends MubaTest {
 		@Provides
 		@Inject
 		@Singleton
-		public SessionContext sessionContext(@Named("host") String peer) {
-			long stakeHolder = 1;
-			Person stakeHolderValue = mock(Person.class);
+		public SessionContext sessionContext() {
+			Session stakeHolderValue = createNiceMock(Session.class);
 
-			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
+			return new SessionContextImpl(stakeHolderValue);
 		}
 
 		@Provides

@@ -2,8 +2,8 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.WorkCompleteEvent;
 import com.wrupple.muba.bpm.domain.Workflow;
-import com.wrupple.muba.bpm.domain.WorkflowFinishedIntent;
 import com.wrupple.muba.bpm.server.chain.command.GoToCommand;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.RuntimeContext;
@@ -22,7 +22,7 @@ public class GoToCommandImpl implements GoToCommand {
 	@Override
 	public boolean execute(Context ctx) {
 		RuntimeContext context = (RuntimeContext) ctx;
-		WorkflowFinishedIntent event = (WorkflowFinishedIntent) context.getServiceContract();
+		WorkCompleteEvent event = (WorkCompleteEvent) context.getServiceContract();
 		ApplicationState state= (ApplicationState) event.getStateValue();
 
 		//Workflow currentItem = state.getApplicationValue();

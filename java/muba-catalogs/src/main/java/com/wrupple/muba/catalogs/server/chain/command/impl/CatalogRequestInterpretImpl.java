@@ -73,7 +73,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 			// set namespace
 			if (request.getDomain() instanceof String) {
 				context.setNamespace((String) request.getDomain());
-			} else {
+			} else if(request.getDomain()==null){
+				context.setNamespace(CatalogEntry.DOMAIN_TOKEN);
+			}else{
 				context.setDomain((Long) request.getDomain());
 			}
 

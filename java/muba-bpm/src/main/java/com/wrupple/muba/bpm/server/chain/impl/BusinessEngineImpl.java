@@ -7,6 +7,7 @@ import com.wrupple.muba.bpm.server.chain.command.InferNextTask;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ChainBase;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
@@ -18,7 +19,7 @@ public class BusinessEngineImpl extends ChainBase implements BusinessEngine {
 
 
     /*recibo ApplicationContextImpl necesito sacar un ApplicationState*/
-    @Singleton
+    @Inject
     public BusinessEngineImpl( CommitSubmission commit, InferNextTask fwd, UpdateApplicationContext update) {
         super(new Command[]{ commit, fwd,update});
     }

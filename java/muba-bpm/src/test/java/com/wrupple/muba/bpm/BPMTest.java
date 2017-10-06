@@ -11,7 +11,6 @@ import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
-import com.wrupple.muba.bpm.server.chain.command.WorkflowEventInterpret;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -19,6 +18,8 @@ import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
+import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
@@ -33,7 +34,6 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.*;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
@@ -58,9 +58,8 @@ public abstract class BPMTest extends AbstractTest {
 	private WriteOutput mockWriter;
 
 	private WriteAuditTrails mockLogger;
-
-	private Host peerValue;
-	protected EventBus wrupple;
+    private Session stakeHolderValue;
+    protected EventBus wrupple;
 	protected SessionContext session;
 
     protected void createMockDrivers() throws Exception {
@@ -97,9 +96,9 @@ public abstract class BPMTest extends AbstractTest {
 			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
 
 			// mocks
+            stakeHolderValue = mock(Session.class);
 			mockWriter = mock(WriteOutput.class);
 			mockLogger = mock(WriteAuditTrails.class);
-			peerValue = mock(Host.class);
 			bind(WriteAuditTrails.class).toInstance(mockLogger);
 			bind(WriteOutput.class).toInstance(mockWriter);
 
@@ -112,16 +111,17 @@ public abstract class BPMTest extends AbstractTest {
 					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
 			// TODO cms test isMasked FieldDescriptor
 
+            bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
+
 		}
 
 		@Provides
 		@Inject
 		@Singleton
-		public SessionContext sessionContext(@Named("host") String peer) {
-			long stakeHolder = 1;
-			Person stakeHolderValue = mock(Person.class);
+		public SessionContext sessionContext() {
 
-			return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
+
+			return new SessionContextImpl(stakeHolderValue);
 		}
 
 		@Provides
@@ -188,11 +188,10 @@ public abstract class BPMTest extends AbstractTest {
 
         WorkflowServiceManifest taskManger = injector.getInstance(WorkflowServiceManifest.class);
 
-        switchs.getIntentInterpret().registerService(taskManger, injector.getInstance(WorkflowEngine.class), injector.getInstance(WorkflowEventInterpret.class),bpm);
+        switchs.getIntentInterpret().registerService(taskManger, injector.getInstance(WorkflowEngine.class), null,bpm);
 
         switchs.getIntentInterpret().registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
 
-        switchs.getIntentInterpret().registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 
         /*
           Solver
@@ -222,7 +221,8 @@ public abstract class BPMTest extends AbstractTest {
 	public void setUp() throws Exception {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
+		expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
+        replayAll();
 
 		session = injector.getInstance(SessionContext.class);
 		wrupple = injector.getInstance(EventBus.class);

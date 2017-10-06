@@ -202,6 +202,14 @@ public class CatalogModule extends AbstractModule {
 		CatalogDescriptor r = builder.fromClass(HostImpl.class, Host.CATALOG, "Peers", -1911193, null);
 		return r;
 	}
+    @Provides
+	@Singleton
+	@Inject
+	@Named(ContentNode.CATALOG_TIMELINE)
+	public CatalogDescriptor timeline(CatalogDescriptorBuilder builder) {
+		CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG_TIMELINE, "Timeline Event", -1911192, null);
+		return r;
+	}
 
 	@Provides
 	@Singleton

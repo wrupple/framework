@@ -13,5 +13,5 @@ public interface ProcessManager {
      * @param thread
      * @return
      */
-    ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, RuntimeContext thread);
+    ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, SessionContext thread);
 }

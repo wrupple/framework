@@ -66,6 +66,9 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		String action = req.getName();
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();
 		String catalog = (String) req.getCatalog();
+		if(catalog==null){
+			throw new IllegalArgumentException("catalog");
+		}
 		String domain = (String) req.getDomain();
 		FilterData filter = req.getFilter();
 		CatalogDescriptor descriptor = null;

@@ -20,6 +20,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private Long taskDescriptor;
     private Long parent;
     private Object entry;
+    private Object session;
 
 
     private ProcessTaskDescriptor taskDescriptorValue;
@@ -213,5 +214,14 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
 
     public void setParentValue(ApplicationState parentValue) {
         this.parentValue = parentValue;
+    }
+
+    public Object getSession() {
+        return session;
+    }
+
+    @Override
+    public void setSession(Object session) {
+        this.session = session;
     }
 }

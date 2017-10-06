@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
@@ -119,20 +120,20 @@ public class ServiceRequestValidation extends MubaTest {
 
 		@Override
 		protected void configure() {
-
-			bind(Person.class).toInstance(mock(Person.class));
-			bind(Host.class).toInstance(mock(Host.class));
 			bind(UserTransaction.class).toInstance(mock(UserTransaction.class));
 			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
 			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-
-
+			mockSuscriptor = mock(EventSuscriptionMapper.class);
+			bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
 		}
 
 		@Provides
 		@Singleton
-		public SessionContext session(Person person, Host host) {
-			return new SessionContextImpl(1, person, "localhost", host, CatalogEntry.PUBLIC_ID);
+		public SessionContext session() {
+			Session sessionValue=createNiceMock(Session.class);
+			//(1, person, "localhost", host, CatalogEntry.PUBLIC_ID);
+			return new SessionContextImpl(sessionValue);
+
 		}
 
 	}

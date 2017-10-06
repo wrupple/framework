@@ -1,6 +1,7 @@
 package com.wrupple.muba;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
@@ -27,6 +28,8 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	protected RuntimeContext runtimeContext;
 
+
+	protected EventSuscriptionMapper mockSuscriptor;
 
 
 	public final  void init(Module... modules) {

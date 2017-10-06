@@ -69,7 +69,7 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
     }
 
     @Override
-    public void setStateValue(Object applicationState) {
+    public void setStateValue(CatalogEntry applicationState) {
         setStateValue((ApplicationState)applicationState);
     }
 

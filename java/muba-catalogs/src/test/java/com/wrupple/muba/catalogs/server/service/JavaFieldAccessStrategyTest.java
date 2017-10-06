@@ -14,12 +14,14 @@ package com.wrupple.muba.catalogs.server.service;
         import com.google.inject.Guice;
         import com.google.inject.Injector;
         import com.wrupple.muba.ValidationModule;
+        import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
         import com.wrupple.muba.event.domain.Instrospection;
         import com.wrupple.muba.event.domain.*;
         import com.wrupple.muba.catalogs.CatalogTestModule;
         import com.wrupple.muba.catalogs.domain.*;
         import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
         import com.wrupple.muba.catalogs.server.chain.command.*;
+        import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
         import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
         import com.wrupple.muba.event.server.service.FieldAccessStrategy;
         import com.wrupple.muba.event.server.service.FormatDictionary;
@@ -41,6 +43,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
     protected Logger log = LoggerFactory.getLogger(JavaFieldAccessStrategyTest.class);
 
     private final Injector injector;
+    private EventSuscriptionMapper mockSuscriptor;
 	/*
 	 * mocks
 	 */
@@ -53,11 +56,13 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
         protected void configure() {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-
+            bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
             // mocks
             WriteOutput mockWriter = mock(WriteOutput.class);
             WriteAuditTrails mockLogger = mock(WriteAuditTrails.class);
              peerValue= mock(Host.class);
+            mockSuscriptor = mock(EventSuscriptionMapper.class);
+            bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
 
             DataCreationCommand mockCreate = mock(DataCreationCommand.class);
             DataQueryCommand mockQuery = mock(DataQueryCommand.class);
@@ -87,11 +92,10 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
        @Provides
         @Inject
         @Singleton
-        public SessionContext sessionContext(@Named("host") String peer) {
-            long stakeHolder = 1;
-            Person stakeHolderValue = mock(Person.class);
+        public SessionContext sessionContext() {
+            Session stakeHolderValue = createNiceMock(Session.class);
 
-            return new SessionContextImpl(stakeHolder, stakeHolderValue, peer, peerValue, CatalogEntry.PUBLIC_ID);
+            return new SessionContextImpl(stakeHolderValue);
         }
 
         @Provides

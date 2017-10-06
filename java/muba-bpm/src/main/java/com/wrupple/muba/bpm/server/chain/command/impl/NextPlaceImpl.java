@@ -1,9 +1,9 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.google.inject.Inject;
+import com.wrupple.muba.bpm.domain.WorkCompleteEvent;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.WorkflowFinishedIntent;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import org.apache.commons.chain.Context;
@@ -33,7 +33,7 @@ public class NextPlaceImpl implements com.wrupple.muba.bpm.server.chain.command.
 	public boolean execute(Context ctx) throws Exception {
 
 		RuntimeContext context = (RuntimeContext) ctx;
-		WorkflowFinishedIntent event = (WorkflowFinishedIntent) context.getServiceContract();
+		WorkCompleteEvent event = (WorkCompleteEvent) context.getServiceContract();
 		ApplicationState state= (ApplicationState) event.getStateValue();
 
         Workflow currentItem = (Workflow) state.getHandleValue();

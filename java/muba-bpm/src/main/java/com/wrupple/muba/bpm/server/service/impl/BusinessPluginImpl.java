@@ -106,6 +106,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 		/* FIXME use in EventSuscriptionMapper
 		names.add(new CatalogIdentificationImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
 				"/static/img/notification.png"));*/
+		//a host can have many sessions that can have many application states
 		names.add(new CatalogIdentificationImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
 		names.add(new CatalogIdentificationImpl(Workflow.CATALOG, "Process", "/static/img/process.png"));
 		names.add(new CatalogIdentificationImpl(WorkRequest.CATALOG, WorkRequest.CATALOG,
