@@ -112,7 +112,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         log.trace("[-create a pool of drivers to resolve the booking-]");
 
         Driver driver;
-        for(int i = 0 ; i < 10 ; i++){
+        for(long i = 0 ; i < 10 ; i++){
             driver = new Driver();
             //thus, best driver will have a location of 6, or 8 because 7 will not be available
             driver.setLocation(i);

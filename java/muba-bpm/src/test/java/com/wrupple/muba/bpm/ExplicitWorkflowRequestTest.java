@@ -14,9 +14,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
-import com.wrupple.muba.event.domain.DataEvent;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +41,9 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 
         //FIXME stack overflow when no parent is specified, ok when consolidated?
         CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(Statistics.class, Statistics.CATALOG,
-                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG_TIMELINE,
+                "Table Statistics", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG_TIMELINE,
                         ContentNode.class.getSimpleName(), -1l, null));
+        solutionContract.setConsolidated(true);
         catalogActionRequest.setEntryValue(solutionContract);
 
 
@@ -53,6 +52,8 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         catalogActionRequest.setFollowReferences(true);
         catalogActionRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
         wrupple.fireEvent(catalogActionRequest,session,null);
+
+
 
 
         ProcessTaskDescriptorImpl task = new ProcessTaskDescriptorImpl();
@@ -134,21 +135,20 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         BusinessIntent intent =injector.getInstance(BusinessIntent.class);
         applicationState.setEntryValue(statistics);
         intent.setStateValue(applicationState);
-
+        intent.setDomain( CatalogEntry.PUBLIC_ID);
         //fire business intent to commit that last action, which should result in application state pointing to the next activity (count)
         //update is fired and handler starts count workflow, as event bus is synchrounous
         wrupple.fireEvent(intent,session,null);
 
-		WorkRequestImpl inboxNotification = new WorkRequestImpl();
-		inboxNotification.setOutputCatalog(Statistics.CATALOG);
-		inboxNotification.setCatalog(Statistics.CATALOG);
-        inboxNotification.setEntry(statistics.getId());
-        wrupple.fireEvent(inboxNotification,session,null);
 
         // when thread returns statistics should be updated (assertion)
-        applicationState = inboxNotification.getStateValue();
+
         statistics = (Statistics) applicationState.getEntryValue();
 
+        assertTrue("statistics dont exist",statistics!=null);
+        assertTrue("statistics not created",statistics.getId()!=null);
+        ;
+        assertTrue("statistics not updated",statistics.getCount()!=null);
         assertTrue("statistics not updated",statistics.getCount().longValue()>0);
 
 

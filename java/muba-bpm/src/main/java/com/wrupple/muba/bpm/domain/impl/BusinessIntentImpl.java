@@ -4,7 +4,7 @@ import com.wrupple.muba.bpm.domain.BusinessIntent;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by japi on 12/08/17.
  */
 public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessIntent {
-    @CatalogKey(
+    @ForeignKey(
             foreignCatalog = ApplicationState.CATALOG
     )
     private Long state;
@@ -25,7 +25,7 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
             foreignCatalog = Workflow.CATALOG
     )
     private Workflow handleValue;
-    @CatalogKey(
+    @ForeignKey(
             foreignCatalog = Workflow.CATALOG
     )
     private Long handle;
@@ -35,6 +35,12 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
     private Object result;
     private Exception error;
     private List<String> sentence;
+
+
+    @Override
+    public String getCatalogType() {
+        return BusinessIntent_CATALOG;
+    }
 
     public Long getState() {
         return state;

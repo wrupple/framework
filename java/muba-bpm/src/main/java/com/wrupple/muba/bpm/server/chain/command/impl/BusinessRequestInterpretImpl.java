@@ -46,9 +46,8 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
         BusinessIntent contractExplicitIntent = (BusinessIntent) requestContext.getServiceContract();
         ApplicationContext context = requestContext.getServiceContext();
 
-        BeanUtils.copyProperties(context,contractExplicitIntent);
-
         ApplicationState applicationContext = (ApplicationState) contractExplicitIntent.getStateValue();
+
         if(applicationContext==null){
             Object existingApplicationStateId = contractExplicitIntent.getState();
 
@@ -71,6 +70,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
 
         }
+        application staate is not comming back from read
         context.setStateValue(applicationContext);
 
         return CONTINUE_PROCESSING;

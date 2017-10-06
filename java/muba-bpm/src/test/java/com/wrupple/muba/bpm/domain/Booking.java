@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.domain;
 
 import com.wrupple.muba.bpm.domain.impl.ManagedObjectImpl;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 /**
@@ -10,7 +10,7 @@ import com.wrupple.muba.event.domain.annotations.CatalogValue;
 public class Booking extends ManagedObjectImpl {
 
     private int location;
-    @CatalogKey(foreignCatalog = Driver.CATALOG)
+    @ForeignKey(foreignCatalog = Driver.CATALOG)
     private Long driver;
     @CatalogValue(foreignCatalog = Driver.CATALOG)
     private Driver driverValue;

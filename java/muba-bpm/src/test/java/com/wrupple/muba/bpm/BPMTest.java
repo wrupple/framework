@@ -18,6 +18,8 @@ import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
 import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
 import com.wrupple.muba.event.ApplicationModule;
@@ -63,18 +65,21 @@ public abstract class BPMTest extends AbstractTest {
 	protected SessionContext session;
 
     protected void createMockDrivers() throws Exception {
+		CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) injector.getInstance(CatalogDescriptorBuilder.class).fromClass(Driver.class, Driver.CATALOG,
+				"Driver", 0, null);
+		solutionContract.setId(null);
+		solutionContract.setConsolidated(true);
+		CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(solutionContract, CatalogDescriptor.CATALOG_ID);
+		catalogActionRequest.setFollowReferences(true);
+		wrupple.fireEvent(catalogActionRequest,session,null);
 		Driver driver;
-        CatalogActionRequestImpl catalogActionRequest;
-		for(int i = 0 ; i < 10 ; i++){
+		for(long i = 0 ; i < 10 ; i++){
 			driver = new Driver();
 			//thus, best driver will have a location of 6, or 8 because 7 will not be available
 			driver.setLocation(i);
 			driver.setAvailable(i%2==0);
 
-            catalogActionRequest= new CatalogActionRequestImpl();
-            catalogActionRequest.setCatalog(Driver.CATALOG);
-            catalogActionRequest.setEntryValue(driver);
-            catalogActionRequest.setName(DataEvent.CREATE_ACTION);
+            catalogActionRequest= new CatalogCreateRequestImpl(driver,Driver.CATALOG);
             wrupple.fireEvent(catalogActionRequest,session,null);
 
 		}
@@ -222,6 +227,8 @@ public abstract class BPMTest extends AbstractTest {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
+        expect(stakeHolderValue.getId()).andStubReturn(CatalogEntry.PUBLIC_ID);
+
         replayAll();
 
 		session = injector.getInstance(SessionContext.class);

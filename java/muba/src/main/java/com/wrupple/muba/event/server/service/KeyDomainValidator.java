@@ -2,8 +2,10 @@ package com.wrupple.muba.event.server.service;
 
 import javax.validation.ConstraintValidator;
 
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
-public interface KeyDomainValidator extends ConstraintValidator<CatalogKey, Object> {
+import java.lang.annotation.Annotation;
+
+public interface KeyDomainValidator extends ConstraintValidator<Annotation, Object> {
 
 }

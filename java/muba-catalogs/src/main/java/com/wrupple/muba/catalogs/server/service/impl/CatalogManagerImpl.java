@@ -603,11 +603,11 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
     @Override
 	@SuppressWarnings("unchecked")
-	public com.wrupple.muba.event.domain.annotations.CatalogKey buildCatalogKeyValidation(FieldDescriptor field) {
+	public ForeignKey buildCatalogKeyValidation(FieldDescriptor field) {
 		Map properties = Collections.singletonMap("foreignCatalog", field.getCatalog());
 
-		com.wrupple.muba.event.domain.annotations.CatalogKey annotation = Defaults
-				.of(com.wrupple.muba.event.domain.annotations.CatalogKey.class, properties);
+		ForeignKey annotation = Defaults
+				.of(ForeignKey.class, properties);
 		return annotation;
 
 	}

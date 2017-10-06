@@ -10,9 +10,9 @@ public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
 	private static final long serialVersionUID = 7957074775049623796L;
 	private String catalog,distinguishedName,transactionType,outputField;
 	private List<String> properties,sentence;
-	//@CatalogKey(foreignCatalog = WruppleActivityAction.CATALOG_TIMELINE)
+	//@ForeignKey(foreignCatalog = WruppleActivityAction.CATALOG_TIMELINE)
 	private List<Long> userActions;
-	//s@CatalogKey(foreignCatalog = ToolbarConfiguration.CATALOG_TIMELINE)
+	//s@ForeignKey(foreignCatalog = ToolbarConfiguration.CATALOG_TIMELINE)
 	private List<Long> toolbars;
 	@CatalogField(ignore = true)
 	private  List<? extends TaskToolbarDescriptor> toolbarsValues;

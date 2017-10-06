@@ -12,8 +12,7 @@ import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.bpm.server.service.impl.ProcessManagerImpl;
 import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.event.domain.ImplicitIntent;
-import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.*;
@@ -26,7 +25,6 @@ import com.wrupple.muba.bpm.server.chain.impl.BusinessEngineImpl;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.impl.BusinessPluginImpl;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 
 /**
@@ -93,6 +91,7 @@ public class BusinessModule  extends AbstractModule {
          */
         bind(ApplicationState.class).to(ApplicationStateImpl.class);
         bind(WorkCompleteEvent.class).to(WorkCompleteEventImpl.class);
+        bind(BusinessIntent.class).to(BusinessIntentImpl.class);
     }
 
     @Provides
@@ -104,6 +103,7 @@ public class BusinessModule  extends AbstractModule {
         CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Workflow",
                 -900190, serviceManifest);
         r.setClazz(WorkflowImpl.class);
+
         return r;
     }
 
@@ -127,7 +127,7 @@ public class BusinessModule  extends AbstractModule {
     public CatalogDescriptor done(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
             CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(WorkCompleteEventImpl.class, WorkCompleteEvent.CATALOG, "Work Completed",
-                -990091, timeline);
+                -990092, timeline);
         r.setClazz(WorkRequestImpl.class);
         return r;
     }
@@ -139,7 +139,7 @@ public class BusinessModule  extends AbstractModule {
     public CatalogDescriptor intent(
             CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(ImplicitIntentImpl.class, ImplicitIntent.CATALOG, "Event",
-                -990092, null);
+                -990093, null);
         r.setClazz(ImplicitIntentImpl.class);
         return r;
     }
@@ -151,10 +151,36 @@ public class BusinessModule  extends AbstractModule {
     public CatalogDescriptor application(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
             CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(ApplicationStateImpl.class, ApplicationState.CATALOG, "Thread",
-                -990093, timeline);
+                -990094, timeline);
         r.setClazz(ApplicationStateImpl.class);
         return r;
     }
+
+    @Provides
+    @Singleton
+    @Inject
+    @Named(BusinessIntent.BusinessIntent_CATALOG)
+    public CatalogDescriptor commit(@Named(ExplicitIntent.CATALOG) CatalogDescriptor timeline,
+                                         CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(BusinessIntentImpl.class, BusinessIntent.BusinessIntent_CATALOG, "Commit",
+                -990095, timeline);
+        r.setClazz(BusinessIntentImpl.class);
+        return r;
+    }
+
+
+    @Provides
+    @Singleton
+    @Inject
+    @Named(ExplicitIntent.CATALOG)
+    public CatalogDescriptor explicit(
+                                    CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(ExplicitIntentImpl.class, ExplicitIntent.CATALOG, "Do",
+                -990096, null);
+        r.setClazz(ExplicitIntentImpl.class);
+        return r;
+    }
+
 
 
 }

@@ -9,6 +9,7 @@ import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 public class ManagedObjectImpl extends ContentNodeImpl implements ManagedObject {
     private Long stakeHolder;
 
+
     @Override
     public Long getStakeHolder() {
         return stakeHolder;

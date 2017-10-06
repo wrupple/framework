@@ -16,17 +16,11 @@ import javax.inject.Singleton;
 
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.domain.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.event.domain.annotations.CatalogField;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldDefault;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldSentence;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldProperties;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldWidget;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
-import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.ImageField;
 import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
@@ -81,7 +75,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 		CatalogField argument;
 		CatalogFieldDefault defaultt;
 		CatalogFieldValues defaultValues;
-		CatalogKey foreignKey;
+		ForeignKey foreignKey;
 		CatalogValue foreignValue;
 		CatalogFieldSentence formula;
 		CatalogFieldWidget widgetAnnot;
@@ -112,7 +106,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			argument = field.getAnnotation(CatalogField.class);
 			defaultt = field.getAnnotation(CatalogFieldDefault.class);
 			defaultValues = field.getAnnotation(CatalogFieldValues.class);
-			foreignKey = field.getAnnotation(CatalogKey.class);
+			foreignKey = field.getAnnotation(ForeignKey.class);
 			foreignValue = field.getAnnotation(CatalogValue.class);
 			formula = field.getAnnotation(CatalogFieldSentence.class);
 			widgetAnnot = field.getAnnotation(CatalogFieldWidget.class);
@@ -332,9 +326,11 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			}
 
 		}
-		CatalogDescriptor regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName,parent==null?null: parent.getId(),
+		CatalogDescriptorImpl regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName,parent==null?null: parent.getId(),
 				descriptors);
 		log.trace("[PARSED NUMERIC_ID DESCRIPTOR] {}", catalogId);
+		//FIXME support inhecitance on beans (not just on HasAccesable property values)s
+		regreso.setConsolidated(true);
 		return regreso;
 
 	}

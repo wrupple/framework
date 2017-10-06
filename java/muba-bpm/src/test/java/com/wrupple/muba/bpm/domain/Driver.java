@@ -8,16 +8,16 @@ import com.wrupple.muba.event.domain.CatalogEntryImpl;
 public class Driver extends CatalogEntryImpl {
     public static final String CATALOG = "Driver";
 
-    private int location;
+    private Long location;
 
-    private boolean available;
+    private Boolean available;
 
 
-    public int getLocation() {
+    public Long getLocation() {
         return location;
     }
 
-    public void setLocation(int location) {
+    public void setLocation(Long location) {
         this.location = location;
     }
 
@@ -26,11 +26,15 @@ public class Driver extends CatalogEntryImpl {
         return CATALOG;
     }
 
-    public boolean isAvailable() {
+    public Boolean getAvailable() {
         return available;
     }
 
-    public void setAvailable(boolean available) {
+    public Boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
         this.available = available;
     }
 }

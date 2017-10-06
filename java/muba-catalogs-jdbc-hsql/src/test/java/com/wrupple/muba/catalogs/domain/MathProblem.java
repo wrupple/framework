@@ -3,7 +3,7 @@ package com.wrupple.muba.catalogs.domain;
 import java.util.List;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 import javax.validation.constraints.Max;
@@ -16,7 +16,7 @@ public class MathProblem extends ContentNodeImpl implements CatalogEntry {
 	@Max(5)
 	private Long solution;
 
-	@CatalogKey(foreignCatalog=Argument.CATALOG)
+	@ForeignKey(foreignCatalog=Argument.CATALOG)
 	private List<Long> arguments;
 
 	@CatalogValue(foreignCatalog=Argument.CATALOG)

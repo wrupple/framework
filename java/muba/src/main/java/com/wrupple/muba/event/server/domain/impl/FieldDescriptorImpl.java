@@ -6,11 +6,8 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.annotations.CatalogField;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldWidget;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
-import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.*;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
 /**
  * 
@@ -24,7 +21,7 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 	 */
 	private static final long serialVersionUID = -2502990328355666825L;
 	private Long id;
-	@CatalogKey(foreignCatalog=CatalogDescriptor.CATALOG_ID)
+	@ForeignKey(foreignCatalog=CatalogDescriptor.CATALOG_ID)
 	private Long foreignCatalog;
 	@CatalogFieldValues(defaultValueOptions={"Default"})
 	int dataType;
@@ -43,7 +40,7 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 
 	private List<String> defaultValueOptions, properties, sentence;
 
-	@CatalogKey(foreignCatalog=Constraint.CATALOG_ID)
+	@ForeignKey(foreignCatalog=Constraint.CATALOG_ID)
 	private List<Long> constraints;
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Constraint.CATALOG_ID)

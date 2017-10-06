@@ -210,6 +210,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			CatalogActionContext context = dictionary.spawn(system);
 			try {
 				context.setNamespace(domain);
+				context.setCatalog(catalogId);
 			} catch (Exception e) {
 				throw new RuntimeException("Unable to set namespace of catalog context during validation", e);
 			}

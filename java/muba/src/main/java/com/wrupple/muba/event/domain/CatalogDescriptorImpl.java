@@ -6,21 +6,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.wrupple.muba.event.domain.annotations.CatalogField;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
-import com.wrupple.muba.event.domain.annotations.CatalogValue;
-import com.wrupple.muba.event.domain.annotations.InheritanceTree;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.wrupple.muba.event.domain.annotations.*;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
 public class CatalogDescriptorImpl extends AbstractContractDescriptor implements CatalogDescriptor {
 
 	private static final long serialVersionUID = 7222404658673284250L;
 
-	@CatalogKey(foreignCatalog = Host.CATALOG)
+	@ForeignKey(foreignCatalog = Host.CATALOG)
 	private Long peer;
 
-	@CatalogKey(foreignCatalog = CatalogDescriptor.CATALOG_ID)
+	@ForeignKey(foreignCatalog = CatalogDescriptor.CATALOG_ID)
 	@InheritanceTree
 	private Long parent;
 
@@ -45,10 +41,10 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 						 * domain data as a field
 						 */;
 
-	@CatalogKey(foreignCatalog = FieldDescriptor.CATALOG_ID)
+	@ForeignKey(foreignCatalog = FieldDescriptor.CATALOG_ID)
 	private List<Long> fields;
 	
-	@CatalogKey(foreignCatalog = Constraint.CATALOG_ID)
+	@ForeignKey(foreignCatalog = Constraint.CATALOG_ID)
 	private List<Long> constraints;
 
 	@CatalogField(ignore = true)

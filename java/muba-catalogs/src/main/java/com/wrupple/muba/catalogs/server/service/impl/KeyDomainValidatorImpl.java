@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.server.service.KeyDomainValidator;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
@@ -31,7 +32,8 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 	}
 
 	@Override
-	public void initialize(CatalogKey constraintAnnotation) {
+	public void initialize(Annotation raw) {
+		ForeignKey constraintAnnotation = (ForeignKey) raw;
 		this.foreignCatalog = constraintAnnotation.foreignCatalog();
 		this.unique = constraintAnnotation.unique();
 	}

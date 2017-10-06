@@ -8,9 +8,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Host;
-import com.wrupple.muba.event.domain.Person;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.chain.command.StakeHolderTrigger;
@@ -20,10 +18,8 @@ import com.wrupple.muba.bpm.server.chain.command.CheckSecureConditions;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
-import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import org.apache.commons.chain.Command;
 
@@ -59,6 +55,8 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
     private final Provider<CatalogDescriptor> notificationProvider;
 
+    private final Provider<CatalogDescriptor> serviceManifestProvider;
+
     private final CatalogTriggerInterpret triggerInterpret;
 
 	private final int SECURE_STORAGE;
@@ -72,7 +70,8 @@ public class BusinessPluginImpl implements BusinessPlugin {
                               // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
                               @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
                               // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
-                              CatalogTriggerInterpret triggerInterpret, @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
+                              @Named(ServiceManifest.CATALOG) Provider<CatalogDescriptor> serviceManifestProvider, CatalogTriggerInterpret triggerInterpret, @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
+        this.serviceManifestProvider = serviceManifestProvider;
         this.triggerInterpret = triggerInterpret;
         this.SECURE_STORAGE = secureStorageIndex;
 		this.notificationProvider = notificationProvider;
@@ -84,6 +83,10 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 	@Override
 	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context)  {
+
+		if (key.equals(serviceManifestProvider.get().getId())) {
+			return serviceManifestProvider.get();
+		}
 		return null;
 	}
 

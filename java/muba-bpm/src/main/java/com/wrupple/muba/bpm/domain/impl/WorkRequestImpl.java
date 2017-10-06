@@ -17,6 +17,11 @@ public class WorkRequestImpl extends BusinessIntentImpl implements WorkRequest {
     }
 
     private String outputCatalog;
+
+    @Override
+    public String getCatalogType() {
+        return WorkRequest.CATALOG;
+    }
 }
 
 

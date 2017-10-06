@@ -53,7 +53,7 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 	}
 	
 	private CatalogDescriptor readCatalog(CatalogActionContext cctxontext, Long key,boolean assemble) throws CatalogException {
-
+		//FIXME throw exception if key is negative
 		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
 		context.setCatalog(CatalogDescriptor.CATALOG_ID);
 		context.setEntry(key);

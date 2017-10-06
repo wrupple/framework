@@ -106,7 +106,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 					}
 
 				} else {
-					log.warn("token \"{}\" from service grammar was not recognized by contract and was ignored ");
+					log.warn("token \"{}\" from service grammar was not recognized by contract and was ignored ",key);
 				}
 
 			}

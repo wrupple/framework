@@ -7,7 +7,7 @@ import java.util.List;
 import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.event.domain.annotations.CatalogKey;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
 public interface JSRAnnotationsDictionary {
 	
@@ -17,7 +17,7 @@ public interface JSRAnnotationsDictionary {
 
 	List<String> getAvailableAnnotationNames();
 
-	CatalogKey buildCatalogKeyValidation(FieldDescriptor field);
+	ForeignKey buildCatalogKeyValidation(FieldDescriptor field);
 
 	CatalogFieldValues buildNormalizationValidation(FieldDescriptor field);
 

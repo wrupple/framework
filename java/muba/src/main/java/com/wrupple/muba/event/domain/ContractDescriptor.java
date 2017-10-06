@@ -11,7 +11,7 @@ public interface ContractDescriptor extends HasDistinguishedName,HasProperties, 
 	/* 
 	 * NOT VISIBLE TO CLIENTS
 	 * (non-Javadoc)
-	 * @see com.wrupple.vegetate.domain.CatalogKey#getId()
+	 * @see com.wrupple.vegetate.domain.ForeignKey#getId()
 	 */
 	public Long getId();
 	/**

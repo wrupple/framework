@@ -18,7 +18,7 @@ import com.wrupple.muba.event.server.service.KeyDomainValidator;
 @Constraint( validatedBy = KeyDomainValidator.class )
 @Target( { FIELD} )
 @Retention( RUNTIME )
-public @interface CatalogKey {
+public @interface ForeignKey {
 	
 	String foreignCatalog();
 	

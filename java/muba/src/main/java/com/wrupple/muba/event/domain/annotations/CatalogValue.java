@@ -14,7 +14,7 @@ import com.wrupple.muba.event.server.service.KeyDomainValidator;
 
 @Documented
 @Inherited
-@Constraint( validatedBy = KeyDomainValidator.class )
+//@Constraint( validatedBy = KeyDomainValidator.class )
 @Target( { FIELD} )
 @Retention( RUNTIME )
 public @interface CatalogValue {

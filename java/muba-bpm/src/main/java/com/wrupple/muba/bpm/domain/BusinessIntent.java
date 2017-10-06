@@ -5,7 +5,7 @@ import com.wrupple.muba.event.domain.ExplicitIntent;
 
 public interface BusinessIntent extends ManagedObject ,DataEvent,ExplicitIntent {
 
-	
+	String BusinessIntent_CATALOG = "BusinessIntent";
 	//Date getDue();
 	
 
