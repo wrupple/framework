@@ -55,7 +55,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
             if(existingApplicationStateId==null){
                 //create new application state
-                applicationContext= context.getProcessManager().acquireContext(contractExplicitIntent,requestContext.getSession());
+                applicationContext= context.getProcessManager().acquireContext(contractExplicitIntent.getStateValue(),requestContext.getSession());
 
             }else{
                 //recover application state
@@ -70,7 +70,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
 
         }
-        application staate is not comming back from read
+
         context.setStateValue(applicationContext);
 
         return CONTINUE_PROCESSING;

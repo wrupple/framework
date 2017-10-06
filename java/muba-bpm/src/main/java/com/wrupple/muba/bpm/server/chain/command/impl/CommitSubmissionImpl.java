@@ -28,17 +28,16 @@ public class CommitSubmissionImpl implements CommitSubmission {
     public boolean execute(Context ctx) throws Exception {
 
         ApplicationContext context = (ApplicationContext) ctx;
-        BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
-        ApplicationContext applicationState = context.getRuntimeContext().getConvertedResult();
-        ProcessTaskDescriptor task = applicationState.getStateValue().getTaskDescriptorValue();
+        ApplicationState applicationState = context.getStateValue();
+        ProcessTaskDescriptor task = applicationState.getTaskDescriptorValue();
         String producedField = task.getOutputField();
 
         //is there submission material?
-        CatalogEntry userOutput = applicationState.getStateValue().getEntryValue();
+        CatalogEntry userOutput = applicationState.getEntryValue();
         //what task
         //what action
         //AQUI VA LO BUENO
-        Instrospection instrospection = aceess.newSession(applicationState.getStateValue());
+        Instrospection instrospection = aceess.newSession(applicationState);
 
         //conditions from GWT desktop ( CommitEditTransaction CommitSelectTransaction )... do commit
 
@@ -46,18 +45,18 @@ public class CommitSubmissionImpl implements CommitSubmission {
         if (producedField != null) {
             //TODO certain saveTo fields are reserved, like those in CatalogAction
             //GWTUtils.setAttribute(contextP, saveTo, userOutput);
-            aceess.setPropertyValue(producedField,applicationState.getStateValue(),userOutput.getId(), instrospection);
+            aceess.setPropertyValue(producedField,applicationState,userOutput.getId(), instrospection);
 
         }
 
 
 
-        CatalogEntry entry = applicationState.getStateValue().getEntryValue();
-        String transactionType = applicationState.getStateValue().getTaskDescriptorValue().getTransactionType();
-        final String catalog = (String) applicationState.getStateValue().getTaskDescriptorValue().getCatalog();
+        CatalogEntry entry = applicationState.getEntryValue();
+        String transactionType = applicationState.getTaskDescriptorValue().getTransactionType();
+        final String catalog = (String) applicationState.getTaskDescriptorValue().getCatalog();
 
-        boolean canceled = applicationState.getStateValue().isCanceled();
-        Object id =applicationState.getStateValue().getEntry();
+        boolean canceled = applicationState.isCanceled();
+        Object id =applicationState.getEntry();
         if(id ==null){
             id = entry.getId();
         }
@@ -146,7 +145,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
         entry = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
 
 
-        applicationState.getStateValue().setEntryValue(entry);
+        applicationState.setEntryValue(entry);
         return CONTINUE_PROCESSING;
     }
 
