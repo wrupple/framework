@@ -1,5 +1,6 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -213,7 +214,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 		return CONTINUE_PROCESSING;
 	}
 
-	private Context materializeContext(RuntimeContext requestContext, RequestInterpret explicitInterpret) {
+	private Context materializeContext(RuntimeContext requestContext, RequestInterpret explicitInterpret) throws InvocationTargetException, IllegalAccessException {
 		Context context = requestContext.getServiceContext();
 
 		if (context == null) {

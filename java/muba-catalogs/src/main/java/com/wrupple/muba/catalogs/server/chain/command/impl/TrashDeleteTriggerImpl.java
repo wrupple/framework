@@ -69,9 +69,9 @@ public class TrashDeleteTriggerImpl implements TrashDeleteTrigger {
 
 	private void flush(List<Object> ids, String catalogId, CatalogActionContext deleteContext) throws Exception {
 		log.trace("delete consecutive trash items so far");
-		deleteContext.setEntry(null);
-		deleteContext.setFilter(FilterDataUtils.createSingleKeyFieldFilter(CatalogEntry.ID_FIELD, ids));
-		deleteContext.setCatalog(catalogId);
+		deleteContext.getRequest().setEntry(null);
+		deleteContext.getRequest().setFilter(FilterDataUtils.createSingleKeyFieldFilter(CatalogEntry.ID_FIELD, ids));
+		deleteContext.getRequest().setCatalog(catalogId);
 		delete.execute(deleteContext);
 	}
 

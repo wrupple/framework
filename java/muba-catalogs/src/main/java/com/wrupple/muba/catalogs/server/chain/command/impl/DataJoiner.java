@@ -98,7 +98,7 @@ public abstract class DataJoiner implements Command {
 		if (log.isInfoEnabled()) {
 			log.trace("[BUILD RESULT SET] {} {} ", mainCatalog.getDistinguishedName(), Arrays.deepToString(joins));
 		}
-		context.setEntry(null);
+		context.getRequest().setEntry(null);
 		// for each join a separate result set is added to the response
 
 		String[] joinSentence;
@@ -267,7 +267,7 @@ public abstract class DataJoiner implements Command {
 
 		// Find values to join
 		FilterData currentQueryFilter = createJoinSubquery(context, foreignField, fieldValues);
-		context.setCatalog(catalog.getDistinguishedName());
+		context.getRequest().setCatalog(catalog.getDistinguishedName());
 		List<CatalogEntry> currentMatchingEntries;
 		if (currentQueryFilter == null) {
 			currentMatchingEntries = Collections.EMPTY_LIST;
@@ -293,7 +293,7 @@ public abstract class DataJoiner implements Command {
 
 			regreso.addFilter(criteria);
 
-			context.setFilter(regreso);
+			context.getRequest().setFilter(regreso);
 			return regreso;
 		}
 	}
@@ -366,16 +366,16 @@ public abstract class DataJoiner implements Command {
 
 		switch (catalog.getLocalization()) {
 		case 1:
-			FilterData membershipFactors = createFilters(context.getLocale(), context.getCatalogDescriptor().getId());
+			FilterData membershipFactors = createFilters(context.getRequest().getLocale(), context.getCatalogDescriptor().getId());
 			log.debug("[build localized results] {}", membershipFactors);
-			context.setCatalog(DistributiedLocalizedEntry.CATALOG);
+			context.getRequest().setCatalog(DistributiedLocalizedEntry.CATALOG);
 			context.setResults(result);
-			context.setFilter(membershipFactors);
+			context.getRequest().setFilter(membershipFactors);
 			separateEntityStrategy.execute(context);
 			break;
 		case 0:
 		default:
-			context.setCatalog(catalog.getDistinguishedName());
+			context.getRequest().setCatalog(catalog.getDistinguishedName());
 			context.setResults(result);
 			sameEntityStrategy.execute(context);
 			break;

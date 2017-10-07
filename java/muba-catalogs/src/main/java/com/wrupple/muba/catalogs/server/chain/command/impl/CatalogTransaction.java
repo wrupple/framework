@@ -31,16 +31,16 @@ public class CatalogTransaction {
 
         CatalogActionCommit preprocessEvent=catalogActionCommitProvider.get();//Extends catalog action request
         preprocessEvent.setName(action);
-        context.setName(action);
+        context.getRequest().setName(action);
         preprocessEvent.setLiveContext(context);
         preprocessEvent.setRequestValue((CatalogActionRequest) context.getRuntimeContext().getServiceContract());
-        preprocessEvent.setDomain((Long) context.getDomain());
+        preprocessEvent.setDomain((Long) context.getRequest().getDomain());
         context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
 
     }
 
     public void postProcess(CatalogActionContext context,String catalog,String action, CatalogEntry regreso) throws Exception {
-        CatalogEvent event=new CatalogEventImpl((Long) context.getDomain(), catalog,action, regreso);
+        CatalogEvent event=new CatalogEventImpl((Long) context.getRequest().getDomain(), catalog,action, regreso);
         event.setLiveContext(context);
         if(context.getOldValues()!=null){
             event.setOldValues(context.getOldValues());
@@ -58,7 +58,7 @@ public class CatalogTransaction {
             people.pushToPath(HasStakeHolder.STAKE_HOLDER_FIELD);
             observers = Collections.singletonList(people);
         }
-        event.setDomain((Long) context.getDomain());
+        event.setDomain((Long) context.getRequest().getDomain());
 
         context.getRuntimeContext().getEventBus().broadcastEvent(event,context.getRuntimeContext(),observers);
 

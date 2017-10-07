@@ -6,10 +6,12 @@ import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.SessionContext;
+import org.apache.commons.beanutils.BeanUtils;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.lang.reflect.InvocationTargetException;
 
 /*SequentialProcessManger imports
 import com.google.gwt.core.client.JavaScriptObject;
@@ -63,8 +65,9 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, SessionContext thread) {
+    public ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, SessionContext thread) throws InvocationTargetException, IllegalAccessException {
         ApplicationState newState = applicationStateProvider.get();
+        BeanUtils.copyProperties(newState,copyFieldValuesFrom);
         newState.setSession(thread.getSessionValue().getId());
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState,ApplicationState.CATALOG);
         return newState;

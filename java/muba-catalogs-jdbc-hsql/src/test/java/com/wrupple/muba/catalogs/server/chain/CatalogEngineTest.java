@@ -3,6 +3,8 @@ package com.wrupple.muba.catalogs.server.chain;
 import static org.easymock.EasyMock.anyObject;
 import static org.junit.Assert.assertTrue;
 
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.event.domain.*;
@@ -11,6 +13,8 @@ import org.junit.Test;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+
+import java.util.List;
 
 public class CatalogEngineTest extends IntegralTest {
 
@@ -35,8 +39,7 @@ public class CatalogEngineTest extends IntegralTest {
 		replayAll();
 
 		CatalogDescriptor problemContract = builder.fromClass(MathProblem.class, MathProblem.class.getSimpleName(),
-				"Math Problem", 0, builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG_TIMELINE,
-						ContentNode.class.getSimpleName(), -1l, null));
+				"Math Problem",  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
         FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
         assertTrue( solutionFieldDescriptor!= null);
 
@@ -53,7 +56,10 @@ public class CatalogEngineTest extends IntegralTest {
 
 		problemContract = catalogContext.getEntryResult();
 		assertTrue(problemContract.getId() != null);
-		assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
+        assertTrue(problemContract.getDomain() != null);
+        assertTrue(((Long)problemContract.getDomain()).longValue()==CatalogEntry.PUBLIC_ID);
+
+        assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
 		solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
 		assertTrue( solutionFieldDescriptor!= null);
         assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
@@ -64,16 +70,20 @@ public class CatalogEngineTest extends IntegralTest {
 		runtimeContext.reset();
 
 		runtimeContext.setServiceContract(null);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
-				CatalogActionRequest.LOCALE_FIELD, CatalogActionRequest.READ_ACTION);
+		runtimeContext.setSentence(
+		        CatalogServiceManifest.SERVICE_NAME,
+                CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogActionRequest.LOCALE_FIELD,
+                CatalogActionRequest.READ_ACTION);
 		runtimeContext.process();
 		catalogContext = runtimeContext.getServiceContext();
-		assertTrue(catalogContext.getResults() != null);
-		assertTrue(!catalogContext.getResults().isEmpty());
+		List<CatalogEntry> catalogList = catalogContext.getResults();
+		assertTrue(catalogList != null);
+		assertTrue(!catalogList.isEmpty());
 		boolean contained = false;
 
-		for (CatalogEntry id : catalogContext.getResults()) {
-			if(id.getId().equals(problemContract.getDistinguishedName())){
+		for (CatalogEntry existingCatalog : catalogList) {
+			if(existingCatalog.getId().equals(problemContract.getId())){
 				contained = true ;
 				break;
 			}
@@ -83,7 +93,7 @@ public class CatalogEngineTest extends IntegralTest {
 		log.trace("[-see registered catalog Descriptor-]");
 		runtimeContext.reset();
 
-        catalogContext.setCatalog(MathProblem.class.getSimpleName());
+        catalogContext.getRequest().setCatalog(MathProblem.class.getSimpleName());
         problemContract = catalogContext.getCatalogDescriptor();
         log.trace("[-verifying catalog graph integrity-]");
         assertTrue(problemContract.getId() != null);

@@ -46,9 +46,9 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 		} else {
 
 			CatalogActionContext read = cms.spawn(exp.get());
-			read.setFilter(null);
-			read.setEntry(null);
-			read.setCatalog(foreignCatalog);
+			read.getRequest().setFilter(null);
+			read.getRequest().setEntry(null);
+			read.getRequest().setCatalog(foreignCatalog);
 			if (unique || nativeInterface.isCollection(value)) {
 				Collection<Object> colection = (Collection<Object>) value;
 				Set<Object> uniqueCollection = new HashSet<Object>();
@@ -76,7 +76,7 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 	}
 
 	private boolean foundValues(CatalogActionContext context, Set<Object> value) throws Exception {
-		context.setFilter(
+		context.getRequest().setFilter(
 				FilterDataUtils.createSingleKeyFieldFilter(context.getCatalogDescriptor().getKeyField(), value));
 
 		context.getCatalogManager().getRead().execute(context);
@@ -84,7 +84,7 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 	}
 
 	private boolean foundValue(CatalogActionContext context, Object value) throws Exception {
-		context.setEntry(value);
+		context.getRequest().setEntry(value);
 
 		context.getCatalogManager().getRead().execute(context);
 		return context.getResults() != null && !context.getResults().isEmpty();

@@ -208,8 +208,7 @@ public class CommitHumanSolution extends MubaTest {
 
         //FIXME stack overflow when no parent is specified, ok when consolidated?
         CatalogDescriptor solutionContract = builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
-                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG_TIMELINE,
-                        ContentNode.class.getSimpleName(), -1l, null));
+                "Equation System Solution", 0, injector.getI);
 
         CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(solutionContract);
@@ -230,7 +229,7 @@ public class CommitHumanSolution extends MubaTest {
         problem.setDistinguishedName("my first problem");
         problem.setName("my first problem");
         problem.setCatalog(EquationSystemSolution.CATALOG);
-        problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
+        problem.setName(CatalogActionRequest.CREATE_ACTION);
         problem.setSentence(
                 Arrays.asList(
                         // x * y = 4

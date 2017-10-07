@@ -31,7 +31,7 @@ public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTim
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
-		CatalogEntry node = (CatalogEntry) context.getEntryValue();
+		CatalogEntry node = (CatalogEntry) context.getRequest().getEntryValue();
         Instrospection instrospection = context.getCatalogManager().access().newSession(node);
         CatalogDescriptor catalog = context.getCatalogDescriptor();
         context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), instrospection);

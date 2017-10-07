@@ -66,7 +66,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
         // use PropertyUtilsBean (bean utils) and dump srping
         private Object getPropertyValue2(Object bean, String property) throws IntrospectionException,
-                IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+                IllegalArgumentException,IllegalAccessException, InvocationTargetException   {
             Class<?> beanClass = bean.getClass();
             PropertyDescriptor propertyDescriptor = getPropertyDescriptor(beanClass, property);
             if (propertyDescriptor == null) {
@@ -106,7 +106,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
         }
 
         private Object getPropertyValue(CatalogEntry object, String fieldId)
-                throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+                throws  IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
             return bean.getProperty(object, fieldId);
         }
@@ -212,7 +212,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
 
     private Object goBeanGet(FieldAccessInstrospection session, CatalogEntry object, String fieldId)
-            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IntrospectionException,
+            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException , IntrospectionException,
             NoSuchMethodException {
         return session.getPropertyValue(object, fieldId);
     }

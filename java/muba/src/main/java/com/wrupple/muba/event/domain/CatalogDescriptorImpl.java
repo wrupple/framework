@@ -81,7 +81,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	public CatalogDescriptorImpl() {
 	}
 
-	public CatalogDescriptorImpl(String catalogId, Class<? extends CatalogEntry> clazz, long numericId, String catalogName, Long parentId,
+	public CatalogDescriptorImpl(String catalogId, Class<? extends CatalogEntry> clazz, Long numericId, String catalogName, Long parentId,
 			FieldDescriptor... descriptors) {
 		this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>();
 		if (descriptors != null) {

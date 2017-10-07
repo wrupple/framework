@@ -61,11 +61,13 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 	private final int SECURE_STORAGE;
 	private final Command[] catalogActions;
+    private final Provider<CatalogDescriptor> state;
 
 
-	@Inject
+    @Inject
 	public BusinessPluginImpl(ValueChangeListener changeListener,
                               ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
+							  @Named(ApplicationState.CATALOG) Provider<CatalogDescriptor> state,
                               @Named(Workflow.CATALOG) Provider<CatalogDescriptor> appItem,
                               // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
                               @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
@@ -75,7 +77,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
         this.triggerInterpret = triggerInterpret;
         this.SECURE_STORAGE = secureStorageIndex;
 		this.notificationProvider = notificationProvider;
-
+        this.state=state;
 		this.appItem=appItem;
 
 		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
@@ -96,7 +98,9 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			return appItem.get();
 		} else if (WorkRequest.CATALOG.equals(catalogId)) {
 			return notificationProvider.get();
-		}/* else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
+		}else if (ApplicationState.CATALOG.equals(catalogId)) {
+            return state.get();
+        }/* else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
 			return clientProvider.get();
 		} else if (VegetateAuthenticationToken.CATALOG_TIMELINE.equals(catalogId)) {
 			return authTokenDescriptor.get();

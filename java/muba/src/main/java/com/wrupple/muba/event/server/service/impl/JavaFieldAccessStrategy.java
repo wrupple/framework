@@ -182,7 +182,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
 
     private void doBeanSet(Instrospection instrospection, CatalogEntry object, String fieldId, Object value)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            throws IllegalAccessException, InvocationTargetException  , NoSuchMethodException {
         nativeInterface.setProperty(object, fieldId, value, instrospection);
     }
 

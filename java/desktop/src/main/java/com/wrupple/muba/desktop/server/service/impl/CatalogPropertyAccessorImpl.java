@@ -103,7 +103,7 @@ public class CatalogPropertyAccessorImpl implements CatalogPropertyAccesor {
 		}
 
 		private Object getPropertyValue(Object bean, String property)
-				throws IntrospectionException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+				throws IntrospectionException, IllegalArgumentException,   {
 			Class<?> beanClass = bean.getClass();
 			PropertyDescriptor propertyDescriptor = getPropertyDescriptor(beanClass, property);
 			if (propertyDescriptor == null) {
@@ -414,12 +414,12 @@ public class CatalogPropertyAccessorImpl implements CatalogPropertyAccesor {
 	}
 
 	private Object goBeanGet(FieldAccessSession session, CatalogEntry object, String fieldId)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, IntrospectionException {
+			throws IllegalArgumentException,  , IntrospectionException {
 		return session.getPropertyValue(object, fieldId);
 	}
 
 	private void doBeanSet(FieldAccessSession session, CatalogEntry object, String fieldId, Object value)
-			throws IllegalAccessException, InvocationTargetException {
+			throws   {
 		BeanUtils.setProperty(object, fieldId, value);
 	}
 

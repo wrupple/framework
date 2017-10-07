@@ -27,7 +27,7 @@ public class SameEntityLocalizationStrategy implements I18nProcessing {
 		List<CatalogEntry> result = context.getResults();
 		int size = result.size();
 		List<CatalogEntry> regreso = new ArrayList<CatalogEntry>(size);
-		String locale = context.getLocale();
+		String locale = context.getRequest().getLocale();
 		Long id = context.getCatalogDescriptor().getId();
 		log.trace("[WRAPPING RESULTS] {}/{}",size,locale);
 		for (int i = 0; i < size; i++) {

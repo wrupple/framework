@@ -48,7 +48,7 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
                 instrospection = context.getCatalogManager().access().newSession(e);
                 trashContext = context.getCatalogManager().spawn(context);
 
-				trashContext.setName(CatalogActionRequest.CREATE_ACTION);
+				trashContext.getRequest().setName(CatalogActionRequest.CREATE_ACTION);
 			}
             trashed = (Boolean) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
             if (trashed != null && trashed) {
@@ -58,9 +58,9 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 						context.getCatalogManager().encodeClientPrimaryKeyFieldValue(e.getId(), field, catalog));
 				trashItem.setCatalog(catalog.getDistinguishedName());
 
-				trashContext.setCatalog(catalog.getDistinguishedName());
-				trashContext.setEntryValue(trashItem);
-				trashContext.setDomain((Long) e.getDomain());
+				trashContext.getRequest().setCatalog(catalog.getDistinguishedName());
+				trashContext.getRequest().setEntryValue(trashItem);
+				trashContext.getRequest().setDomain((Long) e.getDomain());
 				create.execute(trashContext);
 			}
 		}

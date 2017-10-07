@@ -33,7 +33,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 
 	@Override
 	public <T extends CatalogEntry> T get(CatalogActionContext context, String catalogId, Object targetEntryId) {
-		long domain = ((Long)context.getDomain()).longValue();
+		long domain = ((Long)context.getNamespaceContext().getId()).longValue();
 		T r = (T) assertEntrycache(domain, catalogId).get(targetEntryId);
 		if (r != null) {
 			log.trace("[CACHE SATISFIED ENTRY {}]", targetEntryId);
@@ -50,7 +50,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 
 	@Override
 	public void put(CatalogActionContext context, String catalogId, Object explicitKey, CatalogEntry entry) {
-		long domain = ((Long)context.getDomain()).longValue();
+		long domain = ((Long)context.getNamespaceContext().getId()).longValue();
 		assertEntrycache(domain, catalogId).put(explicitKey, entry);
 		log.trace("[NEW CACHE ENTRY {}]", entry.getId());
 	}
@@ -63,7 +63,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 			ids.add(entry.getId());
 			put(context, catalogId, entry);
 		}
-		long domain = ((Long)context.getDomain()).longValue();
+		long domain = ((Long)context.getRequest().getDomain()).longValue();
 		assertListcache(domain, catalogId).put(filterData, ids);
 	}
 
@@ -71,7 +71,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 	public <T extends CatalogEntry> List<T> satisfy(CatalogActionContext context, String catalogId,
 			FilterData filterData) {
 		FilterDataImpl filter = (FilterDataImpl /* hashcode implementation */) filterData;
-		long domain = ((Long)context.getDomain()).longValue();
+		long domain = ((Long)context.getRequest().getDomain()).longValue();
 		Map<Object, Object> cache = assertListcache(domain, catalogId);
 
 		// TODO is a larger range satisfied that could be cut to satisfy this
@@ -106,7 +106,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 	@Override
 	public void delete(CatalogActionContext context, String catalogId, Object targetEntryId) {
 		if (targetEntryId != null) {
-			long domain = ((Long)context.getDomain()).longValue();
+			long domain = ((Long)context.getRequest().getDomain()).longValue();
 			assertEntrycache(domain, catalogId).remove(targetEntryId);
 			assertListcache(domain, catalogId).clear();
 		}
@@ -114,7 +114,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 
 	@Override
 	public void clearLists(CatalogActionContext context, String catalogId) {
-		long domain = ((Long)context.getDomain()).longValue();
+		long domain = ((Long)context.getRequest().getDomain()).longValue();
 		assertListcache(domain, catalogId).clear();
 	}
 

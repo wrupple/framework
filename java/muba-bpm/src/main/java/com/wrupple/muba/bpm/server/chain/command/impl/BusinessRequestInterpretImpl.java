@@ -1,8 +1,6 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.BusinessIntent;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
@@ -17,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * Created by japi on 16/08/17.
@@ -42,20 +41,21 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
     @Override
     public boolean execute(Context ctx) throws Exception {
-        RuntimeContext requestContext = (RuntimeContext) ctx;
-        BusinessIntent contractExplicitIntent = (BusinessIntent) requestContext.getServiceContract();
-        ApplicationContext context = requestContext.getServiceContext();
+        RuntimeContext thread = (RuntimeContext) ctx;
+        BusinessIntent contract = (BusinessIntent) thread.getServiceContract();
+        ApplicationContext context = thread.getServiceContext();
 
-        ApplicationState applicationContext = (ApplicationState) contractExplicitIntent.getStateValue();
+        ApplicationState state = (ApplicationState) contract.getStateValue();
 
-        if(applicationContext==null){
-            Object existingApplicationStateId = contractExplicitIntent.getState();
+        if(state==null){
+            Object existingApplicationStateId = contract.getState();
 
 
 
             if(existingApplicationStateId==null){
+                //FIXME recover application state by session id?
                 //create new application state
-                applicationContext= context.getProcessManager().acquireContext(contractExplicitIntent.getStateValue(),requestContext.getSession());
+                state= context.getProcessManager().acquireContext(contract.getStateValue(),thread.getSession());
 
             }else{
                 //recover application state
@@ -65,14 +65,51 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
                 request.setEntry(existingApplicationStateId);
                 request.setName(CatalogActionRequest.READ_ACTION);
 
-                applicationContext=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
+                state=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
             }
 
 
         }
+        setWorkingTask(state,context);
 
-        context.setStateValue(applicationContext);
+
+        context.setStateValue(state);
 
         return CONTINUE_PROCESSING;
+    }
+
+    private void setWorkingTask(ApplicationState state, ApplicationContext context) {
+        Workflow application = (Workflow) state.getHandleValue();
+        List<ProcessTaskDescriptor> workflow = application.getProcessValues();
+        List<Long> workflowKeys = application.getProcess();
+
+            if(state.getTaskDescriptorValue()==null){
+                if(state.getTaskDescriptor()==null){
+                    //default start at first
+                    state.setTaskDescriptorValue(workflow.get(0));
+                }else{
+                    //get key index and set
+                    int index = workflowKeys.indexOf(state.getTaskDescriptor());
+                    if(index<0){
+                        log.error("workflow contains no task with id {}",state.getTaskDescriptor());
+                    }
+                    state.setTaskDescriptorValue(workflow.get(index));
+                }
+            }else{
+                //value takes precedence over key, so overwrite key
+                state.setTaskDescriptor(state.getTaskDescriptorValue().getId());
+                if(workflowKeys!=null){
+                    if( !workflowKeys.contains(state.getTaskDescriptor())){
+                        throw new IllegalArgumentException("workflow contains no task with id "+state.getTaskDescriptor());
+
+                    }
+                }else {
+                    if(!workflow.contains(state.getTaskDescriptorValue())) {
+                        throw new IllegalArgumentException("workflow contains no task with id " + state.getTaskDescriptor());
+                    }
+                }
+            }
+
+
     }
 }

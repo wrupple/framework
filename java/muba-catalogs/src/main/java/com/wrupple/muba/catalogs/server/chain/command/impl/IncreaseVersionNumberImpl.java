@@ -26,7 +26,7 @@ public class IncreaseVersionNumberImpl implements IncreaseVersionNumber {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogEntry old = (CatalogEntry) context.getOldValue();
 		CatalogDescriptor catalog =  context.getCatalogDescriptor();
-		CatalogEntry updated = (CatalogEntry) context.getEntryValue();
+		CatalogEntry updated = (CatalogEntry) context.getRequest().getEntryValue();
 		Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) old);
 		FieldDescriptor versionField = catalog.getFieldDescriptor(Versioned.FIELD);
 		Long version = (Long) context.getCatalogManager().access().getPropertyValue(versionField, (CatalogEntry) old, null, instrospection);

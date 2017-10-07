@@ -1,16 +1,12 @@
 package com.wrupple.muba.catalogs.server.service;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.CatalogManager;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.DistributiedLocalizedEntry;
-import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager, JSRAnnotationsDictionary, CatalogKeyServices {
@@ -82,12 +78,6 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager, JSRA
 
 
 	void evalTemplate(String value, PrintWriter out, String locale, CatalogActionContext ccontext);
-
-
-		CatalogActionContext spawn(CatalogActionContext parent);
-		
-		CatalogActionContext spawn(RuntimeContext system);
-		
 
 
 		<T extends CatalogEntry> List<T> getAvailableCatalogs(CatalogActionContext context) throws Exception;

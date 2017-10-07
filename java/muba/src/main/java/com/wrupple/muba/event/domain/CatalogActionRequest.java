@@ -18,4 +18,7 @@ public interface CatalogActionRequest extends HasLocale,DataEvent {
     void setFollowReferences(boolean followReferences);
 
 
+	void setFilter(FilterData filter);
+
+	void setEntryValue(Object foreignValue);
 }

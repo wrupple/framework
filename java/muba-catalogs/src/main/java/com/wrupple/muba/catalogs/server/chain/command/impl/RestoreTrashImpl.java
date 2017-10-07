@@ -41,7 +41,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			all.addOrdering(new FilterDataOrderingImpl(HasCatalogId.CATALOG_FIELD, false));
 
 			// READ ALL TRASH ITEMS ORDERED BY NUMERIC_ID TYPE
-			context.setFilter(all);
+			context.getRequest().setFilter(all);
 			context.getCatalogManager().getRead().execute(context);
 			List<Trash> trash = context.getResults();
 			String catalogId = null;
@@ -49,7 +49,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			FieldDescriptor trashField = null;
 
 			context.setResults(trash);
-			context.setFilter(null);
+			context.getRequest().setFilter(null);
 			for (Trash entry : trash) {
 				if (catalogId == null || !catalogId.equals(entry.getCatalog())) {
 					// ONLY CHANGE SERVICES WHEN TRASH TYPE CHANGES, HOPEFULLY
@@ -62,9 +62,9 @@ public class RestoreTrashImpl implements RestoreTrash {
 				undelete(e, context, descriptor, trashField, instrospection);
 			}
 			// DUMP TRASH
-			context.setCatalog(Trash.CATALOG);
-			context.setFilter(all);
-			context.setEntry(null);
+			context.getRequest().setCatalog(Trash.CATALOG);
+			context.getRequest().setFilter(all);
+			context.getRequest().setEntry(null);
 			context.getCatalogManager().getDelete().execute(context);
 		} else {
 
@@ -74,13 +74,13 @@ public class RestoreTrashImpl implements RestoreTrash {
 			CatalogDescriptor descriptor = context.getCatalogManager().getDescriptorForName(catalogId, context);
 			FieldDescriptor trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
             Instrospection instrospection = context.getCatalogManager().access().newSession(null);
-            context.setFilter(null);
+            context.getRequest().setFilter(null);
 			undelete(e, context, descriptor, trashField, instrospection);
 
 			// DUMP TRASH
-			context.setCatalog(Trash.CATALOG);
-			context.setFilter(null);
-			context.setEntry(e.getId());
+			context.getRequest().setCatalog(Trash.CATALOG);
+			context.getRequest().setFilter(null);
+			context.getRequest().setEntry(e.getId());
 			context.getCatalogManager().getDelete().execute(context);
 
 			// SINCE THIS TRIGGER IS PERFORMED BEFORE ACTION IS COMMITED,
@@ -98,12 +98,12 @@ public class RestoreTrashImpl implements RestoreTrash {
 			log.trace("[UNDELETE] {}", e);
 			Object entryId = e.getEntry();
 			String catalogId = e.getCatalog();
-			context.setCatalog(catalogId);
-			context.setEntry(entryId);
+			context.getRequest().setCatalog(catalogId);
+			context.getRequest().setEntry(entryId);
 			context.getCatalogManager().getRead().execute(context);
 			CatalogEntry trashedEntry = context.getEntryResult();
             context.getCatalogManager().access().setPropertyValue(trashField, trashedEntry, false, instrospection);
-            context.setEntryValue(trashedEntry);
+            context.getRequest().setEntryValue(trashedEntry);
 			context.getCatalogManager().getWrite().execute(context);
 
 		}

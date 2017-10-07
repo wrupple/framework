@@ -85,7 +85,7 @@ public class WebEventServiceManifestImpl extends CatalogServiceManifestImpl impl
 		return userContext;
 	}
 
-	private CatalogActionContext processAsContractClass(String stream) throws IllegalAccessException, InvocationTargetException, IOException {
+	private CatalogActionContext processAsContractClass(String stream) throws  IOException {
 		Object contract = mapper.readValue(stream, CatalogActionRequestImpl.class);
 		CatalogActionContext context = contextProvider.get();
 		BeanUtils.copyProperties(context, contract);

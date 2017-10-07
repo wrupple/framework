@@ -43,8 +43,8 @@ public class NamespaceContextImpl extends ContextBase implements NamespaceContex
 		if(multitenant){
 			clear();
 			CatalogActionContext spawn = context.getCatalogManager().spawn(context);
-			spawn.setEntry(requestedDomain);
-			spawn.setCatalog(CatalogNamespace.CATALOG);
+			spawn.getRequest().setEntry(requestedDomain);
+			spawn.getRequest().setCatalog(CatalogNamespace.CATALOG);
 			try {
 				read.get().execute(spawn);
 			} catch (Exception e) {

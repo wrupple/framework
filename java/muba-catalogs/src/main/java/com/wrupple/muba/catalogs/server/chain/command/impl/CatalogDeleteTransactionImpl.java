@@ -58,8 +58,8 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 
 			for (CatalogEntry originalEntry : originalEntries) {
                 context.getCatalogManager().access().setPropertyValue(trashableField, originalEntry, true, instrospection);
-                context.setEntry(originalEntry.getId());
-				context.setEntryValue(originalEntry);
+                context.getRequest().setEntry(originalEntry.getId());
+				context.getRequest().setEntryValue(originalEntry);
 				update.execute(context);
 			}
 
@@ -88,7 +88,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 					// AncestorAware DAO
 					childContext.setCatalogDescriptor(
 							childContext.getCatalogManager().getDescriptorForKey(parentCatalogId, childContext));
-					childContext.setEntry(parentEntityId);
+					childContext.getRequest().setEntry(parentEntityId);
 
 					context.getCatalogManager().getDelete().execute(childContext);
 

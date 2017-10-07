@@ -126,9 +126,9 @@ public class GarbageCollectionImpl implements GarbageCollection {
 							garbageContext = context.getCatalogManager().spawn(context);
 						}
 						log.trace("Querying for hard references");
-						garbageContext.setEntry(null);
-						garbageContext.setCatalog(temp.getDistinguishedName());
-						garbageContext.setFilter(garbageFilter);
+						garbageContext.getRequest().setEntry(null);
+						garbageContext.getRequest().setCatalog(temp.getDistinguishedName());
+						garbageContext.getRequest().setFilter(garbageFilter);
 						delete.execute(garbageContext);
 					}
 				}

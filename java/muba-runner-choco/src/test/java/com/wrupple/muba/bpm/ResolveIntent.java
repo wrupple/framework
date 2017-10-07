@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
@@ -52,8 +54,7 @@ public class ResolveIntent extends IntegralTest {
 
         //FIXME stack overflow when no parent is specified, ok when consolidated?
         CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
-                "Equation System Solution", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG_TIMELINE,
-                        ContentNode.class.getSimpleName(), -1l, null));
+                "Equation System Solution", 0,  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
         CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(solutionContract);
 
@@ -73,7 +74,7 @@ public class ResolveIntent extends IntegralTest {
         problem.setDistinguishedName("equation system");
         problem.setName("equation system");
         problem.setCatalog(EquationSystemSolution.CATALOG);
-        problem.setTransactionType(CatalogActionRequest.CREATE_ACTION);
+        problem.setName(CatalogActionRequest.CREATE_ACTION);
         problem.setSentence(
                 Arrays.asList(
                         // x * y = 4

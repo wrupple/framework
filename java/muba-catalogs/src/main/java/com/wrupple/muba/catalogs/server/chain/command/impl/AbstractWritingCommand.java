@@ -20,7 +20,7 @@ public abstract class AbstractWritingCommand implements DataWritingCommand {
 	@Override
 	public void undo(ServiceContext ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
-		context.setEntryValue(context.getOldValue());
+		context.getRequest().setEntryValue(context.getOldValue());
 		context.setOldValue((CatalogEntry)context.getEntryResult());
 		write.get().execute(context);
 	}

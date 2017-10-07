@@ -28,8 +28,6 @@ public class InferNextTaskImpl implements InferNextTask {
     public boolean execute(Context ctx) throws Exception {
 
         ApplicationContext context = (ApplicationContext) ctx;
-        BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
-        ApplicationContext applicationState = context.getRuntimeContext().getConvertedResult();
 
          /*
             BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
@@ -39,22 +37,17 @@ public class InferNextTaskImpl implements InferNextTask {
 
         */
 
-        Workflow item = (Workflow) applicationState.getStateValue().getHandleValue();
-        List<ProcessTaskDescriptor> workflow = item.getProcessValues();
+        Workflow item = (Workflow) context.getStateValue().getHandleValue();
 
-        ProcessTaskDescriptor nextTask ;
-        int nextTaskIndex = applicationState.getStateValue().getTaskIndex()+1;
-        if(workflow.size()<=nextTaskIndex){
-            applicationState.getStateValue().setTaskIndex(nextTaskIndex);
-            nextTask = workflow.get(applicationState.getStateValue().getTaskIndex());
-        }else{
+        ProcessTaskDescriptor nextTask = getNextWorkflowTask(item.getProcess(),item,context.getStateValue());
+        if(nextTask==null){
 
             // PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
             //state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
 
             WorkCompleteEvent event = eventProvider.get();
 
-            event.setCatalog((String) applicationState.getStateValue().getTaskDescriptorValue().getCatalog());
+            event.setCatalog((String) context.getStateValue().getTaskDescriptorValue().getCatalog());
             String command = item.getExit();
             if(command==null){
                 if(item.getExplicitSuccessorValue()==null){
@@ -66,23 +59,33 @@ public class InferNextTaskImpl implements InferNextTask {
             }
 
             event.setName(command);
-            event.setResult(applicationState.getStateValue().getEntryValue());
-            event.setStateValue(applicationState.getStateValue());
+            event.setResult(context.getStateValue().getEntryValue());
+            event.setStateValue(context.getStateValue());
 
             log.info("firing workflow finished event to survey output Handlers");
-            applicationState.getRuntimeContext().getEventBus().fireEvent(event,context.getRuntimeContext(),null);
+            context.getRuntimeContext().getEventBus().fireEvent(event,context.getRuntimeContext(),null);
 
-            applicationState.getStateValue().setHandleValue(event.getHandleValue());
+            context.getStateValue().setHandleValue(event.getHandleValue());
             nextTask= event.getTaskDescriptorValue();
 
         }
 
-        applicationState.getStateValue().setTaskDescriptorValue(nextTask);
-        applicationState.getStateValue().setTaskDescriptor(nextTask.getId());
+        context.getStateValue().setTaskDescriptorValue(nextTask);
+        context.getStateValue().setTaskDescriptor(nextTask.getId());
 
         return CONTINUE_PROCESSING;
     }
 
+    private ProcessTaskDescriptor getNextWorkflowTask(List<Long> workflow, Workflow application, ApplicationState state) {
+        int index = workflow.indexOf(state.getTaskDescriptor());
+        index++;
+        if(index<workflow.size()){
+            return application.getProcessValues().get(index);
+        }else{
+            return null;
+        }
+
+    }
 
 
 }

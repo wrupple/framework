@@ -16,8 +16,7 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
     @Override
     public boolean execute(Context  ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
-            BusinessIntent contractExplicitIntent = (BusinessIntent) context.getRuntimeContext().getServiceContract();
-            ApplicationState applicationState = context.getRuntimeContext().getConvertedResult();
+            ApplicationState applicationState = context.getStateValue();
 
             applicationState.setEntryValue((CatalogEntry) context.getRuntimeContext().getServiceContract());
 

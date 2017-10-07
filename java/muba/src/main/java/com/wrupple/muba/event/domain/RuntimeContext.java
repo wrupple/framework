@@ -98,4 +98,6 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	RuntimeContext spawnChild();
 
+
+	TransactionHistory getTransactionHistory();
 }

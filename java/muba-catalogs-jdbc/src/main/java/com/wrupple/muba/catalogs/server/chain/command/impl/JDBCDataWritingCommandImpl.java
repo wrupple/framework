@@ -53,11 +53,11 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
 		CatalogEntry originalEntry = context.getCatalogManager().access().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
 
-		CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
+		CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
 		Instrospection instrospection = context.getCatalogManager().access().newSession(originalEntry);
 
 		updatedEntry.setDomain((Long) originalEntry.getDomain());
-		Object id = context.getEntry();
+		Object id = context.getRequest().getEntry();
 		Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
 		List<Object> params = new ArrayList<Object>(fields.size());
 		Object fieldValue;

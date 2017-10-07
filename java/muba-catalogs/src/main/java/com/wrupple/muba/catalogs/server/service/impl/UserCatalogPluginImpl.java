@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.inject.Singleton;
@@ -38,12 +39,12 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 	}
 	
 
-	private List<CatalogDescriptor> readCatalogs(CatalogActionContext cctxontext, FilterData filter,boolean assemble) throws CatalogException {
+	private List<CatalogDescriptor> readCatalogs(CatalogActionContext cctxontext, FilterData filter,boolean assemble) throws CatalogException{
 
 		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
-		context.setCatalog(CatalogDescriptor.CATALOG_ID);
-		context.setFilter(filter);
-		context.setFollowReferences(assemble);
+		context.getRequest().setCatalog(CatalogDescriptor.CATALOG_ID);
+		context.getRequest().setFilter(filter);
+		context.getRequest().setFollowReferences(assemble);
 		try {
 			context.getCatalogManager().getRead().execute(context);
 		} catch (Exception e) {
@@ -52,12 +53,14 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 		return  context.getResults();
 	}
 	
-	private CatalogDescriptor readCatalog(CatalogActionContext cctxontext, Long key,boolean assemble) throws CatalogException {
-		//FIXME throw exception if key is negative
+	private CatalogDescriptor readCatalog(CatalogActionContext cctxontext, Long key,boolean assemble) throws CatalogException{
+		if(key.longValue()<0){
+			throw new IllegalArgumentException("No negative keys allowed for user defined catalogs: "+key);
+		}
 		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
-		context.setCatalog(CatalogDescriptor.CATALOG_ID);
-		context.setEntry(key);
-		context.setFollowReferences(assemble);
+		context.getRequest().setCatalog(CatalogDescriptor.CATALOG_ID);
+		context.getRequest().setEntry(key);
+		context.getRequest().setFollowReferences(assemble);
 		try {
 			context.getCatalogManager().getRead().execute(context);
 		} catch (Exception e) {

@@ -71,7 +71,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			context.getRuntimeContext().getSession().setStakeHolder(stakeHolder);
 		}
 		String targetCatalogId = trigger.getCatalog();
-		context.setCatalog(targetCatalogId);
+		context.getRequest().setCatalog(targetCatalogId);
 
 		boolean rollback = trigger.isFailSilence();
 
@@ -83,15 +83,15 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 				seed = deserializer.deserialize(rawSeed, targetCatalog, context);
 				if (seed != null) {
 					CatalogEntry synthesizedEntry = synthethize(seed, targetCatalog, context, properties);
-					context.setEntryValue(synthesizedEntry);
+					context.getRequest().setEntryValue(synthesizedEntry);
 				}
 			}
 
 			if (entryIdPointer != null) {
-                Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
+                Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getRequest().getEntryValue());
                 entryIdPointer = synthethizeKeyValue(entryIdPointer, context, instrospection,
 						targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()));
-				context.setEntry(entryIdPointer);
+				context.getRequest().setEntry(entryIdPointer);
 			}
 			if (command != null) {
 
@@ -170,14 +170,14 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private CatalogEntry synthethize(CatalogEntry synthesizedEntry, CatalogDescriptor targetCatalog,
 			CatalogActionContext context, Map<String, String> properties) throws Exception {
 
-		context.setCatalog(targetCatalog.getDistinguishedName());
+		context.getRequest().setCatalog(targetCatalog.getDistinguishedName());
 
         Instrospection instrospection = context.getCatalogManager().access().newSession(synthesizedEntry);
         Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
 		String fieldId;
 		String token;
 		Object fieldValue;
-        Instrospection lowInstrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
+        Instrospection lowInstrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getRequest().getEntryValue());
 
 		for (FieldDescriptor field : fields) {
 			fieldId = field.getFieldId();

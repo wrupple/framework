@@ -36,8 +36,8 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 		List<CatalogEntry> result = context.getResults();
         Instrospection instrospection = context.getCatalogManager().access().newSession(result.get(0));
         CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
-				(String) context.getCatalog(), context, instrospection);
-		FilterData filter = context.getFilter();
+				(String) context.getRequest().getCatalog(), context, instrospection);
+		FilterData filter = context.getRequest().getFilter();
 		if (filter != null) {
 			resultSet.setCursor(filter.getCursor());
 		}

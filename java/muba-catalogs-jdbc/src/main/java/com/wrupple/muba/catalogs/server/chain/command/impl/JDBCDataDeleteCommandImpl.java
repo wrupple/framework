@@ -46,7 +46,7 @@ public class JDBCDataDeleteCommandImpl extends AbstractDataDeleteCommand impleme
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
 		Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
-		Object deleteKey = context.getEntry();
+		Object deleteKey = context.getRequest().getEntry();
 		read.execute(context);
 		CatalogEntry deletable = context.getEntryResult();
 

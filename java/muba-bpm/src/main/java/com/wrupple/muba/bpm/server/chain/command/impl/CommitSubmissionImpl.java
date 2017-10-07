@@ -51,14 +51,13 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
 
 
-        CatalogEntry entry = applicationState.getEntryValue();
-        String transactionType = applicationState.getTaskDescriptorValue().getTransactionType();
+        String transactionType = applicationState.getTaskDescriptorValue().getName();
         final String catalog = (String) applicationState.getTaskDescriptorValue().getCatalog();
 
         boolean canceled = applicationState.isCanceled();
         Object id =applicationState.getEntry();
         if(id ==null){
-            id = entry.getId();
+            id = userOutput.getId();
         }
         CatalogActionRequestImpl entryCommit = null;
         if(CatalogActionRequest.READ_ACTION.equals(transactionType)){
@@ -68,7 +67,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
 			 * THIS TRANSACTION HAS SOME SORT OF USER OUTPUT THAT MUST BE COMMITED
 			 */
 
-            if(entry==null){
+            if(userOutput==null){
                 //no user output, most likely canceled
 
             }else{
@@ -105,7 +104,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
                 entryCommit= new CatalogActionRequestImpl();
 
-                entryCommit.setEntryValue(entry);
+                entryCommit.setEntryValue(userOutput);
                 entryCommit.setEntry(id);
                 entryCommit.setCatalog(catalog);
                 entryCommit.setName(transactionType);
@@ -133,7 +132,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
                 entryCommit= new CatalogActionRequestImpl();
 
-                entryCommit.setEntryValue(entry);
+                entryCommit.setEntryValue(userOutput);
                 entryCommit.setCatalog(catalog);
                 entryCommit.setName(transactionType);
 
@@ -142,10 +141,10 @@ public class CommitSubmissionImpl implements CommitSubmission {
         //no commit required for select
         entryCommit.setFollowReferences(true);
 
-        entry = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
+        userOutput = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
 
 
-        applicationState.setEntryValue(entry);
+        applicationState.setEntryValue(userOutput);
         return CONTINUE_PROCESSING;
     }
 

@@ -45,7 +45,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		CatalogActionContext context = (CatalogActionContext) cxt;
 
 		// must have been deserialized by this point
-		CatalogEntry result = (CatalogEntry) context.getEntryValue();
+		CatalogEntry result = (CatalogEntry) context.getRequest().getEntryValue();
 		if(result ==null){
 			throw new NullPointerException("no entry in context");
 		}
@@ -59,17 +59,17 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		Instrospection instrospection = context.getCatalogManager().access().newSession(result);
 		
 		log.trace("[catalog/storage] {}/{}",catalog.getDistinguishedName(),createDao.getClass());
-		if(follow||context.getFollowReferences()){
+		if(follow||context.getRequest().getFollowReferences()){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 			for(FieldDescriptor field: fields){
 				if (field.isKey() && context.getCatalogManager().access().getPropertyValue(field, result, null, instrospection) == null) {
 					Object foreignValue = context.getCatalogManager().getPropertyForeignKeyValue(catalog, field, result, instrospection);
 					if(foreignValue!=null){
 						//if we got to this point, force the context to follow the reference graph
-						context.setFollowReferences(true);
+						context.getRequest().setFollowReferences(true);
 						CatalogActionContext recursiveCreationContext  = context.getCatalogManager().spawn(context);
-						recursiveCreationContext.setFollowReferences(context.getFollowReferences());
-						recursiveCreationContext.setCatalog(field.getCatalog());
+						recursiveCreationContext.getRequest().setFollowReferences(context.getRequest().getFollowReferences());
+						recursiveCreationContext.getRequest().setCatalog(field.getCatalog());
 						 recursiveCreationContext.getCatalogManager().createRefereces(recursiveCreationContext,catalog,field,foreignValue,result, instrospection);
 					}
 				}
@@ -120,7 +120,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		Object parentEntityId = parentEntity.getId();
 		CatalogEntry childEntity = childContext.getCatalogManager().synthesizeChildEntity(parentEntityId, result, instrospection, catalog,childContext);
 		
-		parentContext.setEntryValue(childEntity);
+		parentContext.getRequest().setEntryValue(childEntity);
 		return parentEntity;
 	}
 	
@@ -133,7 +133,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		CatalogEntry parentEntity;
 		if (allegedParentId == null) {
 			parentEntity = childContext.getCatalogManager().synthesizeCatalogObject(o, parentCatalog, false, instrospection, childContext);
-			childContext.setEntryValue(parentEntity);
+			childContext.getRequest().setEntryValue(parentEntity);
 			childContext.setCatalogDescriptor(parentCatalog);
 			childContext.getCatalogManager().getNew().execute(childContext);
 			parentEntity = childContext.getEntryResult();

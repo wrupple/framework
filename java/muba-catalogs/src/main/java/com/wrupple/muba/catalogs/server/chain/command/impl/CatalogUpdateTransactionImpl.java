@@ -65,7 +65,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
             // we are certain this catalog has a parent, otherwise this DAO
 			// would
 			// not be called
-			CatalogEntry updatedEntry = (CatalogEntry) context.getEntryValue();
+			CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
 			parentCatalog = context.getCatalogManager().getDescriptorForKey(catalog.getParent(), context);
 			parentEntityId = context.getCatalogManager().getAllegedParentId(originalEntry, instrospection);
 
@@ -78,8 +78,8 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 			// DAO
 			CatalogActionContext childContext = context.getCatalogManager().spawn(context);
 			CatalogEntry originalParentEntity = context.getCatalogManager().readEntry(parentCatalog, parentEntityId, childContext);
-			childContext.setEntry(originalParentEntity.getId());
-			childContext.setEntryValue(updatedParentEntity);
+			childContext.getRequest().setEntry(originalParentEntity.getId());
+			childContext.getRequest().setEntryValue(updatedParentEntity);
 			context.getCatalogManager().getWrite().execute(childContext);
 			updatedParentEntity = context.getEntryResult();
 

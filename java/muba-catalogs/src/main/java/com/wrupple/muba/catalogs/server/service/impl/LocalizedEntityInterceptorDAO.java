@@ -30,7 +30,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
-		DistributiedLocalizedEntry o = (DistributiedLocalizedEntry) context.getEntryValue();
+		DistributiedLocalizedEntry o = (DistributiedLocalizedEntry) context.getRequest().getEntryValue();
 
 		// check all required data is present
 		Long numericCatalogId = o.getCatalog();
@@ -45,9 +45,9 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 
 		CatalogActionContext localize = context.getCatalogManager().spawn(context);
 
-		localize.setEntry(numericCatalogId);
-		localize.setFilter(null);
-		localize.setCatalog(CatalogDescriptor.CATALOG_ID);
+		localize.getRequest().setEntry(numericCatalogId);
+		localize.getRequest().setFilter(null);
+		localize.getRequest().setCatalog(CatalogDescriptor.CATALOG_ID);
 		// what catalog is this localized entity pointing to?
 		context.getCatalogManager().getRead().execute(localize);
 		CatalogDescriptor pointsTo = localize.getEntryResult();
@@ -65,9 +65,9 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 			List<String> values = (List<String>) o.getProperties();
 
 			// read localizable entity
-			localize.setEntry(entryId);
-			localize.setFilter(null);
-			localize.setCatalog(catalogId);
+			localize.getRequest().setEntry(entryId);
+			localize.getRequest().setFilter(null);
+			localize.getRequest().setCatalog(catalogId);
 			CatalogDescriptor localizedCatalog = localize.getCatalogDescriptor();
 			context.getCatalogManager().getRead().execute(localize);
 			PersistentCatalogEntity targetEntity = localize.getEntryResult();
@@ -88,7 +88,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 				}
 
 			}
-			localize.setEntryValue(targetEntity);
+			localize.getRequest().setEntryValue(targetEntity);
 			// persist without performing any validations
 			context.getCatalogManager().getWrite().execute(localize);
 			targetEntity = localize.getEntryResult();

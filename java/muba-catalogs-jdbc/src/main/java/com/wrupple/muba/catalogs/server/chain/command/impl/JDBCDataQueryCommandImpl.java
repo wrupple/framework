@@ -100,7 +100,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 	public boolean execute(Context ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
-		FilterData filter = context.getFilter();
+		FilterData filter = context.getRequest().getFilter();
 
 		String query;
 		Object[] values;
@@ -211,7 +211,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 	private FilterDataPayload getFilters(CatalogActionContext context, CatalogDescriptor catalogDescriptor,
 			List<? extends FilterCriteria> criterias) throws InstantiationException, IllegalAccessException {
 		List<Object> values;
-		Long domain = (Long) context.getDomain();
+		Long domain = (Long) context.getRequest().getDomain();
 		StringBuilder filterStringBuffer = null;
 		if (criterias == null || criterias.isEmpty()) {
 			filterStringBuffer = new StringBuilder(200);

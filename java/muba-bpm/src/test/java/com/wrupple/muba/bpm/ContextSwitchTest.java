@@ -78,7 +78,7 @@ public class ContextSwitchTest extends BPMTest {
         pickDriver.setDistinguishedName("driverPick");
         pickDriver.setName("Pick Best Driver");
         pickDriver.setCatalog(Driver.class.getSimpleName());
-        pickDriver.setTransactionType(ProcessTaskDescriptor.SELECT_COMMAND);
+        pickDriver.setName(ProcessTaskDescriptor.SELECT_COMMAND);
        /* problem.setSentence(
                 Arrays.asList(
                         // x * y = 4
@@ -93,7 +93,7 @@ public class ContextSwitchTest extends BPMTest {
         updateBooking.setDistinguishedName("UpdateBooking");
         updateBooking.setName("Update Booking");
         updateBooking.setCatalog(Booking.class.getSimpleName());
-        updateBooking.setTransactionType(CatalogActionRequest.WRITE_ACTION);
+        updateBooking.setName(CatalogActionRequest.WRITE_ACTION);
 
 
         log.trace("[-create booking data handling application item-]");

@@ -1,5 +1,8 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.domain.CatalogResultSet;
+import com.wrupple.muba.catalogs.domain.NamespaceContext;
+import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -8,30 +11,39 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
+import org.apache.commons.chain.impl.ContextBase;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.transaction.NotSupportedException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-
+/*Set defaults, (like domain language and stuff)*/
 @Singleton
 public final class CatalogRequestInterpretImpl implements CatalogRequestInterpret {
 
 	private final SystemCatalogPlugin cms;
 	private final ObjectMapper mapper;
+	private final Provider<CatalogActionRequest> contractProvider;
+    private final Provider<NamespaceContext> namespaceProvider;
 
-	@Inject
+    @Inject
 	public CatalogRequestInterpretImpl(
-			SystemCatalogPlugin cms/* , ObjectMapper mapper */) {
+            SystemCatalogPlugin cms,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider) {
 		super();
 		this.cms = cms;
-		this.mapper = null;
+		this.contractProvider = contractProvider;
+        this.namespaceProvider = namespaceProvider;
+        this.mapper = null;
 	}
 
 	@Override
-	public Context materializeBlankContext(RuntimeContext parent) {
-		return cms.spawn(parent);
+	public Context materializeBlankContext(RuntimeContext parent) throws InvocationTargetException, IllegalAccessException {
+		return new CatalogActionContextImpl(cms,namespaceProvider.get(),parent,contractProvider.get());
 	}
 
 	@Override
@@ -42,41 +54,13 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 		CatalogActionContext context = requestContext.getServiceContext();
 
 		if (request == null) {
-			List<String> tokens = requestContext.getServiceManifest().getGrammar();
-			String key, value;
-			for (int i = 0; i < tokens.size() && requestContext.hasNext(); i++) {
-				key = tokens.get(i);
-				value = requestContext.next();
-				if (CatalogDescriptor.DOMAIN_TOKEN.equals(key)) {
-					/*
-					 * TODO change grammar property name from domain to
-					 * "namespace" , which is like domain but string and
-					 * contains aall domains plus other namespaces. the problem
-					 * is domain is a required property by validation, and
-					 * that's good and dont't wanna change it
-					 */
-					context.setNamespace(value);
-				} else if (CatalogActionRequest.ENTRY_ID_FIELD.equals(key)) {
-					context.setEntry(cms.decodePrimaryKeyToken(value));
-				} else if (CatalogActionRequest.CATALOG_FIELD.equals(key)) {
-					if (CatalogActionRequest.READ_ACTION.equals(value)) {
-						context.setName(CatalogActionRequest.READ_ACTION);
-					} else {
-						context.setCatalog(value);
-					}
-				} else {
-					context.put(key, value);
-				}
-
-			}
-		} else {
+			request = contractProvider.get();
+		}
 			// set namespace
 			if (request.getDomain() instanceof String) {
 				context.setNamespace((String) request.getDomain());
 			} else if(request.getDomain()==null){
 				context.setNamespace(CatalogEntry.DOMAIN_TOKEN);
-			}else{
-				context.setDomain((Long) request.getDomain());
 			}
 
 			/*
@@ -84,12 +68,11 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 			 */
 			String pressumedCatalogId = (String) request.getCatalog();
 			if (CatalogActionRequest.READ_ACTION.equals(pressumedCatalogId)) {
-				context.setName(CatalogActionRequest.READ_ACTION);
+				request.setName(CatalogActionRequest.READ_ACTION);
 				pressumedCatalogId = null;
-			} else {
-				context.setName(request.getName());
 			}
-			context.setCatalog(pressumedCatalogId);
+
+        request.setCatalog(pressumedCatalogId);
 
 			/*
 			 * decode incomming primary key
@@ -97,7 +80,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 			Object targetEntryId = request.getEntry();
 			if (targetEntryId != null) {
 				targetEntryId = cms.decodePrimaryKeyToken(targetEntryId);
-				context.setEntry(targetEntryId);
+                request.setEntry(targetEntryId);
 			}
 
 			/*
@@ -111,11 +94,12 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 				} else {
 					catalogDescriptor = context.getCatalogDescriptor();
                     context.getCatalogManager().access().synthesize(catalogDescriptor);
+                    //request.setEntryValue((CatalogEntry) catalogEntry);
                     throw new NotSupportedException("implementar deserialización ya estaa hecha en algun lado");
 				}
 			}
 
-			context.setEntryValue(catalogEntry);
+
 			/*
 			 * Process Incomming filters (if any)
 			 */
@@ -135,11 +119,248 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 					}
 				}
 			}
-			context.setFilter(filter);
-			context.setFollowReferences(request.getFollowReferences());
-		}
+			request.setFilter(filter);
+            request.setFollowReferences(request.getFollowReferences());
 
 		return CONTINUE_PROCESSING;
 	}
+
+
+
+    class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {
+
+        private static final long serialVersionUID = 3599727649189964912L;
+
+
+	/*
+	 * SYSTEM CONTEXT
+	 */
+
+        private final SystemCatalogPlugin catalogManager;
+
+        private final NamespaceContext namespace;
+
+        private final RuntimeContext runtimeContext;
+
+        /* usually use the root ancestor of the catalog context */
+        private TransactionHistory transaction;
+
+        /*
+         * INPUT
+         */
+        private CatalogActionRequest request;
+        // dont change the name of this variable see RequestTokenizer
+        private long totalRequestSize;
+        /*
+         * OUTPUT
+         */
+        private List<CatalogEntry> oldValues;
+
+        private List<CatalogEntry> results;
+        private CatalogResultSet resultSet;
+
+        private CatalogDescriptor catalogDescriptor;
+
+        // not injectable, always construct with CatalogManager.spawn
+        protected CatalogActionContextImpl(SystemCatalogPlugin manager, NamespaceContext domainContext,
+                                           RuntimeContext requestContext, CatalogActionRequest catalogActionRequest)  {
+            this.catalogManager = manager;
+            if(requestContext==null){
+                throw new NullPointerException("Must provide an excecution context");
+            }
+            this.runtimeContext = requestContext;
+            this.namespace = domainContext;
+            setRequest(catalogActionRequest);
+        }
+
+        @Override
+        public SystemCatalogPlugin getCatalogManager() {
+            return catalogManager;
+        }
+
+        @Override
+        public NamespaceContext getNamespaceContext() {
+            if(namespace==null){
+                throw new IllegalStateException("no namespace in context");
+            }
+            return namespace;
+        }
+
+        public Long getDomain() {
+            return (Long) getNamespaceContext().getId();
+        }
+
+        public long getPersonId() throws Exception {
+            return (Long) getSession().getSessionValue().getStakeHolder();
+        }
+
+
+        public void addResult(CatalogEntry entry) {
+            if (entry == null) {
+                return;
+            }
+            if (results == null) {
+                results = new ArrayList<CatalogEntry>();
+            }
+            results.add(entry);
+        }
+
+        public void addResuls(List<CatalogEntry> entries) {
+            if (entries == null || entries.isEmpty()) {
+                return;
+            }
+            if (results == null) {
+                results = new ArrayList<CatalogEntry>();
+            }
+            results.addAll(entries);
+        }
+
+        public List<CatalogEntry> getResults() {
+            return results;
+        }
+
+        @Override
+        public <T extends CatalogEntry> void setResults(List<T> discriminated) {
+            this.results = (List) discriminated;
+        }
+
+        public CatalogDescriptor getCatalogDescriptor() throws CatalogException {
+            if (catalogDescriptor != null) {
+                if(getRequest().getCatalog()==null){
+                    throw new NullPointerException("action contract defines no catalog");
+                }
+                if(!catalogDescriptor.getDistinguishedName().equals(getRequest().getCatalog())){
+                    catalogDescriptor =getCatalogManager().getDescriptorForName((String) getRequest().getCatalog(), this);
+                }
+            }
+            return catalogDescriptor;
+        }
+
+        @Override
+        public String toString() {
+            return "CatalogActionContextImpl{" +
+                    "request=" + request +
+                    '}';
+        }
+
+        public CatalogResultSet getResultSet() {
+            return resultSet;
+        }
+
+        public void setResultSet(CatalogResultSet mainResultSet) {
+            this.resultSet = mainResultSet;
+        }
+
+
+
+        public SessionContext getSession() {
+            return this.runtimeContext.getSession();
+        }
+
+        public long getTotalRequestSize() {
+            return totalRequestSize;
+        }
+
+        public void setTotalRequestSize(long totalRequestSize) {
+            this.totalRequestSize = totalRequestSize;
+        }
+
+        public void addToRequestSize(long size) {
+            totalRequestSize += size;
+        }
+
+        public String getLocale() {
+            return runtimeContext.deduceLocale(getNamespaceContext());
+        }
+
+        public void setLocale(String locale) {
+            runtimeContext.setLocale(locale);
+        }
+
+        public RuntimeContext getRuntimeContext() {
+            return runtimeContext;
+        }
+
+        @Override
+        public <T extends CatalogEntry> T getEntryResult() {
+            return (T) (results == null ? null : results.get(0));
+        }
+
+        public CatalogEntry getOldValue() {
+            return oldValues == null || oldValues.isEmpty() ? null : oldValues.get(0);
+        }
+
+        public void setOldValue(CatalogEntry oldValue) {
+            setOldValues(Collections.singletonList(oldValue));
+        }
+
+        @Override
+        public void setOldValues(List<CatalogEntry> originalEntries) {
+            this.oldValues = originalEntries;
+        }
+
+        @Override
+        public List<CatalogEntry> getOldValues() {
+            return oldValues;
+        }
+
+        @Override
+        public void setNamespace(String domain) throws Exception {
+            if (domain == null) {
+                getNamespaceContext().setId(CatalogEntry.PUBLIC_ID, this);
+            } else if (CatalogEntry.DOMAIN_TOKEN.equals(domain)) {
+
+                getNamespaceContext().setId((Long) getSession().
+                        getSessionValue().
+                        getDomain(), this);
+
+            } else {
+                getNamespaceContext().setId((Long) getCatalogManager().decodePrimaryKeyToken(domain), this);
+            }
+        }
+
+
+
+        @Override
+        public CatalogActionContext spawnChild() throws InvocationTargetException, IllegalAccessException {
+            return getCatalogManager().spawn(this);
+        }
+
+        @Override
+        public void setCatalogDescriptor(CatalogDescriptor catalog) {
+            this.catalogDescriptor=catalog;
+            getRequest().setCatalog(catalog.getDistinguishedName());
+        }
+
+
+        @Override
+        public <T extends CatalogEntry> T getConvertedResult() {
+            return getEntryResult();
+        }
+
+        @Override
+        public CatalogEntry getResult() {
+            return getEntryResult();
+        }
+
+        @Override
+        public void setResult(CatalogEntry catalogEntry) {
+            setResults((List) Collections.singletonList(catalogEntry));
+        }
+
+        @Override
+        public Object getParent() {
+            return getParentValue()==null? null:getParentValue().getRequest().getId();
+        }
+
+        @Override
+        public CatalogActionRequest getRequest() {
+            return request;
+        }
+
+        public void setRequest(CatalogActionRequest request) {
+            this.request = request;
+        }
+    }
 
 }

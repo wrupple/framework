@@ -3,6 +3,8 @@ package com.wrupple.muba.bpm;
 import static org.easymock.EasyMock.anyObject;
 import static org.junit.Assert.assertTrue;
 
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkRequestImpl;
@@ -41,8 +43,7 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 
         //FIXME stack overflow when no parent is specified, ok when consolidated?
         CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(Statistics.class, Statistics.CATALOG,
-                "Table Statistics", 0,  builder.fromClass(ContentNode.class, ContentNode.CATALOG_TIMELINE,
-                        ContentNode.class.getSimpleName(), -1l, null));
+                "Table Statistics",  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
         solutionContract.setConsolidated(true);
         catalogActionRequest.setEntryValue(solutionContract);
 
@@ -127,7 +128,6 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         ProcessManager bpm = injector.getInstance(ProcessManager.class);
         ApplicationState applicationState = injector.getInstance(ApplicationState.class);
         applicationState.setHandleValue(createStatisticsApplication);
-        applicationState.setTaskIndex(0);
         applicationState= bpm.acquireContext(applicationState,session);
 
         Statistics statistics=new Statistics();

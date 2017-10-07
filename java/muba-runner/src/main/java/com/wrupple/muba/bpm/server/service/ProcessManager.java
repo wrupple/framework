@@ -6,6 +6,8 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.SessionContext;
 
+import java.lang.reflect.InvocationTargetException;
+
 public interface ProcessManager {
     /**
      * like unix screens that can be attached or detached to a thread or UI
@@ -13,5 +15,5 @@ public interface ProcessManager {
      * @param thread
      * @return
      */
-    ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, SessionContext thread);
+    ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, SessionContext thread) throws InvocationTargetException, IllegalAccessException;
 }

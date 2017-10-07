@@ -16,7 +16,7 @@ import com.wrupple.muba.catalogs.server.chain.command.WriteOutput;
 public final class CatalogEngineImpl extends ChainBase implements CatalogEngine {
 	
 	@Inject
-	public CatalogEngineImpl(/*Set defaults, (like domain language and stuff)*/CommitCatalogAction commit,
+	public CatalogEngineImpl(CommitCatalogAction commit,
 			 WriteAuditTrails audit,
 			WriteOutput /*CMS*/ writer) {
 		super(new Command[] {  commit,

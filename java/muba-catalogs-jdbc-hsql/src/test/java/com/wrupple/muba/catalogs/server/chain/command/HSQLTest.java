@@ -65,7 +65,7 @@ public class HSQLTest extends IntegralTest {
 		CatalogActionContext context = manager.spawn(excecution);
 		CatalogDescriptor catalog = builder.fromClass(Argument.class, "Argument", "Argument", -49723l, null);
 		context.setCatalogDescriptor(catalog);
-		context.setDomain(CatalogEntry.PUBLIC_ID);
+		context.getRequest().setDomain(CatalogEntry.PUBLIC_ID);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 
 		String TRES = "TRES";
@@ -78,14 +78,14 @@ public class HSQLTest extends IntegralTest {
 
 		JDBCDataCreationCommand create = injector.getInstance(JDBCDataCreationCommand.class);
 		for (Argument arg : argumentsToDeclare) {
-			context.setEntryValue(arg);
+			context.getRequest().setEntryValue(arg);
 			create.execute(context);
 		}
 		log.trace("[-read all-]");
 
 		setUp();
 		FilterData filterData = FilterDataUtils.newFilterData();
-		context.setFilter(filterData);
+		context.getRequest().setFilter(filterData);
 
 		JDBCDataQueryCommand query = injector.getInstance(JDBCDataQueryCommand.class);
 		query.execute(context);
@@ -96,7 +96,7 @@ public class HSQLTest extends IntegralTest {
 		log.trace("[-read element-]");
 		setUp();
 		Object lodId = results.get(0).getId();
-		context.setEntry(lodId);
+		context.getRequest().setEntry(lodId);
 
 		injector.getInstance(JDBCDataReadCommand.class).execute(context);
 		results = context.getResults();
@@ -105,8 +105,8 @@ public class HSQLTest extends IntegralTest {
 
 		log.trace("[-read all in order-]");
 		// ORDER
-		context.setEntry(null);
-		context.setFilter(filterData);
+		context.getRequest().setEntry(null);
+		context.getRequest().setFilter(filterData);
 		filterData.addOrdering(new FilterDataOrderingImpl(Argument.VALUE, false));
 
 		query.execute(context);
@@ -124,7 +124,7 @@ public class HSQLTest extends IntegralTest {
 		// EQUALS = "==";
 		log.trace("[-find element by single == criteria-]");
 		filterData = FilterDataUtils.createSingleFieldFilter(CatalogEntry.NAME_FIELD, TRES);
-		context.setFilter(filterData);
+		context.getRequest().setFilter(filterData);
 
 		query.execute(context);
 		results = context.getResults();
@@ -134,7 +134,7 @@ public class HSQLTest extends IntegralTest {
 		filterData = FilterDataUtils.newFilterData();
 		FilterCriteriaImpl criteria = new FilterCriteriaImpl(Argument.VALUE, FilterData.DIFFERENT, 1l);
 		filterData.addFilter(criteria);
-		context.setFilter(filterData);
+		context.getRequest().setFilter(filterData);
 
 		// DIFFERENT
 		log.trace("[-find element by single != criteria-]");
@@ -244,8 +244,8 @@ public class HSQLTest extends IntegralTest {
 		 */
 		log.trace("[update element]");
 		context.setOldValue((CatalogEntry) context.getConvertedResult());
-		context.setEntry(lodId);
-		context.setEntryValue(new Argument("TROI", 3l));
+		context.getRequest().setEntry(lodId);
+		context.getRequest().setEntryValue(new Argument("TROI", 3l));
 
 		injector.getInstance(JDBCDataWritingCommand.class).execute(context);
 		results = context.getResults();
@@ -255,7 +255,7 @@ public class HSQLTest extends IntegralTest {
 
 		log.trace("[delete element]");
 		setUp();
-		context.setEntry(lodId);
+		context.getRequest().setEntry(lodId);
 
 		injector.getInstance(JDBCDataDeleteCommand.class).execute(context);
 		results = context.getResults();
@@ -265,7 +265,7 @@ public class HSQLTest extends IntegralTest {
 		setUp();
 
 		filterData = FilterDataUtils.newFilterData();
-		context.setFilter(filterData);
+		context.getRequest().setFilter(filterData);
 		query.execute(context);
 		results = context.getResults();
 		assertTrue(results.size() == (argumentsToDeclare.size() - 1));

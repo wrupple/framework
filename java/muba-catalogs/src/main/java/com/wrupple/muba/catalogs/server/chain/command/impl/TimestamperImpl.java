@@ -25,8 +25,8 @@ public class TimestamperImpl implements Timestamper {
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
-		Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getEntryValue());
-		CatalogEntry entry = (CatalogEntry)context.getEntryValue();
+		Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getRequest().getEntryValue());
+		CatalogEntry entry = (CatalogEntry)context.getRequest().getEntryValue();
 		context.getCatalogManager().access().setPropertyValue(HasTimestamp.FIELD, entry, new Date(), instrospection);
 		return CONTINUE_PROCESSING;
 	}

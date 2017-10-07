@@ -1,6 +1,7 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Date;
@@ -113,7 +114,12 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 					if (criteria.getValue() == null) {
 						throw new IllegalArgumentException("Invalid filter criteira (no comparable value)");
 					}
-					descriptor = assertDescriptor(descriptor, catalog, domain);
+					try {
+						descriptor = assertDescriptor(descriptor, catalog, domain);
+					} catch (InvocationTargetException e) {
+						throw new RuntimeException(e);
+					} catch (IllegalAccessException e) {
+						throw new RuntimeException(e);					}
 					local = descriptor.getFieldDescriptor(criteria.getPath(0));
 					if (local == null || !local.isFilterable()) {
 						throw new IllegalArgumentException("Invalid filter criteira (unfilterable field)");
@@ -130,7 +136,13 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		
 		if (report && entryValue != null) {
 			log.trace("validate entry Value");
-			descriptor = assertDescriptor(descriptor, catalog, domain);
+			try {
+				descriptor = assertDescriptor(descriptor, catalog, domain);
+			} catch (InvocationTargetException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
 			// otherwise the validator will descend to java beans
 			if (HasAccesablePropertyValues.class.equals(descriptor.getClazz())) {
 				log.debug("Dynamic validation of non-java-bean entry Value");
@@ -203,14 +215,14 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		return report;
 	}
 
-	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, String domain) {
+	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, String domain) throws InvocationTargetException, IllegalAccessException {
 		if (descriptor == null) {
 
 			RuntimeContext system = this.exp.get();
 			CatalogActionContext context = dictionary.spawn(system);
 			try {
 				context.setNamespace(domain);
-				context.setCatalog(catalogId);
+				context.getRequest().setCatalog(catalogId);
 			} catch (Exception e) {
 				throw new RuntimeException("Unable to set namespace of catalog context during validation", e);
 			}

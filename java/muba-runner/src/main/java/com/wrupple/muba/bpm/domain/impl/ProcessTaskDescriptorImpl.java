@@ -8,7 +8,7 @@ import com.wrupple.muba.event.domain.annotations.CatalogField;
 
 public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
 	private static final long serialVersionUID = 7957074775049623796L;
-	private String catalog,distinguishedName,transactionType,outputField;
+	private String catalog,distinguishedName,outputField;
 	private List<String> properties,sentence;
 	//@ForeignKey(foreignCatalog = WruppleActivityAction.CATALOG_TIMELINE)
 	private List<Long> userActions;
@@ -83,15 +83,6 @@ public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
 
     public void setDistinguishedName(String distinguishedName) {
         this.distinguishedName = distinguishedName;
-    }
-
-    @Override
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
     }
 
     @Override

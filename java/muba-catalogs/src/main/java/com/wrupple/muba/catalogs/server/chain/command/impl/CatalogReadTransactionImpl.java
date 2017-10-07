@@ -40,9 +40,9 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	private final ExplicitDataJoin join;
 
 	// DataReadCommandImpl
-	private final PrimaryKeyReaders primaryKeyers;
+	//private final PrimaryKeyReaders primaryKeyers;
 	// DataQueryCommandImpl
-	private final QueryReaders queryers;
+	//private final QueryReaders queryers;
 
 	private int MIN_TREE_LEVELS;
 
@@ -66,7 +66,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	public boolean execute(Context x) throws Exception {
 		log.trace("[START READ]");
 		CatalogActionContext context = (CatalogActionContext) x;
-		String catalogId = (String) context.getCatalog();
+		String catalogId = (String) context.getRequest().getCatalog();
 		if (catalogId == null) {
 			log.trace("[GET AVAILABLE CATALOG_TIMELINE LIST]");
 			// list all domain catalogs
@@ -76,17 +76,10 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 
-		Object targetEntryId = context.getEntry();
+		Object targetEntryId = context.getRequest().getEntry();
         Instrospection instrospection = context.getCatalogManager().access().newSession(null);
         if (targetEntryId == null) {
-			FilterData filter = context.getFilter();
-			if (filter == null) {
-				log.trace("[ASSEMBLE CATALOG_TIMELINE DESCRIPTOR]");
-				// get full catalog descriptor
-
-				context.setResults(Collections.singletonList(catalog));
-				return CONTINUE_PROCESSING;
-			}
+			FilterData filter = context.getRequest().getFilter();
 			applySorts(filter, catalog.getAppliedSorts());
 			applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, instrospection);
 			List<CatalogEntry> result = null;
@@ -120,7 +113,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			String[][] joins = filter.getJoins();
 			if (joins != null && joins.length > 0) {
 				join.execute(context);
-			} else if (MIN_TREE_LEVELS > 0 || context.getFollowReferences()) {// interceptor
+			} else if (MIN_TREE_LEVELS > 0 || context.getRequest().getFollowReferences()) {// interceptor
 																				// decides
 																				// to
 																				// read
@@ -132,7 +125,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 
 			context.setResults(Collections.singletonList(originalEntry));
 
-			if ( context.getFollowReferences()) {
+			if ( context.getRequest().getFollowReferences()) {
 				graphJoin.execute(context);
 			}
 			log.trace("[RESULT ] {}", originalEntry);
@@ -216,7 +209,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	private List<CatalogEntry> doRead(FilterData filterData, CatalogDescriptor catalog, CatalogActionContext context,
 			Instrospection instrospection) throws Exception {
 		log.trace("DATASTORE QUERY");
-		context.setFilter(filterData);
+		context.getRequest().setFilter(filterData);
 		Command command = queryers.getCommand(String.valueOf(catalog.getStorage()));
 		command.execute(context);
 
@@ -240,7 +233,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	private CatalogEntry doRead(Object targetEntryId, CatalogDescriptor catalog, CatalogActionContext context,
 			Instrospection instrospection) throws Exception {
 		log.trace("DATASTORE READ");
-		context.setEntry(targetEntryId);
+		context.getRequest().setEntry(targetEntryId);
 
 		Command command = primaryKeyers.getCommand(String.valueOf(catalog.getStorage()));
 		command.execute(context);

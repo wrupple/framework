@@ -553,4 +553,24 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	public Object getParent() {
 		return parentValue.getId();
 	}
+
+
+	@Override
+	public TransactionHistory getTransactionHistory() {
+		RuntimeContext root = getRootAncestor();
+		if (root == this) {
+			return assertTransaction();
+		} else {
+			return root.getTransactionHistory();
+		}
+	}
+
+
+	private TransactionHistory assertTransaction() {
+		if (transaction == null) {
+			transaction = new CatalogUserTransactionImpl(getEventBus().getTransaction());
+		}
+		return (TransactionHistory) transaction;
+	}
+
 }

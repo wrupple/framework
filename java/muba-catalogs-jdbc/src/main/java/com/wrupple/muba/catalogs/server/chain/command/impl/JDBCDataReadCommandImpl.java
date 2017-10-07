@@ -83,7 +83,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		StringBuilder builder = new StringBuilder(150);
 		CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
-		Object id = context.getEntry();
+		Object id = context.getRequest().getEntry();
 		builder.append("SELECT * FROM ");
 		builder.append(DELIMITER);
 		tableNames.getTableNameForCatalog(catalogDescriptor, context, builder);
@@ -106,7 +106,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		}
 		CatalogEntry r = results.get(0);
 		if (!this.multitenant) {
-			r.setDomain(CatalogEntry.WRUPPLE_ID);
+			r.setDomain(CatalogEntry.PUBLIC_ID);
 		}
 		Collection<FieldDescriptor> fields = catalogDescriptor.getFieldsValues();
 		String foreignTableName;

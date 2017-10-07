@@ -26,7 +26,7 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 	public boolean execute(Context ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor catalog = (CatalogDescriptor) context.getCatalogDescriptor();
-		CatalogEntry newe = (CatalogEntry) context.getEntryValue();
+		CatalogEntry newe = (CatalogEntry) context.getRequest().getEntryValue();
 		CatalogEntry olde = context.getOldValue();
         Instrospection instrospection = context.getCatalogManager().access().newSession(newe);
         FieldDescriptor treeIndex = catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX);
@@ -53,12 +53,12 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 			CatalogActionContext updateContext = context.getCatalogManager().spawn(context);
 			updateContext.setCatalogDescriptor(catalog);
 			for (Object childId : newChildren) {
-				updateContext.setEntry(childId);
+				updateContext.getRequest().setEntry(childId);
 				updateContext.getCatalogManager().getRead().execute(updateContext);
 				child = updateContext.getEntryResult();
                 context.getCatalogManager().access().setPropertyValue(treeIndex, child, childrenTreeIndex, instrospection);
                 // FIXME update bulk
-				updateContext.setEntryValue(child);
+				updateContext.getRequest().setEntryValue(child);
 				updateContext.getCatalogManager().getWrite().execute(updateContext);
 			}
 

@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.domain.annotations.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +41,12 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 	private Provider<SystemCatalogPlugin> cms;
 
+    public <T extends CatalogEntry> CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String cataogName, long numericId,
+                                                                CatalogDescriptor parent) throws  RuntimeException {
+        return work(clazz,catalogId,cataogName,numericId,parent);
+    }
 
-
-	public <T extends CatalogEntry> CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String cataogName, long numericId,
+	public <T extends CatalogEntry> CatalogDescriptor work(Class<T> clazz, String catalogId, String cataogName, Long numericId,
 			CatalogDescriptor parent) throws  RuntimeException {
 
 		List<Field> cll = new ArrayList<Field>();
@@ -329,8 +333,11 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 		CatalogDescriptorImpl regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName,parent==null?null: parent.getId(),
 				descriptors);
 		log.trace("[PARSED NUMERIC_ID DESCRIPTOR] {}", catalogId);
-		//FIXME support inhecitance on beans (not just on HasAccesable property values)s
-		regreso.setConsolidated(true);
+
+		if(!regreso.getClazz().equals(HasAccesablePropertyValues.class)){
+			regreso.setConsolidated(true);
+		}
+
 		return regreso;
 
 	}
@@ -353,4 +360,10 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			return CatalogEntry.OBJECT_DATA_TYPE;
 		}
 	}
+
+    @Override
+    public <T extends CatalogEntry> CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String catalogName, CatalogDescriptor parent) throws RuntimeException {
+        return work(clazz,catalogId,catalogName,null,parent);
+    }
+
 }

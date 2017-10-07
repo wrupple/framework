@@ -23,7 +23,6 @@ public interface ProcessTaskDescriptor extends CatalogEntry,HasOutput,HasCatalog
 	
 	public List<Long> getUserActions();
 
-	String getTransactionType();
 
 	/**
 	 * 
@@ -38,5 +37,4 @@ public interface ProcessTaskDescriptor extends CatalogEntry,HasOutput,HasCatalog
 
     void setDistinguishedName(String driverPick);
 
-	void setTransactionType(String selectCommand);
 }

@@ -102,7 +102,6 @@ public class BusinessModule  extends AbstractModule {
             CatalogDescriptorBuilder builder, @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest) {
         CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Workflow",
                 -900190, serviceManifest);
-        r.setClazz(WorkflowImpl.class);
 
         return r;
     }

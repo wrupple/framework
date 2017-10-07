@@ -22,8 +22,8 @@ public abstract class AbstractDataDeleteCommand implements DataDeleteCommand {
 	public void undo(ServiceContext ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogEntry entry = context.getEntryResult();
-		context.setEntry(entry.getId());
-		context.setEntryValue(context.getEntryResult());
+		context.getRequest().setEntry(entry.getId());
+		context.getRequest().setEntryValue(context.getEntryResult());
 		create.execute(context);
 	}
 

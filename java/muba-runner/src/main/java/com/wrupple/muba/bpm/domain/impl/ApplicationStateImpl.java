@@ -1,11 +1,11 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -13,12 +13,16 @@ import java.util.List;
  */
 public class ApplicationStateImpl extends ManagedObjectImpl implements ApplicationState {
 
+    @NotNull
     private ServiceManifest handleValue;
     private FilterData filterData;
-    private Long application;
+    private Long handle;
 
     private Long taskDescriptor;
     private Long parent;
+
+    private ApplicationState parentValue;
+
     private Object entry;
     private Object session;
 
@@ -57,9 +61,6 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
         this.setTaskDescriptor((Long)id);
     }
 
-    private int taskIndex;
-
-    private ApplicationState parentValue;
 
     @Override
     public ServiceManifest getHandleValue() {
@@ -100,12 +101,12 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     }
 
     @Override
-    public Long getApplication() {
-        return application;
+    public Long getHandle() {
+        return handle;
     }
 
-    public void setApplication(Long application) {
-        this.application = application;
+    public void setHandle(Long handle) {
+        this.handle = handle;
     }
 
     @Override
@@ -192,15 +193,6 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
         this.entryValue = entryValue;
     }
 
-    @Override
-    public int getTaskIndex() {
-        return taskIndex;
-    }
-
-    @Override
-    public void setTaskIndex(int taskIndex) {
-        this.taskIndex = taskIndex;
-    }
 
     @Override
     public ApplicationState getParentValue() {

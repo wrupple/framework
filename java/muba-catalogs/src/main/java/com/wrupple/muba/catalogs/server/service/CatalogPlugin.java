@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.wrupple.muba.event.domain.CatalogEntry;

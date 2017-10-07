@@ -34,7 +34,7 @@ public abstract class AbstractVegetateChannel<T, R> extends VegetateUrlServiceBu
 		this.requestMethod = requestMethod;
 	}
 
-	public R send(T object) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException {
+	public R send(T object) throws  , NoSuchMethodException, IOException {
 		try {
 
 			URL url = buildUrl(object);
@@ -51,7 +51,7 @@ public abstract class AbstractVegetateChannel<T, R> extends VegetateUrlServiceBu
 
 	}
 
-	protected Map<String, R> send(T object, URL url) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException {
+	protected Map<String, R> send(T object, URL url) throws  , NoSuchMethodException, IOException {
 		
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setConnectTimeout(connectionTimeOut);

@@ -41,7 +41,7 @@ public class DesktopRequestTokenizerImpl implements DesktopRequestTokenizer {
 
 	@Override
 	public Map<String, DesktopBuilderContext> getRequestPayload(HttpServletRequest req, String[] pathTokens)
-			throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
+			throws IOException,  , InstantiationException {
 		DesktopBuilderContext main = contextProvider.get();
 		/*
 		 * String[] tokens; if(pathTokens.length>(firstTokenIndex+1)){ tokens =

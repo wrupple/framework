@@ -20,9 +20,9 @@ public abstract class AbstractDataCreationCommand implements DataCreationCommand
 	@Override
 	public void undo(ServiceContext ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
-		context.setEntryValue(context.getEntryResult());
+		context.getRequest().setEntryValue(context.getEntryResult());
 		CatalogEntry entry = context.getEntryResult();
-		context.setEntry(entry.getId());
+		context.getRequest().setEntry(entry.getId());
 		delete.execute(context);
 	}
 	

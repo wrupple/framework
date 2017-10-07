@@ -36,7 +36,7 @@ public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin
 		List<CatalogEntry> result = context.getResults();
         Instrospection instrospection = context.getCatalogManager().access().newSession(result.get(0));
         CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
-				(String) context.getCatalog(), context, instrospection);
+				(String) context.getRequest().getCatalog(), context, instrospection);
 
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
 		String[][] joins = context.getCatalogManager().getJoins(context.getCatalogManager(), null, descriptor, null,

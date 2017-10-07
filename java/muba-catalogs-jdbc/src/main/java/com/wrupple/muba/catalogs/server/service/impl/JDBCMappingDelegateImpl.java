@@ -62,7 +62,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	@Override
 	public void getTableNameForCatalog(CatalogDescriptor catalog, CatalogActionContext context, StringBuilder builder) {
 		if (catalog.getClazz() == null || PersistentCatalogEntity.class.equals(catalog.getClazz())) {
-			builder.append(context.getDomain());
+			builder.append(context.getRequest().getDomain());
 			builder.append('_');
 			builder.append(catalog.getDistinguishedName());
 		} else {
@@ -73,7 +73,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	@Override
 	public String getColumnForField(CatalogActionContext context, CatalogDescriptor catalogDescriptor,
 			FieldDescriptor field, boolean qualified) {
-		if (field.isInherited() && catalogDescriptor.isConsolidated()) {
+		if (field.isInherited() && !catalogDescriptor.isConsolidated()) {
 			return null;
 		} else {
 			if(qualified){

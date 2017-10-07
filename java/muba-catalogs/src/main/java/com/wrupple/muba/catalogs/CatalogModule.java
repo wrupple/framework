@@ -122,6 +122,7 @@ public class CatalogModule extends AbstractModule {
 
 		bind(NamespaceContext.class).to(NamespaceContextImpl.class);
         bind(CatalogActionCommit.class).to(CatalogActionCommitImpl.class);
+        bind(CatalogActionRequest.class).to(CatalogActionRequestImpl.class);
 		bind(CatalogDescriptor.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
 				.to(DistributiedLocalizedEntryDescriptor.class);
 		bind(CatalogDescriptor.class).annotatedWith(Names.named(LocalizedString.CATALOG))
@@ -189,7 +190,7 @@ public class CatalogModule extends AbstractModule {
 	@Inject
 	@Named(Constraint.CATALOG_ID)
 	public CatalogDescriptor constraint(CatalogDescriptorBuilder builder) {
-		CatalogDescriptor r = builder.fromClass(ConstraintImpl.class, Constraint.CATALOG_ID, "Constraints", -1911192,
+		CatalogDescriptor r = builder.fromClass(ConstraintImpl.class, Constraint.CATALOG_ID, "Constraints", -1911199,
 				null);
 		return r;
 	}

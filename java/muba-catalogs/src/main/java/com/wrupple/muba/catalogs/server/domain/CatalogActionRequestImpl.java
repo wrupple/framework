@@ -13,7 +13,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
 	private static final long serialVersionUID = 1743825364474840159L;
 
-	private CatalogEntry entryValue;
+	private Object entryValue;
 
 	private FilterDataImpl filter;
 
@@ -112,11 +112,11 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		this.locale = locale;
 	}
 
-	public CatalogEntry getEntryValue() {
+	public Object getEntryValue() {
 		return entryValue;
 	}
 
-	public void setEntryValue(CatalogEntry catalogEntry) {
+	public void setEntryValue(Object catalogEntry) {
 		this.entryValue = catalogEntry;
 	}
 
@@ -161,7 +161,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
 	@Override
 	public String toString() {
-		return "CatalogActionRequestImpl [catalogEntry=" + entryValue + ", filter=" + filter + ", action=" + name
+		return "CatalogActionRequestImpl [catalogEntry=" + entryValue + ", filter=" + filter + ", name=" + name
 				+ ", format=" + format + ", entry=" + entry + ", catalog=" + catalog + ", domain=" + getDomain() + "]";
 	}
 
@@ -192,4 +192,11 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	public void setFollowReferences(boolean followReferences) {
 		this.followReferences = followReferences;
 	}
+
+	@Override
+	public void setFilter(FilterData filter) {
+		setFilter((FilterDataImpl)filter);
+	}
+
+
 }

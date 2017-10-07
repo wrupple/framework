@@ -20,7 +20,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
         Workflow nextItem = findNextTreeNode(event, state);
 		state.setHandleValue(nextItem);
         state.setTaskDescriptorValue(null);
-        state.setTaskIndex(0);
+        state.setTaskDescriptor(null);
 
 		return CONTINUE_PROCESSING;
 	}

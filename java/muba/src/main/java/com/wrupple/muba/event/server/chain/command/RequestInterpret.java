@@ -4,9 +4,11 @@ import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Created by japi on 22/04/17.
  */
 public interface RequestInterpret extends Command {
-    Context materializeBlankContext(RuntimeContext requestContext);
+    Context materializeBlankContext(RuntimeContext requestContext) throws InvocationTargetException, IllegalAccessException;
 }

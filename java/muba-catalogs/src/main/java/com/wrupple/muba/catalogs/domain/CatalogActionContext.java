@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.wrupple.muba.event.domain.*;
@@ -10,9 +11,11 @@ import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public interface CatalogActionContext
-		extends ServiceContext, HasParentValue<Object,CatalogActionContext>, HasResult<CatalogEntry>, CatalogActionRequest {
+		extends ServiceContext, HasResult<CatalogEntry> {
 
 	final String CATALOG = "CatalogActionContext";
+
+	CatalogActionRequest getRequest();
 	
 	public NamespaceContext getNamespaceContext();
 
@@ -21,8 +24,6 @@ public interface CatalogActionContext
 	TransactionHistory getTransactionHistory();
 
 	public CatalogDescriptor getCatalogDescriptor() throws RuntimeException;
-	
-	void setCatalogDescriptor(CatalogDescriptor catalog);
 
 	public void addResult(CatalogEntry result);
 
@@ -36,7 +37,6 @@ public interface CatalogActionContext
 
 	public void addResuls(List<CatalogEntry> result);
 
-	public void setFilter(FilterData fd);
 
 	/**
 	 * @return
@@ -45,13 +45,11 @@ public interface CatalogActionContext
 
 	public <T extends CatalogEntry> void setResults(List<T> discriminated);
 
-	void setDomain(Long domain) ;
-
-	void setEntryValue(Object object);
-
 	public <T extends CatalogEntry> T getEntryResult();
 
 	void setNamespace(String domain) throws Exception;
 
-	public CatalogActionContext spawnChild();
+	public CatalogActionContext spawnChild() throws InvocationTargetException, IllegalAccessException;
+
+    void setCatalogDescriptor(CatalogDescriptor catalog);
 }

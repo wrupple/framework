@@ -68,8 +68,8 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 	public boolean execute(Context ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		final CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
-		CatalogEntry e = (CatalogEntry) context.getEntryValue();
-		e.setDomain((Long) context.getDomain());
+		CatalogEntry e = (CatalogEntry) context.getRequest().getEntryValue();
+		e.setDomain((Long) context.getRequest().getDomain());
 		log.trace("[Will create Entry] {} in domain {}", e,e.getDomain());
 		Instrospection instrospection = context.getCatalogManager().access().newSession(e);
 		Object id = null;
@@ -176,8 +176,8 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		log.debug("[CREATE DONE] {}/{} ",catalogDescriptor.getDistinguishedName(),id);
 		
 		context.setCatalogDescriptor(catalogDescriptor);
-		context.setFilter(null);
-		context.setEntry(id);
+		context.getRequest().setFilter(null);
+		context.getRequest().setEntry(id);
 		read.execute(context);
 		return CONTINUE_PROCESSING;
 	}
