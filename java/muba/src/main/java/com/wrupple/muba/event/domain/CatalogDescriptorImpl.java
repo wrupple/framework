@@ -17,7 +17,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	private Long peer;
 
 	@ForeignKey(foreignCatalog = CatalogDescriptor.CATALOG_ID)
-	@InheritanceTree
+	@InheritanceTree(catalog = CatalogDescriptor.CATALOG_ID)
 	private Long parent;
 
 	private boolean typed;

@@ -42,15 +42,11 @@ public class NamespaceContextImpl extends ContextBase implements NamespaceContex
 	public void setId(long requestedDomain,CatalogActionContext context) throws CatalogException {
 		if(multitenant){
 			clear();
-			CatalogActionContext spawn = context.getCatalogManager().spawn(context);
-			spawn.getRequest().setEntry(requestedDomain);
-			spawn.getRequest().setCatalog(CatalogNamespace.CATALOG);
 			try {
-				read.get().execute(spawn);
+				this.namespace = context.triggerGet(CatalogNamespace.CATALOG,requestedDomain);
 			} catch (Exception e) {
-				throw new CatalogException("Unable to change to namespace:"+requestedDomain,e);
+				throw new CatalogException(e);
 			}
-			this.namespace = spawn.getEntryResult();
 			if(namespace==null){
 				this.namespace=defaultNamespace.get();
 			}

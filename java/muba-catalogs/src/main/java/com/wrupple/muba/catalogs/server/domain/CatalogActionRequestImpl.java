@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.annotations.AvailableCommand;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
@@ -31,7 +32,13 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	private String  name;
 	private boolean anonymouslyVisible;
 	private boolean followReferences;
-	
+
+	public void setParentValue(CatalogActionRequest parentValue) {
+		this.parentValue = parentValue;
+	}
+
+	private CatalogActionRequest parentValue;
+
 
 	public final Long getId() {
 		return id;
@@ -199,4 +206,18 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	}
 
 
+	@Override
+	public Void getParent() {
+		return null;
+	}
+
+	@Override
+	public CatalogActionRequest getParentValue() {
+		return parentValue;
+	}
+
+	@Override
+	public CatalogActionRequest getRootAncestor() {
+		return CatalogEntryImpl.getRootAncestor(this);
+	}
 }

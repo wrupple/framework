@@ -21,8 +21,6 @@ public interface CatalogActionContext
 
 	public SystemCatalogPlugin getCatalogManager();
 
-	TransactionHistory getTransactionHistory();
-
 	public CatalogDescriptor getCatalogDescriptor() throws RuntimeException;
 
 	public void addResult(CatalogEntry result);
@@ -49,7 +47,32 @@ public interface CatalogActionContext
 
 	void setNamespace(String domain) throws Exception;
 
-	public CatalogActionContext spawnChild() throws InvocationTargetException, IllegalAccessException;
-
     void setCatalogDescriptor(CatalogDescriptor catalog);
+
+	<T extends CatalogEntry> T get(String catalogId, Object entryId) throws Exception;
+
+	<T extends CatalogEntry> T triggerGet(String catalogId, Object entryId) throws Exception;
+
+	<T extends CatalogEntry> List<T> read(String catalogId,FilterData all) throws Exception;
+
+	<T extends CatalogEntry> List<T> triggerRead(String catalogId,FilterData all) throws Exception;
+
+	<T extends CatalogEntry> List<T> delete(String catalog, FilterData o, Object id) throws Exception;
+
+	<T extends CatalogEntry> List<T> triggerDelete(String catalog, FilterData o, Object id) throws Exception;
+
+
+
+    <T extends CatalogEntry> T  write(String catalogId, Object entryId, CatalogEntry updatedEntry) throws Exception;
+
+	<T extends CatalogEntry> T  triggerWrite(String catalogId, Object entryId, CatalogEntry updatedEntry) throws Exception;
+
+	<T extends CatalogEntry> T  create(String catalogId,  CatalogEntry createdEntry) throws Exception;
+
+	<T extends CatalogEntry> T  triggerCreate(String catalogId,  CatalogEntry createdEntry) throws Exception;
+
+
+	public <T extends CatalogEntry> List<T>  triggerRead(String catalogId, FilterData filter, boolean assemble) throws Exception ;
+
+	<T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception;
 }

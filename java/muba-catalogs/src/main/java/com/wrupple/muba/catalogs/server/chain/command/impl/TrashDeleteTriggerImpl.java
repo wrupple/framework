@@ -21,12 +21,10 @@ import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 public class TrashDeleteTriggerImpl implements TrashDeleteTrigger {
 	private static final Logger log = LoggerFactory.getLogger(TrashDeleteTriggerImpl.class);
 
-	private final CatalogDeleteTransaction delete;
 
 	@Inject
-	public TrashDeleteTriggerImpl(CatalogDeleteTransaction delete) {
+	public TrashDeleteTriggerImpl() {
 		super();
-		this.delete = delete;
 	}
 
 	// when trash items are deleted
@@ -42,7 +40,6 @@ public class TrashDeleteTriggerImpl implements TrashDeleteTrigger {
 		if (trash != null) {
 			log.warn("[PERMANENTLY DELETING DUMPED TRASH ITEMS]");
 			String catalogId = null;
-			CatalogActionContext deleteContext = context.getCatalogManager().spawn(context);
 			List<Object> ids = new ArrayList<Object>();
 			for (Trash entry : trash) {
 
@@ -54,7 +51,7 @@ public class TrashDeleteTriggerImpl implements TrashDeleteTrigger {
 					
 					if (ids.isEmpty()) {
 					} else {
-						flush(ids, catalogId, deleteContext);
+						flush(ids, catalogId, context);
 						ids.clear();
 					}
 					catalogId = entry.getCatalog();
@@ -67,12 +64,9 @@ public class TrashDeleteTriggerImpl implements TrashDeleteTrigger {
 		return CONTINUE_PROCESSING;
 	}
 
-	private void flush(List<Object> ids, String catalogId, CatalogActionContext deleteContext) throws Exception {
+	private void flush(List<Object> ids, String catalogId, CatalogActionContext context) throws Exception {
 		log.trace("delete consecutive trash items so far");
-		deleteContext.getRequest().setEntry(null);
-		deleteContext.getRequest().setFilter(FilterDataUtils.createSingleKeyFieldFilter(CatalogEntry.ID_FIELD, ids));
-		deleteContext.getRequest().setCatalog(catalogId);
-		delete.execute(deleteContext);
+		context.triggerDelete(catalogId,FilterDataUtils.createSingleKeyFieldFilter(CatalogEntry.ID_FIELD, ids),null);
 	}
 
 }

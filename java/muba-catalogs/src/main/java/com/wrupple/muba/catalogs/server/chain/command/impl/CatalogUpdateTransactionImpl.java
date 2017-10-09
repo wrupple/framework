@@ -45,7 +45,9 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 		log.trace("<{}>",this.getClass().getSimpleName());
 		CatalogActionContext context = (CatalogActionContext) c;
 		context.getCatalogManager().getRead().execute(context);
-		CatalogEntry originalEntry = context.getEntryResult();
+
+		CatalogEntry originalEntry = context.getResult();
+
 		context.setOldValue(originalEntry);
 
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
@@ -76,12 +78,10 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 			// delegate deeper inheritance to another instance of an
 			// AncestorAware
 			// DAO
-			CatalogActionContext childContext = context.getCatalogManager().spawn(context);
-			CatalogEntry originalParentEntity = context.getCatalogManager().readEntry(parentCatalog, parentEntityId, childContext);
-			childContext.getRequest().setEntry(originalParentEntity.getId());
-			childContext.getRequest().setEntryValue(updatedParentEntity);
-			context.getCatalogManager().getWrite().execute(childContext);
-			updatedParentEntity = context.getEntryResult();
+			//CatalogEntry originalParentEntity = context.getCatalogManager().readEntry(parentCatalog, parentEntityId, childContext);
+			CatalogEntry originalParentEntity = context.triggerGet(parentCatalog.getDistinguishedName(),parentEntityId);
+
+			updatedParentEntity = context.triggerWrite(parentCatalog.getDistinguishedName(),originalParentEntity.getId(),updatedParentEntity);
 
 			// synthesize childEntity (Always will be Entity Kind) ignoring all
 			// inheritedFields
@@ -92,10 +92,10 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
 			// add inherited values to child Entity (result)
 			context.getCatalogManager().processChild(childEntity, parentCatalog, parentEntityId,
-					context.getCatalogManager().spawn(context), catalog, instrospection);
+					context, catalog, instrospection);
 		}
 		CatalogEntry ress = context.getEntryResult();
-		context.getTransactionHistory().didUpdate(context,ress , context.getOldValue(), dao);
+		context.getRuntimeContext().getTransactionHistory().didUpdate(context,ress , context.getOldValue(), dao);
 
 		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 		if (cache != null) {

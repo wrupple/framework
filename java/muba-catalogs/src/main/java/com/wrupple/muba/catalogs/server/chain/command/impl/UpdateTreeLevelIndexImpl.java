@@ -50,16 +50,11 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 			childrenTreeIndex++;
 			log.trace("[UpdateTreeLevelIndex] new children available {}", childrenTreeIndex);
 			PersistentCatalogEntity child;
-			CatalogActionContext updateContext = context.getCatalogManager().spawn(context);
-			updateContext.setCatalogDescriptor(catalog);
 			for (Object childId : newChildren) {
-				updateContext.getRequest().setEntry(childId);
-				updateContext.getCatalogManager().getRead().execute(updateContext);
-				child = updateContext.getEntryResult();
+				child =context.triggerGet(catalog.getDistinguishedName(),childId);
                 context.getCatalogManager().access().setPropertyValue(treeIndex, child, childrenTreeIndex, instrospection);
                 // FIXME update bulk
-				updateContext.getRequest().setEntryValue(child);
-				updateContext.getCatalogManager().getWrite().execute(updateContext);
+				context.triggerWrite(catalog.getDistinguishedName(),childId,child);
 			}
 
 		}

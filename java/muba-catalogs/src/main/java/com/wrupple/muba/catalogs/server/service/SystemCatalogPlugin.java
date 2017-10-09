@@ -45,9 +45,6 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager, JSRA
 		 */
 		public CatalogEntry synthesizeCatalogObject(CatalogEntry source, CatalogDescriptor catalog,
                                                     boolean excludeInherited, Instrospection instrospection, CatalogActionContext context) throws Exception;
-
-		CatalogEntry readEntry(CatalogDescriptor catalogId, Object parentId, CatalogActionContext readParentEntry)
-				throws Exception;
 		
 		public void addInheritedValuesToChild(CatalogEntry parentEntity, CatalogEntry regreso, Instrospection instrospection,
 				CatalogDescriptor catalog) throws Exception;

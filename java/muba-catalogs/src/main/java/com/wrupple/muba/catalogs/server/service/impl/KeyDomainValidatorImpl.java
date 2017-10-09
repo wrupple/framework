@@ -3,12 +3,16 @@ package com.wrupple.muba.catalogs.server.service.impl;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
@@ -18,17 +22,15 @@ import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 
 public class KeyDomainValidatorImpl implements KeyDomainValidator {
 
-	private final SystemCatalogPlugin cms;
 	private final Provider<RuntimeContext> exp;
 	private final ObjectNativeInterface nativeInterface;
 	private String foreignCatalog;
 	private boolean unique;
 
 	@Inject
-	public KeyDomainValidatorImpl(Provider<RuntimeContext> exp, SystemCatalogPlugin cms, ObjectNativeInterface nativeInterface) {
+	public KeyDomainValidatorImpl(Provider<RuntimeContext> exp, ObjectNativeInterface nativeInterface) {
 		this.exp = exp;
 		this.nativeInterface=nativeInterface;
-		this.cms = cms;
 	}
 
 	@Override
@@ -45,10 +47,9 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 			return true;
 		} else {
 
-			CatalogActionContext read = cms.spawn(exp.get());
-			read.getRequest().setFilter(null);
-			read.getRequest().setEntry(null);
-			read.getRequest().setCatalog(foreignCatalog);
+			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
+			context.setCatalog(foreignCatalog);
+			RuntimeContext runtime = this.exp.get();
 			if (unique || nativeInterface.isCollection(value)) {
 				Collection<Object> colection = (Collection<Object>) value;
 				Set<Object> uniqueCollection = new HashSet<Object>();
@@ -59,13 +60,13 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 					return false;
 				}
 				try {
-					return foundValues(read, uniqueCollection);
+					return foundValues(foreignCatalog,runtime,context, uniqueCollection);
 				} catch (Exception e) {
 					throw new RuntimeException("Failed to validate foreign keys ", e);
 				}
 			} else {
 				try {
-					return foundValue(read, value);
+					return foundValue(runtime,context, value);
 				} catch (Exception e) {
 					throw new RuntimeException("Failed to validate foreign key: " + value, e);
 				}
@@ -75,19 +76,25 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 
 	}
 
-	private boolean foundValues(CatalogActionContext context, Set<Object> value) throws Exception {
-		context.getRequest().setFilter(
-				FilterDataUtils.createSingleKeyFieldFilter(context.getCatalogDescriptor().getKeyField(), value));
+	private boolean foundValues(String foreignCatalog,RuntimeContext runtime,CatalogActionRequestImpl context, Set<Object> value) throws Exception {
+        context.setCatalog(CatalogDescriptor.CATALOG_ID);
+        context.setEntry(foreignCatalog);
+        CatalogDescriptor foreignCatalogDescriptor=runtime.getEventBus().fireEvent(context,runtime,null);
+        context.setEntry(null);
+        context.setCatalog(foreignCatalog);
+		context.setFilter(
+				FilterDataUtils.createSingleKeyFieldFilter(foreignCatalogDescriptor.getKeyField(), value));
 
-		context.getCatalogManager().getRead().execute(context);
-		return context.getResults() != null && !context.getResults().isEmpty();
+        //FIXME TEST FOR SATISFACTION OF CRITERIA without deserializing entries
+		List<CatalogEntry> results = runtime.getEventBus().fireEvent(context,runtime,null);
+		return results != null && !results.isEmpty();
 	}
 
-	private boolean foundValue(CatalogActionContext context, Object value) throws Exception {
-		context.getRequest().setEntry(value);
-
-		context.getCatalogManager().getRead().execute(context);
-		return context.getResults() != null && !context.getResults().isEmpty();
+	private boolean foundValue(RuntimeContext runtime,CatalogActionRequestImpl context, Object value) throws Exception {
+		context.setEntry(value);
+//FIXME TEST FOR existence of key
+        List<CatalogEntry> results = runtime.getEventBus().fireEvent(context,runtime,null);
+        return results != null && !results.isEmpty();
 	}
 
 }

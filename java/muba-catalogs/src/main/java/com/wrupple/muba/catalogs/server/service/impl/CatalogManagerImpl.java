@@ -428,7 +428,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			catalog.setHost(host);
 		}
 		cache.put(context, DOMAIN_METADATA, name, catalog);
-		context.getTransactionHistory().didMetadataRead(catalog);
+		context.getRuntimeContext().getTransactionHistory().didMetadataRead(catalog);
 		log.trace("BUILT catalog {}={}", name, catalog);
 		return catalog;
 	}
@@ -704,13 +704,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	public void createRefereces(CatalogActionContext context, CatalogDescriptor catalog, FieldDescriptor field,
 								  Object foreignValue,CatalogEntry owner, Instrospection instrospection) throws Exception {
         String reservedField;
-		context.getRequest().setCatalog(field.getCatalog());
 		if (field.isMultiple()) {
 			Collection<CatalogEntry> entries = (Collection<CatalogEntry>) foreignValue;
 			List<CatalogEntry> createdValues = new ArrayList<CatalogEntry>(entries.size());
 			for (CatalogEntry entry : entries) {
 				if (entry.getId() == null) {
-					createdValues.add(createEntry(context, entry, field.getCatalog()));
+					createdValues.add(context.triggerCreate(field.getCatalog(), entry));
 				} else {
 					createdValues.add(entry);
 				}
@@ -724,7 +723,10 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
             access.setPropertyValue(field, owner, keys, instrospection);
         } else {
-			CatalogEntry value =  createEntry(context, foreignValue, field.getCatalog());
+			// FIXME this is not batch at all, must be able to load a context with
+			// multile input entries, just like there is multiple results by default
+
+			CatalogEntry value =  context.triggerCreate(field.getCatalog(), (CatalogEntry) foreignValue);
             reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
             if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                 access.setPropertyValue(reservedField, owner, value, instrospection);
@@ -733,13 +735,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
         }
 	}
 
-	private CatalogEntry createEntry(CatalogActionContext context, Object foreignValue, String catalog) throws Exception {
-		// FIXME this is not batch at all, must be able to load a context with
-		// multile input entries, just like there is multiple results by default
-		context.getRequest().setEntryValue(foreignValue);
-		context.getCatalogManager().getNew().execute(context);
-		return context.getEntryResult();
-	}
+
 
 	private CatalogActionTrigger afterCreateHandledTimeline() {
 
@@ -1040,19 +1036,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		}
 	}
 
-	@Override
-	public CatalogEntry readEntry(CatalogDescriptor catalogId, Object parentId, CatalogActionContext readParentEntry)
-			throws Exception {
-		readParentEntry.setCatalogDescriptor(catalogId);
-		readParentEntry.getRequest().setEntry(parentId);
-		readParentEntry.getRequest().setName(CatalogActionRequest.READ_ACTION);
-		readParentEntry.getRequest().setEntryValue(null);
-		readParentEntry.getRequest().setFilter(null);
-
-		readParentEntry.getCatalogManager().getRead().execute(readParentEntry);
-
-		return readParentEntry.getEntryResult();
-	}
 
 	@Override
 	public CatalogEntry synthesizeChildEntity(Object parentEntityId, CatalogEntry o, Instrospection instrospection,
@@ -1064,9 +1047,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	@Override
 	public void processChild(CatalogEntry childEntity, CatalogDescriptor parentCatalogId, Object parentEntityId,
-			CatalogActionContext readParentEntry, CatalogDescriptor catalog, Instrospection instrospection) throws Exception {
+			CatalogActionContext context, CatalogDescriptor catalog, Instrospection instrospection) throws Exception {
 
-		CatalogEntry parentEntity = readEntry(parentCatalogId, parentEntityId, readParentEntry);
+		CatalogEntry parentEntity = context.triggerGet(parentCatalogId.getDistinguishedName(), parentEntityId);
 		// add inherited values to child Entity
 		if (parentEntity instanceof DistributiedLocalizedEntry) {
 			DistributiedLocalizedEntry localized = (DistributiedLocalizedEntry) parentEntity;

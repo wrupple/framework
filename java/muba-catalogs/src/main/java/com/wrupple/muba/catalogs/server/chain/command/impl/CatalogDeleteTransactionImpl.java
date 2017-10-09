@@ -81,16 +81,13 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 				// would
 				// not be called
 				Long parentCatalogId = catalog.getParent();
-				CatalogActionContext childContext = context.getCatalogManager().spawn(context);
 				// if parent not found, asume it has been deleted previously
 				if (parentEntityId != null) {
 					// delegate deeper inheritance to another instance of an
 					// AncestorAware DAO
-					childContext.setCatalogDescriptor(
-							childContext.getCatalogManager().getDescriptorForKey(parentCatalogId, childContext));
-					childContext.getRequest().setEntry(parentEntityId);
 
-					context.getCatalogManager().getDelete().execute(childContext);
+
+					context.triggerDelete(parentCatalogId.toString(),null,parentEntityId);
 
 				}
 
@@ -100,7 +97,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 			dao.execute(context);
 			CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 			for (CatalogEntry originalEntry : originalEntries) {
-				context.getTransactionHistory().didDelete(context, originalEntry, dao);
+				context.getRuntimeContext().getTransactionHistory().didDelete(context, originalEntry, dao);
 				if (cache != null) {
 					cache.delete(context, catalog.getDistinguishedName(), originalEntry);
 				}

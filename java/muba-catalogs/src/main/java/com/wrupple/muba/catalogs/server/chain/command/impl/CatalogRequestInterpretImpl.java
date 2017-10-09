@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ObjectMapper;
@@ -161,7 +162,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         private CatalogDescriptor catalogDescriptor;
 
-        // not injectable, always construct with CatalogManager.spawn
+        // not injectable, always construct with an event
         protected CatalogActionContextImpl(SystemCatalogPlugin manager, NamespaceContext domainContext,
                                            RuntimeContext requestContext, CatalogActionRequest catalogActionRequest)  {
             this.catalogManager = manager;
@@ -321,16 +322,155 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
 
 
-        @Override
-        public CatalogActionContext spawnChild() throws InvocationTargetException, IllegalAccessException {
-            return getCatalogManager().spawn(this);
-        }
 
         @Override
         public void setCatalogDescriptor(CatalogDescriptor catalog) {
             this.catalogDescriptor=catalog;
             getRequest().setCatalog(catalog.getDistinguishedName());
         }
+
+        @Override
+        public <T extends CatalogEntry> T get(String catalogId, Object entryId) throws Exception {
+            request.setCatalog(catalogId);
+            request.setEntry(entryId);
+            request.setFilter(null);
+            request.setName(DataEvent.READ_ACTION);
+            request.setFollowReferences(true);
+
+            getCatalogManager().getRead().execute(this);
+            return (T) getResult();
+        }
+
+
+        @Override
+        public <T extends CatalogEntry> List<T> delete(String catalog, FilterData o, Object id) throws Exception {
+            request.setCatalog(catalog);
+            request.setEntry(id);
+            request.setFilter(o);
+            request.setName(DataEvent.DELETE_ACTION);
+            getCatalogManager().getDelete().execute(this);
+            return (List<T>) getResults();
+        }
+
+        @Override
+        public <T extends CatalogEntry> List<T> read(String catalogId, FilterData all) throws Exception {
+            request.setCatalog(catalogId);
+            request.setEntry(null);
+            request.setFilter(all);
+            request.setName(DataEvent.READ_ACTION);
+            getCatalogManager().getRead().execute(this);
+            return (List<T>) getResults();
+        }
+
+
+
+        @Override
+        public <T extends CatalogEntry> T write(String catalogId, Object entryId, CatalogEntry updatedEntry) throws Exception {
+            request.setCatalog(catalogId);
+            request.setEntry(entryId);
+            request.setEntryValue(updatedEntry);
+            request.setName(DataEvent.WRITE_ACTION);
+            request.setFollowReferences(true);
+
+            getCatalogManager().getWrite().execute(this);
+            return (T) getResult();
+        }
+        @Override
+        public <T extends CatalogEntry> T create(String catalogId, CatalogEntry createdEntry) throws Exception {
+            request.setCatalog(catalogId);
+            request.setEntry(null);
+            request.setEntryValue(createdEntry);
+            request.setName(DataEvent.CREATE_ACTION);
+            request.setFollowReferences(true);
+
+            getCatalogManager().getNew().execute(this);
+            return (T) getResult();
+        }
+        @Override
+        public <T extends CatalogEntry> T triggerGet(String catalogId, Object entryId) throws Exception {
+            return triggerGet(catalogId,entryId,true);
+        }
+
+
+        @Override
+        public <T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception {
+            CatalogActionRequestImpl event = new CatalogActionRequestImpl();
+            event.setParentValue(request);
+            event.setCatalog(catalogId);
+            event.setEntry(key);
+            event.setFilter(null);
+            event.setFollowReferences(assemble);
+            event.setName(DataEvent.READ_ACTION);
+            event.setDomain((Long) getNamespaceContext().getId());
+            List<T> results =  runtimeContext.getEventBus().fireEvent(event,runtimeContext,null);
+            return results==null? null : results.isEmpty()? null : results.get(0);
+        }
+
+
+
+
+        @Override
+        public <T extends CatalogEntry> List<T> triggerRead(String catalogId, FilterData all) throws Exception {
+           return triggerRead(catalogId,all,false);
+        }
+
+        @Override
+        public <T extends CatalogEntry> List<T>  triggerRead(String catalogId, FilterData filter, boolean assemble) throws Exception {
+            CatalogActionRequestImpl event = new CatalogActionRequestImpl();
+            event.setParentValue(request);
+            event.setCatalog(catalogId);
+            event.setFilter(filter);
+            event.setFollowReferences(assemble);
+            event.setName(DataEvent.READ_ACTION);
+            event.setDomain((Long) getNamespaceContext().getId());
+            return runtimeContext.getEventBus().fireEvent(event,runtimeContext,null);
+
+        }
+
+
+
+        @Override
+        public <T extends CatalogEntry> List<T> triggerDelete(String catalog, FilterData o, Object id) throws Exception {
+            CatalogActionRequestImpl event = new CatalogActionRequestImpl();
+            event.setParentValue(request);
+            event.setCatalog(catalog);
+            event.setFilter(o);
+            event.setEntry(id);
+            event.setName(DataEvent.DELETE_ACTION);
+            event.setDomain((Long) getNamespaceContext().getId());
+            return runtimeContext.getEventBus().fireEvent(event,runtimeContext,null);
+        }
+
+
+        @Override
+        public <T extends CatalogEntry> T triggerWrite(String catalogId, Object entryId, CatalogEntry updatedEntry) throws Exception {
+            CatalogActionRequestImpl event = new CatalogActionRequestImpl();
+            event.setParentValue(request);
+            event.setCatalog(catalogId);
+            event.setEntry(entryId);
+            event.setFollowReferences(true);
+            event.setEntryValue(updatedEntry);
+            event.setName(DataEvent.WRITE_ACTION);
+            event.setDomain((Long) getNamespaceContext().getId());
+            List<T> results =  runtimeContext.getEventBus().fireEvent(event,runtimeContext,null);
+            return results==null? null : results.isEmpty()? null : results.get(0);
+        }
+
+
+        @Override
+        public <T extends CatalogEntry> T triggerCreate(String catalogId, CatalogEntry createdEntry) throws Exception {
+            CatalogActionRequestImpl event = new CatalogActionRequestImpl();
+            event.setParentValue(request);
+            event.setCatalog(catalogId);
+            event.setEntryValue(createdEntry);
+            event.setName(DataEvent.WRITE_ACTION);
+            event.setDomain((Long) getNamespaceContext().getId());
+            event.setFollowReferences(true);
+
+            List<T> results =  runtimeContext.getEventBus().fireEvent(event,runtimeContext,null);
+            return results==null? null : results.isEmpty()? null : results.get(0);
+        }
+
 
 
         @Override
@@ -346,11 +486,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         @Override
         public void setResult(CatalogEntry catalogEntry) {
             setResults((List) Collections.singletonList(catalogEntry));
-        }
-
-        @Override
-        public Object getParent() {
-            return getParentValue()==null? null:getParentValue().getRequest().getId();
         }
 
         @Override

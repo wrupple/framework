@@ -5,7 +5,6 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
-import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.chain.Context;
 
@@ -17,9 +16,8 @@ import java.util.*;
 public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCatalogGraph {
 
 	@Inject
-	public CompleteCatalogGraphImpl(DiscriminateEntriesImpl separateEntityStrategy,
-			SameEntityLocalizationStrategy sameEntityStrategy) {
-		super(separateEntityStrategy, sameEntityStrategy);
+	public CompleteCatalogGraphImpl() {
+		super();
 	}
 
 	@Override
@@ -33,7 +31,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 
 			Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);
 			joinWithGivenJoinData(context.getResults(), context.getCatalogDescriptor(), joins,
-					context.getCatalogManager().spawn(context), filterMap, context.getCatalogManager().access().newSession(null));
+					context, filterMap, context.getCatalogManager().access().newSession(null));
 		}
 		log.trace("</{}>",this.getClass().getSimpleName());
 		return CONTINUE_PROCESSING;

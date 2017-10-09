@@ -40,9 +40,9 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 	private final ExplicitDataJoin join;
 
 	// DataReadCommandImpl
-	//private final PrimaryKeyReaders primaryKeyers;
+	private final PrimaryKeyReaders primaryKeyers;
 	// DataQueryCommandImpl
-	//private final QueryReaders queryers;
+	private final QueryReaders queryers;
 
 	private int MIN_TREE_LEVELS;
 
@@ -155,7 +155,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			}
 		}
 
-		context.getTransactionHistory().didRead(context, regreso,
+		context.getRuntimeContext().getTransactionHistory().didRead(context, regreso,
 				null/* no undo */);
 
 		return regreso;
@@ -175,7 +175,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 				}
 			}
 		}
-		context.getTransactionHistory().didRead(context, regreso,
+		context.getRuntimeContext().getTransactionHistory().didRead(context, regreso,
 				null/* no undo */);
 		queryRewriter.interceptResult(regreso, context, catalog);
 		return regreso;
@@ -218,9 +218,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			// read child Results
 			List<CatalogEntry> children = context.getResults();
 			if (children != null && !children.isEmpty()) {
-
-				CatalogActionContext readContext = context.getCatalogManager().spawn(context);
-				processChildren(children, readContext, catalog, instrospection);
+				processChildren(children, context, catalog, instrospection);
 				return children;
 			} else {
 				return Collections.EMPTY_LIST;
@@ -254,22 +252,22 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 			log.trace("[PROCESSING CHILD ENTRY]");
 			context.getCatalogManager().processChild(childEntity,
 					context.getCatalogManager().getDescriptorForKey(parentCatalogId, context), parentEntityId,
-					context.getCatalogManager().spawn(context), catalog, instrospection);
+					context, catalog, instrospection);
 		}
 		return context.getEntryResult();
 
 	}
 
-	protected void processChildren(List<CatalogEntry> children, CatalogActionContext readContext,
+	protected void processChildren(List<CatalogEntry> children, CatalogActionContext context,
 			CatalogDescriptor catalog, Instrospection instrospection) throws Exception {
 		// we are certain this catalog has a parent, otherwise this DAO would
 		// not be called
 		Long parentCatalogId = catalog.getParent();
-		CatalogDescriptor parent = readContext.getCatalogManager().getDescriptorForKey(parentCatalogId, readContext);
+		CatalogDescriptor parent = context.getCatalogManager().getDescriptorForKey(parentCatalogId, context);
 		Object parentEntityId;
 		for (CatalogEntry childEntity : children) {
-			parentEntityId = readContext.getCatalogManager().getAllegedParentId(childEntity, instrospection);
-			readContext.getCatalogManager().processChild(childEntity, parent, parentEntityId, readContext, catalog,
+			parentEntityId = context.getCatalogManager().getAllegedParentId(childEntity, instrospection);
+			context.getCatalogManager().processChild(childEntity, parent, parentEntityId, context, catalog,
                     instrospection);
 		}
 	}

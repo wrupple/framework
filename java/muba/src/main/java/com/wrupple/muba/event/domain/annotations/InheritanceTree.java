@@ -26,4 +26,6 @@ public @interface InheritanceTree {
     String message() default "{catalog.inheritanceTree}";
 
     Class<? extends Payload>[] payload() default {};
+
+    String catalog();
 }

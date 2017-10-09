@@ -1,18 +1,23 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.impl.LocalizedEntityWrapper;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
-import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 import org.apache.commons.chain.Command;
+import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils.*;
 
 public abstract class DataJoiner implements Command {
 
@@ -64,14 +69,10 @@ public abstract class DataJoiner implements Command {
 
 	}
 
-	private final SameEntityLocalizationStrategy sameEntityStrategy;
-	private final DiscriminateEntriesImpl separateEntityStrategy;
 
 	@Inject
-	public DataJoiner(DiscriminateEntriesImpl separateEntityStrategy, SameEntityLocalizationStrategy sameEntityStrategy) {
+	public DataJoiner() {
 		super();
-		this.sameEntityStrategy = sameEntityStrategy;
-		this.separateEntityStrategy = separateEntityStrategy;
 	}
 
 	protected Map<JoinQueryKey, Set<Object>> createFilterMap(String[][] joins, CatalogActionContext context) {
@@ -98,7 +99,6 @@ public abstract class DataJoiner implements Command {
 		if (log.isInfoEnabled()) {
 			log.trace("[BUILD RESULT SET] {} {} ", mainCatalog.getDistinguishedName(), Arrays.deepToString(joins));
 		}
-		context.getRequest().setEntry(null);
 		// for each join a separate result set is added to the response
 
 		String[] joinSentence;
@@ -267,13 +267,12 @@ public abstract class DataJoiner implements Command {
 
 		// Find values to join
 		FilterData currentQueryFilter = createJoinSubquery(context, foreignField, fieldValues);
-		context.getRequest().setCatalog(catalog.getDistinguishedName());
+
 		List<CatalogEntry> currentMatchingEntries;
 		if (currentQueryFilter == null) {
 			currentMatchingEntries = Collections.EMPTY_LIST;
 		} else {
-			context.getCatalogManager().getRead().execute(context);
-			currentMatchingEntries = context.getResults();
+			currentMatchingEntries = context.triggerRead(catalog.getDistinguishedName(),currentQueryFilter);
 		}
 		return currentMatchingEntries;
 	}
@@ -284,16 +283,15 @@ public abstract class DataJoiner implements Command {
 		if (fieldValues == null || fieldValues.isEmpty()) {
 			return null;
 		} else {
-			FilterData regreso = FilterDataUtils.newFilterData();
+			FilterData regreso = newFilterData();
 			regreso.setConstrained(false);
-			FilterCriteria criteria = FilterDataUtils.newFilterCriteria();
+			FilterCriteria criteria = newFilterCriteria();
 			criteria.setOperator(FilterData.EQUALS);
 			criteria.setValues(new ArrayList<Object>(fieldValues));
 			criteria.pushToPath(foreignField);
 
 			regreso.addFilter(criteria);
 
-			context.getRequest().setFilter(regreso);
 			return regreso;
 		}
 	}
@@ -366,34 +364,58 @@ public abstract class DataJoiner implements Command {
 
 		switch (catalog.getLocalization()) {
 		case 1:
-			FilterData membershipFactors = createFilters(context.getRequest().getLocale(), context.getCatalogDescriptor().getId());
-			log.debug("[build localized results] {}", membershipFactors);
-			context.getRequest().setCatalog(DistributiedLocalizedEntry.CATALOG);
-			context.setResults(result);
-			context.getRequest().setFilter(membershipFactors);
-			separateEntityStrategy.execute(context);
-			break;
+
+            FilterCriteria catalogCriteria = newFilterCriteria();
+            catalogCriteria.pushToPath(HasCatalogId.CATALOG_FIELD);
+            catalogCriteria.setOperator(FilterData.EQUALS);
+            catalogCriteria.setValue(catalog);
+            FilterCriteria localeCriteria = newFilterCriteria();
+            catalogCriteria.pushToPath(DistributiedLocalizedEntry.LOCALE_FIELD);
+            catalogCriteria.setOperator(FilterData.EQUALS);
+            catalogCriteria.setValue(catalog);
+
+			log.debug("[build distributed localized results] ");
+			return result.stream().map(entry->{
+			            FilterData filter = createSingleKeyFieldFilter(catalog.getKeyField(), Collections.singletonList(entry.getId()));
+                        filter.addFilter(localeCriteria);
+			            filter.addFilter(catalogCriteria);
+                        return filter;
+			}
+            ).map(filter->{
+                try {
+                    List<DistributiedLocalizedEntry> results = context.triggerRead(DistributiedLocalizedEntry.CATALOG,filter);
+                    if(results!=null&&!results.isEmpty()){
+                        return results.get(0);
+                    }
+                } catch (Exception e) {
+                    log.error(filter.toString(),e);
+                    context.getRuntimeContext().addWarning("${catalog.locale.read}");
+                }
+                return null;
+            }).collect(Collectors.toList());
 		case 0:
 		default:
-			context.getRequest().setCatalog(catalog.getDistinguishedName());
-			context.setResults(result);
-			sameEntityStrategy.execute(context);
-			break;
+			return sameEntityStrategy_wrap(result,context.getRequest().getLocale(),(Long)catalog.getId());
 		}
-		return context.getResults();
 
 	}
+    List<DistributiedLocalizedEntry>  sameEntityStrategy_wrap(List<? extends CatalogEntry> result,String locale,Long catalogNumericId) throws Exception {
+		HasAccesablePropertyValues entry;
+		LocalizedEntityWrapper localizedEntry;
+		int size = result.size();
+        List<DistributiedLocalizedEntry> regreso = new ArrayList<DistributiedLocalizedEntry>(size);
+		log.trace("[WRAPPING RESULTS] {}/{}",size,locale);
+		for (int i = 0; i < size; i++) {
+			entry = (HasAccesablePropertyValues) result.get(i);
 
-	private FilterData createFilters(String locale, Object catalog) {
+			localizedEntry = new LocalizedEntityWrapper(entry, locale, catalogNumericId);
 
-		FilterData filters = FilterDataUtils.createSingleFieldFilter(DistributiedLocalizedEntry.LOCALE_FIELD, locale);
-		FilterCriteria catalogCriteria = FilterDataUtils.newFilterCriteria();
-		catalogCriteria.pushToPath(HasCatalogId.CATALOG_FIELD);
-		catalogCriteria.setOperator(FilterData.EQUALS);
-		catalogCriteria.setValue(catalog);
-		filters.addFilter(catalogCriteria);
-		return filters;
+			regreso.add(localizedEntry);
+		}
+		return regreso;
 	}
+
+
 
 	public static Map<Object, CatalogEntry> mapJoins(HashMap<Object, CatalogEntry> hashMap,
 			List<CatalogEntry> entries) {

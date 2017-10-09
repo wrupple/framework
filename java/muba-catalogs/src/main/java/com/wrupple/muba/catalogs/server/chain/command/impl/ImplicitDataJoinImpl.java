@@ -7,7 +7,6 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
-import com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -21,9 +20,8 @@ import java.util.Set;
 public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin {
 
 	@Inject
-	public ImplicitDataJoinImpl(DiscriminateEntriesImpl separateEntityStrategy,
-			SameEntityLocalizationStrategy sameEntityStrategy) {
-		super(separateEntityStrategy, sameEntityStrategy);
+	public ImplicitDataJoinImpl() {
+		super();
 	}
 
 	@Override

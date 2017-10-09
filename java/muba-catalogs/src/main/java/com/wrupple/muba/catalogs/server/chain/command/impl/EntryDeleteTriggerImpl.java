@@ -19,13 +19,11 @@ import java.util.List;
 @Singleton
 public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 	private final Provider<Trash> trashp;
-	private final CatalogCreateTransaction create;
 
 	@Inject
 	public EntryDeleteTriggerImpl(Provider<Trash> trashp, CatalogCreateTransaction create) {
 		super();
 		this.trashp = trashp;
-		this.create = create;
 	}
 
 	@Override
@@ -42,14 +40,10 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 		Instrospection instrospection = null;
 		Boolean trashed;
 
-		CatalogActionContext trashContext = null;
-		for (CatalogEntry e : oldValues) {
-			if (trashContext == null) {
-                instrospection = context.getCatalogManager().access().newSession(e);
-                trashContext = context.getCatalogManager().spawn(context);
 
-				trashContext.getRequest().setName(CatalogActionRequest.CREATE_ACTION);
-			}
+
+		for (CatalogEntry e : oldValues) {
+
             trashed = (Boolean) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
             if (trashed != null && trashed) {
 				Trash trashItem = trashp.get();
@@ -58,10 +52,8 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 						context.getCatalogManager().encodeClientPrimaryKeyFieldValue(e.getId(), field, catalog));
 				trashItem.setCatalog(catalog.getDistinguishedName());
 
-				trashContext.getRequest().setCatalog(catalog.getDistinguishedName());
-				trashContext.getRequest().setEntryValue(trashItem);
-				trashContext.getRequest().setDomain((Long) e.getDomain());
-				create.execute(trashContext);
+				//TODO ?? trashItem.setDomain((Long) e.getDomain());
+				context.triggerCreate(Trash.CATALOG,trashItem);
 			}
 		}
 

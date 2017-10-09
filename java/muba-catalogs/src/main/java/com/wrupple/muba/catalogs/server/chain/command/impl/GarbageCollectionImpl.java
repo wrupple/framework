@@ -20,7 +20,6 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
@@ -30,12 +29,10 @@ import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 public class GarbageCollectionImpl implements GarbageCollection {
 	private static final Logger log = LoggerFactory.getLogger(GarbageCollectionImpl.class);
 
-	private final CatalogDeleteTransaction delete;
 
 	@Inject
-	public GarbageCollectionImpl(CatalogDeleteTransaction delete) {
+	public GarbageCollectionImpl() {
 		super();
-		this.delete = delete;
 	}
 
 	@Override
@@ -71,7 +68,6 @@ public class GarbageCollectionImpl implements GarbageCollection {
 					ids.add(e.getId());
 				}
 
-				CatalogActionContext garbageContext = null;
 				for (CatalogIdentification idem : names) {
 
 					garbageFilter = null;
@@ -122,14 +118,10 @@ public class GarbageCollectionImpl implements GarbageCollection {
 					}
 
 					if (garbageFilter != null) {
-						if (garbageContext == null) {
-							garbageContext = context.getCatalogManager().spawn(context);
-						}
 						log.trace("Querying for hard references");
-						garbageContext.getRequest().setEntry(null);
-						garbageContext.getRequest().setCatalog(temp.getDistinguishedName());
-						garbageContext.getRequest().setFilter(garbageFilter);
-						delete.execute(garbageContext);
+
+						context.triggerDelete(temp.getDistinguishedName(),garbageFilter,null);
+
 					}
 				}
 

@@ -66,11 +66,9 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 					Object foreignValue = context.getCatalogManager().getPropertyForeignKeyValue(catalog, field, result, instrospection);
 					if(foreignValue!=null){
 						//if we got to this point, force the context to follow the reference graph
-						context.getRequest().setFollowReferences(true);
-						CatalogActionContext recursiveCreationContext  = context.getCatalogManager().spawn(context);
-						recursiveCreationContext.getRequest().setFollowReferences(context.getRequest().getFollowReferences());
-						recursiveCreationContext.getRequest().setCatalog(field.getCatalog());
-						 recursiveCreationContext.getCatalogManager().createRefereces(recursiveCreationContext,catalog,field,foreignValue,result, instrospection);
+
+
+						 context.getCatalogManager().createRefereces(context,catalog,field,foreignValue,result, instrospection);
 					}
 				}
 			}
@@ -79,9 +77,8 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		
 		CatalogEntry parentEntry = null;
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
-			CatalogActionContext ancestorsCreationContext  = context.getCatalogManager().spawn(context);
 
-			parentEntry= create( result, instrospection, catalog, ancestorsCreationContext,context);
+			parentEntry= create( result, instrospection, catalog, context,context);
 		}
 		
 		createDao.execute(context);
@@ -92,7 +89,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 			if (parentEntry!=null &&catalog.getGreatAncestor() != null && !catalog.isConsolidated() ) {
 				context.getCatalogManager().addInheritedValuesToChild(parentEntry,  regreso, instrospection,catalog);
 			}
-			context.getTransactionHistory().didCreate(context, regreso, createDao);
+			context.getRuntimeContext().getTransactionHistory().didCreate(context, regreso, createDao);
 		}
 		
 		//local cache FIXME only empty lists when storage is not guarantee sequential insertion
@@ -125,20 +122,19 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 	}
 	
 	private CatalogEntry createAncestorsRecursively(CatalogEntry o, CatalogDescriptor parentCatalog, Object allegedParentId, Instrospection instrospection,
-			CatalogActionContext childContext) throws Exception {
+			CatalogActionContext context) throws Exception {
 
 		// synthesize parent entity from all non-inherited, passing all
 		// inherited field Values
 
 		CatalogEntry parentEntity;
 		if (allegedParentId == null) {
-			parentEntity = childContext.getCatalogManager().synthesizeCatalogObject(o, parentCatalog, false, instrospection, childContext);
-			childContext.getRequest().setEntryValue(parentEntity);
-			childContext.setCatalogDescriptor(parentCatalog);
-			childContext.getCatalogManager().getNew().execute(childContext);
-			parentEntity = childContext.getEntryResult();
+			parentEntity = context.getCatalogManager().synthesizeCatalogObject(o, parentCatalog, false, instrospection, context);
+
+			parentEntity = context.triggerCreate(parentCatalog.getDistinguishedName(),parentEntity);
 		} else {
-			parentEntity = childContext.getCatalogManager().readEntry(parentCatalog, allegedParentId, childContext);
+
+			parentEntity =context.triggerGet(parentCatalog.getDistinguishedName(),allegedParentId);
 			if (parentEntity == null) {
 				throw new IllegalArgumentException("entry parent does not exist " + allegedParentId + "@" + parentCatalog.getDistinguishedName());
 			}

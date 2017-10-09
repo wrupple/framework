@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
@@ -14,7 +15,7 @@ import java.util.List;
  * delegates to whatever DAO the LocalizedEntity catalog uses to access data,
  * however, this implementation intercepts the creation of any entity pointing
  * to a catalog that uses
- * {@link com.wrupple.muba.catalogs.server.service.impl.SameEntityLocalizationStrategy}
+ * {@link com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin}
  * and updates/creates columns on that same entity, but for the given locale
  * 
  * @author japi
@@ -43,14 +44,9 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		// format locale to be prepended to a field (looks like field_locale)
 		locale = "_" + locale;
 
-		CatalogActionContext localize = context.getCatalogManager().spawn(context);
-
-		localize.getRequest().setEntry(numericCatalogId);
-		localize.getRequest().setFilter(null);
-		localize.getRequest().setCatalog(CatalogDescriptor.CATALOG_ID);
 		// what catalog is this localized entity pointing to?
-		context.getCatalogManager().getRead().execute(localize);
-		CatalogDescriptor pointsTo = localize.getEntryResult();
+        CatalogDescriptor pointsTo =context.triggerGet(CatalogDescriptor.CATALOG_ID,numericCatalogId);
+
 		Instrospection instrospection = context.getCatalogManager().access().newSession(pointsTo);
 
 		// what strategy does the referenced catalog use to localize it's
@@ -65,12 +61,8 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 			List<String> values = (List<String>) o.getProperties();
 
 			// read localizable entity
-			localize.getRequest().setEntry(entryId);
-			localize.getRequest().setFilter(null);
-			localize.getRequest().setCatalog(catalogId);
-			CatalogDescriptor localizedCatalog = localize.getCatalogDescriptor();
-			context.getCatalogManager().getRead().execute(localize);
-			PersistentCatalogEntity targetEntity = localize.getEntryResult();
+			CatalogDescriptor localizedCatalog = context.getCatalogManager().getDescriptorForName(catalogId,context);
+			PersistentCatalogEntity targetEntity = context.triggerGet(catalogId,entryId);
 
 			// write localized values
 			FieldDescriptor field;
@@ -88,16 +80,17 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 				}
 
 			}
-			localize.getRequest().setEntryValue(targetEntity);
-			// persist without performing any validations
-			context.getCatalogManager().getWrite().execute(localize);
-			targetEntity = localize.getEntryResult();
+
+			targetEntity = context.triggerWrite(catalogId,entryId,targetEntity);
 
 			o.setId(targetEntity.getId());
 			context.setResults(Collections.singletonList(o));
 		} else {
 			/* DISTRIBUTED */
-			return context.getCatalogManager().getNew().execute(context);
+			context.create(
+					(String)context.getRequest().getCatalog(),
+					(CatalogEntry)context.getRequest().getEntryValue()
+			);
 		}
 
 		return CONTINUE_PROCESSING;

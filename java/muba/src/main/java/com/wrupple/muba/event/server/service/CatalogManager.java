@@ -10,19 +10,11 @@ import org.apache.commons.chain.Command;
  *
  */
 public interface CatalogManager extends Catalog {
-	
-
-
 	Command getNew();
-	
+
 	Command getRead();
-	
+
 	Command getWrite();
-	
+
 	Command getDelete();
-
-	
-
-	
-
 }

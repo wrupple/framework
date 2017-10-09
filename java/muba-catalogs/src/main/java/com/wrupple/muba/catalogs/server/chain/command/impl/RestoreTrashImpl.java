@@ -41,9 +41,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			all.addOrdering(new FilterDataOrderingImpl(HasCatalogId.CATALOG_FIELD, false));
 
 			// READ ALL TRASH ITEMS ORDERED BY NUMERIC_ID TYPE
-			context.getRequest().setFilter(all);
-			context.getCatalogManager().getRead().execute(context);
-			List<Trash> trash = context.getResults();
+			List<Trash> trash = context.read(Trash.CATALOG,all);
 			String catalogId = null;
 			CatalogDescriptor descriptor = null;
 			FieldDescriptor trashField = null;
@@ -62,10 +60,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 				undelete(e, context, descriptor, trashField, instrospection);
 			}
 			// DUMP TRASH
-			context.getRequest().setCatalog(Trash.CATALOG);
-			context.getRequest().setFilter(all);
-			context.getRequest().setEntry(null);
-			context.getCatalogManager().getDelete().execute(context);
+			context.delete(Trash.CATALOG,all,null/*requested entry*/);
 		} else {
 
 			log.trace("[RESTORE TRASH ITEM] {}", e);
@@ -78,10 +73,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			undelete(e, context, descriptor, trashField, instrospection);
 
 			// DUMP TRASH
-			context.getRequest().setCatalog(Trash.CATALOG);
-			context.getRequest().setFilter(null);
-			context.getRequest().setEntry(e.getId());
-			context.getCatalogManager().getDelete().execute(context);
+            context.delete(Trash.CATALOG,null/*filterdata*/,e.getId());
 
 			// SINCE THIS TRIGGER IS PERFORMED BEFORE ACTION IS COMMITED,
 			// AND FAILS SILENTLY, then when the restoring action is
@@ -98,13 +90,10 @@ public class RestoreTrashImpl implements RestoreTrash {
 			log.trace("[UNDELETE] {}", e);
 			Object entryId = e.getEntry();
 			String catalogId = e.getCatalog();
-			context.getRequest().setCatalog(catalogId);
-			context.getRequest().setEntry(entryId);
-			context.getCatalogManager().getRead().execute(context);
-			CatalogEntry trashedEntry = context.getEntryResult();
+
+			CatalogEntry trashedEntry = context.get(catalogId,entryId);
             context.getCatalogManager().access().setPropertyValue(trashField, trashedEntry, false, instrospection);
-            context.getRequest().setEntryValue(trashedEntry);
-			context.getCatalogManager().getWrite().execute(context);
+			context.write(catalogId,entryId,trashedEntry);
 
 		}
 	}

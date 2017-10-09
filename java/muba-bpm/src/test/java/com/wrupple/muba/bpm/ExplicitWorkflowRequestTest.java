@@ -7,18 +7,14 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
-import com.wrupple.muba.bpm.domain.impl.WorkRequestImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
-import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.catalogs.domain.ContentNode;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;

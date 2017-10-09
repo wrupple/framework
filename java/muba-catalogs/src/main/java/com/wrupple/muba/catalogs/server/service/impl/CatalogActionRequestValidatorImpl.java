@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import org.slf4j.Logger;
@@ -219,14 +220,16 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		if (descriptor == null) {
 
 			RuntimeContext system = this.exp.get();
-			CatalogActionContext context = dictionary.spawn(system);
+			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
+				context.setDomain(domain);
+				context.setCatalog(CatalogDescriptor.CATALOG_ID);
+				context.setEntry(catalogId);
+
 			try {
-				context.setNamespace(domain);
-				context.getRequest().setCatalog(catalogId);
+				descriptor = system.getEventBus().fireEvent(context,system,null);
 			} catch (Exception e) {
-				throw new RuntimeException("Unable to set namespace of catalog context during validation", e);
+				throw new RuntimeException(e);
 			}
-			descriptor = this.dictionary.getDescriptorForName(catalogId, context);
 		}
 		return descriptor;
 	}

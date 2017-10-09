@@ -17,8 +17,6 @@ import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
 import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;

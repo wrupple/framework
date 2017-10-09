@@ -39,35 +39,30 @@ public class UserCatalogPluginImpl implements UserCatalogPlugin {
 	}
 	
 
-	private List<CatalogDescriptor> readCatalogs(CatalogActionContext cctxontext, FilterData filter,boolean assemble) throws CatalogException{
+	private List<CatalogDescriptor> readCatalogs(CatalogActionContext context, FilterData filter,boolean assemble) throws CatalogException{
 
-		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
-		context.getRequest().setCatalog(CatalogDescriptor.CATALOG_ID);
-		context.getRequest().setFilter(filter);
-		context.getRequest().setFollowReferences(assemble);
-		try {
-			context.getCatalogManager().getRead().execute(context);
-		} catch (Exception e) {
-			throw new CatalogException("Unable to read catalogs:"+filter,e);
-		}
-		return  context.getResults();
+        List<CatalogDescriptor> r= null;
+        try {
+            r = context.triggerRead(CatalogDescriptor.CATALOG_ID,filter,assemble);
+        } catch (Exception e) {
+            throw new CatalogException("failed to read catalogs",e);
+        }
+        return r;
+
 	}
 	
-	private CatalogDescriptor readCatalog(CatalogActionContext cctxontext, Long key,boolean assemble) throws CatalogException{
+	private CatalogDescriptor readCatalog(CatalogActionContext context, Long key,boolean assemble) throws CatalogException{
 		if(key.longValue()<0){
 			throw new IllegalArgumentException("No negative keys allowed for user defined catalogs: "+key);
 		}
-		CatalogActionContext context = cctxontext.getCatalogManager().spawn(cctxontext);
-		context.getRequest().setCatalog(CatalogDescriptor.CATALOG_ID);
-		context.getRequest().setEntry(key);
-		context.getRequest().setFollowReferences(assemble);
+
 		try {
-			context.getCatalogManager().getRead().execute(context);
+			return context.triggerGet(CatalogDescriptor.CATALOG_ID,key,assemble);
 		} catch (Exception e) {
 			throw new CatalogException("Unable to read catalog:"+key,e);
 
 		}
-		return  context.getEntryResult();
+
 	}
 
 
