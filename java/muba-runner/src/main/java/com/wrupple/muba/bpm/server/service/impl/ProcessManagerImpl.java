@@ -2,6 +2,7 @@ package com.wrupple.muba.bpm.server.service.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.SessionContext;

@@ -7,6 +7,10 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
+import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.domain.*;
 import org.junit.Test;
 
@@ -14,6 +18,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class CatalogEngineTest extends IntegralTest {
@@ -139,6 +144,234 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue(catalogContext.getResults().get(0).getName().equals(problem.getName()));
 
 	}
+
+
+	@Test
+	public void filters() throws Exception {
+
+		RuntimeContext excecution = injector.getInstance(RuntimeContext.class);
+		SystemCatalogPlugin manager = injector.getInstance(SystemCatalogPlugin.class);
+		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
+		CatalogDescriptor catalog = builder.fromClass(Argument.class, "Argument", "Argument", -49723l, null);
+
+		CatalogActionRequestImpl request = new CatalogActionRequestImpl();
+		request.setCatalog(CatalogDescriptor.CATALOG_ID);
+		request.setDomain(CatalogEntry.PUBLIC_ID);
+        request.setName(DataEvent.CREATE_ACTION);
+		log.trace("NEW TEST EXCECUTION CONTEXT READY");
+
+		String TRES = "TRES";
+		String FIVE = "five";
+
+		log.trace("[-create elements-]");
+
+		List<Argument> argumentsToDeclare = Arrays.asList(new Argument(TRES, 3l), new Argument(FIVE, 5l),
+				new Argument("one", 1l), new Argument("uno", 1l), new Argument("four", 4l));
+
+		for (Argument arg : argumentsToDeclare) {
+			request.setEntryValue(arg);
+			runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		}
+		log.trace("[-read all-]");
+
+		setUp();
+		FilterData filterData = FilterDataUtils.newFilterData();
+		request.setFilter(filterData);
+
+        List<CatalogEntry> results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+		assertTrue(results.size() == argumentsToDeclare.size());
+
+
+		log.trace("[-read element-]");
+		setUp();
+		Object lodId = results.get(0).getId();
+		request.setEntry(lodId);
+        request.setName(DataEvent.READ_ACTION);
+		results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		assertTrue(results.size() == 1);
+		assertTrue(results.get(0).getName().equals(TRES));
+
+		log.trace("[-read all in order-]");
+		// ORDER
+		request.setEntry(null);
+		request.setFilter(filterData);
+		filterData.addOrdering(new FilterDataOrderingImpl(Argument.VALUE, false));
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+		assertTrue(results.size() == argumentsToDeclare.size());
+		assertTrue(((Argument) results.get(0)).getValue() == 5);
+
+		log.trace("[-read a segment-]");
+		// LIMITS log.trace("[-read a segment-]");
+		filterData.setConstrained(true);
+		filterData.setStart(2);
+		filterData.setLength(2);
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		assertTrue(results.size() == 2);
+
+		// EQUALS = "==";
+		log.trace("[-find element by single == criteria-]");
+		filterData = FilterDataUtils.createSingleFieldFilter(CatalogEntry.NAME_FIELD, TRES);
+		request.setFilter(filterData);
+
+
+		results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		assertTrue(results.size() == 1);
+		assertTrue(results.get(0).getName().equals(TRES));
+
+		filterData = FilterDataUtils.newFilterData();
+		FilterCriteriaImpl criteria = new FilterCriteriaImpl(Argument.VALUE, FilterData.DIFFERENT, 1l);
+		filterData.addFilter(criteria);
+		request.setFilter(filterData);
+
+		// DIFFERENT
+		log.trace("[-find element by single != criteria-]");
+		criteria.setOperator(FilterData.DIFFERENT);
+
+
+		results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		assertTrue(results.size() == 3);
+
+		// GREATEREQUALS = ">=";
+		log.trace("[-find element by single >= criteria-]");
+		criteria.setOperator(FilterData.GREATEREQUALS);
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 5);
+
+		// LESSEQUALS = "<=";
+		log.trace("[-find element by single <= criteria-]");
+		criteria.setOperator(FilterData.LESSEQUALS);
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 2);
+
+		// LESS = "<"
+		log.trace("[-find element by single < criteria-]");
+		criteria.setOperator(FilterData.LESS);
+		criteria.setValue(2l);
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 2);
+
+		// GREATER = ">"
+		log.trace("[-find element by single > criteria-]");
+		criteria.setOperator(FilterData.GREATER);
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 3);
+
+		log.debug("testing string filters");
+		// LIKE
+		log.trace("[-find element by single LIKE criteria-]");
+		criteria.setPath(Arrays.asList(CatalogEntry.NAME_FIELD));
+		criteria.setOperator(FilterData.LIKE);
+
+		criteria.setValue("f???");
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 1);
+
+		criteria.setValue("f????");
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 0);
+
+		criteria.setValue("f%");
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 2);
+
+
+
+
+		log.trace("[-find element by single STARTS criteria-]");
+
+		criteria.setOperator(FilterData.STARTS); criteria.setValue("f");
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 2);
+
+
+
+		log.trace("[-find element by single ENDS criteria-]");
+		criteria.setOperator(FilterData.ENDS); criteria.setValue("o");
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 1);
+
+
+
+		log.trace("[-find element by single REGEX criteria-]");
+		criteria.setOperator(FilterData.REGEX);
+		criteria.setValue("([A-Z])\\w+");
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 1);
+
+
+		log.debug("testing collection filters");
+		// IN
+		log.trace("[-find element by single IN criteria-]");
+		criteria.setOperator(FilterData.IN);
+		criteria.setValues(Arrays.asList((Object)TRES,FIVE));
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 2);
+
+		/*
+		 * FINISHED QUERY TESTS
+		 */
+		log.trace("[update element]");
+		//request.setOldValue((CatalogEntry) request.getConvertedResult());
+		request.setEntry(lodId);
+		request.setEntryValue(new Argument("TROI", 3l));
+        request.setName(DataEvent.WRITE_ACTION);
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		assertTrue(results.size() == 1);
+		assertTrue(lodId.equals(results.get(0).getId()));
+		assertTrue(results.get(0).getName().equals("TROI"));
+
+		log.trace("[delete element]");
+		setUp();
+		request.setEntry(lodId);
+        request.setName(DataEvent.DELETE_ACTION);
+
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == 1);
+		assertTrue(lodId.equals(results.get(0).getId()));
+
+		setUp();
+
+		filterData = FilterDataUtils.newFilterData();
+		request.setFilter(filterData);
+        request.setEntry(null);
+        request.setName(DataEvent.READ_ACTION);
+        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(results.size() == (argumentsToDeclare.size() - 1));
+
+		log.trace("[CRUD tests passed]");
+
+	}
+
+
+	// i18n locale-dependent field values
 	// DROP COLUMN/INDEX CatalogDescriptorUpdateTriggerImpl
 
 	// ADD COLUMN/INDEX

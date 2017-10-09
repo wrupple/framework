@@ -7,7 +7,9 @@ import com.wrupple.muba.bpm.server.chain.command.DetermineSolutionFieldsDomain;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.DataEvent;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
@@ -27,12 +29,10 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
     protected Logger log = LoggerFactory.getLogger(DetermineSolutionFieldsDomainImpl.class);
 
     private final SolverCatalogPlugin plugin;
-    private final SystemCatalogPlugin catalogPlugin;
 
     @Inject
-    public DetermineSolutionFieldsDomainImpl(SolverCatalogPlugin plugin, SystemCatalogPlugin catalogPlugin) {
+    public DetermineSolutionFieldsDomainImpl(SolverCatalogPlugin plugin) {
         this.plugin = plugin;
-        this.catalogPlugin=catalogPlugin;
     }
 
     @Override
@@ -43,8 +43,13 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         final Solver solver = plugin.getSolver();
         log.debug("Resolving Solution Type");
         String solutionType =(String) request.getCatalog();
-        CatalogActionContext catalogContext= catalogPlugin.spawn(context.getRuntimeContext());
-        CatalogDescriptor solutionDescriptor = catalogPlugin.getDescriptorForName(solutionType,catalogContext);
+
+        CatalogActionRequestImpl solutionTypeInquiry = new CatalogActionRequestImpl();
+        solutionTypeInquiry.setEntry(solutionType);
+        solutionTypeInquiry.setCatalog(CatalogDescriptor.CATALOG_ID);
+        solutionTypeInquiry.setName(DataEvent.READ_ACTION);
+
+        CatalogDescriptor solutionDescriptor = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
         context.getStateValue().setSolutionDescriptor(solutionDescriptor);
 
         //by default, all fields are eligible for solving
