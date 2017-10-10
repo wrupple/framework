@@ -71,7 +71,8 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		if(catalog==null){
 			throw new NullPointerException("catalogId");
 		}
-		String domain = (String) req.getDomain();
+		//after request interpret we expect contract domain to be a Long
+		Long domain = (Long) req.getDomain();
 		FilterData filter = req.getFilter();
 		CatalogDescriptor descriptor = null;
 		
@@ -216,7 +217,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		return report;
 	}
 
-	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, String domain) throws InvocationTargetException, IllegalAccessException {
+	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, Long domain) throws InvocationTargetException, IllegalAccessException {
 		if (descriptor == null) {
 //at this point this very validator should allow this as a valid  request no more questions asked
 			RuntimeContext system = this.exp.get();

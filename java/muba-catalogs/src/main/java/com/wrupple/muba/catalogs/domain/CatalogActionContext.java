@@ -45,8 +45,6 @@ public interface CatalogActionContext
 
 	public <T extends CatalogEntry> T getEntryResult();
 
-	void setNamespace(String domain) throws Exception;
-
     void setCatalogDescriptor(CatalogDescriptor catalog);
 
 	<T extends CatalogEntry> T get(String catalogId, Object entryId) throws Exception;

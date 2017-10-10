@@ -76,7 +76,7 @@ public abstract class CatalogEntryImpl implements CatalogEntry {
         if (ancestor == null) {
             ancestor = (T) parent;
         } else {
-            while (ancestor.getParent() != null) {
+            while (ancestor.getParentValue() != null) {
                 ancestor = ancestor.getParentValue();
             }
         }

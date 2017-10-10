@@ -68,7 +68,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		CatalogActionContext context = (CatalogActionContext) x;
 		String catalogId = (String) context.getRequest().getCatalog();
 		if (catalogId == null) {
-			log.trace("[GET AVAILABLE CATALOG_TIMELINE LIST]");
+			log.trace("[GET AVAILABLE CATALOG LIST]");
 			// list all domain catalogs
 			context.setResults(context.getCatalogManager().getAvailableCatalogs(context));
 			return CONTINUE_PROCESSING;
@@ -196,18 +196,18 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
                 Object primaryId = context.getCatalogManager().decodePrimaryKeyToken(vanityId);
                 regreso = read(primaryId, catalog, context, cache, instrospection);
             }catch(NumberFormatException e){
-                log.warn("specified parameter {} could not be used as a primary key");
+                log.warn("specified parameter {} could not be used as a primary key",vanityId);
             }
 
 		}
 
 		if (regreso == null) {
-            log.info("primary key {} returned no results");
+            log.info("primary key {} returned no results",vanityId);
 			if(catalog.getFieldDescriptor(HasDistinguishedName.FIELD)!=null){
 				FilterData filter = FilterDataUtils.createSingleFieldFilter(HasDistinguishedName.FIELD, vanityId);
 				List<CatalogEntry> results = doRead(filter, catalog, context, instrospection);
 				if (results == null || results.isEmpty()) {
-					log.error("attempt to use {} as discriminator returned no results");
+					log.error("attempt to use {} as discriminator returned no results",vanityId);
 				} else {
 					regreso = results.get(0);
 				}
