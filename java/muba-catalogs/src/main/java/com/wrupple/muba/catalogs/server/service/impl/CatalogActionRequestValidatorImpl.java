@@ -220,7 +220,8 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		if (descriptor == null) {
 
 			RuntimeContext system = this.exp.get();
-			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
+			//FIXME validation of a catalog request can not depend on resolution of another catalog request
+			CatalogActionRequestImpl context = new CatalogActionRequestImpl()
 				context.setDomain(domain);
 				context.setCatalog(CatalogDescriptor.CATALOG_ID);
 				context.setEntry(catalogId);
@@ -229,6 +230,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			try {
 				descriptor = system.getEventBus().fireEvent(context,system,null);
 			} catch (Exception e) {
+			    log.error("Error while attempting to read catalog id ",e);
 				throw new RuntimeException(e);
 			}
 			if(descriptor==null){

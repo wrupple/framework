@@ -13,6 +13,8 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -26,6 +28,7 @@ import java.util.List;
 /*Set defaults, (like domain language and stuff)*/
 @Singleton
 public final class CatalogRequestInterpretImpl implements CatalogRequestInterpret {
+    protected static final Logger log = LoggerFactory.getLogger(CatalogRequestInterpretImpl.class);
 
 	private final SystemCatalogPlugin cms;
 	private final ObjectMapper mapper;
@@ -80,7 +83,12 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 			 */
 			Object targetEntryId = request.getEntry();
 			if (targetEntryId != null) {
-                request.setEntry(targetEntryId);
+                try{
+                    targetEntryId = cms.decodePrimaryKeyToken(targetEntryId);
+                    request.setEntry(targetEntryId);
+                }catch(NumberFormatException e){
+                    log.error("Primary key is not a number",e);
+                }
 			}
 
 			/*
@@ -121,7 +129,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 			}
 			request.setFilter(filter);
             request.setFollowReferences(request.getFollowReferences());
-
+        context.put(CatalogEntry.NAME_FIELD,request.getName());
 		return CONTINUE_PROCESSING;
 	}
 
