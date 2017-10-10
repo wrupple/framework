@@ -224,11 +224,15 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 				context.setDomain(domain);
 				context.setCatalog(CatalogDescriptor.CATALOG_ID);
 				context.setEntry(catalogId);
+            context.setName(DataEvent.READ_ACTION);
 
 			try {
 				descriptor = system.getEventBus().fireEvent(context,system,null);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
+			}
+			if(descriptor==null){
+				throw new IllegalArgumentException(catalogId+"@"+domain);
 			}
 		}
 		return descriptor;

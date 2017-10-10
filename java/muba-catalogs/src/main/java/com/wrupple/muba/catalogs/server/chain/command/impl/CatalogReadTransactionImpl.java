@@ -121,7 +121,13 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 				graphJoin.execute(context);
 			}
 		} else {
-			CatalogEntry originalEntry = read(targetEntryId, catalog, context, cache, instrospection);
+            CatalogEntry originalEntry;
+            if(targetEntryId instanceof String){
+                originalEntry = readVanityId((String)targetEntryId, catalog, context, cache, instrospection);
+
+            }else{
+                originalEntry = read(targetEntryId, catalog, context, cache, instrospection);
+            }
 
 			context.setResults(Collections.singletonList(originalEntry));
 
@@ -186,21 +192,27 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 		CatalogEntry regreso = null;
 		if (context.getCatalogManager().isPrimaryKey(vanityId)) {
 			// almost certainly an Id
-			Object primaryId = context.getCatalogManager().decodePrimaryKeyToken(vanityId);
-			regreso = read(primaryId, catalog, context, cache, instrospection);
+            try{
+                Object primaryId = context.getCatalogManager().decodePrimaryKeyToken(vanityId);
+                regreso = read(primaryId, catalog, context, cache, instrospection);
+            }catch(NumberFormatException e){
+                log.warn("specified parameter {} could not be used as a primary key");
+            }
+
 		}
 
 		if (regreso == null) {
-			FilterData filter;
-			List<CatalogEntry> results;
-			// if(catalog.getFieldDescriptor(HasDistinguishedName.FIELD)==null){
-			filter = FilterDataUtils.createSingleFieldFilter(HasDistinguishedName.FIELD, vanityId);
-			results = doRead(filter, catalog, context, instrospection);
-			if (results == null || results.isEmpty()) {
-				throw new IllegalArgumentException(vanityId);
-			} else {
-				regreso = results.get(0);
+            log.info("primary key {} returned no results");
+			if(catalog.getFieldDescriptor(HasDistinguishedName.FIELD)!=null){
+				FilterData filter = FilterDataUtils.createSingleFieldFilter(HasDistinguishedName.FIELD, vanityId);
+				List<CatalogEntry> results = doRead(filter, catalog, context, instrospection);
+				if (results == null || results.isEmpty()) {
+					log.error("attempt to use {} as discriminator returned no results");
+				} else {
+					regreso = results.get(0);
+				}
 			}
+
 		}
 		queryRewriter.interceptResult(regreso, context, catalog);
 		return regreso;

@@ -80,7 +80,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 			 */
 			Object targetEntryId = request.getEntry();
 			if (targetEntryId != null) {
-				targetEntryId = cms.decodePrimaryKeyToken(targetEntryId);
                 request.setEntry(targetEntryId);
 			}
 
