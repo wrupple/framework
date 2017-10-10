@@ -47,7 +47,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
 	@Override
 	public Context materializeBlankContext(RuntimeContext parent) throws InvocationTargetException, IllegalAccessException {
-		return new CatalogActionContextImpl(cms,namespaceProvider.get(),parent,contractProvider.get());
+		return new CatalogActionContextImpl(cms,namespaceProvider.get(),parent, (CatalogActionRequest) parent.getServiceContract());
 	}
 
 	@Override

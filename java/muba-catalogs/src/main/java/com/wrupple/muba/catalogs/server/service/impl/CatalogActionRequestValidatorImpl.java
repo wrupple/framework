@@ -69,13 +69,13 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();
 		String catalog = (String) req.getCatalog();
 		if(catalog==null){
-			throw new IllegalArgumentException("catalog");
+			throw new NullPointerException("catalogId");
 		}
 		String domain = (String) req.getDomain();
 		FilterData filter = req.getFilter();
 		CatalogDescriptor descriptor = null;
 		
-		if (CatalogActionRequest.READ_ACTION.equals(catalog)) {
+		if (entryValue==null&& filter==null && (action==null||CatalogActionRequest.READ_ACTION.equals(action))) {
 			return report;
 		}
 
@@ -218,10 +218,9 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, String domain) throws InvocationTargetException, IllegalAccessException {
 		if (descriptor == null) {
-
+//at this point this very validator should allow this as a valid  request no more questions asked
 			RuntimeContext system = this.exp.get();
-			//FIXME validation of a catalog request can not depend on resolution of another catalog request
-			CatalogActionRequestImpl context = new CatalogActionRequestImpl()
+			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
 				context.setDomain(domain);
 				context.setCatalog(CatalogDescriptor.CATALOG_ID);
 				context.setEntry(catalogId);

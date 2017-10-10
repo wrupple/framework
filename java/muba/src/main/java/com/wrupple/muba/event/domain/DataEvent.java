@@ -20,10 +20,6 @@ public interface DataEvent extends Event,HasCatalogKey {
 
     public final String FORMAT_PARAMETER = "format";
 
-    public final String FILTER_DATA_PARAMETER = "filter";
-
-    public final String PUBLISH_ACTION = "publish";
-
     public final String UPLOAD_ACTION = "upload";
 
     public final String UPLOAD_URL = "url";
