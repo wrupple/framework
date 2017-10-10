@@ -69,7 +69,7 @@ public class LocalizedEntityWrapper implements DistributiedLocalizedEntry {
 	}
 
 	@Override
-	public void setDomain(Long domain) {
+	public void setDomain(Object domain) {
 		entity.setDomain(domain);
 	}
 

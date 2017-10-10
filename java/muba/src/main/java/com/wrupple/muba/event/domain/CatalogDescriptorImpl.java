@@ -24,9 +24,8 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	private Class<? extends CatalogEntry> clazz;
 
-	@CatalogFieldValues(defaultValueOptions = { MAIN_STORAGE_UNIT, QUICK_STORAGE_UNIT, LOCAL, LOCAL_KEY_VALUE_PAIR,
-			LOCAL_CACHE, MAIN_CACHE, SECURE })
-	private int storage;
+
+	private List<String> storage;
 
 	@CatalogFieldValues(defaultValueOptions = { CONSOLIDATED, DistributiedLocalizedEntry.CATALOG})
 	private int localization;
@@ -77,6 +76,8 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	private String distinguishedName;
 
 	private Long version;
+	@CatalogFieldValues(defaultValueOptions = {"FIRST","ALL"})
+	private int storageStrategy;
 
 	public CatalogDescriptorImpl() {
 	}
@@ -260,11 +261,16 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.localization = localization;
 	}
 
-	public int getStorage() {
+	public List<String> getStorage() {
 		return storage;
 	}
 
-	public void setStorage(int storage) {
+	@Override
+	public int getStorageStrategy() {
+		return storageStrategy;
+	}
+
+	public void setStorage(List<String> storage) {
 		this.storage = storage;
 	}
 

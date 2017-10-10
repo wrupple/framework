@@ -69,7 +69,7 @@ public interface Host extends CatalogEntry,HasStakeHolder {
 
 	void setChannel(Integer c);
 
-	void setDomain(Long domain);
+	void setDomain(Object domain);
 	
 	/**
 	 * @return the platform the peer is running on

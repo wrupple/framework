@@ -39,7 +39,7 @@ public class IntentResolverContextImpl extends ContextBase implements IntentReso
         return null;
     }
 
-    public final void setDomain(Long domain) {
+    public final void setDomain(Object domain) {
 
     }
 

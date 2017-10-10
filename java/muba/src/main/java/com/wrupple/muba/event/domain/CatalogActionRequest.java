@@ -14,8 +14,6 @@ public interface CatalogActionRequest extends HasLocale,DataEvent,HasParentValue
 
 	boolean getFollowReferences();
 
-
-
     void setFollowReferences(boolean followReferences);
 
 

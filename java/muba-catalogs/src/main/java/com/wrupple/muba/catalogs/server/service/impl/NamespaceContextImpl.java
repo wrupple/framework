@@ -53,7 +53,7 @@ public class NamespaceContextImpl extends ContextBase implements NamespaceContex
 		}
 	}
 	@Override
-	public void setDomain(Long domain) {
+	public void setDomain(Object domain) {
 	}
 
 

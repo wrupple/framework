@@ -69,10 +69,6 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		return domain;
 	}
 
-	public final void setDomain(String domain) {
-		this.domain = domain;
-	}
-
 	public final boolean isAnonymouslyVisible() {
 		return anonymouslyVisible;
 	}
@@ -183,7 +179,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	}
 
 	@Override
-	public void setDomain(Long domain) {
+	public void setDomain(Object domain) {
 		if(domain==null){
 			this.domain=null;
 		}else{

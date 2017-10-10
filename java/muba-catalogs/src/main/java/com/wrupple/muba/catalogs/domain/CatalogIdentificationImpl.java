@@ -7,7 +7,7 @@ public class CatalogIdentificationImpl implements CatalogIdentification {
 	private static final long serialVersionUID = -7040850909734516615L;
 
 	private String id, name, image;
-	private Long domain;
+	private Object domain;
 	private boolean anonymouslyVisible;
 
 	public CatalogIdentificationImpl() {
@@ -50,11 +50,11 @@ public class CatalogIdentificationImpl implements CatalogIdentification {
 		return CatalogDescriptor.CATALOG_ID;
 	}
 
-	public Long getDomain() {
+	public Object getDomain() {
 		return domain;
 	}
 
-	public void setDomain(Long domain) {
+	public void setDomain(Object domain) {
 		this.domain = domain;
 	}
 

@@ -53,7 +53,7 @@ public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
         return domain;
     }
 
-    public final void setDomain(Long domain) {
+    public final void setDomain(Object domain) {
         this.domain = domain;
     }
 

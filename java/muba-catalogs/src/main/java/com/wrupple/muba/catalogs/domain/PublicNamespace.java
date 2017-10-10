@@ -48,7 +48,7 @@ public final class PublicNamespace implements CatalogNamespace {
 	}
 
 	@Override
-	public void setDomain(Long domain) {
+	public void setDomain(Object domain) {
 
 	}
 

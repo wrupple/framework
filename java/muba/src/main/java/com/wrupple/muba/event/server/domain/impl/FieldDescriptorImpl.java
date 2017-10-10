@@ -381,7 +381,7 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 
 
 	@Override
-	public void setDomain(Long domain) {
+	public void setDomain(Object domain) {
 		
 	}
 

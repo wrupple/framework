@@ -10,14 +10,14 @@ import com.wrupple.muba.event.domain.reserved.Versioned;
 
 public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,HasParentValue<Long,CatalogDescriptor>,Versioned,HasConstrains {
 	public static final String CATALOG_ID = "CatalogDescriptor";
-	String MAIN_STORAGE_UNIT = "main";
-	String QUICK_STORAGE_UNIT = "quick";
-	String LOCAL = "local";
-	String LOCAL_KEY_VALUE_PAIR = "dictionary";
-	String LOCAL_CACHE = "volatile";
+	//String MAIN_STORAGE_UNIT = "main";
+	//String QUICK_STORAGE_UNIT = "quick";
+	//String LOCAL = "local";
+	//String LOCAL_KEY_VALUE_PAIR = "dictionary";
+	//String LOCAL_CACHE = "volatile";
 	
-	String MAIN_CACHE = "index";
-	String SECURE = "secure";
+	//String MAIN_CACHE = "index";
+	//String SECURE = "secure";
     String CONSOLIDATED =  "MONOLITIC";
 
 
@@ -34,7 +34,9 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,Ha
 	 * 
 	 * @return storage service
 	 */
-	public int getStorage();
+	public List<String> getStorage();
+
+	public int getStorageStrategy();
 
 	/**
 	 * @return cache or other resource saving strategy
@@ -95,4 +97,6 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,Ha
 
 
 	public void setGreatAncestor(String greatAncestor);
+
+    void setStorage(List<String> strings);
 }

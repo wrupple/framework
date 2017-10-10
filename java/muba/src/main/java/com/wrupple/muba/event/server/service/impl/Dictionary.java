@@ -11,7 +11,7 @@ import org.apache.commons.chain.impl.CatalogBase;
  */
 public class Dictionary extends CatalogBase {
 
-	private final Command defaultCommand;
+	protected final Command defaultCommand;
 
 	public Dictionary(Command defaultCommand) {
 		this.defaultCommand = defaultCommand;

@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.PersistentCatalogEntity;
-import com.wrupple.muba.event.domain.reserved.HasParent;
 
 public class PersistentCatalogEntityImpl implements PersistentCatalogEntity {
 	private static final long serialVersionUID = -8295920370428632912L;
@@ -69,7 +68,7 @@ public class PersistentCatalogEntityImpl implements PersistentCatalogEntity {
 	}
 
 	@Override
-	public void setDomain(Long domain) {
+	public void setDomain(Object domain) {
 	}
 
 	@Override

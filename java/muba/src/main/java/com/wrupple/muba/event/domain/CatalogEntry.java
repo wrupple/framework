@@ -25,11 +25,11 @@ public interface CatalogEntry extends Entity {
 	/**
 	 * sets the id of the  namespace for this
 	 * entry
-	 * 
+	 *
 	 * @param domain
 	 *            t
 	 */
-	void setDomain(Long domain);
+	void setDomain(Object domain);
 
 	/**
 	 *  the GUID consists on a combination of domain, catalog, and id then

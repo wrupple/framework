@@ -78,7 +78,8 @@ public class CatalogModule extends AbstractModule {
 		// 2014-01-18T00:35:03.463Z
 		String datePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
-		bind(Integer.class).annotatedWith(Names.named("catalog.storage.secure")).toInstance(6);
+		bind(String.class).annotatedWith(Names.named("catalog.storage.secure")).toInstance("Secure");
+		bind(String.class).annotatedWith(Names.named("catalog.metadata.storage")).toInstance(CatalogDescriptor.CATALOG_ID);
 		bind(String.class).annotatedWith(Names.named("template.token.splitter")).toInstance("\\.");
 		Pattern pattern = Pattern.compile(rawPattern);
 		bind(Pattern.class).annotatedWith(Names.named("template.pattern")).toInstance(pattern);
@@ -246,11 +247,12 @@ public class CatalogModule extends AbstractModule {
 	@Inject
 	@Singleton
 	@Named(CatalogDescriptor.CATALOG_ID)
-	public CatalogDescriptor catalogDescriptor(@Named(CatalogDescriptor.CATALOG_ID) Class clazz,
+	public CatalogDescriptor catalogDescriptor(@Named("catalog.metadata.storage") String catalogPluginStorage,@Named(CatalogDescriptor.CATALOG_ID) Class clazz,
 			CatalogDescriptorBuilder builder) {
 		CatalogDescriptor r = builder.fromClass(CatalogDescriptorImpl.class, CatalogDescriptor.CATALOG_ID, "Catalogs",
 				-191191, null);
 		r.setClazz(clazz);
+		r.setStorage(Arrays.asList(CatalogReadTransaction.DEFAULT_STORAGE,catalogPluginStorage));
 		return r;
 	}
 

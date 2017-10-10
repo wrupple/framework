@@ -4,4 +4,5 @@ import org.apache.commons.chain.Command;
 
 public interface CatalogReadTransaction extends Command {
 
+    String DEFAULT_STORAGE = "DEFAULT";
 }
