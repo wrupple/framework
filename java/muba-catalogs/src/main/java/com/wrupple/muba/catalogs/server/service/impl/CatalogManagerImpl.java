@@ -813,7 +813,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				String raw;
 				for (int i = 0; i < values.size(); i++) {
 					raw = (String) values.get(i);
-					ids.add(decodeKey(raw));
+					ids.add(decodePrimaryKeyToken(raw));
 				}
 				return ids;
 			} catch (NumberFormatException e) {
@@ -831,7 +831,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 	@Override
-	public Long decodePrimaryKeyToken(Object targetEntryId) {
+	public Object decodePrimaryKeyToken(Object targetEntryId) {
 		if (targetEntryId == null) {
 			return null;
 		}
@@ -839,12 +839,18 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		if (targetEntryId instanceof Long) {
 			return (Long) targetEntryId;
 		} else {
-			return decodeKey((String) targetEntryId);
+		    String rawKey = (String) targetEntryId;
+		    if(rawKey.charAt(0)==':'){
+                return decodeKey((String) targetEntryId);
+            }else{
+                return rawKey;
+            }
+
 		}
 	}
 
 	private String encodeLongKey(Long key) {
-		return Long.toString(key, 36);
+		return ":"+Long.toString(key, 36);
 	}
 
 	private Long decodeKey(String key) {
