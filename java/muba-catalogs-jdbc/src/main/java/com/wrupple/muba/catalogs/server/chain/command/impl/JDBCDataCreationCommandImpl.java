@@ -106,7 +106,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 						}else{
 							paramz.add(((Class)fieldValue).getCanonicalName());
 						}
-						
+
 					}else{
 						paramz.add(fieldValue);
 					}

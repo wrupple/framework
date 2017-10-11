@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,6 +31,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 
 	protected static final Logger log = LoggerFactory.getLogger(JDBCDataReadCommandImpl.class);
+	private final Integer missingTableErrorCode;
 
 	static class MultipleFieldResultsHandler extends AbstractListHandler<Object> {
 
@@ -67,12 +69,14 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 	@Inject
 	public JDBCDataReadCommandImpl(QueryRunner runner, Provider<QueryResultHandler> rshp,
 			JDBCMappingDelegate tableNames,
+								   @Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
 			@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
 			@Named("catalog.sql.delimiter") Character delimiter) {
 		DELIMITER = delimiter;
 		this.dateFormat = dateFormat;
 		this.rshp = rshp;
 		this.runner = runner;
+		this.missingTableErrorCode=missingTableErrorCode;
 		this.tableNames = tableNames;
 		this.multitenant = multitenant;
 	}
@@ -96,8 +100,18 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		log.trace("[DB read] {}  id={}", builder.toString(), id);
 		QueryResultHandler rsh = rshp.get();
 		rsh.setContext(context);
-		List<CatalogEntry> results = runner.query(builder.toString(), rsh, id);
-
+		List<CatalogEntry> results;
+		try {
+			results = runner.query(builder.toString(), rsh, id);
+		} catch (SQLException e) {
+		if (e.getErrorCode() == missingTableErrorCode) {
+			log.warn("[DB table does not exist] will return empty result set");
+			results = Collections.EMPTY_LIST;
+		} else {
+			log.error("[DB query error]", e);
+			throw e;
+		}
+	}
 		if (results == null || results.isEmpty()) {
 			context.setResults(null);
 			return CONTINUE_PROCESSING;
