@@ -13,14 +13,14 @@ import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
 	private static final long serialVersionUID = 1743825364474840159L;
-
+    private Object entry;
 	private Object entryValue;
 
 	private FilterDataImpl filter;
 
 	@AvailableCommand(dictionary=CatalogActionRequest.CATALOG_FIELD)
 	private String format;
-	private String entry;
+
 	@NotNull
 	private String catalog;
 	private String locale;
@@ -81,7 +81,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		super();
 	}
 
-	public CatalogActionRequestImpl(Long domain, String catalog, String action, String entry, String format,
+	public CatalogActionRequestImpl(Long domain, String catalog, String action, Object entry, String format,
 			CatalogEntry catalogEntry, FilterData filterData) {
 		super();
 		this.entryValue = catalogEntry;
@@ -94,7 +94,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		this.locale = LOCALE_FIELD;
 	}
 
-	public CatalogActionRequestImpl(Long domain, String locale, String catalog, String action, String entry,
+	public CatalogActionRequestImpl(Long domain, String locale, String catalog, String action, Object entry,
 			String format, CatalogEntry catalogEntry, FilterDataImpl filter) {
 		super();
 		this.entryValue = catalogEntry;
@@ -145,12 +145,8 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		this.format = format;
 	}
 
-	public String getEntry() {
+	public Object getEntry() {
 		return entry;
-	}
-
-	public void setEntry(String entry) {
-		this.entry = entry;
 	}
 
 	public String getCatalog() {
@@ -170,7 +166,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
 	@Override
 	public void setEntry(Object id) {
-		setEntry((String) id);
+		this.entry=id;
 	}
 
 	@Override

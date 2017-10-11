@@ -86,7 +86,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
             applySorts(filter, catalog.getAppliedSorts());
             applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, instrospection);
             List<CatalogEntry> result = null;
-            FilterCriteria keyCriteria = filter.fetchCriteria(CatalogEntry.ID_FIELD);
+            FilterCriteria keyCriteria = filter.fetchCriteria(catalog.getKeyField());
             if (!filter.isConstrained() || keyCriteria == null) {
                 result = read(filter, catalog, context, cache, instrospection);
             } else {
@@ -280,10 +280,10 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
                                 }
                             }).
                             forEach(partialResults->{
-                                if(partialResults!=null)
+                                if(partialResults!=null  && ! partialResults.isEmpty())
                                     results.addAll(partialResults);
                             });
-                        return results;
+                        return results.isEmpty() ? null : results;
                 case 0:
                 default:
                     //first to preset results wins
@@ -292,7 +292,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
                         storageUnit = queryers.getCommand(storageName);
 
                         patials = queryUnits(filter, catalog, context, instrospection, storageUnit);
-                        if (patials != null) {
+                        if (patials != null && ! patials.isEmpty()) {
                             return patials;
                         }
                     }

@@ -154,6 +154,7 @@ public class CatalogModule extends AbstractModule {
 		bind(EntryDeleteTrigger.class).to(EntryDeleteTriggerImpl.class);
 		bind(FieldDescriptorUpdateTrigger.class).to(FieldDescriptorUpdateTriggerImpl.class);
 		bind(CatalogDescriptorUpdateTrigger.class).to(CatalogDescriptorUpdateTriggerImpl.class);
+        bind(CatalogPluginQueryCommand.class).to(CatalogPluginQueryCommandImpl.class);
 
 		bind(GarbageCollection.class).to(GarbageCollectionImpl.class);
 		bind(TrashDeleteTrigger.class).to(TrashDeleteTriggerImpl.class);

@@ -465,7 +465,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setParentValue(request);
             event.setCatalog(catalogId);
             event.setEntryValue(createdEntry);
-            event.setName(DataEvent.WRITE_ACTION);
+            event.setName(DataEvent.CREATE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
             event.setFollowReferences(true);
 
