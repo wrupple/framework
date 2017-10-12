@@ -177,7 +177,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	@Override
 	public void setDomain(Long domain) {
 		if(domain==null){
-			this.domain=CatalogEntry.PUBLIC_ID;
+			this.domain=CatalogEntry.CURRENT_NAMESPACE;
 		}else{
 			this.domain = domain;
 		}

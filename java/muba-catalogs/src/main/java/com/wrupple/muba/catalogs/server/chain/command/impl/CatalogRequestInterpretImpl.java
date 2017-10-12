@@ -65,9 +65,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
 
         // set namespace
-        if (request.getDomain() == null) {
-            context.getNamespaceContext().setId(CatalogEntry.PUBLIC_ID, context);
-        }else if (request.getDomain().longValue()==CatalogEntry.CURRENT_NAMESPACE) {
+
+        if (request.getDomain()==null || request.getDomain().longValue()==CatalogEntry.CURRENT_NAMESPACE) {
             context.getNamespaceContext().setId((Long) context.getRuntimeContext().getSession().
                     getSessionValue().
                     getDomain(), context);
