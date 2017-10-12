@@ -462,8 +462,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setDomain((Long) getNamespaceContext().getId());
             event.setFollowReferences(true);
 
-            return runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
-        }
+            List<T> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
+            return results == null ? null : results.isEmpty() ? null : results.get(0);        }
 
 
         @Override

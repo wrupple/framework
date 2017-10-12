@@ -12,15 +12,14 @@ import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.service.ContextAwareValidator;
 import com.wrupple.muba.event.server.service.PropertyValidationContext;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.reserved.HasConstrains;
@@ -35,7 +34,8 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	protected static final Logger log = LoggerFactory.getLogger(CatalogActionRequestValidatorImpl.class);
 
 	private final SystemCatalogPlugin dictionary;
-	private final Provider<RuntimeContext> exp;
+	private final Provider<SessionContext> exp;
+	private final Provider<EventBus> bus;
 	private final ContextAwareValidator delegate;
 	/*
 	 * secondary services
@@ -44,8 +44,9 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final LargeStringFieldDataAccessObject lsdao;
 
 	@Inject
-	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<RuntimeContext> exp,
-			SystemCatalogPlugin cms, LargeStringFieldDataAccessObject lsdao) {
+	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<SessionContext> exp,
+											 SystemCatalogPlugin cms, Provider<EventBus> bus, LargeStringFieldDataAccessObject lsdao) {
+		this.bus = bus;
 		this.lsdao = lsdao;
 		this.exp = exp;
 
@@ -220,7 +221,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, Long domain) throws InvocationTargetException, IllegalAccessException {
 		if (descriptor == null) {
 //at this point this very validator should allow this as a valid  request no more questions asked
-			RuntimeContext system = this.exp.get();
+			SessionContext system = this.exp.get();
 			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
 				context.setDomain(domain);
 				context.setCatalog(CatalogDescriptor.CATALOG_ID);
@@ -228,7 +229,8 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
             context.setName(DataEvent.READ_ACTION);
 
 			try {
-				descriptor = system.getEventBus().fireEvent(context,system,null)
+				//TODO event always returns fill result list, can we make it so it doesnt have to wrap single results?ss
+				descriptor = (CatalogDescriptor) ((List)bus.get().fireEvent(context,system,null)).get(0);
 			} catch (Exception e) {
 			    log.error("Error while attempting to read catalog id ",e);
 				throw new RuntimeException(e);
