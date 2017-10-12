@@ -34,6 +34,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	protected static final Logger log = LoggerFactory.getLogger(CatalogActionRequestValidatorImpl.class);
 
 	private final SystemCatalogPlugin dictionary;
+	//FIXME this session object should base universal privileges as it is isolated from the to-be excecuted runtime context
 	private final Provider<SessionContext> exp;
 	private final Provider<EventBus> bus;
 	private final ContextAwareValidator delegate;
