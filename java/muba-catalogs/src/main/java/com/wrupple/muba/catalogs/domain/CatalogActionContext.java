@@ -9,9 +9,10 @@ import com.wrupple.muba.event.domain.reserved.HasParent;
 import com.wrupple.muba.event.domain.reserved.HasParentValue;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.domain.reserved.HasResults;
 
 public interface CatalogActionContext
-		extends ServiceContext, HasResult<CatalogEntry> {
+		extends ServiceContext, HasResult<CatalogEntry>,HasResults<CatalogEntry> {
 
 	final String CATALOG = "CatalogActionContext";
 
@@ -34,14 +35,6 @@ public interface CatalogActionContext
 	public List<CatalogEntry> getOldValues();
 
 	public void addResuls(List<CatalogEntry> result);
-
-
-	/**
-	 * @return
-	 */
-	public <T extends CatalogEntry> List<T> getResults();
-
-	public <T extends CatalogEntry> void setResults(List<T> discriminated);
 
 	public <T extends CatalogEntry> T getEntryResult();
 

@@ -124,7 +124,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
         runtimeContext.setSentence(event.getSentence());
         runtimeContext.setServiceContract(event.getStateValue());
         boolean regreso = resume(runtimeContext);
-        event.setResult(runtimeContext.getResult());
+        event.setResult(runtimeContext.getResults());
         return regreso;
     }
 

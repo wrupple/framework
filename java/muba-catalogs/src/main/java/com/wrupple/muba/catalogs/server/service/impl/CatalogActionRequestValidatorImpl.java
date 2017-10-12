@@ -228,7 +228,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
             context.setName(DataEvent.READ_ACTION);
 
 			try {
-				descriptor = system.getEventBus().fireEvent(context,system,null);
+				descriptor = system.getEventBus().fireEvent(context,system,null)
 			} catch (Exception e) {
 			    log.error("Error while attempting to read catalog id ",e);
 				throw new RuntimeException(e);

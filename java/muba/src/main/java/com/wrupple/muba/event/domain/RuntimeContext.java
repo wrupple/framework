@@ -10,7 +10,7 @@ import com.wrupple.muba.event.domain.reserved.*;
 import org.apache.commons.chain.Context;
 
 public interface RuntimeContext extends Context, HasValidations, HasLocale, ListIterator<String>, CatalogKey,
-		HasParentValue<Object,RuntimeContext>, HasResult<Object> {
+		HasParentValue<Object,RuntimeContext>, HasResult<Object> ,HasResults<Object> {
 
 	final int Unauthorized = 401;
 	final int PaymentRequired = 402;

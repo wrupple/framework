@@ -16,6 +16,7 @@ import javax.validation.ConstraintViolation;
 
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasResults;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 
@@ -352,6 +353,21 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 	}
 
+    @Override
+    public <T> List<T> getResults() {
+        if (this.serviceContext != this && this.serviceContext instanceof HasResult) {
+            return ((HasResults<T>) this.serviceContext).getResults();
+
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> void setResults(List<T> discriminated) {
+
+    }
+
 	@Override
 	public RuntimeContext spawnChild() {
 		return new RuntimeContextImpl( getEventBus(), getSession(), this);
@@ -572,5 +588,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		}
 		return (TransactionHistory) transaction;
 	}
+
 
 }

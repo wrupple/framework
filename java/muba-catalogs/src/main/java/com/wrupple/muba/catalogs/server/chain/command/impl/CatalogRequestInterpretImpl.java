@@ -407,7 +407,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public <T extends CatalogEntry> List<T> triggerRead(String catalogId, FilterData all) throws Exception {
-            return triggerRead(catalogId, all, false);
+            return triggerRead(catalogId, all, true);
         }
 
         @Override
@@ -462,8 +462,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setDomain((Long) getNamespaceContext().getId());
             event.setFollowReferences(true);
 
-            List<T> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
-            return results == null ? null : results.isEmpty() ? null : results.get(0);
+            return runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
         }
 
 
