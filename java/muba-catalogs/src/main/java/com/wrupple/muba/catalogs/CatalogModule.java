@@ -68,11 +68,7 @@ public class CatalogModule extends AbstractModule {
         bind(CatalogRequestInterpret.class).to(CatalogRequestInterpretImpl.class);
         bind(CatalogActionFilterInterpret.class).to(CatalogActionFilterInterpretImpl.class);
         bind(CatalogEventInterpret.class).to(CatalogEventInterpretImpl.class);
-		/*
-		 * workarounds / replacement classes
-		 */
-		ConvertUtils.register(new LongConverter(null), Long.class);
-		BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
+
 		//${my.service.invocation}
 		String rawPattern = "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}";
 		// 2014-01-18T00:35:03.463Z
@@ -86,7 +82,7 @@ public class CatalogModule extends AbstractModule {
 
 		bind(String.class).annotatedWith(Names.named("catalog.datePattern")).toInstance(datePattern);
 		bind(DateFormat.class).toInstance(new SimpleDateFormat(datePattern));
-		bind(String.class).annotatedWith(Names.named("catalog.domainField")).toInstance(CatalogDescriptor.DOMAIN_TOKEN);
+		bind(String.class).annotatedWith(Names.named("catalog.domainField")).toInstance(CatalogEntry.DOMAIN_FIELD);
 		bind(Boolean.class).annotatedWith(Names.named("catalog.createablePrimaryKeys")).toInstance(false);
 		bind(Boolean.class).annotatedWith(Names.named("catalog.followGraph")).toInstance(true);
 		bind(Integer.class).annotatedWith(Names.named("catalog.read.preloadCatalogGraph")).toInstance(0);

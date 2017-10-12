@@ -12,7 +12,7 @@ public abstract class CatalogEntryImpl implements CatalogEntry {
 	private Long id,image;
 	private String  name;
 	@NotNull
-	private Object domain;
+	private Long domain;
 	private boolean anonymouslyVisible;
 	
 
@@ -41,11 +41,11 @@ public abstract class CatalogEntryImpl implements CatalogEntry {
 		this.image = image;
 	}
 
-	public final Object getDomain() {
+	public final Long getDomain() {
 		return domain;
 	}
 
-	public final void setDomain(Object domain) {
+	public final void setDomain(Long domain) {
 		this.domain = domain;
 	}
 

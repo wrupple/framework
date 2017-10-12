@@ -17,6 +17,10 @@ import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.event.server.domain.impl.PersistentCatalogEntityImpl;
 import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.service.impl.*;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.BeanUtilsBean2;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.LongConverter;
 import org.apache.commons.chain.CatalogFactory;
 
 import com.google.inject.AbstractModule;
@@ -32,6 +36,10 @@ public class ApplicationModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+        ConvertUtils.register(new LongConverter(null), Long.class);
+        //BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
+        BeanUtilsBean2.getInstance().getConvertUtils().register(false, false, 0);
+        BeanUtilsBean.setInstance(BeanUtilsBean2.getInstance());
         bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
         bind(String.class).annotatedWith(Names.named("chain.unknownService")).toInstance("chain.unknownService");
         bind(FieldDescriptor.class).annotatedWith(Names.named("event.sentence")).to(SentenceField.class);
@@ -40,6 +48,7 @@ public class ApplicationModule extends AbstractModule {
          * Application
          */
 		bind(EventBus.class).to(EventBusImpl.class);//ServletContext
+
         /*
          * model
          */

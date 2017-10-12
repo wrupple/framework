@@ -30,7 +30,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     protected static final Logger log = LoggerFactory.getLogger(JavaObjectNativeInterface.class);
     private final LargeStringFieldDataAccessObject delegate;
 
-
+        //TODO use common instance (dfined in application module)
     private final PropertyUtilsBean bean;
 
     @Inject

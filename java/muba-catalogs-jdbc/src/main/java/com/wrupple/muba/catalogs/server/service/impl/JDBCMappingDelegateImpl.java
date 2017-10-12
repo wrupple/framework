@@ -338,7 +338,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 					} catch (ClassNotFoundException e) {
 						//FIXME WITH JDBCDataCreationDommandImpl 107
 						//FIXME with CatalogDescriptorBuilder 360
-						throw new IllegalArgumentException("this catalog jdbc implementation only supports deserialization of clazz type objects")
+						throw new IllegalArgumentException("this catalog jdbc implementation only supports deserialization of clazz type objects");
 					}
 					break;
 				case CatalogEntry.DATE_DATA_TYPE:

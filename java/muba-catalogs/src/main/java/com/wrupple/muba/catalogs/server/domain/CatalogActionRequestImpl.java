@@ -25,7 +25,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	private String catalog;
 	private String locale;
 	
-	private Object domain;
+	private Long domain;
 	private Long id,image;
 	@NotNull
 	@AvailableCommand(dictionary=NAME_FIELD)
@@ -65,7 +65,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		this.image = image;
 	}
 
-	public final Object getDomain() {
+	public final Long getDomain() {
 		return domain;
 	}
 
@@ -175,9 +175,9 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	}
 
 	@Override
-	public void setDomain(Object domain) {
+	public void setDomain(Long domain) {
 		if(domain==null){
-			this.domain=null;
+			this.domain=CatalogEntry.PUBLIC_ID;
 		}else{
 			this.domain = domain;
 		}

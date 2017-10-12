@@ -13,6 +13,9 @@ import javax.validation.Validator;
 
 import com.wrupple.muba.event.domain.ParentServiceManifest;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -103,11 +106,14 @@ public class EventDispatcherImpl implements EventDispatcher {
 					}
 					if(value!=null){
 						log.trace("service grammar defined contract key {}={}", key, value);
-						PropertyUtils.setProperty(contract, key, value);
-					}
 
+						BeanUtilsBean2.getInstance().setProperty(contract,key,value);
+					}
 				} else {
-					log.warn("token \"{}\" from service grammar was not recognized by contract and was ignored ",key);
+					log.error("token \"{}\" from service grammar was not recognized by contract and was ignored ",key);
+					log.trace("stop analizing sentence");
+					requestContext.setNextWordIndex(requestContext.previousIndex());
+					break;
 				}
 
 			}

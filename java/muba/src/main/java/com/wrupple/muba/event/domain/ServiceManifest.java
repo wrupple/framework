@@ -17,7 +17,7 @@ public interface ServiceManifest extends HasProperties,HasStakeHolder,HasDisting
 	String getServiceId();
 
 	/**
-	 * Note: all services that wish to conform to  security should declare it's first token to be CatalogEntry.DOMAIN_TOKEN
+	 * Note: all services that wish to conform to  security should declare it's first token to be CatalogEntry.DOMAIN_FIELD
 	 * 
 	 * @return
 	 */

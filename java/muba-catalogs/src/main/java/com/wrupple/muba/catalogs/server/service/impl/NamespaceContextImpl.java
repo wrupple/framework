@@ -53,7 +53,8 @@ public class NamespaceContextImpl extends ContextBase implements NamespaceContex
 		}
 	}
 	@Override
-	public void setDomain(Object domain) {
+	public void setDomain(Long domain) {
+		throw new RuntimeException("use setId to change namespace context domain");
 	}
 
 
@@ -99,8 +100,8 @@ public class NamespaceContextImpl extends ContextBase implements NamespaceContex
 	}
 
 	@Override
-	public Object getDomain() {
-		return namespace.getId();
+	public Long getDomain() {
+		return (Long) namespace.getId();
 	}
 
 	@Override

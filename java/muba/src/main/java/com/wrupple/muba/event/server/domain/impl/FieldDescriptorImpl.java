@@ -2,10 +2,7 @@ package com.wrupple.muba.event.server.domain.impl;
 
 import java.util.List;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.Constraint;
-import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.*;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
@@ -15,7 +12,7 @@ import com.wrupple.muba.event.domain.annotations.ForeignKey;
  * @author japi
  * 
  */
-public class FieldDescriptorImpl implements FieldDescriptor {
+public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescriptor {
 	/**
 	 * 
 	 */
@@ -25,14 +22,14 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 	private Long foreignCatalog;
 	@CatalogFieldValues(defaultValueOptions={"Default"})
 	int dataType;
-	private boolean masked = false,anonymouslyVisible =false, multiple = false, sortable = false, ephemeral = false, filterable = false, createable = true, writeable = true, detailable = true,
+	private boolean masked = false, multiple = false, sortable = false, ephemeral = false, filterable = false, createable = true, writeable = true, detailable = true,
 			summary = true, inherited = false, localized = false, key = false,hardKey=false;
 	
 	@CatalogFieldWidget(widget="Widget")
 	private String widget;
 	@CatalogFieldWidget(widget="catalogPicker")
 	private String catalog;
-	private String fieldId,description,help, name, defaultValue, command;
+	private String fieldId,description,help, defaultValue, command;
 
 	@CatalogField(ignore=true)
 	private String ownerCatalogId;
@@ -150,13 +147,7 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 		return fieldId;
 	}
 
-	/**
-	 * @return the name of the field
-	 */
-	@Override
-	public String getName() {
-		return name;
-	}
+
 
 	/**
 	 * @return the widget
@@ -251,9 +242,6 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 	@Override
 	public String getCatalog() {
 		return catalog;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setWidget(String widget) {
@@ -360,45 +348,13 @@ public class FieldDescriptorImpl implements FieldDescriptor {
 		this.foreignCatalog = foreignCatalog;
 	}
 
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@Override
-	public String getImage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String getCatalogType() {
 		return CATALOG_ID;
 	}
 
-
-	@Override
-	public void setDomain(Object domain) {
-		
-	}
-
-	@Override
-	public Long getDomain() {
-		return CatalogEntry.WRUPPLE_ID;
-	}
-
-	@Override
-	public boolean isAnonymouslyVisible() {
-		return anonymouslyVisible;
-	}
-
-	@Override
-	public void setAnonymouslyVisible(boolean p) {
-		this.anonymouslyVisible=p;
-	}
 
 	public List<Long> getConstraints() {
 		return constraints;

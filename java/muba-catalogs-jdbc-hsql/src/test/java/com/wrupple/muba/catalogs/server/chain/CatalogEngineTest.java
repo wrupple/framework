@@ -7,7 +7,6 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
@@ -52,7 +51,7 @@ public class CatalogEngineTest extends IntegralTest {
 		action.setEntryValue(problemContract);
         //action.setFollowReferences(true);
 		runtimeContext.setServiceContract(action);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 		// locale is set in catalog
 		runtimeContext.process();
@@ -77,7 +76,7 @@ public class CatalogEngineTest extends IntegralTest {
 		runtimeContext.setServiceContract(null);
 		runtimeContext.setSentence(
 		        CatalogServiceManifest.SERVICE_NAME,
-                CatalogDescriptor.DOMAIN_TOKEN,
+                CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD,
                 CatalogActionRequest.READ_ACTION);
 		runtimeContext.process();
@@ -116,7 +115,7 @@ public class CatalogEngineTest extends IntegralTest {
 		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
 		runtimeContext.setServiceContract(contract);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
 				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(),
 				CatalogActionRequest.CREATE_ACTION);
 
@@ -132,7 +131,7 @@ public class CatalogEngineTest extends IntegralTest {
 		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, ContentNode.CATALOG_TIMELINE,
 				CatalogActionRequest.READ_ACTION, null, null, null, FilterDataUtils.newFilterData());
 		runtimeContext.setServiceContract(contract);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
 				CatalogActionRequest.LOCALE_FIELD, ContentNode.CATALOG_TIMELINE, CatalogActionRequest.READ_ACTION);
 
 		runtimeContext.process();

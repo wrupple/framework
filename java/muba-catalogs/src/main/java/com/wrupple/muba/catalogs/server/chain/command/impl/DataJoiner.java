@@ -85,7 +85,7 @@ public abstract class DataJoiner implements Command {
 			foreignField = statement[1];
 			key = new JoinQueryKey(catalogId, foreignField);
 			if (!regreso.containsKey(key)) {
-				log.trace("[ALLOCATING KEY NAMESPACE FOR JOINED RESULT] {}", key);
+				log.trace("[ALLOCATING KEY DOMAIN_FIELD FOR JOINED RESULT] {}", key);
 				regreso.put(key, new HashSet<Object>(size));
 			}
 		}

@@ -15,12 +15,11 @@ public interface CatalogEntry extends Entity {
 
 
 	public static final long PUBLIC_ID = -1;
-	public static final String WRUPPLE = "Wrupple";
-	public static final long WRUPPLE_ID = 0;
+	public static final long CURRENT_NAMESPACE = 0;
 	public static final String PUBLIC = "anonymouslyVisible";
 	public static final String NAME_FIELD = "name";
-	public static final String DOMAIN_TOKEN = "domain";
-	
+	final String DOMAIN_FIELD = "domain";
+
 
 	/**
 	 * sets the id of the  namespace for this
@@ -29,14 +28,14 @@ public interface CatalogEntry extends Entity {
 	 * @param domain
 	 *            t
 	 */
-	void setDomain(Object domain);
+	void setDomain(Long domain);
 
 	/**
 	 *  the GUID consists on a combination of domain, catalog, and id then
 	 * 
 	 * @return the identifier for the Organizational Unit (ou) this entry belongs to
 	 */
-	Object getDomain();
+	Long getDomain();
 
 	boolean isAnonymouslyVisible();
 

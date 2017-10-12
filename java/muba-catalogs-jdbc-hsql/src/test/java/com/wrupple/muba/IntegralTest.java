@@ -138,7 +138,7 @@ public class IntegralTest extends AbstractTest{
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
         expect(mockSuscriptor.execute(anyObject(Context.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
+        expect(stakeHolderValue.getDomain()).andStubReturn((Long)CatalogEntry.PUBLIC_ID);
         runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }

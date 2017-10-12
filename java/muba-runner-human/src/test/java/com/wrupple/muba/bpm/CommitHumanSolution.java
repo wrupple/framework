@@ -214,7 +214,7 @@ public class CommitHumanSolution extends MubaTest {
         catalogRequest.setEntryValue(solutionContract);
 
         runtimeContext.setServiceContract(catalogRequest);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
@@ -243,7 +243,7 @@ public class CommitHumanSolution extends MubaTest {
         catalogRequest.setEntryValue(problem);
 
         runtimeContext.setServiceContract(catalogRequest);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();

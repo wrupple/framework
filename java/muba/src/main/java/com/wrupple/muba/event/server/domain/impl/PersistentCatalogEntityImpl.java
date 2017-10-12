@@ -64,11 +64,12 @@ public class PersistentCatalogEntityImpl implements PersistentCatalogEntity {
 
 	@Override
 	public Long getDomain() {
-		return CatalogEntry.WRUPPLE_ID;
+		return (Long) persistentProperties.get(CatalogEntry.DOMAIN_FIELD);
 	}
 
 	@Override
-	public void setDomain(Object domain) {
+	public void setDomain(Long domain) {
+		persistentProperties.put(CatalogEntry.DOMAIN_FIELD,domain);
 	}
 
 	@Override

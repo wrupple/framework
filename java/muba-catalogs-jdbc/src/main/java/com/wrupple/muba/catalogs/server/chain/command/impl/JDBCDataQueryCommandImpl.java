@@ -162,7 +162,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 		if (!this.multitenant) {
 			for (CatalogEntry o : results) {
-				o.setDomain(CatalogEntry.WRUPPLE_ID);
+				o.setDomain(CatalogEntry.PUBLIC_ID);
 			}
 		}
 

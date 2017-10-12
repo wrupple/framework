@@ -24,7 +24,7 @@ public class OAuthServiceManifest  extends AbstractServiceManifest  implements S
 	public OAuthServiceManifest(VegetateAuthenticationTokenDescriptor catalog,ObjectMapper mapper, Provider<UserAuthenticationContext> provider) {
 		super(mapper, VegetateAuthenticationTokenImpl.class, provider);
 		this.catalog=catalog;
-		path =new String[]{CatalogDescriptor.DOMAIN_TOKEN,VegetateAuthenticationToken.REALM_PARAMETER,VegetateAuthenticationToken.ACTION_PARAMETER};
+		path =new String[]{CatalogDescriptor.DOMAIN_FIELD,VegetateAuthenticationToken.REALM_PARAMETER,VegetateAuthenticationToken.ACTION_PARAMETER};
 	}
 
 	@Override

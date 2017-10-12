@@ -41,7 +41,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         action.setEntryValue(bookingDescriptor);
         action.setFollowReferences(true);
         runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
         runtimeContext.process();
         runtimeContext.reset();
@@ -50,7 +50,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
                 "Driver", 1, null));
         action.setFollowReferences(true);
         runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
         runtimeContext.process();
 
@@ -95,7 +95,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         action.setEntryValue(item);
 
         runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD, Workflow.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
@@ -121,7 +121,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
             action.setEntryValue(driver);
 
             runtimeContext.setServiceContract(action);
-            runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+            runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
                     CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
 
             runtimeContext.process();
@@ -140,7 +140,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         action.setEntryValue(booking);
 
         runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_TOKEN,
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
