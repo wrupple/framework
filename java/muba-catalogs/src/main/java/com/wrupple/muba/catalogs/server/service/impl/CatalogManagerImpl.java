@@ -64,7 +64,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	private final Command delete;
 
-	private final String host;
+
 	private final Provider<CatalogDescriptor> fieldProvider;
 	private final Provider<CatalogDescriptor> catalogProvider;
 	private final Provider<CatalogDescriptor> peerProvider;
@@ -79,15 +79,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
      *Evaluation
 	 */
     private final FieldAccessStrategy access;
-    /*
-     * Indexing
-     */
-    private final CatalogActionTriggerImpl treeIndex;
-	private final CatalogActionTrigger timelineDiscriminator;
-	/*
-	 * versioning
-	 */
-	private final CatalogActionTriggerImpl versionTrigger;
+
+
 	/*
 	 * validation
 	 */
@@ -96,19 +89,14 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	private ArrayList<String> asStringList;
 
-	private ArrayList<String> defaultVersioningTriggerproperties;
-
-	private CatalogActionTriggerImpl timestamp;
-
-	private WritePublicTimelineEventDiscriminator inheritanceHandler;
 
 	private final CatalogTriggerInterpret triggerInterpret;
     private Provider<CatalogActionRequest> requestProvider;
 
     @Inject
-	public CatalogManagerImpl(Provider<CatalogActionRequest> requestProvider,@Named("template.token.splitter") String splitter /* "\\." */,
+	public CatalogManagerImpl(PluginConsensus consensus,Provider<CatalogActionRequest> requestProvider,@Named("template.token.splitter") String splitter /* "\\." */,
                               @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
-            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory, @Named("host") String host, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(Host.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider,@Named(ContentNode.CATALOG_TIMELINE) Provider<CatalogDescriptor> timeline, FieldAccessStrategy access, CatalogTriggerInterpret triggerInterpret) {
+            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory,Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(Host.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider,@Named(ContentNode.CATALOG_TIMELINE) Provider<CatalogDescriptor> timeline, FieldAccessStrategy access, CatalogTriggerInterpret triggerInterpret) {
         super();
         this.requestProvider=requestProvider;
 		this.ancestorIdField = ancestorIdField;
@@ -117,38 +105,14 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
         this.timeline = timeline;
         this.access = access;
         this.triggerInterpret = triggerInterpret;
-        versionTrigger = new CatalogActionTriggerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
-                null);
-		versionTrigger.setFailSilence(true);
-		versionTrigger.setStopOnFail(true);
 
-		treeIndex = new CatalogActionTriggerImpl(0, UpdateTreeLevelIndex.class.getSimpleName(), true, null, null, null);
-		treeIndex.setFailSilence(true);
-		treeIndex.setStopOnFail(true);
-		timelineDiscriminator = new CatalogActionTriggerImpl(0,
-				WritePublicTimelineEventDiscriminator.class.getSimpleName(), false, null, null, null);
-		timelineDiscriminator.setFailSilence(true);
-		timelineDiscriminator.setStopOnFail(true);
-
-		timestamp = new CatalogActionTriggerImpl(0, Timestamper.class.getSimpleName(), true, null, null, null);
-		timestamp.setFailSilence(false);
-		timestamp.setStopOnFail(true);
-
-		this.defaultVersioningTriggerproperties = new ArrayList<String>(5);
-		String putCatalogId = HasCatalogId.CATALOG_FIELD + "=" + CatalogActionRequest.CATALOG_FIELD;
-		String putEntryId = HasEntryId.ENTRY_ID_FIELD + "=" + SystemCatalogPlugin.SOURCE_OLD + ".id";
-		defaultVersioningTriggerproperties
-				.add(Versioned.FIELD + "=" + SystemCatalogPlugin.SOURCE_OLD + "." + Versioned.FIELD);
-		defaultVersioningTriggerproperties.add(putEntryId);
-		defaultVersioningTriggerproperties.add(putCatalogId);
-		defaultVersioningTriggerproperties
-				.add("value=" + SystemCatalogPlugin.SOURCE_OLD + "." + CatalogActionTrigger.SERIALIZED);
 
 		factory.addCatalog(CatalogActionRequest.NAME_FIELD, this);
 		addCommand(CatalogDescriptorUpdateTrigger.class.getSimpleName(), invalidate);
 		addCommand(FieldDescriptorUpdateTrigger.class.getSimpleName(), invalidateAll);
 		addCommand(EntryDeleteTrigger.class.getSimpleName(), trash);
 		addCommand(TrashDeleteTrigger.class.getSimpleName(), dump);
+		addCommand(PluginConsensus.class.getSimpleName(),consensus);
 		addCommand(RestoreTrash.class.getSimpleName(), restore);
 		addCommand(GarbageCollection.class.getSimpleName(), collect);
 		addCommand(CatalogActionRequest.CREATE_ACTION, create);
@@ -158,14 +122,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		addCommand(CatalogActionRequest.UPLOAD_ACTION, upload);
 		addCommand(IncreaseVersionNumber.class.getSimpleName(), increaseVersionNumber);
 		addCommand(UpdateTreeLevelIndex.class.getSimpleName(), treeIndexHandler);
-		this.inheritanceHandler = inheritanceHandler;
 		addCommand(WritePublicTimelineEventDiscriminator.class.getSimpleName(), inheritanceHandler);
 		addCommand(Timestamper.class.getSimpleName(), timestamper);
 		addCommand("url", url);
 		this.peerProvider = peerProvider;
 		this.cache = cache;
 		this.domainContextProvider = domainContextProvider;
-		this.host = host;
 		this.fieldProvider = fieldProvider;
 		this.revisionP = revisionP;
 		this.catalogProvider = catalogProvider;
@@ -255,10 +217,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		if (timeline.get().getId().equals(key)) {
 			regreso = timeline.get();
 		}else {
-			return null;
+            regreso= null;
 		}
-
-		return processDescriptor(regreso.getDistinguishedName(), regreso, context);
+        return regreso;
 	}
 
 	@Override
@@ -291,6 +252,11 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
 				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
+
+                trigger = new CatalogActionTriggerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
+                trigger.setFailSilence(true);
+                trigger.setStopOnFail(true);
+                triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 			} else if (Host.CATALOG.equals(catalogId)) {
 				regreso = peerProvider.get();
 			} else if (DistributiedLocalizedEntry.CATALOG.equals(catalogId)) {
@@ -316,92 +282,15 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			} else if (ContentNode.CATALOG_TIMELINE.equals(catalogId)) {
 				regreso = timeline.get();
 			} else if (ContentRevision.CATALOG.equals(catalogId)) {
-				return revisionP.get();
+                regreso= revisionP.get();
 			}else{
-return null;			}
+                regreso= null;			}
 
-			return processDescriptor(catalogId, regreso, context);
+			return regreso;
 
 
 	}
 
-
-
-	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
-		if(log.isTraceEnabled()){
-			log.trace("process descriptor with DN :"+name);
-		}
-		boolean versioned = catalog.getFieldDescriptor(Versioned.FIELD) != null;
-
-		if (versioned || catalog.isVersioned()) {
-			if (!versioned) {
-				// MUST HAVE VERSION FIELD
-				catalog.putField(new VersionFields());
-			}
-            triggerInterpret.addNamespaceScopeTrigger(getVersioningTrigger(), catalog,context);
-
-		}
-
-		if (catalog.isRevised()) {
-            triggerInterpret.addNamespaceScopeTrigger(getRevisionTrigger(catalog), catalog,context);
-
-        }
-		if (catalog.getParent() != null) {
-			if (catalog.getGreatAncestor() == null) {
-				// find great ancestor
-				CatalogDescriptor parent = context.getDescriptorForKey(catalog.getParent());
-
-				while (parent != null) {
-					catalog.setGreatAncestor(parent.getDistinguishedName());
-					parent = parent.getParent() == null ? null : context.getDescriptorForKey(parent.getParent());
-				}
-			}
-			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()
-					&& ContentNode.CATALOG_TIMELINE.equals(catalog.getGreatAncestor())) {
-
-                triggerInterpret.addNamespaceScopeTrigger(timestamp, catalog,context);
-
-                List<FilterDataOrdering> sorts = catalog.getAppliedSorts();
-				FilterDataOrderingImpl index;
-				if (sorts == null) {
-					sorts = new ArrayList<FilterDataOrdering>(5);
-					catalog.setAppliedSorts(sorts);
-				}
-				if (catalog.getFieldDescriptor(IsPinnable.FIELD) != null) {
-					index = new FilterDataOrderingImpl(IsPinnable.FIELD, false);
-					sorts.add(index);
-				}
-				if (catalog.getFieldDescriptor(HasTimestamp.FIELD) != null) {
-					index = new FilterDataOrderingImpl(HasTimestamp.FIELD, false);
-					sorts.add(index);
-				}
-
-				FieldDescriptor field = catalog.getFieldDescriptor(HasChildren.FIELD);
-
-				if (catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null
-						&& catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null) {
-					log.debug("catalog is public timeline");
-                    triggerInterpret.addNamespaceScopeTrigger(afterCreateHandledTimeline(), catalog,context);
-				}
-
-				if (catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX) != null && field != null
-						&& catalog.getDistinguishedName().equals(field.getCatalog())) {
-					index = new FilterDataOrderingImpl(ContentNode.CHILDREN_TREE_LEVEL_INDEX, true);
-					sorts.add(index);
-					// INDEXED TREE
-                    triggerInterpret.addNamespaceScopeTrigger(beforeIndexedTreeCreate(), catalog,context);
-				}
-			}
-		}
-
-
-		if (catalog.getHost() == null) {
-			log.trace("locally bound catalog {} @ {}", name, host);
-			catalog.setHost(host);
-		}
-		log.trace("BUILT catalog {}={}", name, catalog);
-		return catalog;
-	}
 
 	@Override
 	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) {
@@ -682,32 +571,6 @@ return null;			}
 
 
 
-	private CatalogActionTrigger afterCreateHandledTimeline() {
-
-		return timelineDiscriminator;
-	}
-
-	private CatalogActionTrigger beforeIndexedTreeCreate() {
-		return treeIndex;
-	}
-
-	private CatalogActionTrigger getVersioningTrigger() {
-		return versionTrigger;
-	}
-
-	private CatalogActionTrigger getRevisionTrigger(CatalogDescriptor c) {
-		ArrayList<String> properties = new ArrayList<String>(5);
-
-		properties.addAll(this.defaultVersioningTriggerproperties);
-
-		properties.add("name=" + SystemCatalogPlugin.SOURCE_OLD + "." + c.getDescriptiveField());
-
-		CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1, CatalogActionRequest.CREATE_ACTION, true,
-				ContentRevision.CATALOG, properties, null);
-		trigger.setFailSilence(true);
-		trigger.setStopOnFail(true);
-		return trigger;
-	}
 
 	/*
 	 * KEY SERVICES

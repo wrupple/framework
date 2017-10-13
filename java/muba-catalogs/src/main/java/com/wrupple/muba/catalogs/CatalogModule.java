@@ -84,8 +84,6 @@ public class CatalogModule extends AbstractModule {
 		bind(Integer.class).annotatedWith(Names.named("catalog.read.preloadCatalogGraph")).toInstance(0);
 
 
-		bind(UserCatalogPlugin.class).to(UserCatalogPluginImpl.class);
-
 		bind(String.class).annotatedWith(Names.named("catalog.ancestorKeyField")).toInstance("superAncestorHIdentity");
 		bind(String.class).annotatedWith(Names.named("catalog.timeline.entryDiscriminator"))
 				.toInstance("childHIdentity");

@@ -26,7 +26,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		if (!(context.getResults() == null || context.getResults().isEmpty())) {
 			CatalogDescriptor descriptor = context.getCatalogDescriptor();
-			String[][] joins = context.getCatalogManager().getJoins(context.getCatalogManager(), null, descriptor, null,
+			String[][] joins = context.getCatalogManager().getJoins(context, null, descriptor, null,
 					context, null);
 
 			Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);

@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.google.inject.Provider;
+import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogPluginQueryCommand;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
@@ -26,8 +28,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.wrupple.muba.event.domain.DataEvent.CREATE_ACTION;
+import static com.wrupple.muba.event.domain.DataEvent.READ_ACTION;
+
 @Singleton
-public class CatalogReadTransactionImpl implements CatalogReadTransaction {
+public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
     protected static final Logger log = LoggerFactory.getLogger(CatalogReadTransactionImpl.class);
 
@@ -52,6 +57,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
     public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage, @com.google.inject.name.Named("catalog.metadata.storage") String catalogPluginStorage, @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
                                       QueryReaders queryers, PrimaryKeyReaders primaryKeyers, CompleteCatalogGraph graphJoin,
                                       ExplicitDataJoin join, CatalogReaderInterceptor queryRewriter) {
+
         this.graphJoin = graphJoin;
         this.join = join;
         this.MIN_TREE_LEVELS = minLevelsDeepOfhierarchy;
@@ -69,16 +75,8 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
     public boolean execute(Context x) throws Exception {
         log.trace("[START READ]");
         CatalogActionContext context = (CatalogActionContext) x;
-        String catalogId = (String) context.getRequest().getCatalog();
         Object targetEntryId = context.getRequest().getEntry();
         FilterData filter = context.getRequest().getFilter();
-
-        if (targetEntryId==null && filter==null && CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
-            log.trace("[GET AVAILABLE CATALOG LIST]");
-            // list all domain catalogs
-            context.setResults(context.getCatalogManager().getAvailableCatalogs(context));
-            return CONTINUE_PROCESSING;
-        }
         CatalogDescriptor catalog = context.getCatalogDescriptor();
         CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 
@@ -107,11 +105,26 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
                     }
                 }
             }
-            if (result != null && result.isEmpty()) {
-                result = null;
+            if(result==null){
+                log.trace("[RESULT ] null");
+            }else {
+                if(result.size()> FilterData.DEFAULT_INCREMENT){
+                    log.trace("[RESULT SIZE] {}", result.size());
+                }else{
+                    log.trace("[RESULT] {}", result);
+                }
+                for(CatalogEntry dafsgf:result){
+
+                    //FIXME batch
+                    queryRewriter.interceptResult(dafsgf, context, catalog);
+
+                }
+                if(result.isEmpty()){
+                    result = null;
+                }
             }
 
-            log.trace("[RESULT ] {}", result);
+
             context.setResults(result);
 
             String[][] joins = filter.getJoins();
@@ -137,7 +150,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
                 context.setResults(null);
 
             }else{
-
+                queryRewriter.interceptResult(originalEntry, context, catalog);
                 context.setResults(Collections.singletonList(originalEntry));
 
                 if (context.getRequest().getFollowReferences()) {
@@ -192,7 +205,6 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
         }
         context.getRuntimeContext().getTransactionHistory().didRead(context, regreso,
                 null/* no undo */);
-        queryRewriter.interceptResult(regreso, context, catalog);
         return regreso;
     }
 
@@ -253,7 +265,6 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
             }
 
         }
-        queryRewriter.interceptResult(regreso, context, catalog);
         return regreso;
     }
 

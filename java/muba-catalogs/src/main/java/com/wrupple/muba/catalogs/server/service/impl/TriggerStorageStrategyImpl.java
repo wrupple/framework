@@ -54,11 +54,9 @@ public class TriggerStorageStrategyImpl implements TriggerStorageStrategy {
             stream =  all.
                     stream();
         }else if(namespaceScoped==null){
-                stream =  catalogScopedTriggers.
-                        stream();
+                stream =  catalogScopedTriggers.stream();
         }else {
-                stream =  namespaceScoped.
-                        stream();
+                stream =  namespaceScoped.stream();
         }
 
         return stream.

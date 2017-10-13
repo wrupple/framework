@@ -17,10 +17,4 @@ public class NonOperativeCatalogReaderInterceptor implements CatalogReaderInterc
 		return filterData;
 	}
 
-	@Override
-	public void interceptResult(CatalogEntry entry, CatalogActionContext context, CatalogDescriptor catalog)
-			throws Exception {
-
-	}
-
 }
