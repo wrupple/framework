@@ -26,7 +26,5 @@ public interface TransactionHistory extends UserTransaction {
 			UserCommand dao);
 	
 	public <T extends CatalogEntry> void didDelete(ServiceContext context, T r, UserCommand dao);
-	
-	public void didMetadataRead(ContractDescriptor regreso) ;
 
 }

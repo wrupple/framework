@@ -3,13 +3,11 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
-import com.wrupple.muba.catalogs.server.domain.CatalogEventImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Writers;
 import org.apache.commons.chain.Context;
@@ -19,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.wrupple.muba.catalogs.domain.CatalogEvent.CREATE_ACTION;
-import static com.wrupple.muba.catalogs.domain.CatalogEvent.DELETE_ACTION;
 import static com.wrupple.muba.catalogs.domain.CatalogEvent.WRITE_ACTION;
 
 @Singleton
@@ -68,7 +64,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 			// would
 			// not be called
 			CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
-			parentCatalog = context.getCatalogManager().getDescriptorForKey(catalog.getParent(), context);
+			parentCatalog = context.getDescriptorForKey(catalog.getParent());
 			parentEntityId = context.getCatalogManager().getAllegedParentId(originalEntry, instrospection);
 
 			// synthesize parent entity from all non-inherited, passing all

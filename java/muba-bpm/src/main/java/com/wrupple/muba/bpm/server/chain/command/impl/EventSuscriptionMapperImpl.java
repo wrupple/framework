@@ -42,7 +42,7 @@ public class EventSuscriptionMapperImpl  implements EventSuscriptionMapper {
         //FIXME Spawn Catalog context with system privileges:
         // if event stake holder has no permissions to see Observer or it's host, then the event wont get broadcasted to those poeple
         CatalogActionContext catalogContext = catalog.spawn(context.getRuntimeContext());
-        CatalogDescriptor descriptor = catalog.getDescriptorForName(entry.getCatalogType(),catalogContext);
+        CatalogDescriptor descriptor = context.getDescriptorForName(entry.getCatalogType());
 
         Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
         FieldAccessStrategy accessor = catalog.access();

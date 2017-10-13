@@ -112,7 +112,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 	private CatalogEntry create(CatalogEntry result, Instrospection instrospection, CatalogDescriptor catalog, CatalogActionContext childContext, CatalogActionContext parentContext) throws Exception {
 		Long parentCatalogId = catalog.getParent();
 		Object allegedParentId = childContext.getCatalogManager().getAllegedParentId(result, instrospection);
-		CatalogDescriptor parentCatalog = childContext.getCatalogManager().getDescriptorForKey(parentCatalogId, childContext);
+		CatalogDescriptor parentCatalog = childContext.getDescriptorForKey(parentCatalogId);
 		CatalogEntry parentEntity = createAncestorsRecursively(result, parentCatalog, allegedParentId, instrospection,childContext);
 		Object parentEntityId = parentEntity.getId();
 		CatalogEntry childEntity = childContext.getCatalogManager().synthesizeChildEntity(parentEntityId, result, instrospection, catalog,childContext);

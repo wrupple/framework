@@ -1,12 +1,9 @@
 package com.wrupple.muba.catalogs.domain;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.ServiceContext;
-import com.wrupple.muba.event.domain.reserved.HasParent;
-import com.wrupple.muba.event.domain.reserved.HasParentValue;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.domain.reserved.HasResults;
@@ -65,9 +62,9 @@ public interface CatalogActionContext
 
 	public <T extends CatalogEntry> List<T>  triggerRead(String catalogId, FilterData filter, boolean assemble) throws Exception ;
 
-	CatalogDescriptor getDescriptorForKey(Long numericId, CatalogActionContext context) throws Exception;
+	CatalogDescriptor getDescriptorForKey(Long numericId) throws Exception;
 
-	CatalogDescriptor getDescriptorForName(String catalogId,CatalogActionContext context) throws Exception;
+	CatalogDescriptor getDescriptorForName(String catalogId) throws Exception;
 
 
 	<T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception;

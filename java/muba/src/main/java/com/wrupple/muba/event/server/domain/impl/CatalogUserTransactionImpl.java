@@ -100,12 +100,6 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 	public <T extends CatalogEntry> void didDelete(ServiceContext catalog, T r, UserCommand dao) {
 		history.didDelete((Context)catalog, r, dao);
 	}
-	@Override
-	public void didMetadataRead(ContractDescriptor regreso) {
-		if (regreso != null && regreso.getDistinguishedName() != null) {
-			history.didMetadataRead((CatalogDescriptor) regreso);
-		}
-	}
 
 	public enum CatalogAction {
 		CREATE,UPDATE,READ,DELETE
@@ -189,12 +183,6 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 			history.add(new UndoToken(CatalogAction.DELETE, 1,dao,catalog));
 		}
 
-		public void didMetadataRead(CatalogDescriptor regreso) {
-			log.debug("[NEW INSPECT HISTORY TOKEN] result={}",regreso);
-			if (regreso != null && regreso.getDistinguishedName() != null) {
-				history.add(new UndoToken(CatalogAction.READ, 1,null,null));
-			}
-		}
 
 		public void commit() {
 			if(parent!=null){

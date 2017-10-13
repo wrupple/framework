@@ -76,10 +76,6 @@ public interface SystemCatalogPlugin extends CatalogPlugin, CatalogManager, JSRA
 
 	void evalTemplate(String value, PrintWriter out, String locale, CatalogActionContext ccontext);
 
-
-		<T extends CatalogEntry> List<T> getAvailableCatalogs(CatalogActionContext context) throws Exception;
-
-		CatalogResultCache getCache();
 		
 		public  CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context);
 

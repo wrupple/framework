@@ -5,10 +5,8 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
 import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
-import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 

@@ -38,7 +38,7 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
     }
 
     @Override
-    public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) throws RuntimeException {
+    public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) throws RuntimeException {
         if (ProcessTaskDescriptor.CATALOG.equals(catalogId)) {
             return taskDescP.get();
         } else if (TaskToolbarDescriptor.CATALOG.equals(catalogId)) {
@@ -50,7 +50,7 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
     }
 
     @Override
-    public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws RuntimeException {
+    public CatalogDescriptor getDescriptor(Long key, CatalogActionContext context) throws RuntimeException {
         return null;
     }
 

@@ -358,7 +358,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 
             log.trace("[PROCESSING CHILD ENTRY]");
             context.getCatalogManager().processChild(childEntity,
-                    context.getDescriptorForKey(parentCatalogId, context), parentEntityId,
+                    context.getDescriptorForKey(parentCatalogId), parentEntityId,
                     context, catalog, instrospection);
         }
         return context.getEntryResult();
@@ -370,7 +370,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
         // we are certain this catalog has a parent, otherwise this DAO would
         // not be called
         Long parentCatalogId = catalog.getParent();
-        CatalogDescriptor parent = context.getCatalogManager().getDescriptorForKey(parentCatalogId, context);
+        CatalogDescriptor parent = context.getDescriptorForKey(parentCatalogId);
         Object parentEntityId;
         for (CatalogEntry childEntity : children) {
             parentEntityId = context.getCatalogManager().getAllegedParentId(childEntity, instrospection);

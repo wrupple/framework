@@ -17,9 +17,6 @@ import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
-import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.LongConverter;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -42,7 +39,6 @@ import com.wrupple.muba.catalogs.server.service.EntryCreators;
 import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
 import com.wrupple.muba.catalogs.server.service.QueryReaders;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.UserCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.Writers;
 
 /**

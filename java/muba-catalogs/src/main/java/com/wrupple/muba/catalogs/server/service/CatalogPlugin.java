@@ -45,4 +45,8 @@ public interface CatalogPlugin  {
 	void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) throws Exception;
 	
 	public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context);
+
+	CatalogDescriptor getDescriptor(Long primariKey, CatalogActionContext context);
+	CatalogDescriptor getDescriptor(String primariKey, CatalogActionContext context);
+
 }

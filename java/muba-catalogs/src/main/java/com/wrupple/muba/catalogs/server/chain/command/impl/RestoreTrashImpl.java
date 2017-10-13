@@ -54,7 +54,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 					// OPTIMIZING THE PROCESS SINCE TRASH ITEMS ARE READ ORDERED
 					// BY TYPE
 					catalogId = entry.getCatalog();
-					descriptor = context.getCatalogManager().getDescriptorForName(catalogId, context);
+					descriptor = context.getDescriptorForName(catalogId);
 					trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
 				}
 				undelete(e, context, descriptor, trashField, instrospection);
@@ -66,7 +66,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			log.trace("[RESTORE TRASH ITEM] {}", e);
 
 			String catalogId = e.getCatalog();
-			CatalogDescriptor descriptor = context.getCatalogManager().getDescriptorForName(catalogId, context);
+			CatalogDescriptor descriptor = context.getDescriptorForName(catalogId);
 			FieldDescriptor trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
             Instrospection instrospection = context.getCatalogManager().access().newSession(null);
             context.getRequest().setFilter(null);

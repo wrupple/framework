@@ -1,6 +1,5 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
@@ -61,7 +60,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 			List<String> values = (List<String>) o.getProperties();
 
 			// read localizable entity
-			CatalogDescriptor localizedCatalog = context.getCatalogManager().getDescriptorForName(catalogId,context);
+			CatalogDescriptor localizedCatalog = context.getDescriptorForName(catalogId);
 			PersistentCatalogEntity targetEntity = context.triggerGet(catalogId,entryId);
 
 			// write localized values

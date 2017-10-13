@@ -59,7 +59,6 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
     private final CatalogTriggerInterpret triggerInterpret;
 
-	private final int SECURE_STORAGE;
 	private final Command[] catalogActions;
     private final Provider<CatalogDescriptor> state;
 
@@ -72,10 +71,9 @@ public class BusinessPluginImpl implements BusinessPlugin {
                               // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
                               @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
                               // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
-                              @Named(ServiceManifest.CATALOG) Provider<CatalogDescriptor> serviceManifestProvider, CatalogTriggerInterpret triggerInterpret, @Named("catalog.storage." + CatalogDescriptor.SECURE) Integer secureStorageIndex) {
+                              @Named(ServiceManifest.CATALOG) Provider<CatalogDescriptor> serviceManifestProvider, CatalogTriggerInterpret triggerInterpret) {
         this.serviceManifestProvider = serviceManifestProvider;
         this.triggerInterpret = triggerInterpret;
-        this.SECURE_STORAGE = secureStorageIndex;
 		this.notificationProvider = notificationProvider;
         this.state=state;
 		this.appItem=appItem;
@@ -84,7 +82,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	}
 
 	@Override
-	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context)  {
+	public CatalogDescriptor getDescriptor(Long key, CatalogActionContext context)  {
 
 		if (key.equals(serviceManifestProvider.get().getId())) {
 			return serviceManifestProvider.get();
@@ -93,7 +91,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	}
 
 	@Override
-	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) {
+	public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) {
 		if (Workflow.CATALOG.equals(catalogId)) {
 			return appItem.get();
 		} else if (WorkRequest.CATALOG.equals(catalogId)) {
@@ -129,7 +127,7 @@ public class BusinessPluginImpl implements BusinessPlugin {
 				&& stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
 				&& Person.CATALOG.equals(stakeHolderField.getCatalog())) {
 
-			if (catalog.getStorage() == SECURE_STORAGE) {
+			if (catalog.getStorage() == CatalogDescriptor.SECURE) {
 				e = new CatalogActionTriggerImpl();
 				e.setAction(0);
 				e.setAdvice(true);

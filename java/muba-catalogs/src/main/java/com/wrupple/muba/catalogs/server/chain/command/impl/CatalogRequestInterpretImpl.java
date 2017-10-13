@@ -247,7 +247,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                     throw new NullPointerException("action contract defines no catalog");
                 }
                 try {
-                    catalogDescriptor = getDescriptorForName((String) getRequest().getCatalog(), this);
+                    catalogDescriptor = getDescriptorForName((String) getRequest().getCatalog());
                 } catch (Exception e) {
                     throw new CatalogException(e);
                 }
@@ -394,13 +394,13 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
         @Override
-        public CatalogDescriptor getDescriptorForKey(Long numericId, CatalogActionContext context) throws Exception {
+        public CatalogDescriptor getDescriptorForKey(Long numericId) throws Exception {
 
            return triggerGet(CatalogDescriptor.CATALOG_ID,numericId);
         }
 
         @Override
-        public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) throws Exception {
+        public CatalogDescriptor getDescriptorForName(String catalogId) throws Exception {
             return triggerGet(CatalogDescriptor.CATALOG_ID,catalogId);
         }
 

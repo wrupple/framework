@@ -48,6 +48,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	private final String ancestorIdField;
 	private final Pattern pattern;
+    private final Provider<Object> pluginProvider;
 
     ///////
 
@@ -64,7 +65,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	private final Command delete;
 
 	private final String host;
-	private final CatalogPlugin[] plugins;
 	private final Provider<CatalogDescriptor> fieldProvider;
 	private final Provider<CatalogDescriptor> catalogProvider;
 	private final Provider<CatalogDescriptor> peerProvider;
@@ -173,13 +173,13 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		this.triggerProvider = triggerProvider;
 		this.constraintProvider = constraintProvider;
 		this.localizedStringProvider = localizedStringProvider;
-		this.plugins = (CatalogPlugin[]) pluginProvider.get();
 		this.trashP = trashP;
 		this.create = create;
 		this.read = read;
 		this.write = write;
 		this.delete = delete;
-
+		this.pluginProvider=pluginProvider;
+		CatalogPlugin[] plugins = (CatalogPlugin[]) pluginProvider.get();
 		Command[] actions;
 		for(CatalogPlugin plugin: plugins){
 			actions = plugin.getCatalogActions();
@@ -247,34 +247,24 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 	@Override
-	public CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws RuntimeException{
+	public CatalogDescriptor getDescriptor(Long key, CatalogActionContext context) throws RuntimeException{
 
 		long value = key.longValue();
 		log.trace("assemble catalog descriptor FOR KEY {} ", value);
 		CatalogDescriptor regreso = null;
 		if (timeline.get().getId().equals(key)) {
 			regreso = timeline.get();
+		}else {
+			return null;
 		}
 
-		if (regreso == null) {
-			// POLLING plugins
-			for (CatalogPlugin plugin : plugins) {
-				log.trace("asking {} for descriptor", plugin);
-				regreso = plugin.getDescriptorForKey(key, context);
-				if (regreso != null) {
-					break;
-				}
-			}
-		}
-
-		return processDescriptor(regreso.getDistinguishedName(), regreso, context, cache);
+		return processDescriptor(regreso.getDistinguishedName(), regreso, context);
 	}
 
 	@Override
-	public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context)
+	public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context)
             throws RuntimeException {
-		CatalogDescriptor regreso = cache.get(context, DOMAIN_METADATA, catalogId);
-		if (regreso == null) {
+		CatalogDescriptor regreso;
 			log.trace("assemble catalog descriptor {} ", catalogId);
 			if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = fieldProvider.get();
@@ -327,32 +317,17 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				regreso = timeline.get();
 			} else if (ContentRevision.CATALOG.equals(catalogId)) {
 				return revisionP.get();
-			} else {
-				// POLLING plugins
-				for (CatalogPlugin plugin : plugins) {
-					log.trace("asking {} for descriptor", plugin);
-					regreso = plugin.getDescriptorForName(catalogId, context);
-					if (regreso != null) {
-						break;
-					}
-				}
-			}
+			}else{
+return null;			}
 
-			if (regreso == null) {
-				throw new IllegalArgumentException("No catalog plugin recognized catalogid: " + catalogId);
-			}
+			return processDescriptor(catalogId, regreso, context);
 
-			return processDescriptor(catalogId, regreso, context, cache);
 
-		} else {
-			return regreso;
-		}
 	}
 
 
 
-	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context,
-			CatalogResultCache cache) throws RuntimeException{
+	private CatalogDescriptor processDescriptor(String name, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
 		if(log.isTraceEnabled()){
 			log.trace("process descriptor with DN :"+name);
 		}
@@ -374,11 +349,11 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		if (catalog.getParent() != null) {
 			if (catalog.getGreatAncestor() == null) {
 				// find great ancestor
-				CatalogDescriptor parent = getDescriptorForKey(catalog.getParent(), context);
+				CatalogDescriptor parent = context.getDescriptorForKey(catalog.getParent());
 
 				while (parent != null) {
 					catalog.setGreatAncestor(parent.getDistinguishedName());
-					parent = parent.getParent() == null ? null : getDescriptorForKey(parent.getParent(), context);
+					parent = parent.getParent() == null ? null : context.getDescriptorForKey(parent.getParent());
 				}
 			}
 			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()
@@ -419,33 +394,13 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			}
 		}
 
-		for (CatalogPlugin interpret2 : plugins) {
-			log.trace("POST process {} IN {}", name, interpret2);
-			interpret2.postProcessCatalogDescriptor(catalog, context);
-		}
+
 		if (catalog.getHost() == null) {
 			log.trace("locally bound catalog {} @ {}", name, host);
 			catalog.setHost(host);
 		}
-		cache.put(context, DOMAIN_METADATA, name, catalog);
-		context.getRuntimeContext().getTransactionHistory().didMetadataRead(catalog);
 		log.trace("BUILT catalog {}={}", name, catalog);
 		return catalog;
-	}
-
-	@Override
-	public List<CatalogIdentification> getAvailableCatalogs(CatalogActionContext context) throws Exception {
-		List<CatalogIdentification> names = new ArrayList<CatalogIdentification>();
-
-		modifyAvailableCatalogList(names, context);
-
-		CatalogPlugin[] modules = getPlugins();
-		if (modules != null) {
-			for (CatalogPlugin module : modules) {
-				module.modifyAvailableCatalogList(names, context);
-			}
-		}
-		return names;
 	}
 
 	@Override
@@ -474,9 +429,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	}
 
-	public CatalogPlugin[] getPlugins() {
-		return plugins;
-	}
 
 	@Override
 	public Annotation buildAnnotation(Constraint constraint) {
@@ -551,7 +503,10 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 					new ValidationExpression(CAPTCHA.class, Constraint.EVALUATING_VARIABLE,
 							Constraint.EVALUATING_VARIABLE + "==null?\"{captcha.message}\":null",null));
 
-			CatalogPlugin[] catalogPlugins = getPlugins();
+            CatalogPlugin[] catalogPlugins = (CatalogPlugin[]) pluginProvider.get();
+
+
+
 
 			if (catalogPlugins != null) {
 				ValidationExpression[] exprs;
@@ -682,19 +637,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 	}
 
-	@Override
-	public CatalogResultCache getCache() {
-		return cache;
-	}
-
 	public CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context) {
-		CatalogResultCache cache = catalog.getOptimization() != 2/* NO_CACHE */ ? context.getCatalogManager().getCache()
-				: null;
+		CatalogResultCache cache = catalog.getOptimization() != 2/* NO_CACHE */ ? this.cache: null;
 
-		if (cache == null) {
-			log.debug("[NUMERIC_ID DAO] NO CACHE");
-		} else {
-		}
 		return cache;
 	}
 
@@ -868,7 +813,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		return true;
 	}
 
-	public String[][] getJoins(SystemCatalogPlugin serverSide, Object clientSide, CatalogDescriptor descriptor,
+	public String[][] getJoins(CatalogActionContext serverSide, Object clientSide, CatalogDescriptor descriptor,
 			String[][] customJoins, Object domain, String host) throws Exception {
 		// TODO configure how many levels/orders deep to go into for
 		// joinable fields
@@ -903,7 +848,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				// foreign =clientSide.loadFromCache(host, (String)domain,
 				// foreignCatalogId);
 			} else {
-				foreign = serverSide.getDescriptorForName(foreignCatalogId, (CatalogActionContext) domain);
+				foreign = serverSide.getDescriptorForName(foreignCatalogId);
 			}
 
 			if (currentJoinableField.isKey()) {
@@ -1088,7 +1033,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	public String getDenormalizedFieldValue(CatalogEntry client, String fieldId, Instrospection instrospection,
 			CatalogActionContext context) throws Exception {
 		String catalogid = client.getCatalogType();
-		CatalogDescriptor type = context.getCatalogManager().getDescriptorForName(catalogid, context);
+		CatalogDescriptor type = context.getDescriptorForName(catalogid);
 		FieldDescriptor field = type.getFieldDescriptor(fieldId);
 		if (field == null) {
 			throw new IllegalArgumentException("unknown field :" + fieldId);

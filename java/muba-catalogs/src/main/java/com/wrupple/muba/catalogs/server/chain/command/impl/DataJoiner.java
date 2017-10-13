@@ -7,9 +7,7 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +130,7 @@ public abstract class DataJoiner implements Command {
 		 * Gather join results for statement
 		 */
 
-		CatalogDescriptor catalog = context.getCatalogManager().getDescriptorForName(catalogId, context);
+		CatalogDescriptor catalog = context.getDescriptorForName(catalogId);
 
 		List<CatalogEntry> currentMatchingEntries = getjoinCandidates(mainResults, context, catalog, foreignField,
 				fieldValues);
@@ -304,7 +302,7 @@ public abstract class DataJoiner implements Command {
 	 * catalog, String currentCatalogId, CatalogActionContext context) throws
 	 * Exception { log.trace("[CREATE RESULT SET]"); if (catalog == null) {
 	 * catalog =
-	 * context.getCatalogManager().getDescriptorForName(currentCatalogId,
+	 * context.getDescriptorForName(currentCatalogId,
 	 * context); }
 	 * 
 	 * Collection<FieldDescriptor> rawFields = catalog.getFieldsValues(); if
@@ -429,7 +427,7 @@ public abstract class DataJoiner implements Command {
 			String currentCatalogId, CatalogActionContext context, Instrospection instrospection) throws Exception {
 		log.trace("[CREATE RESULT SET]");
 		if (catalog == null) {
-			catalog = context.getCatalogManager().getDescriptorForName(currentCatalogId, context);
+			catalog = context.getDescriptorForName(currentCatalogId);
 		}
 
 		Collection<FieldDescriptor> rawFields = catalog.getFieldsValues();
