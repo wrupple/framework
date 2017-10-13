@@ -49,7 +49,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
 		action.setEntryValue(problemContract);
-        //action.setFollowReferences(true);
+        action.setFollowReferences(true);
 		runtimeContext.setServiceContract(action);
 		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
@@ -73,21 +73,23 @@ public class CatalogEngineTest extends IntegralTest {
 
 		runtimeContext.reset();
 
-		runtimeContext.setServiceContract(null);
+		runtimeContext.setServiceContract(new CatalogActionRequestImpl());
 		runtimeContext.setSentence(
 		        CatalogServiceManifest.SERVICE_NAME,
                 CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD,
-                CatalogActionRequest.READ_ACTION);
+                CatalogDescriptor.CATALOG_ID,
+				CatalogActionRequest.READ_ACTION);
 		runtimeContext.process();
 		catalogContext = runtimeContext.getServiceContext();
-		List<CatalogEntry> catalogList = catalogContext.getResults();
+		List<CatalogIdentification> catalogList = catalogContext.getResults();
 		assertTrue(catalogList != null);
 		assertTrue(!catalogList.isEmpty());
 		boolean contained = false;
-
+        log.trace("Looking for just created catalog {}={}",problemContract.getId(),problemContract.getName());
 		for (CatalogEntry existingCatalog : catalogList) {
-			if(existingCatalog.getId().equals(problemContract.getId())){
+		    log.trace("Existing catalog {}={}",existingCatalog.getId(),existingCatalog.getName());
+			if(existingCatalog.getId().equals(problemContract.getDistinguishedName())){
 				contained = true ;
 				break;
 			}
@@ -125,7 +127,7 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue(problem.getId() != null);
 		assertTrue(problem.getTimestamp() != null);
 
-		log.debug("-check if child was created-");
+		log.debug("-check if problem was created-");
 		runtimeContext.reset();
 
 		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, ContentNode.CATALOG_TIMELINE,

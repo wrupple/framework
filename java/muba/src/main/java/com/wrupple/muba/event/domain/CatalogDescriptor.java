@@ -36,7 +36,7 @@ public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,Ha
 	 */
 	public List<String> getStorage();
 
-	public int getStorageStrategy();
+	public Integer getStorageStrategy();
 
 	/**
 	 * @return cache or other resource saving strategy

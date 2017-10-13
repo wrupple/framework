@@ -70,7 +70,10 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
         log.trace("[START READ]");
         CatalogActionContext context = (CatalogActionContext) x;
         String catalogId = (String) context.getRequest().getCatalog();
-        if (catalogId == null) {
+        Object targetEntryId = context.getRequest().getEntry();
+        FilterData filter = context.getRequest().getFilter();
+
+        if (targetEntryId==null && filter==null && CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
             log.trace("[GET AVAILABLE CATALOG LIST]");
             // list all domain catalogs
             context.setResults(context.getCatalogManager().getAvailableCatalogs(context));
@@ -79,10 +82,8 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
         CatalogDescriptor catalog = context.getCatalogDescriptor();
         CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
 
-        Object targetEntryId = context.getRequest().getEntry();
         Instrospection instrospection = context.getCatalogManager().access().newSession(null);
         if (targetEntryId == null) {
-            FilterData filter = context.getRequest().getFilter();
             applySorts(filter, catalog.getAppliedSorts());
             applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, instrospection);
             List<CatalogEntry> result = null;
@@ -131,11 +132,17 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
             } else {
                 originalEntry = read(targetEntryId, catalog, context, cache, instrospection);
             }
+            if(originalEntry==null){
 
-            context.setResults(Collections.singletonList(originalEntry));
+                context.setResults(null);
 
-            if (context.getRequest().getFollowReferences()) {
-                graphJoin.execute(context);
+            }else{
+
+                context.setResults(Collections.singletonList(originalEntry));
+
+                if (context.getRequest().getFollowReferences()) {
+                    graphJoin.execute(context);
+                }
             }
             log.trace("[RESULT ] {}", originalEntry);
         }
@@ -193,7 +200,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
         List<String> storageUnits = catalog.getStorage();
 
         Command storageUnit;
-        if (storageUnits == null || storageUnits.size() == 1) {
+        if (storageUnits == null ||storageUnits.isEmpty() ||storageUnits.size() == 1) {
             if (storageUnits == null || storageUnits.isEmpty()) {
                 //default?
                 storageUnit = primaryKeyers.getDefault();
@@ -225,6 +232,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
             // almost certainly an Id
             try {
                 Object primaryId = context.getCatalogManager().decodePrimaryKeyToken(vanityId);
+                //FIXME in vanity id cases this query is repeated each call before querying distinguished name. Results should be cached at a higher level to catch vanityId results
                 regreso = read(primaryId, catalog, context, cache, instrospection);
             } catch (NumberFormatException e) {
                 log.warn("specified parameter {} could not be used as a primary key", vanityId);
@@ -264,7 +272,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
             return queryUnits(filter, catalog, context, instrospection, storageUnit);
         } else {
 
-            int storageStrategy = catalog.getStorageStrategy();
+            Integer storageStrategy = catalog.getStorageStrategy()==null?0:catalog.getStorageStrategy();
             switch (storageStrategy) {
                 case 1:
                     final  List<CatalogEntry> results = new LinkedList<>();

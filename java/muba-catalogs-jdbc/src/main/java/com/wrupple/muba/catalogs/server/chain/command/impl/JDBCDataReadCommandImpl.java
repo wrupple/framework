@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
@@ -85,9 +86,15 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 	public boolean execute(Context ctx) throws Exception {
 		log.trace("[START]");
 		CatalogActionContext context = (CatalogActionContext) ctx;
-		StringBuilder builder = new StringBuilder(150);
+
 		CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
 		Object id = context.getRequest().getEntry();
+		if(catalogDescriptor.getFieldDescriptor(catalogDescriptor.getKeyField()).getDataType()==CatalogEntry.INTEGER_DATA_TYPE){
+		    if(!(id instanceof Number)){
+		        return CONTINUE_PROCESSING;
+            }
+        }
+        StringBuilder builder = new StringBuilder(150);
 		builder.append("SELECT * FROM ");
 		builder.append(DELIMITER);
 		tableNames.getTableNameForCatalog(catalogDescriptor, context, builder);
@@ -97,19 +104,19 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		builder.append(tableNames.getColumnForField(context, catalogDescriptor, catalogDescriptor.getFieldDescriptor(catalogDescriptor.getKeyField()), false));
 		builder.append(DELIMITER);
 		builder.append("=?");
-		log.trace("[DB read] {}  id={}", builder.toString(), id);
+		log.trace("[DB read id={}] {}",id, builder.toString());
 		QueryResultHandler rsh = rshp.get();
 		rsh.setContext(context);
 		List<CatalogEntry> results;
 		try {
+            builder.trimToSize();
 			results = runner.query(builder.toString(), rsh, id);
 		} catch (SQLException e) {
 		if (e.getErrorCode() == missingTableErrorCode) {
 			log.warn("[DB table does not exist] will return empty result set");
 			results = Collections.EMPTY_LIST;
 		} else {
-			log.error("[DB query error]", e);
-			throw e;
+			throw new CatalogException(e);
 		}
 	}
 		if (results == null || results.isEmpty()) {
@@ -140,7 +147,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 					}
 
 					handler.setField(field);
-					log.trace("[DB secondary read] {}  id={}", builder.toString(), id);
+					log.trace("[DB secondary read id={}] {}", id, builder.toString());
 					fieldValues = runner.query(builder.toString(), handler, id);
 					if (instrospection == null) {
 						instrospection = context.getCatalogManager().access().newSession(r);

@@ -77,7 +77,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	private Long version;
 	@CatalogFieldValues(defaultValueOptions = {"FIRST","ALL"})
-	private int storageStrategy;
+	private Integer storageStrategy;
 
 	public CatalogDescriptorImpl() {
 	}
@@ -266,7 +266,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	}
 
 	@Override
-	public int getStorageStrategy() {
+	public Integer getStorageStrategy() {
 		return storageStrategy;
 	}
 
@@ -410,4 +410,8 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
     public CatalogDescriptor getRootAncestor() {
         return null;
     }
+
+	public void setStorageStrategy(Integer storageStrategy) {
+		this.storageStrategy = storageStrategy;
+	}
 }
