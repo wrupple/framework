@@ -16,19 +16,19 @@ public interface CatalogPlugin  {
 	static final String DOMAIN_METADATA = "Namespace"+CatalogDescriptor.CATALOG_ID;
 	//necesaary to explicitly point to context? something.context.old
 	static final String SOURCE_OLD = ContextEvaluationService.NAME+".old"+ CatalogEntry.FOREIGN_KEY;
-	
-	CatalogDescriptor getDescriptorForName(String catalogId,CatalogActionContext context) throws RuntimeException;
+
+	//CatalogDescriptor getDescriptorForName(String catalogId,CatalogActionContext context) throws RuntimeException;
 
 
 	/**
 	 * Catalogs that can be inherited from must be accesible through a numeric key
-	 * 
+	 *
 	 * @param key
 	 * @param context
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws RuntimeException;
+	//CatalogDescriptor getDescriptorForKey(Long key, CatalogActionContext context) throws RuntimeException;
 
 
 	//UserCommand getCatalogAction(String action,CatalogActionContext context);

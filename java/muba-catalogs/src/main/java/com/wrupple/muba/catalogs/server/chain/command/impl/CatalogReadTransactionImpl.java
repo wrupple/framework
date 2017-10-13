@@ -358,7 +358,7 @@ public class CatalogReadTransactionImpl implements CatalogReadTransaction {
 
             log.trace("[PROCESSING CHILD ENTRY]");
             context.getCatalogManager().processChild(childEntity,
-                    context.getCatalogManager().getDescriptorForKey(parentCatalogId, context), parentEntityId,
+                    context.getDescriptorForKey(parentCatalogId, context), parentEntityId,
                     context, catalog, instrospection);
         }
         return context.getEntryResult();

@@ -65,5 +65,11 @@ public interface CatalogActionContext
 
 	public <T extends CatalogEntry> List<T>  triggerRead(String catalogId, FilterData filter, boolean assemble) throws Exception ;
 
+	CatalogDescriptor getDescriptorForKey(Long numericId, CatalogActionContext context) throws Exception;
+
+	CatalogDescriptor getDescriptorForName(String catalogId,CatalogActionContext context) throws Exception;
+
+
 	<T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception;
+
 }

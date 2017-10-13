@@ -246,7 +246,11 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 if (getRequest().getCatalog() == null) {
                     throw new NullPointerException("action contract defines no catalog");
                 }
-                catalogDescriptor = getCatalogManager().getDescriptorForName((String) getRequest().getCatalog(), this);
+                try {
+                    catalogDescriptor = getDescriptorForName((String) getRequest().getCatalog(), this);
+                } catch (Exception e) {
+                    throw new CatalogException(e);
+                }
 
             }
 
@@ -389,6 +393,17 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             return triggerGet(catalogId, entryId, true);
         }
 
+        @Override
+        public CatalogDescriptor getDescriptorForKey(Long numericId, CatalogActionContext context) throws Exception {
+
+           return triggerGet(CatalogDescriptor.CATALOG_ID,numericId);
+        }
+
+        @Override
+        public CatalogDescriptor getDescriptorForName(String catalogId, CatalogActionContext context) throws Exception {
+            return triggerGet(CatalogDescriptor.CATALOG_ID,catalogId);
+        }
+
 
         @Override
         public <T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception {
@@ -422,7 +437,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             return runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
 
         }
-
 
         @Override
         public <T extends CatalogEntry> List<T> triggerDelete(String catalog, FilterData o, Object id) throws Exception {
