@@ -2,7 +2,6 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
-import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

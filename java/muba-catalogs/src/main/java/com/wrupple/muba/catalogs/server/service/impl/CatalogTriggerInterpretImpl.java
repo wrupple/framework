@@ -1,6 +1,5 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.catalogs.server.service.TriggerStorageStrategy;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
@@ -14,7 +13,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Singleton
 public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
