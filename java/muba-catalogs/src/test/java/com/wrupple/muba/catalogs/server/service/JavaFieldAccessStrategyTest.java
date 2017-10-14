@@ -7,14 +7,12 @@ package com.wrupple.muba.catalogs.server.service;
         import java.io.OutputStream;
 
         import javax.inject.Inject;
-        import javax.inject.Named;
         import javax.inject.Singleton;
         import javax.transaction.UserTransaction;
 
         import com.google.inject.Guice;
         import com.google.inject.Injector;
         import com.wrupple.muba.ValidationModule;
-        import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
         import com.wrupple.muba.event.domain.Instrospection;
         import com.wrupple.muba.event.domain.*;
         import com.wrupple.muba.catalogs.CatalogTestModule;

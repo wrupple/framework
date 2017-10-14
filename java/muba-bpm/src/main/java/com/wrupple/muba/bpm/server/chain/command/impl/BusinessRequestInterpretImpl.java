@@ -1,12 +1,10 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -80,7 +77,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
     private void setWorkingTask(ApplicationState state, ApplicationContext context) {
         Workflow application = (Workflow) state.getHandleValue();
-        List<ProcessTaskDescriptor> workflow = application.getProcessValues();
+        List<Task> workflow = application.getProcessValues();
         List<Long> workflowKeys = application.getProcess();
 
             if(state.getTaskDescriptorValue()==null){

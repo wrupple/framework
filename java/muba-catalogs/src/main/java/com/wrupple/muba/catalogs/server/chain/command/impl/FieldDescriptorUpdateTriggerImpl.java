@@ -36,7 +36,7 @@ public class FieldDescriptorUpdateTriggerImpl implements FieldDescriptorUpdateTr
 		
 		
 		
-		List<CatalogIdentification> names = context.getCatalogManager().getAvailableCatalogs(context);
+		List<CatalogIdentification> names = context.getAvailableCatalogs();
 		
 		for(CatalogIdentification key: names){
 			cache.delete(context, SystemCatalogPlugin.DOMAIN_METADATA,key.getId());

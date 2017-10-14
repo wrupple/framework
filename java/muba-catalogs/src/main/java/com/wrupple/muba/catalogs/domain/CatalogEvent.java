@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.DataEvent;
+import com.wrupple.muba.event.domain.reserved.HasLiveContext;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @author japi
  *
  */
-public interface CatalogEvent extends DataEvent,HasLiveContext{
+public interface CatalogEvent extends DataEvent,HasLiveContext {
 
 	String CATALOG = "CatalogEvent";
 

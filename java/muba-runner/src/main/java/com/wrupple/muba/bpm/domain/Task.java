@@ -2,13 +2,11 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.catalogs.domain.CatalogJob;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.event.domain.reserved.HasOutput;
-import com.wrupple.muba.event.domain.reserved.HasProperties;
 
-public interface ProcessTaskDescriptor extends CatalogEntry,HasOutput,HasCatalogId,HasDistinguishedName,HasProperties{
+public interface Task extends HasOutput,HasDistinguishedName,CatalogJob {
 	
 	String CATALOG = "TaskDescriptor";
 	String COMMAND_FIELD = "machineTaskCommandName";
@@ -18,7 +16,6 @@ public interface ProcessTaskDescriptor extends CatalogEntry,HasOutput,HasCatalog
 	String SELECT_COMMAND = "select";
 	final String CONSTRAINT = "constraint";
 
-	List<String> getSentence();
 	
 	
 	public List<Long> getUserActions();

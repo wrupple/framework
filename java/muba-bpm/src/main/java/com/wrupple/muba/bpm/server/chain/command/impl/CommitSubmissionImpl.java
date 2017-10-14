@@ -29,7 +29,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
         ApplicationContext context = (ApplicationContext) ctx;
         ApplicationState applicationState = context.getStateValue();
-        ProcessTaskDescriptor task = applicationState.getTaskDescriptorValue();
+        Task task = applicationState.getTaskDescriptorValue();
         String producedField = task.getOutputField();
 
         //is there submission material?

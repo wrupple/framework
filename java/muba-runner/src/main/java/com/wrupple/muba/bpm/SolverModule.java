@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationContextImpl;
-import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
+import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.bpm.domain.impl.SolverServiceManifestImpl;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
@@ -36,12 +36,12 @@ public class SolverModule extends AbstractModule {
         bind(SolverCatalogPlugin.class).to(SolverCatalogPluginImpl.class).in(Singleton.class);
     }
 
-    @Provides @Singleton @Inject @Named(ProcessTaskDescriptor.CATALOG)
+    @Provides @Singleton @Inject @Named(Task.CATALOG)
     public CatalogDescriptor task(
                                                CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(ProcessTaskDescriptorImpl.class, ProcessTaskDescriptor.CATALOG, "Task",
+        CatalogDescriptor r = builder.fromClass(TaskImpl.class, Task.CATALOG, "Task",
                 -790090, null);
-        r.setClazz(ProcessTaskDescriptorImpl.class);
+        r.setClazz(TaskImpl.class);
         return r;
     }
 

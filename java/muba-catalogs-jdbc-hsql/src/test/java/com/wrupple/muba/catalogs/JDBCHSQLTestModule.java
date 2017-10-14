@@ -8,7 +8,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 
-import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 

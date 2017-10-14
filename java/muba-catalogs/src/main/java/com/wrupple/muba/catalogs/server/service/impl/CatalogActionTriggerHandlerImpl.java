@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.wrupple.muba.catalogs.domain.CatalogEventListener;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Singleton;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 
@@ -34,13 +34,13 @@ public class CatalogActionTriggerHandlerImpl  {
 
 	protected boolean extecute(CatalogActionContext context, boolean advise) throws Exception {
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		List<CatalogActionTrigger> triggers = interpret.getTriggersValues(context,advise);
+		List<CatalogEventListener> triggers = interpret.getTriggersValues(context,advise);
 		if (triggers == null || triggers.isEmpty()) {
 			log.trace("no triggers to process");
 		} else {
 			int action;
 			boolean r;
-			CatalogActionTrigger trigger;
+			CatalogEventListener trigger;
 			for (int i = 0; i < triggers.size(); i++) {
 				trigger = triggers.get(i);
 				action = trigger.getAction();
@@ -74,7 +74,7 @@ public class CatalogActionTriggerHandlerImpl  {
 	}
 
 
-	private boolean excecuteTrigger(CatalogActionTrigger trigger, CatalogActionContext context)
+	private boolean excecuteTrigger(CatalogEventListener trigger, CatalogActionContext context)
 			throws Exception {
 
 		log.trace("[PROCESS trigger] ");
@@ -107,7 +107,7 @@ public class CatalogActionTriggerHandlerImpl  {
 		return Command.CONTINUE_PROCESSING;
 	}
 
-	private static Map<String, String> parseProperties(List<String> rawProperties, CatalogActionTrigger trigger,
+	private static Map<String, String> parseProperties(List<String> rawProperties, CatalogEventListener trigger,
 			CatalogActionContext context) {
 		Map<String, String> regreso = trigger.getParsedProperties(rawProperties, context.getNamespaceContext());
 		if (regreso == null) {

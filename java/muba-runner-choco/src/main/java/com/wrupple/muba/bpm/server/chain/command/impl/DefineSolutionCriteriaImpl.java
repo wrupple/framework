@@ -1,9 +1,9 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.event.domain.JavaNativeInterfaceContext;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
@@ -34,7 +34,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     @Override
     public boolean execute(Context ctx) throws Exception {
         final ApplicationContext context = (ApplicationContext) ctx;
-        ProcessTaskDescriptor request = context.getStateValue().getTaskDescriptorValue();
+        Task request = context.getStateValue().getTaskDescriptorValue();
 
         log.info("Resolving problem model");
         Model model = plugin.getSolver().resolveSolverModel(context);
@@ -54,11 +54,11 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         return CONTINUE_PROCESSING;
     }
 
-    private void processNextConstraint(JavaNativeInterfaceContext invokerContext,ListIterator<String> sentence, Model model, ProcessTaskDescriptor request, ApplicationContext context) throws Exception {
+    private void processNextConstraint(JavaNativeInterfaceContext invokerContext, ListIterator<String> sentence, Model model, Task request, ApplicationContext context) throws Exception {
         if(sentence.hasNext()){
             String next = sentence.next();
             //TODO USE CHILD SERVICES LIKE ServiceRequestValidation
-            if(ProcessTaskDescriptor.CONSTRAINT.equals(next)){
+            if(Task.CONSTRAINT.equals(next)){
                 invokerContext.sentenceIterator=sentence;
                 nativeInterface.execute(invokerContext);
                 postConstraint(invokerContext);

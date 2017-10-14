@@ -20,43 +20,21 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
-    private final TriggerStorageStrategy storage;
 
 	@Inject
 	public CatalogTriggerInterpretImpl(Provider<CatalogServiceManifest> manifestP,
-                                       CatalogDeserializationService deserializer, TriggerStorageStrategy storage) {
+                                       CatalogDeserializationService deserializer) {
 		super();
 		this.manifestP = manifestP;
 		this.deserializer = deserializer;
-        this.storage = storage;
     }
-
-	/**
-	 * before == trigger.isAdvice()
-	 * @param context
-	 * @param advise
-	 * @return
-	 */
-	@Override public List<CatalogActionTrigger> getTriggersValues(CatalogActionContext context, boolean advise){
-        return storage.getTriggersValues(context,advise);
-
-	}
-
-	@Override public void addCatalogScopeTrigger(CatalogActionTrigger trigger, CatalogDescriptor catalog){
-        storage.addCatalogScopeTrigger(trigger,catalog);
-    }
-
-	@Override
-	public void addNamespaceScopeTrigger(CatalogActionTrigger trigger, CatalogDescriptor catalog, CatalogActionContext context) {
-        storage.addNamespaceScopeTrigger(trigger,catalog,context);
-	}
 
 
 	@Override
-	public void invokeTrigger(Map<String, String> properties, CatalogActionContext context, CatalogTrigger trigger)
+	public void invokeTrigger(Map<String, String> properties, CatalogActionContext context, UserDefinedCatalogJob trigger)
 			throws Exception {
 		log.trace("[INVOKE] {}", trigger);
-		String targetAction = trigger.getHandler();
+		String targetAction = trigger.getSentence();
 
 		Command command = context.getCatalogManager().getCommand(targetAction);
 
@@ -141,10 +119,10 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	}
 
 	/*@Override
-	public void configureContext(CatalogActionContext context, CatalogTrigger trigger, Long domain,
+	public void configureContext(CatalogActionContext context, UserDefinedCatalogJob trigger, Long domain,
 			TransactionHistory transaction) throws Exception {
 
-		String targetAction = trigger.getHandler();
+		String targetAction = trigger.getSentence();
 		String entryIdPointer = trigger.getEntry();
 		String targetCatalogId = trigger.getCatalog();
 		context.setCatalog(targetCatalogId);

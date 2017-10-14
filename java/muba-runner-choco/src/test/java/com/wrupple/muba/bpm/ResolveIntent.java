@@ -8,11 +8,11 @@ import java.util.Arrays;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
+import com.wrupple.muba.bpm.domain.Task;
+import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
-import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
@@ -70,7 +70,7 @@ public class ResolveIntent extends IntegralTest {
 
         runtimeContext.reset();
         log.info("[-create a task with problem constraints-]");
-        ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
+        TaskImpl problem = new TaskImpl();
         problem.setDistinguishedName("equation system");
         problem.setName("equation system");
         problem.setCatalog(EquationSystemSolution.CATALOG);
@@ -78,9 +78,9 @@ public class ResolveIntent extends IntegralTest {
         problem.setSentence(
                 Arrays.asList(
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                        Task.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
                         // x + y < 5
-                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
+                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
                 )
         );
 
@@ -89,7 +89,7 @@ public class ResolveIntent extends IntegralTest {
 
         runtimeContext.setServiceContract(catalogRequest);
         runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
+                CatalogActionRequest.LOCALE_FIELD, Task.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
         catalogContext = runtimeContext.getServiceContext();
@@ -102,7 +102,7 @@ public class ResolveIntent extends IntegralTest {
         //TODO maybe CONSTRAINT is a child of solver
         runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME/*, FIXME allow constrains to be posted in service request sentence
                         // x + y < 5
-                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"*/);
+                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"*/);
 
         runtimeContext.process();
 

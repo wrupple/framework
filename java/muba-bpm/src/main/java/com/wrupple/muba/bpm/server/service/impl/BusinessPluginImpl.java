@@ -7,6 +7,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
@@ -17,7 +18,6 @@ import com.wrupple.muba.bpm.server.chain.command.ValueChangeListener;
 import com.wrupple.muba.bpm.server.chain.command.CheckSecureConditions;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
@@ -122,32 +122,32 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	@Override
 	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) {
 		FieldDescriptor stakeHolderField = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
-		CatalogActionTriggerImpl e;
+		CatalogEventListenerImpl e;
 		if (stakeHolderField != null && !stakeHolderField.isMultiple()
 				&& stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
 				&& Person.CATALOG.equals(stakeHolderField.getCatalog())) {
 
 			if (catalog.getStorage() == CatalogDescriptor.SECURE) {
-				e = new CatalogActionTriggerImpl();
+				e = new CatalogEventListenerImpl();
 				e.setAction(0);
 				e.setAdvice(true);
-				e.setHandler(CheckSecureConditions.class.getSimpleName());
+				e.getSentence(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
                 triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
 
-				e = new CatalogActionTriggerImpl();
+				e = new CatalogEventListenerImpl();
 				e.setAction(1);
 				e.setAdvice(true);
-				e.setHandler(CheckSecureConditions.class.getSimpleName());
+				e.getSentence(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
                 triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
 
-				e = new CatalogActionTriggerImpl();
+				e = new CatalogEventListenerImpl();
 				e.setAction(2);
 				e.setAdvice(true);
-				e.setHandler(CheckSecureConditions.class.getSimpleName());
+				e.getSentence(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
                 triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
@@ -155,10 +155,10 @@ public class BusinessPluginImpl implements BusinessPlugin {
 
 			stakeHolderField.setWriteable(false);
 
-			e = new CatalogActionTriggerImpl();
+			e = new CatalogEventListenerImpl();
 			e.setAction(0);
 			e.setAdvice(true);
-			e.setHandler(StakeHolderTrigger.class.getSimpleName());
+			e.getSentence(StakeHolderTrigger.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
             triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
@@ -166,18 +166,18 @@ public class BusinessPluginImpl implements BusinessPlugin {
 			// especificos, alteran los filtros o la visibilidad de una entrada
 			// ((CatalogDescriptor) catalog).setStakeHolderProtected(true);
 
-			e = new CatalogActionTriggerImpl();
+			e = new CatalogEventListenerImpl();
 			e.setAction(1);
 			e.setAdvice(true);
-			e.setHandler(ValueChangeAudit.class.getSimpleName());
+			e.getSentence(ValueChangeAudit.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
             triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
 
-			e = new CatalogActionTriggerImpl();
+			e = new CatalogEventListenerImpl();
 			e.setAction(1);
 			e.setAdvice(false);
-			e.setHandler(ValueChangeListener.class.getSimpleName());
+			e.getSentence(ValueChangeListener.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
             triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);

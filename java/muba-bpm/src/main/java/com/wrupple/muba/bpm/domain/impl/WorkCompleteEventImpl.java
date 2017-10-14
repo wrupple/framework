@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.WorkCompleteEvent;
 import com.wrupple.muba.event.domain.ExplicitIntentImpl;
@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class WorkCompleteEventImpl extends ExplicitIntentImpl implements WorkCompleteEvent {
     private Workflow handleValue;
-    private ProcessTaskDescriptor taskDescriptorValue;
+    private Task taskDescriptorValue;
     private Long stakeHolder;
     private Date timestamp;
 
@@ -23,11 +23,11 @@ public class WorkCompleteEventImpl extends ExplicitIntentImpl implements WorkCom
     }
 
     @Override
-    public ProcessTaskDescriptor getTaskDescriptorValue() {
+    public Task getTaskDescriptorValue() {
         return taskDescriptorValue;
     }
 
-    public void setTaskDescriptorValue(ProcessTaskDescriptor taskDescriptorValue) {
+    public void setTaskDescriptorValue(Task taskDescriptorValue) {
         this.taskDescriptorValue = taskDescriptorValue;
     }
 

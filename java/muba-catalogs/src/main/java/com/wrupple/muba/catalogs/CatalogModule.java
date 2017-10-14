@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogEvent;
+import com.wrupple.muba.catalogs.domain.CatalogEventListener;
+import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.*;
@@ -59,7 +61,7 @@ public class CatalogModule extends AbstractModule {
 
         bind(CatalogEngine.class).to(CatalogEngineImpl.class);
         bind(CatalogActionFilterEngine.class).to(CatalogActionFilterEngineImpl.class);
-        bind(CatalogEventHandler.class).to(CatalogEventHandlerImpl.class);
+        bind(com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler.class).to(com.wrupple.muba.catalogs.server.chain.command.impl.CatalogEventHandlerImpl.class);
 
         bind(CatalogRequestInterpret.class).to(CatalogRequestInterpretImpl.class);
         bind(CatalogActionFilterInterpret.class).to(CatalogActionFilterInterpretImpl.class);
@@ -95,8 +97,8 @@ public class CatalogModule extends AbstractModule {
 		bind(Class.class).annotatedWith(Names.named(LocalizedString.CATALOG))
 				.toInstance(HasAccesablePropertyValues.class);
 		bind(Class.class).annotatedWith(Names.named(Trash.CATALOG)).toInstance(HasAccesablePropertyValues.class);
-		bind(Class.class).annotatedWith(Names.named(CatalogActionTrigger.CATALOG))
-				.toInstance(CatalogActionTriggerImpl.class);
+		bind(Class.class).annotatedWith(Names.named(CatalogEventListener.CATALOG))
+				.toInstance(CatalogEventListenerImpl.class);
 		bind(Class.class).annotatedWith(Names.named(FieldDescriptor.CATALOG_ID)).toInstance(FieldDescriptorImpl.class);
 		bind(Class.class).annotatedWith(Names.named(CatalogDescriptor.CATALOG_ID))
 				.toInstance(CatalogDescriptorImpl.class);
@@ -269,10 +271,10 @@ public class CatalogModule extends AbstractModule {
 	@Provides
 	@Inject
 	@Singleton
-	@Named(CatalogActionTrigger.CATALOG)
-	public CatalogDescriptor catalogActionTrigger(@Named(CatalogActionTrigger.CATALOG) Class clazz,
+	@Named(CatalogEventListener.CATALOG)
+	public CatalogDescriptor catalogActionTrigger(@Named(CatalogEventListener.CATALOG) Class clazz,
 			CatalogDescriptorBuilder builder) {
-		CatalogDescriptor r = builder.fromClass(CatalogActionTriggerImpl.class, CatalogActionTrigger.CATALOG,
+		CatalogDescriptor r = builder.fromClass(CatalogEventListenerImpl.class, CatalogEventListener.CATALOG,
 				"Catalog Trigger", -194949, null);
 		r.setClazz(clazz);
 		return r;

@@ -197,6 +197,11 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 							public String getDistinguishedName() {
 								return CatalogActionRequest.FOREIGN_KEY;
 							}
+
+							@Override
+							public void setDistinguishedName(String dn) {
+
+							}
 						};
 						// type level constriants
 						log.trace("validating entry level constraints");
@@ -297,6 +302,11 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			@Override
 			public String getDistinguishedName() {
 				return field.getFieldId();
+			}
+
+			@Override
+			public void setDistinguishedName(String dn) {
+
 			}
 
 		};

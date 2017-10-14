@@ -13,8 +13,8 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
      */
     private String catalog;
     private Object result;
-    private CatalogEntry stateValue;
-    private Object state;
+    private Event implicitIntentValue;
+    private Object implicitIntent;
     private Exception error;
     private List<String> sentence;
 
@@ -47,13 +47,13 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
     }
 
     @Override
-    public CatalogEntry getStateValue() {
-        return stateValue;
+    public Event getImplicitIntentValue() {
+        return implicitIntentValue;
     }
 
     @Override
-    public void setStateValue(CatalogEntry stateValue) {
-        this.stateValue = stateValue;
+    public void setImplicitIntentValue(Event stateValue) {
+        this.implicitIntentValue = stateValue;
     }
 
     @Override
@@ -87,12 +87,12 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
     }
 
     @Override
-    public Object getState() {
-        return state;
+    public Object getImplicitIntent() {
+        return implicitIntent;
     }
 
-    public void setState(Object state) {
-        this.state = state;
+    public void setImplicitIntent(Object state) {
+        this.implicitIntent = state;
     }
 
     @Override
@@ -100,8 +100,6 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
         return "ExplicitIntentImpl{" +
                 "catalog='" + catalog + '\'' +
                 ", result=" + result +
-                ", stateValue=" + stateValue +
-                ", state=" + state +
                 ", error=" + error +
                 ", sentence=" + sentence +
                 '}';

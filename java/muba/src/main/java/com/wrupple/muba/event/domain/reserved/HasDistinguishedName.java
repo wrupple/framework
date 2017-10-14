@@ -7,4 +7,7 @@ public interface HasDistinguishedName {
 	 * @return the DN of this entry
 	 */
 	String getDistinguishedName();
+
+
+	void setDistinguishedName(String dn);
 }

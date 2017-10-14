@@ -2,10 +2,12 @@ package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import org.apache.commons.chain.Context;
 
 public class CatalogActionCommitImpl extends CatalogEntryImpl implements CatalogActionCommit{
     private CatalogActionRequest requestValue;
-    private CatalogActionContext liveContext;
+    private CatalogActionContext stateValue;
+    private Object state;
 
     @Override
     public CatalogActionRequest getRequestValue() {
@@ -18,13 +20,13 @@ public class CatalogActionCommitImpl extends CatalogEntryImpl implements Catalog
     }
 
     @Override
-    public CatalogActionContext getLiveContext() {
-        return liveContext;
+    public CatalogActionContext getStateValue() {
+        return stateValue;
     }
 
     @Override
-    public void setLiveContext(CatalogActionContext liveContext) {
-        this.liveContext = liveContext;
+    public void setStateValue(Context liveContext) {
+        this.stateValue = (CatalogActionContext) liveContext;
     }
 
     @Override
@@ -55,5 +57,14 @@ public class CatalogActionCommitImpl extends CatalogEntryImpl implements Catalog
     @Override
     public Object getEntryValue() {
         return getRequestValue().getEntryValue();
+    }
+
+    @Override
+    public Object getState() {
+        return state;
+    }
+
+    public void setState(Object state) {
+        this.state = state;
     }
 }

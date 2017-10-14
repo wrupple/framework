@@ -1,8 +1,8 @@
 package com.wrupple.muba.bpm.domain.impl;
 
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.event.domain.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.Workflow;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
@@ -23,11 +23,11 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
     @CatalogValue(foreignCatalog = Workflow.CATALOG)
     private Workflow explicitSuccessorValue;
     private boolean clearOutput;
-    @ForeignKey(foreignCatalog = ProcessTaskDescriptor.CATALOG)
+    @ForeignKey(foreignCatalog = Task.CATALOG)
     private List<Long> process;
     @CatalogField(ignore = true)
-    @CatalogValue(foreignCatalog = ProcessTaskDescriptor.CATALOG)
-    private List<ProcessTaskDescriptor> processValues;
+    @CatalogValue(foreignCatalog = Task.CATALOG)
+    private List<Task> processValues;
 
     @Override
     public Workflow getExplicitSuccessorValue() {
@@ -109,7 +109,7 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
         return process;
     }
 
-    public <T extends ProcessTaskDescriptor> List<T> getProcessValues() {
+    public <T extends Task> List<T> getProcessValues() {
         return (List<T>) processValues;
     }
 
@@ -119,8 +119,8 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
 
 
 
-    public  <T extends ProcessTaskDescriptor> void setProcessValues(List<T> processValues) {
-        this.processValues = (List<ProcessTaskDescriptor>) processValues;
+    public  <T extends Task> void setProcessValues(List<T> processValues) {
+        this.processValues = (List<Task>) processValues;
     }
 
     @Override

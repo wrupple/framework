@@ -1,14 +1,12 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.*;
-import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
-import org.apache.commons.chain.impl.ChainBase;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -50,10 +48,10 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
         }
 
 
-        ProcessTaskDescriptor request = context.getStateValue().getTaskDescriptorValue();
+        Task request = context.getStateValue().getTaskDescriptorValue();
         if(request==null){
             //FIXME this implies the service contract will always be a task descriptor
-            request = (ProcessTaskDescriptor) requestContext.getServiceContract();
+            request = (Task) requestContext.getServiceContract();
             if(request==null){
                 //TODO task plugin is used as a shorthand for the more verbose catalog engine
 

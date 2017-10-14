@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogEntry;
 
 @Singleton

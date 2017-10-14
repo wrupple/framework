@@ -217,7 +217,8 @@ public class EventRegistryImpl implements EventRegistry {
         //TODO Business Event or User Event
         ExplicitIntentImpl event = new ExplicitIntentImpl( );
         event.setSentence(pathTokens);
-        event.setStateValue(intent);
+        event.setImplicitIntent(intent.getId());
+        event.setImplicitIntentValue(intent);
         return event;
     }
 

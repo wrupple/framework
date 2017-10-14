@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 
@@ -17,7 +17,7 @@ public class SolverServiceManifestImpl extends ServiceManifestImpl implements So
     private static final long serialVersionUID = 5444635742533027016L;
 
     @Inject
-    public SolverServiceManifestImpl(@Named(ProcessTaskDescriptor.CATALOG) CatalogDescriptor descriptor) {
+    public SolverServiceManifestImpl(@Named(Task.CATALOG) CatalogDescriptor descriptor) {
         super(SERVICE_NAME, "1.0", descriptor, Arrays.asList(new String[] {
                 //the only service token defined points to the Id of the task to perform, all other tokens
                 //are defined by the task's specific url tokens list

@@ -11,14 +11,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
 
+import com.wrupple.muba.catalogs.domain.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
-import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
-import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
-import com.wrupple.muba.catalogs.domain.ContentNode;
+import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogExcecutionContext;
 import com.wrupple.muba.catalogs.server.domain.ConstraintDTO;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryBeanDAO;
@@ -30,7 +29,7 @@ import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.desktop.domain.ConstraintImpl;
 import com.wrupple.muba.desktop.server.service.CatalogTableNameService;
 import com.wrupple.muba.catalogs.domain.AncestryConclusions;
-import com.wrupple.muba.catalogs.domain.CatalogActionTrigger;
+import com.wrupple.muba.catalogs.domain.CatalogEventListener;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.Constraint;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
@@ -191,10 +190,10 @@ public class DatabaseDomainDrivenServerModule extends AbstractDatabaseDrivenServ
 
 		if (triggers != null) {
 			dao = localDatasourceProvider.get();
-			GenericJavaObjectDAO<CatalogActionTriggerImpl> triggerDao = dao.cast(CatalogActionTriggerImpl.class,
-					namespace.getDescriptorForName(CatalogActionTriggerImpl.CATALOG));
-			CatalogActionTriggerImpl trigger;
-			List<CatalogActionTrigger> values = regreso.getTriggersValues();
+			GenericJavaObjectDAO<CatalogEventListenerImpl> triggerDao = dao.cast(CatalogEventListenerImpl.class,
+					namespace.getDescriptorForName(CatalogEventListenerImpl.CATALOG));
+			CatalogEventListenerImpl trigger;
+			List<CatalogEventListener> values = regreso.getTriggersValues();
 			for (Long triggerId : triggers) {
 				trigger = triggerDao.read(String.valueOf(triggerId));
 				values.add(trigger);

@@ -8,5 +8,5 @@ public interface WorkCompleteEvent extends ManagedObject, ExplicitIntent {
 
     Workflow getHandleValue();
 
-    ProcessTaskDescriptor getTaskDescriptorValue();
+    Task getTaskDescriptorValue();
 }

@@ -32,7 +32,7 @@ public class CatalogTransaction {
         CatalogActionCommit preprocessEvent=catalogActionCommitProvider.get();//Extends catalog action request
         preprocessEvent.setName(action);
         context.getRequest().setName(action);
-        preprocessEvent.setLiveContext(context);
+        preprocessEvent.setStateValue(context);
         preprocessEvent.setRequestValue((CatalogActionRequest) context.getRuntimeContext().getServiceContract());
         preprocessEvent.setDomain((Long) context.getRequest().getDomain());
         context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
@@ -41,7 +41,7 @@ public class CatalogTransaction {
 
     public void postProcess(CatalogActionContext context,String catalog,String action, CatalogEntry regreso) throws Exception {
         CatalogEvent event=new CatalogEventImpl((Long) context.getRequest().getDomain(), catalog,action, regreso);
-        event.setLiveContext(context);
+        event.setStateValue(context);
         if(context.getOldValues()!=null){
             event.setOldValues(context.getOldValues());
         }

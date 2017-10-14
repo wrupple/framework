@@ -51,7 +51,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 
 				SystemCatalogPlugin database = context.getCatalogManager();
 				//TODO descriptor extends identification, if we want the short version we read identifictation
-				List<CatalogIdentification> names = database.getAvailableCatalogs(context);
+				List<CatalogIdentification> names = context.getAvailableCatalogs();
 
 				log.trace("[SEARCHING {} CATALOGS FOR hard keys referencing {}]", names.size(),
 						catalog.getDistinguishedName());
@@ -71,7 +71,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 				for (CatalogIdentification idem : names) {
 
 					garbageFilter = null;
-					temp = database.getDescriptorForName((String) idem.getId(), context);
+					temp = context.getDescriptorForName((String) idem.getId());
 					tempFields = temp.getFieldsValues();
 
 					log.trace("[PROCESSING {}]", idem.getId());

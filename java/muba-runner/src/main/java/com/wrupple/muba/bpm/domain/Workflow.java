@@ -33,7 +33,7 @@ public interface Workflow extends ServiceManifest,HasOutput{
 
     List<Long> getProcess();
 
-    <T extends ProcessTaskDescriptor> List<T> getProcessValues();
+    <T extends Task> List<T> getProcessValues();
 
     /**
      *

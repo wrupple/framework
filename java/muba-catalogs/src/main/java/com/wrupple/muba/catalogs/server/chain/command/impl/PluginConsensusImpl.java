@@ -1,6 +1,8 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.domain.CatalogEventListener;
+import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
@@ -31,17 +33,17 @@ public class PluginConsensusImpl implements PluginConsensus {
     /*
 	 * versioning
 	 */
-    private final CatalogActionTriggerImpl versionTrigger;
+    private final CatalogEventListenerImpl versionTrigger;
     /*
      * Indexing
      */
-    private final CatalogActionTriggerImpl treeIndex;
-    private final CatalogActionTrigger timelineDiscriminator;
+    private final CatalogEventListenerImpl treeIndex;
+    private final CatalogEventListener timelineDiscriminator;
 
     /*
      * timelines
      */
-    private CatalogActionTriggerImpl timestamp;
+    private CatalogEventListenerImpl timestamp;
     private ArrayList<String> defaultVersioningTriggerproperties;
     private WritePublicTimelineEventDiscriminator inheritanceHandler;
 
@@ -52,21 +54,21 @@ public class PluginConsensusImpl implements PluginConsensus {
         this.host=host;
         this.pluginProvider=pluginProvider;
         this.inheritanceHandler = inheritanceHandler;
-        treeIndex = new CatalogActionTriggerImpl(0, UpdateTreeLevelIndex.class.getSimpleName(), true, null, null, null);
+        treeIndex = new CatalogEventListenerImpl(0, UpdateTreeLevelIndex.class.getSimpleName(), true, null, null, null);
         treeIndex.setFailSilence(true);
         treeIndex.setStopOnFail(true);
 
-        timelineDiscriminator = new CatalogActionTriggerImpl(0,
+        timelineDiscriminator = new CatalogEventListenerImpl(0,
                 WritePublicTimelineEventDiscriminator.class.getSimpleName(), false, null, null, null);
         timelineDiscriminator.setFailSilence(true);
         timelineDiscriminator.setStopOnFail(true);
 
-        timestamp = new CatalogActionTriggerImpl(0, Timestamper.class.getSimpleName(), true, null, null, null);
+        timestamp = new CatalogEventListenerImpl(0, Timestamper.class.getSimpleName(), true, null, null, null);
         timestamp.setFailSilence(false);
         timestamp.setStopOnFail(true);
 
 
-        versionTrigger = new CatalogActionTriggerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
+        versionTrigger = new CatalogEventListenerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
                 null);
         versionTrigger.setFailSilence(true);
         versionTrigger.setStopOnFail(true);
@@ -79,7 +81,7 @@ public class PluginConsensusImpl implements PluginConsensus {
         defaultVersioningTriggerproperties.add(putEntryId);
         defaultVersioningTriggerproperties.add(putCatalogId);
         defaultVersioningTriggerproperties
-                .add("value=" + SystemCatalogPlugin.SOURCE_OLD + "." + CatalogActionTrigger.SERIALIZED);
+                .add("value=" + SystemCatalogPlugin.SOURCE_OLD + "." + CatalogEventListener.SERIALIZED);
 
     }
 
@@ -171,18 +173,18 @@ public class PluginConsensusImpl implements PluginConsensus {
         return CONTINUE_PROCESSING;
     }
 
-    private CatalogActionTrigger getVersioningTrigger() {
+    private CatalogEventListener getVersioningTrigger() {
         return versionTrigger;
     }
 
-    private CatalogActionTrigger getRevisionTrigger(CatalogDescriptor c) {
+    private CatalogEventListener getRevisionTrigger(CatalogDescriptor c) {
         ArrayList<String> properties = new ArrayList<String>(5);
 
         properties.addAll(this.defaultVersioningTriggerproperties);
 
         properties.add("name=" + SystemCatalogPlugin.SOURCE_OLD + "." + c.getDescriptiveField());
 
-        CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1, CatalogActionRequest.CREATE_ACTION, true,
+        CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1, CatalogActionRequest.CREATE_ACTION, true,
                 ContentRevision.CATALOG, properties, null);
         trigger.setFailSilence(true);
         trigger.setStopOnFail(true);
@@ -190,12 +192,12 @@ public class PluginConsensusImpl implements PluginConsensus {
     }
 
 
-    private CatalogActionTrigger afterCreateHandledTimeline() {
+    private CatalogEventListener afterCreateHandledTimeline() {
 
         return timelineDiscriminator;
     }
 
-    private CatalogActionTrigger beforeIndexedTreeCreate() {
+    private CatalogEventListener beforeIndexedTreeCreate() {
         return treeIndex;
     }
 

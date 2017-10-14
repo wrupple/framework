@@ -1,17 +1,15 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.DetermineSolutionFieldsDomain;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.DataEvent;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +36,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
     @Override
     public boolean execute(Context ctx) throws Exception {
         final ApplicationContext context = (ApplicationContext) ctx;
-        ProcessTaskDescriptor request = context.getStateValue().getTaskDescriptorValue();
+        Task request = context.getStateValue().getTaskDescriptorValue();
 
         final Solver solver = plugin.getSolver();
         log.debug("Resolving Solution Type");

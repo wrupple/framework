@@ -1,8 +1,8 @@
 package com.wrupple.muba.bpm.domain.impl;
 
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 
 import javax.validation.constraints.NotNull;
@@ -27,7 +27,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private Object session;
 
 
-    private ProcessTaskDescriptor taskDescriptorValue;
+    private Task taskDescriptorValue;
     private List<Object> userSelection;
     private List<CatalogEntry> userSelectionValues;
     private String distinguishedName;
@@ -119,12 +119,12 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     }
 
     @Override
-    public ProcessTaskDescriptor getTaskDescriptorValue() {
+    public Task getTaskDescriptorValue() {
         return taskDescriptorValue;
     }
 
     @Override
-    public void setTaskDescriptorValue(ProcessTaskDescriptor taskDescriptorValue) {
+    public void setTaskDescriptorValue(Task taskDescriptorValue) {
         this.taskDescriptorValue = taskDescriptorValue;
     }
 

@@ -11,11 +11,11 @@ public class CatalogEventInterpretImpl  implements CatalogEventInterpret {
     public Context materializeBlankContext(RuntimeContext requestContext) {
 
         CatalogEvent event = /*(CatalogActionCommit)*/ (CatalogEvent) requestContext.getServiceContract();
-        if (event.getLiveContext() == null) {
+        if (event.getStateValue() == null) {
             //TODO remote (relative to the event source) listeners should read de actionRequest to create a mirrored action context (?)
             throw new NullPointerException("No catalog action context marked as source of catalog event");
         }else{
-            return event.getLiveContext();
+            return event.getStateValue();
         }
     }
 

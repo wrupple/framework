@@ -1,9 +1,11 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
+import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -404,6 +406,13 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             return triggerGet(CatalogDescriptor.CATALOG_ID,catalogId);
         }
 
+        @Override
+        public List<CatalogIdentification> getAvailableCatalogs() throws Exception {
+            FilterData filter = FilterDataUtils.newFilterData();
+            filter.setConstrained(false);
+            return  triggerRead(CatalogDescriptor.CATALOG_ID,filter);
+        }
+
 
         @Override
         public <T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception {
@@ -418,6 +427,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             List<T> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
             return results == null ? null : results.isEmpty() ? null : results.get(0);
         }
+
+
 
 
         @Override

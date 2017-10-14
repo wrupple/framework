@@ -5,6 +5,7 @@ import com.wrupple.muba.catalogs.domain.CatalogEvent;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
+import org.apache.commons.chain.Context;
 
 import java.util.List;
 
@@ -14,7 +15,8 @@ public class CatalogEventImpl extends CatalogEntryImpl implements CatalogEvent {
 	private final CatalogEntry entry;
 	private List<Long> explicitlySuscriptedPeers;
 	private List<CatalogEntry> oldValues;
-	private CatalogActionContext liveContext;
+	private CatalogActionContext stateValue;
+	private Object state;
 
 
 	public CatalogEventImpl(Long domain, String catalogId, String action, CatalogEntry entry){
@@ -57,13 +59,13 @@ public class CatalogEventImpl extends CatalogEntryImpl implements CatalogEvent {
 	}
 
 	@Override
-	public CatalogActionContext getLiveContext() {
-		return liveContext;
+	public CatalogActionContext getStateValue() {
+		return stateValue;
 	}
 
 	@Override
-	public void setLiveContext(CatalogActionContext context) {
-		this.liveContext=context;
+	public void setStateValue(Context context) {
+		this.stateValue = (CatalogActionContext) context;
 	}
 
 	public Object getEntryAsSerializable() {
@@ -90,4 +92,12 @@ public class CatalogEventImpl extends CatalogEntryImpl implements CatalogEvent {
 		return CatalogEvent.CATALOG;
 	}
 
+	@Override
+	public Object getState() {
+		return state;
+	}
+
+	public void setState(Object state) {
+		this.state = state;
+	}
 }

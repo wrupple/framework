@@ -3,7 +3,6 @@ package com.wrupple.muba;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.catalogs.server.service.impl.TriggerStorageStrategyImpl;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;

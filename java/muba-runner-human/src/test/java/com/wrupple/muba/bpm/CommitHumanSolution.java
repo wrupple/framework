@@ -14,13 +14,13 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
 import com.wrupple.muba.HumanRunnerTestModule;
+import com.wrupple.muba.bpm.domain.Task;
+import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
-import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.catalogs.domain.*;
@@ -197,7 +197,7 @@ public class CommitHumanSolution extends MubaTest {
 
     }
 
-    private ProcessTaskDescriptor prepareEquationSolverTask() throws Exception {
+    private Task prepareEquationSolverTask() throws Exception {
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 
         // expectations
@@ -225,7 +225,7 @@ public class CommitHumanSolution extends MubaTest {
 
         runtimeContext.reset();
         log.info("[-create a task with problem constraints-]");
-        ProcessTaskDescriptorImpl problem = new ProcessTaskDescriptorImpl();
+        TaskImpl problem = new TaskImpl();
         problem.setDistinguishedName("my first problem");
         problem.setName("my first problem");
         problem.setCatalog(EquationSystemSolution.CATALOG);
@@ -233,9 +233,9 @@ public class CommitHumanSolution extends MubaTest {
         problem.setSentence(
                 Arrays.asList(
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                        Task.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
                         // x + y < 5
-                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
+                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
                 )
         );
 
@@ -244,7 +244,7 @@ public class CommitHumanSolution extends MubaTest {
 
         runtimeContext.setServiceContract(catalogRequest);
         runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, ProcessTaskDescriptor.CATALOG, CatalogActionRequest.CREATE_ACTION);
+                CatalogActionRequest.LOCALE_FIELD, Task.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
         catalogContext = runtimeContext.getServiceContext();

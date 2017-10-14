@@ -8,7 +8,7 @@ import com.wrupple.muba.bpm.domain.impl.BusinessIntentImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
-import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
+import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
@@ -58,22 +58,22 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         log.trace("[-create tasks (problem definition)-]");
 
-        ProcessTaskDescriptor pickDriver = new ProcessTaskDescriptorImpl();
+        Task pickDriver = new TaskImpl();
         pickDriver.setDistinguishedName("driverPick");
         pickDriver.setName("Pick Best Driver");
         pickDriver.setCatalog(Driver.class.getSimpleName());
-        pickDriver.setName(ProcessTaskDescriptor.SELECT_COMMAND);
+        pickDriver.setName(Task.SELECT_COMMAND);
        /* problem.setSentence(
                 Arrays.asList(
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                        Task.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
                         // x + y < 5
-                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
+                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
                 )
         );*/
 
 
-        ProcessTaskDescriptor updateBooking = new ProcessTaskDescriptorImpl();
+        Task updateBooking = new TaskImpl();
         updateBooking.setDistinguishedName("UpdateBooking");
         updateBooking.setName("Update Booking");
         updateBooking.setCatalog(Booking.class.getSimpleName());

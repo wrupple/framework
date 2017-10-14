@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
 import com.wrupple.muba.bpm.domain.WruppleActivityAction;
 import com.wrupple.muba.bpm.server.service.Solver;
@@ -28,7 +28,7 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
     private final Solver solver;
 
     @Inject
-    public SolverCatalogPluginImpl(Solver solver, @Named(ProcessTaskDescriptor.CATALOG) Provider<CatalogDescriptor> taskDescP,
+    public SolverCatalogPluginImpl(Solver solver, @Named(Task.CATALOG) Provider<CatalogDescriptor> taskDescP,
                                    @Named(TaskToolbarDescriptor.CATALOG) Provider<CatalogDescriptor> toolbarDescP,
                                    @Named(WruppleActivityAction.CATALOG) Provider<CatalogDescriptor> actionDescP) {
         this.taskDescP = taskDescP;
@@ -39,7 +39,7 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
 
     @Override
     public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) throws RuntimeException {
-        if (ProcessTaskDescriptor.CATALOG.equals(catalogId)) {
+        if (Task.CATALOG.equals(catalogId)) {
             return taskDescP.get();
         } else if (TaskToolbarDescriptor.CATALOG.equals(catalogId)) {
             return toolbarDescP.get();
@@ -66,7 +66,7 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
 
     @Override
     public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) throws Exception {
-        names.add(new CatalogIdentificationImpl(ProcessTaskDescriptor.CATALOG, "Task Descriptor",
+        names.add(new CatalogIdentificationImpl(Task.CATALOG, "Task Descriptor",
                 "/static/img/task.png"));
         names.add(
                 new CatalogIdentificationImpl(WruppleActivityAction.CATALOG, "Task Action", "/static/img/action.png"));

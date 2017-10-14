@@ -39,7 +39,7 @@ public class InferNextTaskImpl implements InferNextTask {
 
         Workflow item = (Workflow) context.getStateValue().getHandleValue();
 
-        ProcessTaskDescriptor nextTask = getNextWorkflowTask(item.getProcess(),item,context.getStateValue());
+        Task nextTask = getNextWorkflowTask(item.getProcess(),item,context.getStateValue());
         if(nextTask==null){
 
             // PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
@@ -76,7 +76,7 @@ public class InferNextTaskImpl implements InferNextTask {
         return CONTINUE_PROCESSING;
     }
 
-    private ProcessTaskDescriptor getNextWorkflowTask(List<Long> workflow, Workflow application, ApplicationState state) {
+    private Task getNextWorkflowTask(List<Long> workflow, Workflow application, ApplicationState state) {
         int index = workflow.indexOf(state.getTaskDescriptor());
         index++;
         if(index<workflow.size()){

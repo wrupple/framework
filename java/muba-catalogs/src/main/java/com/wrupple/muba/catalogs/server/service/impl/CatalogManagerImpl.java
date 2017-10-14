@@ -1,18 +1,16 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.google.inject.Inject;
+import com.wrupple.muba.catalogs.domain.CatalogEventListener;
 import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
 import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.CatalogKey;
 import com.wrupple.muba.event.domain.annotations.*;
-import com.wrupple.muba.event.domain.reserved.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.annotations.CAPTCHA;
 import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
-import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -94,9 +92,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
     private Provider<CatalogActionRequest> requestProvider;
 
     @Inject
-	public CatalogManagerImpl(PluginConsensus consensus,Provider<CatalogActionRequest> requestProvider,@Named("template.token.splitter") String splitter /* "\\." */,
-                              @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
-            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory,Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(Host.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogActionTrigger.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider,@Named(ContentNode.CATALOG_TIMELINE) Provider<CatalogDescriptor> timeline, FieldAccessStrategy access, CatalogTriggerInterpret triggerInterpret) {
+	public CatalogManagerImpl(PluginConsensus consensus, Provider<CatalogActionRequest> requestProvider, @Named("template.token.splitter") String splitter /* "\\." */,
+							  @Named("template.pattern") Pattern pattern/** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */
+            , @Named("catalog.ancestorKeyField") String ancestorIdField, CatalogFactory factory, Provider<NamespaceContext> domainContextProvider, CatalogResultCache cache, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named(FieldDescriptor.CATALOG_ID) Provider<CatalogDescriptor> fieldProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> catalogProvider, @Named(Host.CATALOG) Provider<CatalogDescriptor> peerProvider, @Named(DistributiedLocalizedEntry.CATALOG) Provider<CatalogDescriptor> i18nProvider, @Named(CatalogEventListener.CATALOG) Provider<CatalogDescriptor> triggerProvider, @Named(LocalizedString.CATALOG) Provider<CatalogDescriptor> localizedStringProvider, @Named(Constraint.CATALOG_ID) Provider<CatalogDescriptor> constraintProvider, @Named(Trash.CATALOG) Provider<CatalogDescriptor> trashP, @Named(ContentRevision.CATALOG) Provider<CatalogDescriptor> revisionP, @Named("catalog.plugins") Provider<Object> pluginProvider, @Named(ContentNode.CATALOG_TIMELINE) Provider<CatalogDescriptor> timeline, FieldAccessStrategy access, CatalogTriggerInterpret triggerInterpret) {
         super();
         this.requestProvider=requestProvider;
 		this.ancestorIdField = ancestorIdField;
@@ -196,7 +194,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		names.add(new CatalogIdentificationImpl(CatalogDescriptor.CATALOG_ID, "Catalogs", "/static/img/catalog.png"));
 		names.add(new CatalogIdentificationImpl(FieldDescriptor.CATALOG_ID, "Fields", "/static/img/fields.png"));
 		names.add(new CatalogIdentificationImpl(Constraint.CATALOG_ID, "Validation Data", "/static/img/check.png"));
-		names.add(new CatalogIdentificationImpl(CatalogActionTrigger.CATALOG, "Action Triggers",
+		names.add(new CatalogIdentificationImpl(CatalogEventListener.CATALOG, "Action Triggers",
 				"/static/img/excecute.png"));
 		names.add(new CatalogIdentificationImpl(WebEventTrigger.CATALOG, "Web Triggers", "/static/img/excecute.png"));
 		names.add(new CatalogIdentificationImpl(DistributiedLocalizedEntry.CATALOG, "Localized Entity",
@@ -229,12 +227,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			log.trace("assemble catalog descriptor {} ", catalogId);
 			if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = fieldProvider.get();
-				CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1,
+				CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1,
 						FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
 				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-				trigger = new CatalogActionTriggerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
+				trigger = new CatalogEventListenerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
@@ -242,18 +240,18 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				return regreso;
 			} else if (CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = catalogProvider.get();
-				CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1,
+				CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1,
 						CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
 				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-				trigger = new CatalogActionTriggerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
+				trigger = new CatalogEventListenerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
 						null, null, null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
 				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 
-                trigger = new CatalogActionTriggerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
+                trigger = new CatalogEventListenerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
                 trigger.setFailSilence(true);
                 trigger.setStopOnFail(true);
                 triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
@@ -261,7 +259,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				regreso = peerProvider.get();
 			} else if (DistributiedLocalizedEntry.CATALOG.equals(catalogId)) {
 				regreso = i18nProvider.get();
-			} else if (CatalogActionTrigger.CATALOG.equals(catalogId)) {
+			} else if (CatalogEventListener.CATALOG.equals(catalogId)) {
 				regreso = triggerProvider.get();
 			} else if (LocalizedString.CATALOG.equals(catalogId)) {
 				regreso = localizedStringProvider.get();
@@ -269,12 +267,12 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				regreso = constraintProvider.get();
 			} else if (Trash.CATALOG.equals(catalogId)) {
 				regreso = trashP.get();
-				CatalogActionTriggerImpl trigger = new CatalogActionTriggerImpl(1, RestoreTrash.class.getSimpleName(),
+				CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1, RestoreTrash.class.getSimpleName(),
 						true, null, null, null);
 				trigger.setFailSilence(false);
 				trigger.setStopOnFail(false);
 				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-				trigger = new CatalogActionTriggerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
+				trigger = new CatalogEventListenerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
 						null);
 				trigger.setFailSilence(true);
 				trigger.setStopOnFail(true);
@@ -295,9 +293,9 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	@Override
 	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) {
 
-		CatalogActionTriggerImpl trigger;
+		CatalogEventListenerImpl trigger;
 
-		trigger = new CatalogActionTriggerImpl(2, GarbageCollection.class.getSimpleName(), false, null, null, null);
+		trigger = new CatalogEventListenerImpl(2, GarbageCollection.class.getSimpleName(), false, null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
@@ -306,7 +304,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		FieldDescriptor field = catalog.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
 
-			trigger = new CatalogActionTriggerImpl(1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
+			trigger = new CatalogEventListenerImpl(1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
 					null);
 			trigger.setFailSilence(true);
 			trigger.setStopOnFail(true);

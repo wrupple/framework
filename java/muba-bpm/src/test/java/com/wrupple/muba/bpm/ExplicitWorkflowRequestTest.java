@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.impl.ProcessTaskDescriptorImpl;
+import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.catalogs.domain.ContentNode;
@@ -53,7 +53,7 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 
 
 
-        ProcessTaskDescriptorImpl task = new ProcessTaskDescriptorImpl();
+        TaskImpl task = new TaskImpl();
         task.setCatalog(Statistics.CATALOG);
         task.setName(DataEvent.WRITE_ACTION);
         //TODO SUBQUERY solver service appends, resolving variables if necesary, excecutes sql and attempts to resolve fields from result set
@@ -67,9 +67,9 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
          problem.setSentence(
                 Arrays.asList(
                         // x * y = 4
-                        ProcessTaskDescriptor.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
+                        Task.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
                         // x + y < 5
-                        ProcessTaskDescriptor.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
+                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
                 )
         );
          */
@@ -78,7 +78,7 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
         count.setName("Count");
         count.setProcessValues( Arrays.asList(task));
 
-        task = new ProcessTaskDescriptorImpl();
+        task = new TaskImpl();
         task.setCatalog(Statistics.CATALOG);
         task.setName(DataEvent.CREATE_ACTION);
 

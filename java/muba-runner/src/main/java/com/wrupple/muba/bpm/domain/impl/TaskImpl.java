@@ -2,11 +2,11 @@ package com.wrupple.muba.bpm.domain.impl;
 
 import java.util.List;
 
-import com.wrupple.muba.bpm.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 
-public class ProcessTaskDescriptorImpl  implements ProcessTaskDescriptor {
+public class TaskImpl implements Task {
 	private static final long serialVersionUID = 7957074775049623796L;
 	private String catalog,distinguishedName,outputField;
 	private List<String> properties,sentence;

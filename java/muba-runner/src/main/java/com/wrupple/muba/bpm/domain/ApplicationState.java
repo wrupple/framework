@@ -29,7 +29,7 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
     Long getTaskDescriptor();
 
-    ProcessTaskDescriptor getTaskDescriptorValue();
+    Task getTaskDescriptorValue();
 
     List<Object> getUserSelection();
 
@@ -39,7 +39,7 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
     void setExcecutionContext(RuntimeContext context);
 
-    void setTaskDescriptorValue(ProcessTaskDescriptor request);
+    void setTaskDescriptorValue(Task request);
 
     void setSolutionDescriptor(CatalogDescriptor solutionDescriptor);
 
