@@ -221,8 +221,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 	@Override
-	public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context)
-            throws RuntimeException {
+	public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) throws Exception {
 		CatalogDescriptor regreso;
 			log.trace("assemble catalog descriptor {} ", catalogId);
 			if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
@@ -291,7 +290,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 
 	@Override
-	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) {
+	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
 
 		CatalogEventListenerImpl trigger;
 

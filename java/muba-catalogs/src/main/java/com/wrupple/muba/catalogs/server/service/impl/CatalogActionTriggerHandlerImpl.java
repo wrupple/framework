@@ -43,27 +43,7 @@ public class CatalogActionTriggerHandlerImpl  {
 			CatalogEventListener trigger;
 			for (int i = 0; i < triggers.size(); i++) {
 				trigger = triggers.get(i);
-				action = trigger.getAction();
-				r = Command.CONTINUE_PROCESSING;
-				switch (action) {
-				case 0:// Create
-					if (CatalogActionRequest.CREATE_ACTION.equals(context.getRequest().getName())) {
-						r = excecuteTrigger(trigger, context);
-					}
-					break;
-				case 1:// Update
-					if (CatalogActionRequest.WRITE_ACTION.equals(context.getRequest().getName())) {
-						r = excecuteTrigger(trigger, context);
-					}
-					break;
-				case 2:// Delete
-					if (CatalogActionRequest.DELETE_ACTION.equals(context.getRequest().getName())) {
-						r = excecuteTrigger(trigger, context);
-					}
-					break;
-				default:
-					break;
-				}
+				r = excecuteTrigger(trigger, context);
 				if (Command.PROCESSING_COMPLETE == r) {
 					return Command.CONTINUE_PROCESSING;
 				}

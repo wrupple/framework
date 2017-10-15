@@ -46,7 +46,18 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                 //numeric id
 
                 List<CatalogDescriptor> results = keys.stream().
-                        map(key-> getDescriptorForKey(key,context)).collect(Collectors.toList());
+                        map(key -> {
+                            try {
+                                return getDescriptorForKey(key, context);
+                            } catch (Exception e) {
+                                log.error("Unable to retrive catalog with key:"+key,e);
+                                return null;
+                            }
+                        }).
+                        filter( descriptor ->{
+                            return descriptor!=null;
+                        })
+                        .collect(Collectors.toList());
 
                 context.setResults(results);
             }else if(filter.containsKey(HasDistinguishedName.FIELD)){
@@ -55,7 +66,17 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                 //numeric id
 
                 List<CatalogDescriptor> results = names.stream().
-                        map(key-> getDescriptorForName(key,context)).collect(Collectors.toList());
+                        map(key -> {
+                            try {
+                                return getDescriptorForName(key, context);
+                            } catch (Exception e) {
+                                log.error("Unable to retrive catalog with key:"+key,e);
+                                return null;
+                            }
+                        }).
+                        filter( descriptor ->{
+                            return descriptor!=null;
+                        }).collect(Collectors.toList());
 
                 context.setResults(results);
             }
@@ -79,11 +100,11 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
     }
 
 
-    private CatalogDescriptor getDescriptorForKey(Long primariKEy, CatalogActionContext context) {
+    private CatalogDescriptor getDescriptorForKey(Long primariKEy, CatalogActionContext context) throws Exception{
         // POLLING plugins
         for (CatalogPlugin plugin : plugins) {
             log.trace("asking {} for descriptor", plugin);
-            CatalogDescriptor regreso = plugin.getDescriptor(primariKEy, context);
+            CatalogDescriptor regreso = plugin.getDescriptor(primariKEy,context);
             if (regreso != null) {
                 return regreso;
             }
@@ -91,7 +112,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
         return null;
     }
 
-    private CatalogDescriptor getDescriptorForName(String distinguishedName, CatalogActionContext context) {
+    private CatalogDescriptor getDescriptorForName(String distinguishedName, CatalogActionContext context) throws Exception  {
         // POLLING plugins
         for (CatalogPlugin plugin : plugins) {
             log.trace("asking {} for descriptor", plugin);

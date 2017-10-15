@@ -1,14 +1,18 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
@@ -20,13 +24,17 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
+    private final Provider<SessionContext> exp;
+    private final Provider<EventBus> bus;
 
 	@Inject
 	public CatalogTriggerInterpretImpl(Provider<CatalogServiceManifest> manifestP,
-                                       CatalogDeserializationService deserializer) {
+                                       CatalogDeserializationService deserializer, @Named(SessionContext.SYSTEM)Provider<SessionContext> exp, Provider<EventBus> bus) {
 		super();
 		this.manifestP = manifestP;
 		this.deserializer = deserializer;
+        this.exp = exp;
+        this.bus = bus;
     }
 
 
@@ -34,7 +42,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	public void invokeTrigger(Map<String, String> properties, CatalogActionContext context, UserDefinedCatalogJob trigger)
 			throws Exception {
 		log.trace("[INVOKE] {}", trigger);
-		String targetAction = trigger.getSentence();
+		String targetAction = trigger.getName();
 
 		Command command = context.getCatalogManager().getCommand(targetAction);
 
@@ -46,8 +54,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 				//FIXME if trigger fails context is changed stake holders
 			context.getRuntimeContext().getSession().setStakeHolder(stakeHolder);
 		}
-		String targetCatalogId = trigger.getCatalog();
-		context.getRequest().setCatalog(targetCatalogId);
+		Object targetCatalogId = trigger.getCatalog();
+		context.getRequest().setCatalog((String) targetCatalogId);
 
 		boolean rollback = trigger.isFailSilence();
 
@@ -109,7 +117,50 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		}
 	}
 
-	private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,
+	@Override
+	public List<CatalogEventListener> getTriggersValues(CatalogActionContext context, boolean advise) throws Exception {
+		String catalogId = context.getCatalogDescriptor().getDistinguishedName();
+        String action = context.getRequest().getName();
+        Integer triggerAction ;
+        if (CatalogActionRequest.CREATE_ACTION.equals(action)) {
+            triggerAction=0;
+        }else if (CatalogActionRequest.WRITE_ACTION.equals(action)) {
+            triggerAction=1;
+        }else  if (CatalogActionRequest.DELETE_ACTION.equals(action)) {
+            triggerAction=2;
+        }else{
+            return null;
+        }
+
+        FilterData triggerFilter = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,catalogId);
+        triggerFilter.addFilter(FilterDataUtils.createSingleFieldFilter(Collections.singletonList(CatalogEventListener.ACTION_FIELD),triggerAction));
+        triggerFilter.addFilter(FilterDataUtils.createSingleFieldFilter(Collections.singletonList(CatalogEventListener.ADVISE_FIELD),advise));
+
+        return context.triggerRead(CatalogEventListener.CATALOG,triggerFilter);
+	}
+
+    @Override
+    public void addCatalogScopeTrigger(CatalogEventListener trigger, CatalogDescriptor regreso) throws Exception {
+        trigger.setCatalog(regreso.getDistinguishedName());
+
+	    SessionContext system = this.exp.get();
+        CatalogActionRequestImpl context = new CatalogActionRequestImpl();
+        context.setCatalog(CatalogEventListener.CATALOG);
+        context.setEntryValue(regreso);
+        context.setName(DataEvent.CREATE_ACTION);
+
+        bus.get().fireEvent(context, system, null);
+
+    }
+
+    @Override
+    public void addNamespaceScopeTrigger(CatalogEventListener trigger, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
+        trigger.setCatalog(catalog.getDistinguishedName());
+	    context.triggerCreate(CatalogEventListener.CATALOG,trigger);
+    }
+
+
+    private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,
 			FieldDescriptor field) throws Exception {
 		if (entryIdPointer instanceof String) {
 			return context.getCatalogManager().synthethizeFieldValue(((String) entryIdPointer).split("\\."), context);

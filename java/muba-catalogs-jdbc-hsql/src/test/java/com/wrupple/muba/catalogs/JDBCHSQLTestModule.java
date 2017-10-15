@@ -22,7 +22,6 @@ public class JDBCHSQLTestModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
 		bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
 		
 	}
@@ -60,9 +59,9 @@ public class JDBCHSQLTestModule extends AbstractModule {
 	@Inject
 	@Singleton
 	@Named("catalog.plugins")
-	public Object plugins(UserCatalogPlugin /* domain driven */ user) {
+	public Object plugins() {
 		// this is what makes it purr but not as much
-		CatalogPlugin[] plugins = new CatalogPlugin[] { user };
+		CatalogPlugin[] plugins = new CatalogPlugin[] {  };
 		return plugins;
 	}
 

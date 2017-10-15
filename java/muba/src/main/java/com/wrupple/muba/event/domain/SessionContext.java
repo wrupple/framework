@@ -8,7 +8,9 @@ import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
 public interface SessionContext extends Context {
 
-	Session getSessionValue();
+	String SYSTEM = "wrupple";
+
+    Session getSessionValue();
 
 	<T> T getStakeHolderPrincipal(Class<T> clazz);
 

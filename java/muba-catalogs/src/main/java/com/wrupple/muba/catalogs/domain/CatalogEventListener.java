@@ -9,8 +9,10 @@ import java.util.Map;
  */
 public interface CatalogEventListener extends UserDefinedCatalogJob {
 	String CATALOG = "CatalogEventListener";
+	String ACTION_FIELD="action";
+    String ADVISE_FIELD = "advice";
 
-	int getAction();
+    int getAction();
 
 	
 	/**

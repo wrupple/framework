@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
@@ -45,7 +46,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final LargeStringFieldDataAccessObject lsdao;
 
 	@Inject
-	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, Provider<SessionContext> exp,
+	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate,@Named(SessionContext.SYSTEM) Provider<SessionContext> exp,
 											 SystemCatalogPlugin cms, Provider<EventBus> bus, LargeStringFieldDataAccessObject lsdao) {
 		this.bus = bus;
 		this.lsdao = lsdao;

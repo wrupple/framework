@@ -54,7 +54,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
         protected void configure() {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-            bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
             // mocks
             WriteOutput mockWriter = mock(WriteOutput.class);
             WriteAuditTrails mockLogger = mock(WriteAuditTrails.class);
