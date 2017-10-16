@@ -12,7 +12,7 @@ import com.wrupple.muba.event.domain.CatalogDescriptor;
 public interface CatalogTriggerInterpret {
 	void invokeTrigger(Map<String, String> properties, CatalogActionContext original, UserDefinedCatalogJob matchingRegistry) throws Exception;
 
-	List<CatalogEventListener> getTriggersValues(CatalogActionContext context, boolean advise) throws Exception;
+	List<CatalogEventListener> getTriggersValues(CatalogActionContext context) throws Exception;
 
     //void addCatalogScopeTrigger(CatalogEventListener trigger, CatalogDescriptor regreso) throws Exception;
 

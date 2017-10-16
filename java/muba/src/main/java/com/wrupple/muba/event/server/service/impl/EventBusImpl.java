@@ -101,6 +101,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
         BroadcastEvent queued = queueElementProvider.get();
         queued.setEventValue(event);
         queued.setObserversValues(explicitlySuscriptedObservers);
+        queued.setDomain(event.getDomain());
         fireEvent(queued,runtimeContext,null/*use all broadcast handlers*/);
     }
 

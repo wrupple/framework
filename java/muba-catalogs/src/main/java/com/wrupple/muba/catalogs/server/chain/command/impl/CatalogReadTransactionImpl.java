@@ -77,10 +77,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         FilterData filter = context.getRequest().getFilter();
         log.info("[Resolving catalog metadata]");
         CatalogDescriptor catalog = context.getCatalogDescriptor();
-        if(context.getResults()!=null){
-            //STOP QUERYING FOR METADATA DESCRIPTOR
-            return CONTINUE_PROCESSING;
-        }
+
         Instrospection instrospection = context.getCatalogManager().access().newSession(null);
 
         CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);

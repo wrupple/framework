@@ -118,7 +118,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	}
 
 	@Override
-	public List<CatalogEventListener> getTriggersValues(CatalogActionContext context, boolean advise) throws Exception {
+	public List<CatalogEventListener> getTriggersValues(CatalogActionContext context) throws Exception {
 		String catalogId = context.getCatalogDescriptor().getDistinguishedName();
         String action = context.getRequest().getName();
         Integer triggerAction ;
@@ -134,7 +134,6 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
         FilterData triggerFilter = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,catalogId);
         triggerFilter.addFilter(FilterDataUtils.createSingleFieldFilter(Collections.singletonList(CatalogEventListener.ACTION_FIELD),triggerAction));
-        triggerFilter.addFilter(FilterDataUtils.createSingleFieldFilter(Collections.singletonList(CatalogEventListener.ADVISE_FIELD),advise));
 
         return context.triggerRead(CatalogEventListener.CATALOG,triggerFilter);
 	}

@@ -33,18 +33,21 @@ public class CatalogActionTriggerHandlerImpl  {
 
 
 	protected boolean extecute(CatalogActionContext context, boolean advise) throws Exception {
-		List<CatalogEventListener> triggers = interpret.getTriggersValues(context,advise);
+		List<CatalogEventListener> triggers = interpret.getTriggersValues(context);
 		if (triggers == null || triggers.isEmpty()) {
 			log.trace("no triggers to process");
 		} else {
-			int action;
 			boolean r;
 			CatalogEventListener trigger;
 			for (int i = 0; i < triggers.size(); i++) {
 				trigger = triggers.get(i);
-				r = excecuteTrigger(trigger, context);
-				if (Command.PROCESSING_COMPLETE == r) {
-					return Command.CONTINUE_PROCESSING;
+				if(trigger.isAdvice()==advise){
+
+					r = excecuteTrigger(trigger, context);
+					if (Command.PROCESSING_COMPLETE == r) {
+						log.warn("[Trigger stops trigger chain]");
+						return Command.CONTINUE_PROCESSING;
+					}
 				}
 			}
 		}

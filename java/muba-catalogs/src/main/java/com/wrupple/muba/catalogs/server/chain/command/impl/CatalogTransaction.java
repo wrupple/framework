@@ -31,10 +31,9 @@ public class CatalogTransaction {
 
         CatalogActionCommit preprocessEvent=catalogActionCommitProvider.get();//Extends catalog action request
         preprocessEvent.setName(action);
-        context.getRequest().setName(action);
         preprocessEvent.setStateValue(context);
         preprocessEvent.setRequestValue((CatalogActionRequest) context.getRuntimeContext().getServiceContract());
-        preprocessEvent.setDomain((Long) context.getRequest().getDomain());
+        preprocessEvent.setDomain((Long) context.getNamespaceContext().getId());
         context.getRuntimeContext().getEventBus().fireEvent(preprocessEvent,context.getRuntimeContext(),null);
 
     }
@@ -58,7 +57,7 @@ public class CatalogTransaction {
             people.pushToPath(HasStakeHolder.STAKE_HOLDER_FIELD);
             observers = Collections.singletonList(people);
         }
-        event.setDomain((Long) context.getRequest().getDomain());
+        event.setDomain((Long) context.getNamespaceContext().getId());
 
         context.getRuntimeContext().getEventBus().broadcastEvent(event,context.getRuntimeContext(),observers);
 
