@@ -1,6 +1,7 @@
 package com.wrupple.muba;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.*;
@@ -15,6 +16,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
+import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import org.apache.commons.chain.Command;
@@ -29,6 +31,7 @@ import javax.validation.Validator;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
@@ -86,6 +89,7 @@ public class IntegralTest extends AbstractTest{
         @Provides
         @Inject
         @Singleton
+        @Named(SYSTEM)
         public SessionContext sessionContext() {
 
 
@@ -139,7 +143,7 @@ public class IntegralTest extends AbstractTest{
         expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
         expect(mockSuscriptor.execute(anyObject(Context.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(stakeHolderValue.getDomain()).andStubReturn((Long)CatalogEntry.PUBLIC_ID);
-        runtimeContext = injector.getInstance(RuntimeContext.class);
+        runtimeContext = new RuntimeContextImpl(injector.getInstance(EventBus.class),injector.getInstance( Key.get(SessionContext.class,Names.named(SYSTEM))));
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 

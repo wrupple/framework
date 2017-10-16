@@ -14,7 +14,7 @@ public interface CatalogTriggerInterpret {
 
 	List<CatalogEventListener> getTriggersValues(CatalogActionContext context, boolean advise) throws Exception;
 
-    void addCatalogScopeTrigger(CatalogEventListener trigger, CatalogDescriptor regreso) throws Exception;
+    //void addCatalogScopeTrigger(CatalogEventListener trigger, CatalogDescriptor regreso) throws Exception;
 
 	void addNamespaceScopeTrigger(CatalogEventListener trigger, CatalogDescriptor catalog, CatalogActionContext context) throws Exception;
 

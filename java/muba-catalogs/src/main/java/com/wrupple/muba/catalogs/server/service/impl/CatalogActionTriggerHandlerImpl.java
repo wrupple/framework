@@ -33,7 +33,6 @@ public class CatalogActionTriggerHandlerImpl  {
 
 
 	protected boolean extecute(CatalogActionContext context, boolean advise) throws Exception {
-		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		List<CatalogEventListener> triggers = interpret.getTriggersValues(context,advise);
 		if (triggers == null || triggers.isEmpty()) {
 			log.trace("no triggers to process");

@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogPluginQueryCommand;
+import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogManagerImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
@@ -50,8 +51,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                             try {
                                 return getDescriptorForKey(key, context);
                             } catch (Exception e) {
-                                log.error("Unable to retrive catalog with key:"+key,e);
-                                return null;
+                                throw new CatalogException(e);
                             }
                         }).
                         filter( descriptor ->{
@@ -70,8 +70,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                             try {
                                 return getDescriptorForName(key, context);
                             } catch (Exception e) {
-                                log.error("Unable to retrive catalog with key:"+key,e);
-                                return null;
+                                throw new CatalogException(e);
                             }
                         }).
                         filter( descriptor ->{
@@ -81,9 +80,8 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                 context.setResults(results);
             }
 
-
-
         }
+
         return CONTINUE_PROCESSING;
     }
 
@@ -114,9 +112,15 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
 
     private CatalogDescriptor getDescriptorForName(String distinguishedName, CatalogActionContext context) throws Exception  {
         // POLLING plugins
+        log.trace("asking main plugin for descriptor", distinguishedName);
+
+        CatalogDescriptor regreso = context.getCatalogManager().getDescriptor(distinguishedName, context);
+        if (regreso != null) {
+            return regreso;
+        }
         for (CatalogPlugin plugin : plugins) {
             log.trace("asking {} for descriptor", plugin);
-            CatalogDescriptor regreso = plugin.getDescriptor(distinguishedName, context);
+            regreso = plugin.getDescriptor(distinguishedName, context);
             if (regreso != null) {
                return regreso;
             }

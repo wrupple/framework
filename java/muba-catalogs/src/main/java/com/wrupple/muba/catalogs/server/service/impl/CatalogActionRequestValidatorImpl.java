@@ -13,6 +13,7 @@ import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -63,10 +64,26 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 	@Override
 	public boolean isValid(CatalogActionRequest req, final ConstraintValidatorContext validationContext) {
+
+        log.info("[Validate] {}",req);
+        if(req.getParentValue()==null){
+            log.warn("root request");
+        }
 		// had to be done this way because security violations occur when
 		// using reflection on the apache chain context map
 		boolean report = true;
-		log.debug("[VALIDATE CATALOG_TIMELINE ACTION REQUEST]");
+		if(req.getCatalog()!=null && req.getEntryValue()!=null ){
+		    if(req.getEntryValue() instanceof CatalogEntry){
+		        String typ = ((CatalogEntry) req.getEntryValue()).getCatalogType();
+		        if(typ!=null){
+		            if(!req.getCatalog().equals(typ)){
+                        validationContext.buildConstraintViolationWithTemplate("{catalog.request.mismatchValue}")
+                                .addConstraintViolation();
+		                report = false;
+                    }
+                }
+            }
+        }
 
 		String action = req.getName();
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();
@@ -120,14 +137,18 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 						throw new IllegalArgumentException("Invalid filter criteira (no comparable value)");
 					}
 					try {
-						descriptor = assertDescriptor(descriptor, catalog, domain);
+						descriptor = assertDescriptor(descriptor, catalog, domain,req);
 					} catch (InvocationTargetException e) {
 						throw new RuntimeException(e);
 					} catch (IllegalAccessException e) {
 						throw new RuntimeException(e);					}
 					local = descriptor.getFieldDescriptor(criteria.getPath(0));
 					if (local == null || !local.isFilterable()) {
-						throw new IllegalArgumentException("Invalid filter criteira (unfilterable field)");
+                        if(local==null){
+                            throw new IllegalArgumentException("Invalid filter criteira "+criteria+" (unmageable path: "+criteria.getPath(0)+")");
+                        }else{
+                            throw new IllegalArgumentException("Invalid filter criteira (unfilterable field: "+local.getFieldId()+"@"+descriptor.getDistinguishedName()+")");
+                        }
 					}
 					if (criteria.getPathTokenCount() > 1 && local.getCatalog() == null) {
 						throw new IllegalArgumentException(
@@ -142,7 +163,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		if (report && entryValue != null) {
 			log.trace("validate entry Value");
 			try {
-				descriptor = assertDescriptor(descriptor, catalog, domain);
+				descriptor = assertDescriptor(descriptor, catalog, domain, req);
 			} catch (InvocationTargetException e) {
 				throw new RuntimeException(e);
 			} catch (IllegalAccessException e) {
@@ -225,26 +246,30 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		return report;
 	}
 
-	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, Long domain) throws InvocationTargetException, IllegalAccessException {
+	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, Long domain, CatalogActionRequest req) throws InvocationTargetException, IllegalAccessException {
 		if (descriptor == null) {
 //at this point this very validator should allow this as a valid  request no more questions asked
 			SessionContext system = this.exp.get();
 			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
 				context.setDomain(domain);
+				context.setParentValue(req);
 				context.setCatalog(CatalogDescriptor.CATALOG_ID);
 				context.setEntry(catalogId);
             context.setName(DataEvent.READ_ACTION);
-
+            context.setFollowReferences(true);
+			List results =null;
 			try {
 				//TODO event always returns fill result list, can we make it so it doesnt have to wrap single results?ss
-				descriptor = (CatalogDescriptor) ((List)bus.get().fireEvent(context,system,null)).get(0);
+				results = (List) bus.get().fireEvent(context, system, null);
+
 			} catch (Exception e) {
-			    log.error("Error while attempting to read catalog id ",e);
 				throw new RuntimeException(e);
 			}
-			if(descriptor==null){
+			if(results==null||results.isEmpty()){
 				throw new IllegalArgumentException(catalogId+"@"+domain);
 			}
+			descriptor = (CatalogDescriptor) (results).get(0);
+
 		}
 		return descriptor;
 	}

@@ -12,6 +12,7 @@ public interface CatalogActionContext
 		extends ServiceContext, HasResult<CatalogEntry>,HasResults<CatalogEntry> {
 
 	final String CATALOG = "CatalogActionContext";
+	String INCOMPLETO ="_incompleto" ;
 
 	CatalogActionRequest getRequest();
 	
@@ -70,4 +71,8 @@ public interface CatalogActionContext
 	<T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception;
 
     List<CatalogIdentification> getAvailableCatalogs() throws Exception;
+
+	boolean isMetadataReady();
+
+	void switchContract(CatalogActionRequest childContext);
 }

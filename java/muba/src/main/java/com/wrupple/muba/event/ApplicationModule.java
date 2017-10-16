@@ -53,7 +53,7 @@ public class ApplicationModule extends AbstractModule {
         /*
          * model
          */
-		bind(RuntimeContext.class).to(RuntimeContextImpl.class);//request scoped
+		//bind(RuntimeContext.class).to(RuntimeContextImpl.class);//request scoped
         bind(BroadcastContext.class).to(BroadcastContextImpl.class);
         bind(BroadcastEvent.class).to(BroadcastEventImpl.class);
         bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);

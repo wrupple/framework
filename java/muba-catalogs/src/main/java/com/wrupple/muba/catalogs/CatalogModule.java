@@ -148,6 +148,7 @@ public class CatalogModule extends AbstractModule {
 		bind(CatalogDescriptorUpdateTrigger.class).to(CatalogDescriptorUpdateTriggerImpl.class);
         bind(CatalogPluginQueryCommand.class).to(CatalogPluginQueryCommandImpl.class);
 
+        bind(PluginConsensus.class).to(PluginConsensusImpl.class);
 		bind(GarbageCollection.class).to(GarbageCollectionImpl.class);
 		bind(TrashDeleteTrigger.class).to(TrashDeleteTriggerImpl.class);
 		bind(RestoreTrash.class).to(RestoreTrashImpl.class);
@@ -274,7 +275,7 @@ public class CatalogModule extends AbstractModule {
 	@Named(CatalogEventListener.CATALOG)
 	public CatalogDescriptor catalogActionTrigger(@Named(CatalogEventListener.CATALOG) Class clazz,
 			CatalogDescriptorBuilder builder) {
-		CatalogDescriptor r = builder.fromClass(CatalogEventListenerImpl.class, CatalogEventListener.CATALOG,
+		CatalogDescriptor r = builder.fromClass(clazz, CatalogEventListener.CATALOG,
 				"Catalog Trigger", -194949, null);
 		r.setClazz(clazz);
 		return r;
@@ -289,7 +290,7 @@ public class CatalogModule extends AbstractModule {
     @Named(CatalogEvent.CATALOG)
     public CatalogDescriptor eventCatalog(@Named(CatalogEvent.CATALOG) Class clazz,
                                           CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(CatalogEventImpl.class, CatalogEvent.CATALOG,
+        CatalogDescriptor r = builder.fromClass(clazz, CatalogEvent.CATALOG,
                 "Catalog Event", -13939395, null);
         r.setClazz(clazz);
         return r;

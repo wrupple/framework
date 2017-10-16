@@ -69,7 +69,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		return getEventBus().resume(this);
 	}
 
-	@Inject
+
 	public RuntimeContextImpl(EventBus appication, SessionContext session) {
 		this( appication, session, null);
 	}

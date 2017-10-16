@@ -12,7 +12,7 @@ public interface CatalogEventListener extends UserDefinedCatalogJob {
 	String ACTION_FIELD="action";
     String ADVISE_FIELD = "advice";
 
-    int getAction();
+    Integer getAction();
 
 	
 	/**
@@ -22,7 +22,7 @@ public interface CatalogEventListener extends UserDefinedCatalogJob {
 	 */
 	String getSystemEvent();
 	
-	public boolean isAdvice();
+	public Boolean isAdvice();
 
 
 	Map<String, String> getParsedProperties(List<String> rawProperties, Map context);

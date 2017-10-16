@@ -226,34 +226,8 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			log.trace("assemble catalog descriptor {} ", catalogId);
 			if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = fieldProvider.get();
-				CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1,
-						FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
-				trigger.setFailSilence(true);
-				trigger.setStopOnFail(true);
-				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-				trigger = new CatalogEventListenerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
-						null, null, null);
-				trigger.setFailSilence(true);
-				trigger.setStopOnFail(true);
-				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-				return regreso;
 			} else if (CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
 				regreso = catalogProvider.get();
-				CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1,
-						CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
-				trigger.setFailSilence(true);
-				trigger.setStopOnFail(true);
-				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-				trigger = new CatalogEventListenerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
-						null, null, null);
-				trigger.setFailSilence(true);
-				trigger.setStopOnFail(true);
-				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-
-                trigger = new CatalogEventListenerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
-                trigger.setFailSilence(true);
-                trigger.setStopOnFail(true);
-                triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 			} else if (Host.CATALOG.equals(catalogId)) {
 				regreso = peerProvider.get();
 			} else if (DistributiedLocalizedEntry.CATALOG.equals(catalogId)) {
@@ -266,16 +240,6 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 				regreso = constraintProvider.get();
 			} else if (Trash.CATALOG.equals(catalogId)) {
 				regreso = trashP.get();
-				CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1, RestoreTrash.class.getSimpleName(),
-						true, null, null, null);
-				trigger.setFailSilence(false);
-				trigger.setStopOnFail(false);
-				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
-				trigger = new CatalogEventListenerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
-						null);
-				trigger.setFailSilence(true);
-				trigger.setStopOnFail(true);
-				triggerInterpret.addCatalogScopeTrigger(trigger, regreso);
 			} else if (ContentNode.CATALOG_TIMELINE.equals(catalogId)) {
 				regreso = timeline.get();
 			} else if (ContentRevision.CATALOG.equals(catalogId)) {
@@ -290,17 +254,58 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 
 
 	@Override
-	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
+	public void postProcessCatalogDescriptor(CatalogDescriptor regreso, CatalogActionContext context) throws Exception {
+        String catalogId = regreso.getDistinguishedName();
 
-		CatalogEventListenerImpl trigger;
+        CatalogEventListenerImpl trigger;
+        if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
+            trigger = new CatalogEventListenerImpl(1,
+                    FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
+            trigger.setFailSilence(true);
+            trigger.setStopOnFail(true);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            trigger = new CatalogEventListenerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
+                    null, null, null);
+            trigger.setFailSilence(true);
+            trigger.setStopOnFail(true);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+        } else if (CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
+             trigger = new CatalogEventListenerImpl(1,
+                    CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
+            trigger.setFailSilence(true);
+            trigger.setStopOnFail(true);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            trigger = new CatalogEventListenerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
+                    null, null, null);
+            trigger.setFailSilence(true);
+            trigger.setStopOnFail(true);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+
+            trigger = new CatalogEventListenerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
+            trigger.setFailSilence(true);
+            trigger.setStopOnFail(true);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+        }  else if (Trash.CATALOG.equals(catalogId)) {
+            trigger = new CatalogEventListenerImpl(1, RestoreTrash.class.getSimpleName(),
+                    true, null, null, null);
+            trigger.setFailSilence(false);
+            trigger.setStopOnFail(false);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            trigger = new CatalogEventListenerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
+                    null);
+            trigger.setFailSilence(true);
+            trigger.setStopOnFail(true);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+        }
+
 
 		trigger = new CatalogEventListenerImpl(2, GarbageCollection.class.getSimpleName(), false, null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
-        triggerInterpret.addNamespaceScopeTrigger(trigger, catalog,context);
+        triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
 
-		FieldDescriptor field = catalog.getFieldDescriptor(Trash.TRASH_FIELD);
+		FieldDescriptor field = regreso.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
 
 			trigger = new CatalogEventListenerImpl(1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
@@ -309,7 +314,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			trigger.setStopOnFail(true);
 
 
-            triggerInterpret.addNamespaceScopeTrigger(trigger, catalog,context);
+            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
 
 		}
 
@@ -673,7 +678,7 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 		return true;
 	}
 
-	public String[][] getJoins(CatalogActionContext serverSide, Object clientSide, CatalogDescriptor descriptor,
+	public String[][] getJoins(CatalogActionContext contexto, Object clientSide, CatalogDescriptor descriptor,
 			String[][] customJoins, Object domain, String host) throws Exception {
 		// TODO configure how many levels/orders deep to go into for
 		// joinable fields
@@ -703,12 +708,26 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 			foreignCatalogId = currentJoinableField.getCatalog();
 			localField = null;
 			foreignField = null;
-			if (serverSide == null) {
+			if (contexto == null) {
 				throw new RuntimeException("not implemented");
 				// foreign =clientSide.loadFromCache(host, (String)domain,
 				// foreignCatalogId);
 			} else {
-				foreign = serverSide.getDescriptorForName(foreignCatalogId);
+			    //TODO dismiss join from statement if result is already joined (by storage unit or some magic)
+				log.trace("[{} requires metadata for foreign catalog] {}",descriptor.getDistinguishedName(),foreignCatalogId);
+                foreign=null;
+				if(CatalogDescriptor.CATALOG_ID.equals(descriptor.getDistinguishedName())  ){
+				    //si estoy actualmente armando descriptores
+                    if(CatalogDescriptor.CATALOG_ID.equals(foreignCatalogId)){
+
+                        foreign= descriptor;
+                    }
+
+                }
+                if(foreign==null) {
+                    foreign = contexto.getDescriptorForName(foreignCatalogId);
+                }
+
 			}
 
 			if (currentJoinableField.isKey()) {

@@ -53,6 +53,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 	public boolean execute(Context context) throws Exception {
         log.debug("<{}>",this.getClass().getSimpleName());
 
+
         RuntimeContext requestContext = (RuntimeContext) context;
 		Set<ConstraintViolation<?>> violations = null;
 		Object contract = requestContext.getServiceContract();
@@ -131,7 +132,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 						}
 					}
                     log.debug("</{}>",this.getClass().getSimpleName());
-					return PROCESSING_COMPLETE;
+					throw new IllegalArgumentException("Contract violates constrains");
 				}
 			}
 		}

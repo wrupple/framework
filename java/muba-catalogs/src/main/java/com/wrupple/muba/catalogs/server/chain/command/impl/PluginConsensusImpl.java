@@ -21,9 +21,11 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 public class PluginConsensusImpl implements PluginConsensus {
     protected static final Logger log = LoggerFactory.getLogger(PluginConsensusImpl.class);
     private final Provider<Object> pluginProvider;

@@ -3,8 +3,10 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
+import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ObjectMapper;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.transaction.NotSupportedException;
@@ -38,13 +41,18 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
     private final Provider<CatalogActionRequest> contractProvider;
     private final Provider<NamespaceContext> namespaceProvider;
 
+    private final Provider<CatalogDescriptor> metadataDescriptorProvider;
+    private final Provider<CatalogReadTransaction> readerProvider;
+
     @Inject
     public CatalogRequestInterpretImpl(
-            SystemCatalogPlugin cms,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider) {
+            SystemCatalogPlugin cms,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider) {
         super();
         this.cms = cms;
         this.contractProvider = contractProvider;
         this.namespaceProvider = namespaceProvider;
+        this.metadataDescriptorProvider = metadataDescriptorProvider;
+        this.readerProvider = readerProvider;
         this.mapper = null;
     }
 
@@ -89,6 +97,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         request.setCatalog(pressumedCatalogId);
 
+
+        context.setCatalogDescriptor(getCatalogDescriptor(context,pressumedCatalogId));
 			/*
 			 * decode incomming primary key
 			 */
@@ -144,6 +154,66 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         return CONTINUE_PROCESSING;
     }
+
+
+    private CatalogDescriptor getCatalogDescriptor(CatalogActionContext context,String catalogid) throws Exception {
+
+        if(context.isMetadataReady()){
+            return context.getCatalogDescriptor();
+        }else{
+
+            CatalogDescriptor metadataDescriptor = metadataDescriptorProvider.get();
+            CatalogDescriptor result;
+            if(metadataDescriptor.getDistinguishedName().equals(catalogid)){
+
+                CatalogResultCache metadataCache = context.getCatalogManager().getCache(metadataDescriptor, context);
+                metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor);
+                log.warn("[incomplete metadata] {}",metadataDescriptor);
+                context.getRuntimeContext().getRootAncestor().put(catalogid,metadataCache);
+                //FIXME cache with explicit id
+                //metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor.getDistinguishedName(),metadataDescriptor);
+
+                if(CatalogDescriptor.CATALOG_ID.equals(context.getRequest().getEntry())){
+                    context.setResult(metadataDescriptor);
+                }
+
+                result = metadataDescriptor;
+            }else{
+
+                CatalogActionRequest parentContext = context.getRequest();
+                CatalogActionRequest childContext = new CatalogActionRequestImpl();
+
+
+
+                childContext.setName(DataEvent.READ_ACTION);
+                childContext.setEntry(catalogid);
+
+                context.switchContract(childContext);
+                context.setCatalogDescriptor(metadataDescriptor);
+
+                CatalogResultCache metadataCache = context.getCatalogManager().getCache(metadataDescriptor, context);
+                Instrospection introspection = context.getCatalogManager().access().newSession(null);
+
+
+                result = (CatalogDescriptor) readerProvider.get().readVanityId(catalogid, metadataDescriptor, context, metadataCache, introspection);
+                log.warn("[incomplete metadata] {}",result);
+
+                context.getRuntimeContext().getRootAncestor().put(catalogid,result);
+
+                if(result==null){
+                    throw new CatalogException("No such catalog "+catalogid);
+                }
+
+                context.switchContract(parentContext);
+
+            }
+
+            context.setCatalogDescriptor(result);
+
+            return result;
+        }
+    }
+
 
 
     class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {
@@ -244,18 +314,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
         public CatalogDescriptor getCatalogDescriptor() throws CatalogException {
-            if (catalogDescriptor == null || !catalogDescriptor.getDistinguishedName().equals(getRequest().getCatalog())) {
-                if (getRequest().getCatalog() == null) {
-                    throw new NullPointerException("action contract defines no catalog");
-                }
-                try {
-                    catalogDescriptor = getDescriptorForName((String) getRequest().getCatalog());
-                } catch (Exception e) {
-                    throw new CatalogException(e);
-                }
-
+            if(!isMetadataReady()){
+                throw new CatalogException("Context is not ready");
             }
-
             return catalogDescriptor;
         }
 
@@ -403,7 +464,15 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public CatalogDescriptor getDescriptorForName(String catalogId) throws Exception {
-            return triggerGet(CatalogDescriptor.CATALOG_ID,catalogId);
+            CatalogDescriptor foreign = (CatalogDescriptor) getRuntimeContext().getRootAncestor().get(catalogId + CatalogActionContext.INCOMPLETO);
+            if(foreign==null){
+                log.warn("[incomplete metadata found] null");
+                foreign=triggerGet(CatalogDescriptor.CATALOG_ID,catalogId);
+            }else{
+                log.warn("[incomplete metadata found] {}",foreign);
+
+            }
+            return foreign;
         }
 
         @Override
@@ -411,6 +480,16 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             FilterData filter = FilterDataUtils.newFilterData();
             filter.setConstrained(false);
             return  triggerRead(CatalogDescriptor.CATALOG_ID,filter);
+        }
+
+        @Override
+        public boolean isMetadataReady() {
+            return catalogDescriptor!=null;
+        }
+
+        @Override
+        public void switchContract(CatalogActionRequest childContext) {
+            setRequest(childContext);
         }
 
 
@@ -512,6 +591,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
         public void setRequest(CatalogActionRequest request) {
+            if(request==null){
+                throw new NullPointerException("A catalog context requires a contract");
+            }
             this.request = request;
         }
     }

@@ -332,7 +332,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 		}
 		CatalogDescriptorImpl regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName,parent==null?null: parent.getId(),
 				descriptors);
-		log.trace("[PARSED NUMERIC_ID DESCRIPTOR] {}", catalogId);
+		log.trace("[PARSED JAVA DESCRIPTOR] {}", clazz);
 
 		if(!regreso.getClazz().equals(HasAccesablePropertyValues.class)){
 			regreso.setConsolidated(true);

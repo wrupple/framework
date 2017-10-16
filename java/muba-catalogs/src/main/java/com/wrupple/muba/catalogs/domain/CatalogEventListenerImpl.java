@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
 
 public class CatalogEventListenerImpl extends CatalogEntryImpl implements CatalogEventListener {
 
@@ -23,9 +24,12 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 	}
 
 	private Long stakeHolder;
-	private String description,catalog,entry,seed,systemEvent;
-	private int action;
-	private boolean advise,runAsStakeHolder,failSilence,stopOnFail;
+	@CatalogField(filterable = true)
+	private String catalog;
+	private String description,entry,seed,systemEvent;
+    @CatalogField(filterable = true)
+	private Integer action;
+	private Boolean advise,runAsStakeHolder,failSilence,stopOnFail;
 	
 	
 	private List<String> properties,sentence;
@@ -38,16 +42,16 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 		this.seed = seed;
 	}
 
-	public int getAction() {
+	public Integer getAction() {
 		return action;
 	}
-	public void setAction(int action) {
+	public void setAction(Integer action) {
 		this.action = action;
 	}
-	public boolean isAdvice() {
+	public Boolean isAdvice() {
 		return advise;
 	}
-	public void setAdvice(boolean before) {
+	public void setAdvice(Boolean before) {
 		this.advise = before;
 	}
 	public String getCatalog() {

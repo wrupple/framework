@@ -19,7 +19,7 @@ public abstract class AbstractTest extends EasyMockSupport {
 
 
 	static {
-		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO");
 	}
 
 	protected Logger log = LoggerFactory.getLogger(AbstractTest.class);

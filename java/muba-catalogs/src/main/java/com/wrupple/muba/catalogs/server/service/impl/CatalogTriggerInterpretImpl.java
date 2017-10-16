@@ -139,19 +139,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
         return context.triggerRead(CatalogEventListener.CATALOG,triggerFilter);
 	}
 
-    @Override
-    public void addCatalogScopeTrigger(CatalogEventListener trigger, CatalogDescriptor regreso) throws Exception {
-        trigger.setCatalog(regreso.getDistinguishedName());
 
-	    SessionContext system = this.exp.get();
-        CatalogActionRequestImpl context = new CatalogActionRequestImpl();
-        context.setCatalog(CatalogEventListener.CATALOG);
-        context.setEntryValue(regreso);
-        context.setName(DataEvent.CREATE_ACTION);
-
-        bus.get().fireEvent(context, system, null);
-
-    }
 
     @Override
     public void addNamespaceScopeTrigger(CatalogEventListener trigger, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
