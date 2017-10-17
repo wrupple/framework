@@ -1,12 +1,11 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogPluginQueryCommand;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.impl.CatalogManagerImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import org.apache.commons.chain.Context;
@@ -41,55 +40,59 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
         if(catalogDescriptor.getDistinguishedName().equals(CatalogDescriptor.CATALOG_ID)){
             FilterData filter = context.getRequest().getFilter();
 
-
-            if(filter.containsKey(catalogDescriptor.getKeyField())){
-                List<Long> keys = (List)filter.fetchCriteria(catalogDescriptor.getKeyField()).getValues();
-                //numeric id
-
-                List<CatalogDescriptor> results = keys.stream().
-                        map(key -> {
-                            try {
-                                return getDescriptorForKey(key, context);
-                            } catch (Exception e) {
-                                throw new CatalogException(e);
-                            }
-                        }).
-                        filter( descriptor ->{
-                            return descriptor!=null;
-                        })
-                        .collect(Collectors.toList());
-
+            if (filter == null) {
+                //FIXME CATALOG_TYPE (DTO) SHOULD EXPOSE A SEPARATE DATASOURCE FOR THIS PURPOSE
+                List<CatalogEntry> results = getAvailableCatalogs(context)
                 context.setResults(results);
-            }else if(filter.containsKey(HasDistinguishedName.FIELD)){
-                //distinguished name
-                List<String> names = (List)filter.fetchCriteria(HasDistinguishedName.FIELD).getValues();
-                //numeric id
+            }else if (filter.containsKey(catalogDescriptor.getKeyField())) {
+                    List<Long> keys = (List) filter.fetchCriteria(catalogDescriptor.getKeyField()).getValues();
+                    //numeric id
 
-                List<CatalogDescriptor> results = names.stream().
-                        map(key -> {
-                            try {
-                                return getDescriptorForName(key, context);
-                            } catch (Exception e) {
-                                throw new CatalogException(e);
-                            }
-                        }).
-                        filter( descriptor ->{
-                            return descriptor!=null;
-                        }).collect(Collectors.toList());
+                    List<CatalogDescriptor> results = keys.stream().
+                            map(key -> {
+                                try {
+                                    return getDescriptorForKey(key, context);
+                                } catch (Exception e) {
+                                    throw new CatalogException(e);
+                                }
+                            }).
+                            filter(descriptor -> {
+                                return descriptor != null;
+                            })
+                            .collect(Collectors.toList());
 
-                context.setResults(results);
+                    context.setResults(results);
+                } else if (filter.containsKey(HasDistinguishedName.FIELD)) {
+                    //distinguished name
+                    List<String> names = (List) filter.fetchCriteria(HasDistinguishedName.FIELD).getValues();
+                    //numeric id
+
+                    List<CatalogDescriptor> results = names.stream().
+                            map(key -> {
+                                try {
+                                    return getDescriptorForName(key, context);
+                                } catch (Exception e) {
+                                    throw new CatalogException(e);
+                                }
+                            }).
+                            filter(descriptor -> {
+                                return descriptor != null;
+                            }).collect(Collectors.toList());
+
+                    context.setResults(results);
+                }
             }
 
-        }
+        
 
         return CONTINUE_PROCESSING;
     }
 
 
 
-    public List<CatalogIdentification> getAvailableCatalogs(CatalogActionContext context) throws Exception {
-        List<CatalogIdentification> names = new ArrayList<CatalogIdentification>();
-
+    public List<CatalogEntry> getAvailableCatalogs(CatalogActionContext context) throws Exception {
+        List<CatalogEntry> names = new ArrayList<CatalogEntry>();
+        context.getCatalogManager().modifyAvailableCatalogList(names,context);
             for (CatalogPlugin module : plugins) {
                 module.modifyAvailableCatalogList(names, context);
             }

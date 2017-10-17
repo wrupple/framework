@@ -7,8 +7,6 @@ import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
-import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import org.apache.commons.chain.Command;
 
@@ -65,12 +63,12 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
     }
 
     @Override
-    public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) throws Exception {
-        names.add(new CatalogIdentificationImpl(Task.CATALOG, "Task Descriptor",
+    public void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) throws Exception {
+        names.add(new CatalogEntryImpl(Task.CATALOG, "Task Descriptor",
                 "/static/img/task.png"));
         names.add(
-                new CatalogIdentificationImpl(WruppleActivityAction.CATALOG, "Task Action", "/static/img/action.png"));
-        names.add(new CatalogIdentificationImpl(TaskToolbarDescriptor.CATALOG, "Task Toolbar",
+                new CatalogEntryImpl(WruppleActivityAction.CATALOG, "Task Action", "/static/img/action.png"));
+        names.add(new CatalogEntryImpl(TaskToolbarDescriptor.CATALOG, "Task Toolbar",
                 "/static/img/task-piece.png"));
     }
 

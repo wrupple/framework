@@ -9,7 +9,6 @@ import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.server.chain.command.FieldDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
@@ -36,9 +35,9 @@ public class FieldDescriptorUpdateTriggerImpl implements FieldDescriptorUpdateTr
 		
 		
 		
-		List<CatalogIdentification> names = context.getAvailableCatalogs();
+		List<CatalogEntry> names = context.getAvailableCatalogs();
 		
-		for(CatalogIdentification key: names){
+		for(CatalogEntry key: names){
 			cache.delete(context, SystemCatalogPlugin.DOMAIN_METADATA,key.getId());
 		}
 		

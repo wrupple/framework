@@ -30,7 +30,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogIdentification;
+import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterCriteria;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.vegetate.client.services.CreditCardStorageUnit;
@@ -54,7 +54,7 @@ public class StorageManagerImpl implements StorageManager {
 	/**
 	 * names of all publicly registered catalogs
 	 */
-	private static Map<String, Map<String, List<JsCatalogIdentification>>> catalogNames;
+	private static Map<String, Map<String, List<JsCatalogEntry>>> catalogNames;
 
 	/**
 	 * convinience storage for CatalogDescriptors fetched from the server
@@ -116,11 +116,11 @@ public class StorageManagerImpl implements StorageManager {
 		}
 	}
 
-	static class OnCatalogNamesReceived extends DataCallback<JsArray<JsCatalogIdentification>> {
-		StateTransition<List<JsCatalogIdentification>> callback;
+	static class OnCatalogNamesReceived extends DataCallback<JsArray<JsCatalogEntry>> {
+		StateTransition<List<JsCatalogEntry>> callback;
 		String host, domain;
 
-		public OnCatalogNamesReceived(StateTransition<List<JsCatalogIdentification>> callback, String host, String domain) {
+		public OnCatalogNamesReceived(StateTransition<List<JsCatalogEntry>> callback, String host, String domain) {
 			this.callback = callback;
 			this.host = host;
 			this.domain = domain;
@@ -128,7 +128,7 @@ public class StorageManagerImpl implements StorageManager {
 
 		@Override
 		public void execute() {
-			List<JsCatalogIdentification> regreso = JsArrayList.arrayAsList(result);
+			List<JsCatalogEntry> regreso = JsArrayList.arrayAsList(result);
 			put(host, domain, regreso);
 			callback.setResult(regreso);
 			callback.execute();
@@ -136,10 +136,10 @@ public class StorageManagerImpl implements StorageManager {
 
 	}
 
-	static class ConvertJsArray extends DataCallback<JsArray<JsCatalogIdentification>> {
-		DataCallback<List<JsCatalogIdentification>> callback;
+	static class ConvertJsArray extends DataCallback<JsArray<JsCatalogEntry>> {
+		DataCallback<List<JsCatalogEntry>> callback;
 
-		public ConvertJsArray(DataCallback<List<JsCatalogIdentification>> callback) {
+		public ConvertJsArray(DataCallback<List<JsCatalogEntry>> callback) {
 			super();
 			this.callback = callback;
 		}
@@ -147,7 +147,7 @@ public class StorageManagerImpl implements StorageManager {
 		@Override
 		public void execute() {
 
-			List<JsCatalogIdentification> regreso = JsArrayList.arrayAsList(result);
+			List<JsCatalogEntry> regreso = JsArrayList.arrayAsList(result);
 			callback.setResultAndFinish(regreso);
 		}
 
@@ -333,11 +333,11 @@ public class StorageManagerImpl implements StorageManager {
 	}
 
 	@Override
-	public void loadCatalogNames(String host, String domain, StateTransition<List<JsCatalogIdentification>> callback) {
+	public void loadCatalogNames(String host, String domain, StateTransition<List<JsCatalogEntry>> callback) {
 		if (catalogNames != null) {
-			Map<String, List<JsCatalogIdentification>> hostCache = catalogNames.get(host);
+			Map<String, List<JsCatalogEntry>> hostCache = catalogNames.get(host);
 			if(hostCache!=null){
-				List<JsCatalogIdentification> domainCache = hostCache.get(domain);
+				List<JsCatalogEntry> domainCache = hostCache.get(domain);
 				if(domainCache!=null){
 					callback.setResult(domainCache);
 					callback.execute();
@@ -371,13 +371,13 @@ public class StorageManagerImpl implements StorageManager {
 		domainCache.put(djso.getCatalogId(), djso);
 	}
 
-	private static void put(String host, String domain, List<JsCatalogIdentification> regreso) {
+	private static void put(String host, String domain, List<JsCatalogEntry> regreso) {
 
 		if (catalogNames == null) {
 			catalogNames = new HashMap<>(1);
 		}
 
-		Map<String, List<JsCatalogIdentification>> hostCache = catalogNames.get(host);
+		Map<String, List<JsCatalogEntry>> hostCache = catalogNames.get(host);
 		if (hostCache == null) {
 			hostCache = new HashMap<>(1);
 			catalogNames.put(host, hostCache);
@@ -407,9 +407,9 @@ public class StorageManagerImpl implements StorageManager {
 
 	private static void clearNamesCache(String host, String domain) {
 		if (catalogNames != null) {
-			Map<String, List<JsCatalogIdentification>> hostCache = catalogNames.get(host);
+			Map<String, List<JsCatalogEntry>> hostCache = catalogNames.get(host);
 			if (hostCache != null) {
-				List<JsCatalogIdentification> domainCache = hostCache.get(domain);
+				List<JsCatalogEntry> domainCache = hostCache.get(domain);
 				if (domainCache != null) {
 					hostCache.remove(domain);
 				}

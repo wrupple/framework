@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 @Singleton
@@ -34,24 +35,31 @@ public class PublishEventsImpl    implements PublishEvents {
         EventBus eventBus = context.getRuntimeContext().getEventBus();
         log.debug("<PublishEventsImpl>");
         log.debug("Broadcast event {}",queueElement);
+
         // UPDATE CLIENT'S ACTIVITY STATUS
 
-        Stream<Host> concernedClients = parallel?context.getConcernedPeersValues().parallelStream():context.getConcernedPeersValues().stream();
+        Collection<Host> concernedPeers = context.getConcernedPeersValues();
+        if(concernedPeers==null){
+            log.debug("no peer concerned in event");
+        }else{
+            Stream<Host> s = parallel?concernedPeers.parallelStream():concernedPeers.stream();
 
+            log.debug("streaming event to concerned peers");
+            s.forEach((Host host) -> {
+                BroadcastQueueAppend queue = queueProvider.get();
+                queue.setHostValue(host);
+                queue.setQueuedElementValue(queueElement);
+                queue.setCatalog(queueElement.getEventValue().getCatalogType());
+                try {
+                    log.debug("Append to broadcast channel of host {}",host);
+                    eventBus.fireEvent(queue, context.getRuntimeContext(), null);
+                } catch (Exception e) {
+                    log.error("failed to append event to host broadcast queue",e);
+                }
+                //return queue;
+            });
+        }
 
-        concernedClients.forEach((Host host) -> {
-            BroadcastQueueAppend queue = queueProvider.get();
-            queue.setHostValue(host);
-            queue.setQueuedElementValue(queueElement);
-            queue.setCatalog(queueElement.getEventValue().getCatalogType());
-            try {
-                log.debug("Append to broadcast channel of host {}",host);
-                eventBus.fireEvent(queue, context.getRuntimeContext(), null);
-            } catch (Exception e) {
-                log.error("failed to append event to host broadcast queue",e);
-            }
-            //return queue;
-        });
 
         log.debug("</PublishEventsImpl>");
 

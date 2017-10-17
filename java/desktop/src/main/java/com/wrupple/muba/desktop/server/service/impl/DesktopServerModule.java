@@ -10,8 +10,8 @@ import javax.inject.Provider;
 import com.wrupple.muba.catalogs.domain.ActivityDescriptor;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.catalogs.domain.CatalogActionTriggerImpl;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
-import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
+import com.wrupple.muba.catalogs.domain.CatalogEntry;
+import com.wrupple.muba.catalogs.domain.CatalogEntryImpl;
 import com.wrupple.muba.catalogs.domain.WrupleSVGDocument;
 import com.wrupple.muba.catalogs.domain.WruppleAudioMetadata;
 import com.wrupple.muba.catalogs.domain.WruppleFileMetadata;
@@ -130,16 +130,16 @@ public class DesktopServerModule extends AbstractServerModule implements Wrupple
 	}
 
 	@Override
-	public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogExcecutionContext context) {
-		names.add(new CatalogIdentificationImpl(ApplicationItem.CATALOG, "Desktop Place", "/static/img/application.png"));
-		names.add(new CatalogIdentificationImpl(WruppleDomainHTMLPage.CATALOG, "HTML", "/static/img/document.png"));
-		names.add(new CatalogIdentificationImpl(WruppleDomainStyleSheet.CATALOG, "CSS", "/static/img/css.png"));
-		names.add(new CatalogIdentificationImpl(WruppleDomainJavascript.CATALOG, "JavaScript", "/static/img/javascript.png"));
-		names.add(new CatalogIdentificationImpl(WruppleImageMetadata.CATALOG, PersistentImageMetadata.IMAGE_FIELD, "/static/img/image.png"));
-		names.add(new CatalogIdentificationImpl(WruppleVideoMetadata.CATALOG, "Video", "/static/img/video.png"));
-		names.add(new CatalogIdentificationImpl(WruppleAudioMetadata.CATALOG, "Audio", "/static/img/audio.png"));
-		names.add(new CatalogIdentificationImpl(WruppleFileMetadata.CATALOG, "Document", "/static/img/misc-files.png"));
-		names.add(new CatalogIdentificationImpl(WrupleSVGDocument.CATALOG, "Drawing", "/static/img/vector.png"));
+	public void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogExcecutionContext context) {
+		names.add(new CatalogEntryImpl(ApplicationItem.CATALOG, "Desktop Place", "/static/img/application.png"));
+		names.add(new CatalogEntryImpl(WruppleDomainHTMLPage.CATALOG, "HTML", "/static/img/document.png"));
+		names.add(new CatalogEntryImpl(WruppleDomainStyleSheet.CATALOG, "CSS", "/static/img/css.png"));
+		names.add(new CatalogEntryImpl(WruppleDomainJavascript.CATALOG, "JavaScript", "/static/img/javascript.png"));
+		names.add(new CatalogEntryImpl(WruppleImageMetadata.CATALOG, PersistentImageMetadata.IMAGE_FIELD, "/static/img/image.png"));
+		names.add(new CatalogEntryImpl(WruppleVideoMetadata.CATALOG, "Video", "/static/img/video.png"));
+		names.add(new CatalogEntryImpl(WruppleAudioMetadata.CATALOG, "Audio", "/static/img/audio.png"));
+		names.add(new CatalogEntryImpl(WruppleFileMetadata.CATALOG, "Document", "/static/img/misc-files.png"));
+		names.add(new CatalogEntryImpl(WrupleSVGDocument.CATALOG, "Drawing", "/static/img/vector.png"));
 	}
 
 	@Override

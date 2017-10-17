@@ -18,7 +18,6 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
@@ -51,7 +50,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 
 				SystemCatalogPlugin database = context.getCatalogManager();
 				//TODO descriptor extends identification, if we want the short version we read identifictation
-				List<CatalogIdentification> names = context.getAvailableCatalogs();
+				List<CatalogEntry> names = context.getAvailableCatalogs();
 
 				log.trace("[SEARCHING {} CATALOGS FOR hard keys referencing {}]", names.size(),
 						catalog.getDistinguishedName());
@@ -68,7 +67,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 					ids.add(e.getId());
 				}
 
-				for (CatalogIdentification idem : names) {
+				for (CatalogEntry idem : names) {
 
 					garbageFilter = null;
 					temp = context.getDescriptorForName((String) idem.getId());

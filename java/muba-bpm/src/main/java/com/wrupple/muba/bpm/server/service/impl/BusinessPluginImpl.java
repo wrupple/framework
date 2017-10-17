@@ -18,8 +18,6 @@ import com.wrupple.muba.bpm.server.chain.command.ValueChangeListener;
 import com.wrupple.muba.bpm.server.chain.command.CheckSecureConditions;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
-import com.wrupple.muba.catalogs.domain.CatalogIdentificationImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import org.apache.commons.chain.Command;
 
@@ -107,14 +105,14 @@ public class BusinessPluginImpl implements BusinessPlugin {
 	}
 
 	@Override
-	public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) {
+	public void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) {
 		/* FIXME use in EventSuscriptionMapper
-		names.add(new CatalogIdentificationImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
+		names.add(new CatalogEntryImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
 				"/static/img/notification.png"));*/
 		//a host can have many sessions that can have many application states
-		names.add(new CatalogIdentificationImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
-		names.add(new CatalogIdentificationImpl(Workflow.CATALOG, "Process", "/static/img/process.png"));
-		names.add(new CatalogIdentificationImpl(WorkRequest.CATALOG, WorkRequest.CATALOG,
+		names.add(new CatalogEntryImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
+		names.add(new CatalogEntryImpl(Workflow.CATALOG, "Process", "/static/img/process.png"));
+		names.add(new CatalogEntryImpl(WorkRequest.CATALOG, WorkRequest.CATALOG,
 				"/static/img/notification.png"));
 		// organization catalog as visible?
 	}

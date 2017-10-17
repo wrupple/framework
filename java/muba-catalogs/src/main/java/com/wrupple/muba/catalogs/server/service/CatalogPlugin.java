@@ -1,13 +1,11 @@
 package com.wrupple.muba.catalogs.server.service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.ContextEvaluationService;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import org.apache.commons.chain.Command;
 
@@ -42,7 +40,7 @@ public interface CatalogPlugin  {
 	 * depending on context, and exposes a catalog of reserved actions that
 	 * plugins may not overwrite
 	 */
-	void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) throws Exception;
+	void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) throws Exception;
 	
 	public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context) throws Exception;
 

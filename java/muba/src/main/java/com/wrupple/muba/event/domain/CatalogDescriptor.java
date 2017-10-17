@@ -8,7 +8,7 @@ import com.wrupple.muba.event.domain.reserved.HasConstrains;
 import com.wrupple.muba.event.domain.reserved.HasParentValue;
 import com.wrupple.muba.event.domain.reserved.Versioned;
 
-public interface CatalogDescriptor extends  CatalogEntry, ContractDescriptor ,HasParentValue<Long,CatalogDescriptor>,Versioned,HasConstrains {
+public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<Long,CatalogDescriptor>,Versioned,HasConstrains,CatalogEntry {
 	public static final String CATALOG_ID = "CatalogDescriptor";
 	//String MAIN_STORAGE_UNIT = "main";
 	//String QUICK_STORAGE_UNIT = "quick";

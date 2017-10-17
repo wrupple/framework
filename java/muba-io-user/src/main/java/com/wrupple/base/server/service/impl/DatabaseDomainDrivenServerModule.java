@@ -59,12 +59,12 @@ public class DatabaseDomainDrivenServerModule extends AbstractDatabaseDrivenServ
 	}
 
 	@Override
-	public void modifyAvailableCatalogList(List<CatalogIdentificationImpl> names, CatalogExcecutionContext context) throws Exception {
+	public void modifyAvailableCatalogList(List<CatalogEntryImpl> names, CatalogExcecutionContext context) throws Exception {
 		try {
 			CatalogDescriptor catalogCatalogDescriptor=namespace.get().getDescriptorForName(CatalogDescriptor.CATALOG_ID);
-			List<CatalogIdentificationImpl> newNames = runner.query(
+			List<CatalogEntryImpl> newNames = runner.query(
 					"SELECT catalogId AS id, name,image FROM " + tableNames.getTableNameForCatalog(catalogCatalogDescriptor, null),
-					new BeanListHandler<CatalogIdentificationImpl>(CatalogIdentificationImpl.class));
+					new BeanListHandler<CatalogEntryImpl>(CatalogEntryImpl.class));
 			names.addAll(newNames);
 		} catch (SQLException e) {
 			if (e.getErrorCode() == 1146) {

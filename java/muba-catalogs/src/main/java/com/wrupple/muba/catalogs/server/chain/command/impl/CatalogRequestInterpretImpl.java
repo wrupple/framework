@@ -1,6 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.domain.CatalogIdentification;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
@@ -476,7 +475,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
         @Override
-        public List<CatalogIdentification> getAvailableCatalogs() throws Exception {
+        public List<CatalogEntry> getAvailableCatalogs() throws Exception {
             FilterData filter = FilterDataUtils.newFilterData();
             filter.setConstrained(false);
             return  triggerRead(CatalogDescriptor.CATALOG_ID,filter);

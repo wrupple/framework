@@ -70,7 +70,7 @@ public interface CatalogActionContext
 
 	<T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception;
 
-    List<CatalogIdentification> getAvailableCatalogs() throws Exception;
+    List<CatalogEntry> getAvailableCatalogs() throws Exception;
 
 	boolean isMetadataReady();
 

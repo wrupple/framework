@@ -78,11 +78,11 @@ public class CatalogEngineTest extends IntegralTest {
 		        CatalogServiceManifest.SERVICE_NAME,
                 CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD,
-                CatalogDescriptor.CATALOG_ID,
+                CatalogEntry.CATALOG_DTO,
 				CatalogActionRequest.READ_ACTION);
 		runtimeContext.process();
 		catalogContext = runtimeContext.getServiceContext();
-		List<CatalogIdentification> catalogList = catalogContext.getResults();
+		List<CatalogEntry> catalogList = catalogContext.getResults();
 		assertTrue(catalogList != null);
 		assertTrue(!catalogList.isEmpty());
 		boolean contained = false;

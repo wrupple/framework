@@ -8,7 +8,7 @@ import com.wrupple.muba.bpm.domain.Transaction;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogIdentification;
+import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -56,7 +56,7 @@ public interface StorageManager {
 	
 	void loadGraphDescription(String host, String domain, String catalog, StateTransition<CatalogDescriptor> onDone);
 
-	void loadCatalogNames(String host, String domain, StateTransition<List<JsCatalogIdentification>> callback);
+	void loadCatalogNames(String host, String domain, StateTransition<List<JsCatalogEntry>> callback);
 
 	void putInCache(String host, String domain, CatalogDescriptor djso);
 }

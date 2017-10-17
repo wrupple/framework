@@ -190,19 +190,19 @@ public class CatalogManagerImpl extends CatalogBase implements SystemCatalogPlug
 	}
 
 	@Override
-	public void modifyAvailableCatalogList(List<? super CatalogIdentification> names, CatalogActionContext context) {
-		names.add(new CatalogIdentificationImpl(CatalogDescriptor.CATALOG_ID, "Catalogs", "/static/img/catalog.png"));
-		names.add(new CatalogIdentificationImpl(FieldDescriptor.CATALOG_ID, "Fields", "/static/img/fields.png"));
-		names.add(new CatalogIdentificationImpl(Constraint.CATALOG_ID, "Validation Data", "/static/img/check.png"));
-		names.add(new CatalogIdentificationImpl(CatalogEventListener.CATALOG, "Action Triggers",
+	public void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) {
+		names.add(new CatalogEntryImpl(CatalogDescriptor.CATALOG_ID, "Catalogs", "/static/img/catalog.png"));
+		names.add(new CatalogEntryImpl(FieldDescriptor.CATALOG_ID, "Fields", "/static/img/fields.png"));
+		names.add(new CatalogEntryImpl(Constraint.CATALOG_ID, "Validation Data", "/static/img/check.png"));
+		names.add(new CatalogEntryImpl(CatalogEventListener.CATALOG, "Action Triggers",
 				"/static/img/excecute.png"));
-		names.add(new CatalogIdentificationImpl(WebEventTrigger.CATALOG, "Web Triggers", "/static/img/excecute.png"));
-		names.add(new CatalogIdentificationImpl(DistributiedLocalizedEntry.CATALOG, "Localized Entity",
+		names.add(new CatalogEntryImpl(WebEventTrigger.CATALOG, "Web Triggers", "/static/img/excecute.png"));
+		names.add(new CatalogEntryImpl(DistributiedLocalizedEntry.CATALOG, "Localized Entity",
 				"/static/img/locale.png"));
-		names.add(new CatalogIdentificationImpl(LocalizedString.CATALOG, "i18n", "/static/img/locale.png"));
-		names.add(new CatalogIdentificationImpl(ContentRevision.CATALOG, "Revision", "/static/img/revision.png"));
+		names.add(new CatalogEntryImpl(LocalizedString.CATALOG, "i18n", "/static/img/locale.png"));
+		names.add(new CatalogEntryImpl(ContentRevision.CATALOG, "Revision", "/static/img/revision.png"));
 		if (context.getNamespaceContext().isRecycleBinEnabled()) {
-			names.add(new CatalogIdentificationImpl(Trash.CATALOG, "Trash", "/static/img/trash.png"));
+			names.add(new CatalogEntryImpl(Trash.CATALOG, "Trash", "/static/img/trash.png"));
 		}
 	}
 

@@ -8,7 +8,7 @@ import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.activity.process.state.CatalogSelectionLoader;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogIdentification;
+import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.vegetate.client.services.StorageManager;
 
 public class CatalogSelectionLoaderImpl implements CatalogSelectionLoader {
@@ -26,7 +26,7 @@ public class CatalogSelectionLoaderImpl implements CatalogSelectionLoader {
 
 	@Override
 	public void start(DesktopPlace parameter,
-			StateTransition<List<JsCatalogIdentification>> onDone, EventBus bus) {
+			StateTransition<List<JsCatalogEntry>> onDone, EventBus bus) {
 		service.loadCatalogNames(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(), onDone);
 	}
 

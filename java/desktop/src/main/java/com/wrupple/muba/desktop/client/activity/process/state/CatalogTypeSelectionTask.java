@@ -5,7 +5,7 @@ import java.util.List;
 import com.wrupple.muba.bpm.client.activity.process.state.HumanTask;
 import com.wrupple.muba.bpm.client.activity.process.state.State;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogIdentification;
+import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 
-public interface CatalogTypeSelectionTask extends HumanTask<List<JsCatalogIdentification>, List<DesktopPlace>>,State.ContextAware<List<JsCatalogIdentification>, List<DesktopPlace>> {
+public interface CatalogTypeSelectionTask extends HumanTask<List<JsCatalogEntry>, List<DesktopPlace>>,State.ContextAware<List<JsCatalogEntry>, List<DesktopPlace>> {
 }

@@ -25,7 +25,7 @@ import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
-import com.wrupple.muba.desktop.domain.overlay.JsCatalogIdentification;
+import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
@@ -48,11 +48,11 @@ public class CatalogTypeSelectionTaskImpl extends ResizeComposite implements Cat
 	}
 	
 	@Override
-	public void start(List<JsCatalogIdentification> p, final StateTransition<List<DesktopPlace	>> onDone, EventBus bus) {
+	public void start(List<JsCatalogEntry> p, final StateTransition<List<DesktopPlace	>> onDone, EventBus bus) {
 		JsArray<JsCatalogEntry> parameter = JsArrayList.unwrap(p).cast();
 		SafeUri defaulti = theme.catalog().getSafeUri();
 		JsCatalogKey key;
-		for(JsCatalogIdentification c : p ){
+		for(JsCatalogEntry c : p ){
 			if(c.getImage()==null){
 				key = c.cast();
 				key.setImage("data:image");
@@ -69,7 +69,7 @@ public class CatalogTypeSelectionTaskImpl extends ResizeComposite implements Cat
 			public void onSelectionChange(SelectionChangeEvent event) {
 				if(selectionModel.getSelectedObject()!=null){
 					JsCatalogEntry key=selectionModel.getSelectedObject();
-					JsCatalogIdentification catalogid =key.cast();
+					JsCatalogEntry catalogid =key.cast();
 
 					DesktopPlace result = new DesktopPlace(CatalogSelectionActivity.ACTIVITY_ID);
 					result.setProperty(CatalogActionRequest.CATALOG_ID_PARAMETER, catalogid.getId());
