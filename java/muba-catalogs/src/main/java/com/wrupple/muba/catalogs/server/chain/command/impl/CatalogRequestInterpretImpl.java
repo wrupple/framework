@@ -202,11 +202,11 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 context.setCatalogDescriptor(metadataDescriptor);
 
                 CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
-                Instrospection introspection = access.newSession(null);
 
 
-                result = (CatalogDescriptor) readerProvider.get().readVanityId(catalogid, metadataDescriptor, context, metadataCache, introspection);
-                log.warn("[incomplete metadata] {}",result);
+                readerProvider.get().execute(context);
+                result = context.getConvertedResult();
+                log.warn("[full metadata] {}",result);
 
                 context.getRuntimeContext().getRootAncestor().put(catalogid+CatalogActionContext.INCOMPLETO,result);
 

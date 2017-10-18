@@ -135,7 +135,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 		problem = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
 		assertTrue(problem.getId() != null);
-		assertTrue(problem.getTimestamp() != null);
+		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
 
 		log.debug("-check if problem was created-");
 		runtimeContext.reset();
