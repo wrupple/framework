@@ -11,7 +11,7 @@ public interface CatalogEventListener extends UserDefinedCatalogJob {
 	String CATALOG = "CatalogEventListener";
 	String ACTION_FIELD="action";
 
-    Integer getAction();
+    Long getAction();
 
 	
 	/**

@@ -7,19 +7,19 @@ public interface UserDefinedCatalogJob extends HasStakeHolder,CatalogJob {
 	String SERIALIZED = "serializedEntry";
 
 	
-	boolean isRunAsStakeHolder();
+	Boolean getRunAsStakeHolder();
 	void setRunAsStakeHolder(Boolean b);
 
 	
 	/**
 	 * @return if true the entire chain of events that lead to this trigger failing should be rollbacked
 	 */
-	boolean isFailSilence();
+	Boolean getFailSilence();
 	void setFailSilence(Boolean n);
 	
 	/**
 	 * @return if true and this trigger fails, no further triggers will be excecuted
 	 */
-	boolean isStopOnFail();
+	Boolean getStopOnFail();
 	void setStopOnFail(Boolean b);
 }

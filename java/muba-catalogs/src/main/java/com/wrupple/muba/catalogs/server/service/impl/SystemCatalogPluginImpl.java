@@ -72,22 +72,6 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
             triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
-        } else if (CatalogDescriptor.CATALOG_ID.equals(catalogId)) {
-             trigger = new CatalogEventListenerImpl(1,
-                    CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
-            trigger.setFailSilence(true);
-            trigger.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
-            trigger = new CatalogEventListenerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
-                    null, null, null);
-            trigger.setFailSilence(true);
-            trigger.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
-
-            trigger = new CatalogEventListenerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
-            trigger.setFailSilence(true);
-            trigger.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
         }  else if (Trash.CATALOG.equals(catalogId)) {
             trigger = new CatalogEventListenerImpl(1, RestoreTrash.class.getSimpleName(),
                     true, null, null, null);

@@ -37,9 +37,6 @@ public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.
 	public Long getStakeHolder() {
 		return stakeHolder;
 	}
-	public void setStakeHolder(Long stakeHolder) {
-		this.stakeHolder = stakeHolder;
-	}
 	public String getAgent() {
 		return agent;
 	}
@@ -108,7 +105,7 @@ public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.
 		this.host=h;
 	}
 	@Override
-	public void setStakeHolder(long stakeHolder) {
+	public void setStakeHolder(Long stakeHolder) {
 		this.stakeHolder=stakeHolder;
 	}
 	@Override

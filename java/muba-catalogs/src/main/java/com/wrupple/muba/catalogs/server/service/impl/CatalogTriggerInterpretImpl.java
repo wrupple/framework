@@ -1,7 +1,8 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
+import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
-import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
@@ -29,6 +29,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private final ActionsDictionary dictionary;
     private final EntrySynthesizer synthetizationDelegate;
 	private final FieldAccessStrategy access;
+	private final List<CatalogEventListener> metadataTriggers;
 
 	@Inject
 	public CatalogTriggerInterpretImpl(FieldAccessStrategy access,ActionsDictionary dictionary, Provider<CatalogServiceManifest> manifestP,
@@ -39,7 +40,27 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		this.manifestP = manifestP;
 		this.deserializer = deserializer;
         this.synthetizationDelegate = synthetizationDelegate;
-    }
+        //FIXME this may be an indication that a static storage unit for triggers is necessary
+        CatalogEventListenerImpl[] triggg = new CatalogEventListenerImpl[3];
+		CatalogEventListenerImpl trigger = new CatalogEventListenerImpl(1,
+				CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
+		trigger.setFailSilence(true);
+		trigger.setStopOnFail(true);
+        triggg[0]= (trigger);
+		trigger = new CatalogEventListenerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
+				null, null, null);
+		trigger.setFailSilence(true);
+		trigger.setStopOnFail(true);
+        triggg[1]=(trigger);
+
+		trigger = new CatalogEventListenerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
+		trigger.setFailSilence(true);
+		trigger.setStopOnFail(true);
+        triggg[2]=(trigger);
+
+        this.metadataTriggers = Arrays.asList(triggg);
+
+	}
 
 
 	@Override
@@ -53,7 +74,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		log.trace("[TRIGGER COMMAND] {}", command);
 		Object entryIdPointer = trigger.getEntry();
 		Long stakeHolder = null;
-		if (trigger.isRunAsStakeHolder()) {
+		if (trigger.getRunAsStakeHolder()) {
 			stakeHolder = (Long) trigger.getStakeHolder();
 				//FIXME if trigger fails context is changed stake holders
 			context.getRuntimeContext().getSession().setStakeHolder(stakeHolder);
@@ -61,7 +82,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		Object targetCatalogId = trigger.getCatalog();
 		context.getRequest().setCatalog((String) targetCatalogId);
 
-		boolean rollback = trigger.isFailSilence();
+		boolean rollback = trigger.getFailSilence();
 
 		String rawSeed = trigger.getSeed();
 		try {
@@ -124,6 +145,9 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	@Override
 	public List<CatalogEventListener> getTriggersValues(CatalogActionContext context) throws Exception {
 		String catalogId = context.getCatalogDescriptor().getDistinguishedName();
+		if(CatalogDescriptor.CATALOG_ID.equals(catalogId)){
+			return metadataTriggers;
+		}
         String action = context.getRequest().getName();
         Integer triggerAction ;
         if (CatalogActionRequest.CREATE_ACTION.equals(action)) {

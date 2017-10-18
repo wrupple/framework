@@ -1,21 +1,23 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
+import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
+import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.ObjectMapper;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
     private final ObjectMapper mapper;
     private final CatalogKeyServices keydelegate;
     private final FieldAccessStrategy access;
+    private final CatalogTriggerInterpret triggerInterpret;
     private final Provider<CatalogActionRequest> contractProvider;
     private final Provider<NamespaceContext> namespaceProvider;
 
@@ -49,10 +52,11 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
     private final ActionsDictionary dictionary;
 
     @Inject
-    public CatalogRequestInterpretImpl(CatalogKeyServices keydelegate, FieldAccessStrategy access, CatalogResultCache cache,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider, ActionsDictionary dictionary) {
+    public CatalogRequestInterpretImpl(CatalogKeyServices keydelegate, FieldAccessStrategy access, CatalogTriggerInterpret triggerInterpret, CatalogResultCache cache,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider, ActionsDictionary dictionary) {
         super();
         this.keydelegate = keydelegate;
         this.access = access;
+        this.triggerInterpret = triggerInterpret;
         this.cache=cache;
         this.contractProvider = contractProvider;
         this.namespaceProvider = namespaceProvider;
@@ -169,15 +173,22 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }else{
 
             CatalogDescriptor metadataDescriptor = metadataDescriptorProvider.get();
+
             CatalogDescriptor result;
-            if(metadataDescriptor.getDistinguishedName().equals(catalogid)){
+            if (CatalogDescriptor.CATALOG_ID.equals(catalogid)) {
 
                 CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
-                metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor);
-                log.warn("[incomplete metadata] {}",metadataDescriptor);
+
+                result = metadataCache.get(context, metadataDescriptor.getDistinguishedName(), metadataDescriptor.getId());
+                if (result == null) {
+                    //no post processing for metadata catalog
+
+                    //FIXME cache with explicit id
+                    //metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor.getDistinguishedName(),metadataDescriptor);
+                    metadataCache.put(context, CatalogDescriptor.CATALOG_ID, metadataDescriptor);
+                }
+
                 context.getRuntimeContext().getRootAncestor().put(catalogid,metadataCache);
-                //FIXME cache with explicit id
-                //metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor.getDistinguishedName(),metadataDescriptor);
 
                 if(CatalogDescriptor.CATALOG_ID.equals(context.getRequest().getEntry())){
                     context.setResult(metadataDescriptor);

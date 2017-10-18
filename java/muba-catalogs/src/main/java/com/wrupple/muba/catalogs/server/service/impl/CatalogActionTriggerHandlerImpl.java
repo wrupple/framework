@@ -13,9 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 
 @Singleton
@@ -66,7 +64,7 @@ public class CatalogActionTriggerHandlerImpl  {
 		Map<String, String> properties = parseProperties(rawProperties, trigger, context);
 
 
-			if (!trigger.isFailSilence() || trigger.isStopOnFail()) {
+			if (!trigger.getFailSilence() || trigger.getStopOnFail()) {
 				log.trace("invoking trigger {}", trigger);
 				interpret.invokeTrigger( properties, (CatalogActionContext) context, trigger);
 			} else {
@@ -78,7 +76,7 @@ public class CatalogActionTriggerHandlerImpl  {
 					log.error("[TRIGGER FAIL]", e);
 					context.getRuntimeContext().addWarning("Trigger failed " + trigger.getName());
 
-					if (trigger.isStopOnFail()) {
+					if (trigger.getStopOnFail()) {
 						return Command.PROCESSING_COMPLETE;
 					}
 				}

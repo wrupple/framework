@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.domain;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.wrupple.muba.event.domain.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 
@@ -15,10 +16,10 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 	
 	public CatalogEventListenerImpl(int action, String handler, boolean before, String targetCatalogId, List<String> properties, String seed) {
 		super();
-		this.action=action;
+		this.action=Long.valueOf(action);
 		this.seed=seed;
 		setName(handler);
-		this.advise = before;
+		this.advice = before;
 		this.catalog = targetCatalogId;
 		this.properties = properties;
 	}
@@ -28,8 +29,8 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 	private String catalog;
 	private String description,entry,seed,systemEvent;
     @CatalogField(filterable = true)
-	private Integer action;
-	private Boolean advise,runAsStakeHolder,failSilence,stopOnFail;
+	private Long action;
+	private Boolean advice,runAsStakeHolder,failSilence,stopOnFail;
 	
 	
 	private List<String> properties,sentence;
@@ -42,17 +43,20 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 		this.seed = seed;
 	}
 
-	public Integer getAction() {
+	public Long getAction() {
 		return action;
 	}
-	public void setAction(Integer action) {
+	public void setAction(Long action) {
 		this.action = action;
 	}
+	public Boolean getAdvice() {
+		return isAdvice();
+	}
 	public Boolean isAdvice() {
-		return advise;
+		return advice;
 	}
 	public void setAdvice(Boolean before) {
-		this.advise = before;
+		this.advice = before;
 	}
 	public String getCatalog() {
 		return catalog;
@@ -73,8 +77,8 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 		this.description = description;
 	}
 
-	public boolean isRunAsStakeHolder() {
-		return runAsStakeHolder;
+	public Boolean getRunAsStakeHolder() {
+		return runAsStakeHolder==null?false:runAsStakeHolder;
 	}
 
 	public void setRunAsStakeHolder(Boolean runAsStakeHolder) {
@@ -88,12 +92,12 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 		return stakeHolder;
 	}
 
-	public void setStakeHolder(long stakeHolder) {
+	public void setStakeHolder(Long stakeHolder) {
 		this.stakeHolder = stakeHolder;
 	}
 
 
-	public boolean isFailSilence() {
+	public Boolean getFailSilence() {
 		return failSilence;
 	}
 
@@ -106,7 +110,7 @@ public class CatalogEventListenerImpl extends CatalogEntryImpl implements Catalo
 	
 	}
 
-	public boolean isStopOnFail() {
+	public Boolean getStopOnFail() {
 		return stopOnFail;
 	}
 

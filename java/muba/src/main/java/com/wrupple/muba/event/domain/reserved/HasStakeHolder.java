@@ -6,6 +6,6 @@ public interface HasStakeHolder {
 
 	Object getStakeHolder();
 	
-	void setStakeHolder(long stakeHolder);
+	void setStakeHolder(Long stakeHolder);
 
 }
