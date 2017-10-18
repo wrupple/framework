@@ -32,8 +32,9 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	private String  name;
 	private boolean anonymouslyVisible;
 	private boolean followReferences;
+	
 
-	public void setParentValue(CatalogActionRequest parentValue) {
+    public void setParentValue(CatalogActionRequest parentValue) {
 		this.parentValue = parentValue;
 	}
 

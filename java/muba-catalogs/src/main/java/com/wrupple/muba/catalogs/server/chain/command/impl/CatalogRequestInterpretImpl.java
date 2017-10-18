@@ -187,12 +187,16 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             }else{
 
                 CatalogActionRequest parentContext = context.getRequest();
+
+
+
                 CatalogActionRequest childContext = new CatalogActionRequestImpl();
 
 
 
                 childContext.setName(DataEvent.READ_ACTION);
                 childContext.setEntry(catalogid);
+                childContext.setCatalog(CatalogDescriptor.CATALOG_ID);
 
                 context.switchContract(childContext);
                 context.setCatalogDescriptor(metadataDescriptor);
@@ -204,7 +208,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 result = (CatalogDescriptor) readerProvider.get().readVanityId(catalogid, metadataDescriptor, context, metadataCache, introspection);
                 log.warn("[incomplete metadata] {}",result);
 
-                context.getRuntimeContext().getRootAncestor().put(catalogid,result);
+                context.getRuntimeContext().getRootAncestor().put(catalogid+CatalogActionContext.INCOMPLETO,result);
 
                 if(result==null){
                     throw new CatalogException("No such catalog "+catalogid);

@@ -87,6 +87,12 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             applySorts(filter, catalog.getAppliedSorts());
             applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, instrospection);
             List<CatalogEntry> result = null;
+            if(filter==null && CatalogDescriptor.CATALOG_ID.equals(catalog.getDistinguishedName())){
+                log.warn("Non filtered read of catalog list will result in all catalogs");
+                filter = FilterDataUtils.newFilterData();
+                filter.setConstrained(false);
+                context.getRequest().setFollowReferences(false);
+            }
             FilterCriteria keyCriteria = filter.fetchCriteria(catalog.getKeyField());
             if (!filter.isConstrained() || keyCriteria == null) {
                 result = read(filter, catalog, context, cache, instrospection);
@@ -285,6 +291,10 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                 if (results == null || results.isEmpty()) {
                     log.error("attempt to use {} as discriminator returned no results", vanityId);
                 } else {
+                    if(CatalogDescriptor.CATALOG_ID.equals(catalog.getDistinguishedName())){
+                        log.warn("vanity id query for a catalog descriptor return a result, will force to fully build result graph");
+                    }
+                    context.getRequest().setFollowReferences(true);
                     regreso = results.get(0);
                 }
             }

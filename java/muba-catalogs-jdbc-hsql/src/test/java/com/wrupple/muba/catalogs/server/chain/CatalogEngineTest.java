@@ -89,7 +89,7 @@ public class CatalogEngineTest extends IntegralTest {
         log.trace("Looking for just created catalog {}={}",problemContract.getId(),problemContract.getName());
 		for (CatalogEntry existingCatalog : catalogList) {
 		    log.trace("Existing catalog {}={}",existingCatalog.getId(),existingCatalog.getName());
-			if(existingCatalog.getId().equals(problemContract.getDistinguishedName())){
+			if(existingCatalog.getId().equals(problemContract.getId())){
 				contained = true ;
 				break;
 			}
@@ -99,8 +99,18 @@ public class CatalogEngineTest extends IntegralTest {
 		log.trace("[-see registered catalog Descriptor-]");
 		runtimeContext.reset();
 
-        catalogContext.getRequest().setCatalog(MathProblem.class.getSimpleName());
-        problemContract = catalogContext.getCatalogDescriptor();
+        runtimeContext.setServiceContract(new CatalogActionRequestImpl());
+        runtimeContext.setSentence(
+                CatalogServiceManifest.SERVICE_NAME,
+                CatalogDescriptor.DOMAIN_FIELD,
+                CatalogActionRequest.LOCALE_FIELD,
+                CatalogDescriptor.CATALOG_ID,
+                CatalogActionRequest.READ_ACTION,
+                MathProblem.class.getSimpleName());
+        runtimeContext.process();
+        catalogContext = runtimeContext.getServiceContext();
+
+        problemContract = catalogContext.getConvertedResult();
         log.trace("[-verifying catalog graph integrity-]");
         assertTrue(problemContract.getId() != null);
         assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
