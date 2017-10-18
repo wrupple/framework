@@ -76,7 +76,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         CatalogActionContext context = (CatalogActionContext) x;
         Object targetEntryId = context.getRequest().getEntry();
         FilterData filter = context.getRequest().getFilter();
-        log.info("[Resolving catalog metadata]");
         CatalogDescriptor catalog = context.getCatalogDescriptor();
 
         Instrospection instrospection = access.newSession(null);

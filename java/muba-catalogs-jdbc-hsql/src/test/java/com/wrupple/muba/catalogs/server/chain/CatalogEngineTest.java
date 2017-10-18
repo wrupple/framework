@@ -46,6 +46,7 @@ public class CatalogEngineTest extends IntegralTest {
 				"Math Problem",  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
         FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
         assertTrue( solutionFieldDescriptor!= null);
+        assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
 
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
 		action.setEntryValue(problemContract);
@@ -62,6 +63,8 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue(problemContract.getId() != null);
         assertTrue(problemContract.getDomain() != null);
         assertTrue(((Long)problemContract.getDomain()).longValue()==CatalogEntry.PUBLIC_ID);
+        assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
+        assertTrue("does metadata provide problem's parent type?",problemContract.getParentValue()!=null);
 
         assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
 		solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
@@ -118,6 +121,7 @@ public class CatalogEngineTest extends IntegralTest {
         assertTrue(solutionFieldDescriptor!= null);
         assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
         assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
+        assertTrue("does metadata describe problem as inherited?",problemContract.getParentValue()!=null);
 
 
 		log.debug("-create math problem entry-");
