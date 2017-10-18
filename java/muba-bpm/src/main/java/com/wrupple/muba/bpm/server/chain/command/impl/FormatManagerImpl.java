@@ -41,7 +41,6 @@ public class FormatManagerImpl extends LookupCommand implements FormatManager {
 				return command.execute(c);
 			}
 		}
-
 	}
 
 }

@@ -101,7 +101,7 @@ public class PluginConsensusImpl implements PluginConsensus {
         }
         boolean versioned = catalog.getFieldDescriptor(Versioned.FIELD) != null;
 
-        if (versioned || catalog.isVersioned()) {
+        if (versioned || catalog.getVersioned()!=null && catalog.getVersioned()) {
             if (!versioned) {
                 // MUST HAVE VERSION FIELD
                 catalog.putField(new VersionFields());
@@ -110,7 +110,7 @@ public class PluginConsensusImpl implements PluginConsensus {
 
         }
 
-        if (catalog.isRevised()) {
+        if (catalog.getRevised()!=null&&catalog.getRevised()) {
             triggerInterpret.addNamespaceScopeTrigger(getRevisionTrigger(catalog), catalog,context);
 
         }
@@ -124,7 +124,7 @@ public class PluginConsensusImpl implements PluginConsensus {
                     parent = parent.getParent() == null ? null : context.getDescriptorForKey(parent.getParent());
                 }
             }
-            if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()
+            if (catalog.getGreatAncestor() != null && (catalog.getConsolidated()==null||!catalog.getConsolidated())
                     && ContentNode.CATALOG_TIMELINE.equals(catalog.getGreatAncestor())) {
 
                 triggerInterpret.addNamespaceScopeTrigger(timestamp, catalog,context);

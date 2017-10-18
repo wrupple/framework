@@ -64,7 +64,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 		Instrospection instrospection = null;
 		CatalogDescriptor parentCatalog = null;
 		Object parentEntityId = null;
-		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
+		if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
             instrospection = access.newSession(originalEntry);
             // we are certain this catalog has a parent, otherwise this DAO
 			// would
@@ -91,7 +91,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 		}
 		dao.execute(context);
 
-		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
+		if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
 			// add inherited values to child Entity (result)
             snth.processChildInheritance(childEntity, parentCatalog, parentEntityId,
 					context, catalog, instrospection);

@@ -44,7 +44,8 @@ public class CatalogEngineTest extends IntegralTest {
 
 		CatalogDescriptor problemContract = builder.fromClass(MathProblem.class, MathProblem.class.getSimpleName(),
 				"Math Problem",  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
-        FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
+        problemContract.setConsolidated(false);
+		FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
         assertTrue( solutionFieldDescriptor!= null);
         assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
 

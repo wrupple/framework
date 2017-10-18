@@ -64,6 +64,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         this.primaryKeyers = primaryKeyers;
         this.queryRewriter = queryRewriter;
         this.queryers.addCommand(catalogPluginStorage,pluginStorage);
+        primaryKeyers.addCommand(catalogPluginStorage,pluginStorage);
 
     }
 
@@ -365,7 +366,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
         storageUnit.execute(context);
 
-        if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
+        if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
 
             // read child Results
             List<CatalogEntry> children = context.getResults();
@@ -388,7 +389,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
         storageUnit.execute(context);
 
-        if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
+        if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
             // read child entity
             CatalogEntry childEntity = context.getEntryResult();
             // we are certain this catalog has a parent, otherwise this DAO

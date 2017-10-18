@@ -76,7 +76,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 
 			// single or multiple delete
 
-			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
+			if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
 				dictionary.getRead().execute(context);
 				Object parentEntityId = synthesizer.getAllegedParentId((CatalogEntry) context.getEntryResult(), instrospection,access);
 				// we are certain this catalog has a parent, otherwise this DAO

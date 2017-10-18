@@ -88,7 +88,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		
 		
 		CatalogEntry parentEntry = null;
-		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
+		if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
 
 			parentEntry= create( result, instrospection, catalog, context,context);
 		}
@@ -98,7 +98,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		CatalogEntry regreso = context.getEntryResult();
 		
 		if(regreso!=null){
-			if (parentEntry!=null &&catalog.getGreatAncestor() != null && !catalog.isConsolidated() ) {
+			if (parentEntry!=null &&catalog.getGreatAncestor() != null && !catalog.getConsolidated() ) {
                 delegate.addInheritedValuesToChild(parentEntry,  regreso, instrospection,catalog);
 			}
 			context.getRuntimeContext().getTransactionHistory().didCreate(context, regreso, createDao);

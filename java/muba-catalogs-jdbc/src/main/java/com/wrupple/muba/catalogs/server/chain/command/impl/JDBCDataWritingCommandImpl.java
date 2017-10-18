@@ -122,7 +122,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		builder.append("=?");
 		params.add(id);
 
-		if (descriptor.isVersioned()) {
+		if (descriptor.getVersioned()) {
 			Long version = (Long) access.getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
 					context.getOldValue(), null, instrospection);
 			builder.append(" && ");

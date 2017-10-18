@@ -33,7 +33,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 					context, null);
 
 			Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);
-			joinWithGivenJoinData(context.getResults(), context.getCatalogDescriptor(), joins,
+			joinWithGivenJoinData(context.getResults(),descriptor, joins,
 					context, filterMap, access.newSession(null));
 		}
 		log.trace("</{}>",this.getClass().getSimpleName());
@@ -82,7 +82,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 					} else {
 						reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
 						if (access.isWriteableProperty(reservedField, sample, instrospection)) {
-							log.trace("Working on to many relationship {}", field.getFieldId());
+							log.trace("Working one to many relationship {}", field.getFieldId());
 							if (key == null) {
 								key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
 							}

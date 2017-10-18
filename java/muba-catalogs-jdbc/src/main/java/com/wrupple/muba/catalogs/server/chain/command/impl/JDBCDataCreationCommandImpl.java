@@ -93,7 +93,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		for (FieldDescriptor field : fields) {
 			column = tableNames.getColumnForField(context, catalogDescriptor, field, false);
 
-			if (column != null && !field.isEphemeral() && (catalogDescriptor.isConsolidated()||!field.isInherited()||catalogDescriptor.getKeyField().equals(field.getFieldId()))) {
+			if (column != null && !field.isEphemeral() && (catalogDescriptor.getConsolidated()||!field.isInherited()||catalogDescriptor.getKeyField().equals(field.getFieldId()))) {
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {

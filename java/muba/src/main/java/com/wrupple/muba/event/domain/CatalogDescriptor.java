@@ -58,10 +58,10 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
 	 */
 	public FieldDescriptor getFieldDescriptor(String id);
 
-	public boolean isRevised();
-	public void setRevised(boolean b);
-	public boolean isVersioned();
-	public void setVersioned(boolean b);
+	public Boolean getRevised();
+	public void setRevised(Boolean b);
+	public Boolean getVersioned();
+	public void setVersioned(Boolean b);
 	
 	/**
 	 * 
@@ -69,7 +69,7 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
 	 *         single entity, rather than scathering data along the ancestry
 	 *         tree
 	 */
-	public boolean isConsolidated();
+	public Boolean getConsolidated();
 
 
 	public Iterator<FieldDescriptor> fieldIterator();
@@ -101,4 +101,6 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
     void setStorage(List<String> strings);
 
 	void setImage(Object image);
+
+	void setConsolidated(Boolean b);
 }

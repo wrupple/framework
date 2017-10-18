@@ -17,6 +17,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,13 +40,14 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
         CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
         if(catalogDescriptor.getDistinguishedName().equals(CatalogDescriptor.CATALOG_ID)){
             FilterData filter = context.getRequest().getFilter();
-
-            if (filter == null) {
-                //FIXME CATALOG_TYPE (DTO) SHOULD EXPOSE A SEPARATE DATASOURCE FOR THIS
-                //no puede ser que el dto sea del mismo catalogo porque contaminaría el cache
-                List<CatalogEntry> results = getAvailableCatalogs(context);
-                context.setResults(results);
-            }else if (filter.containsKey(catalogDescriptor.getKeyField())) {
+            Object entry = context.getRequest().getEntry();
+            if(entry==null){
+                if (filter == null) {
+                    //FIXME CATALOG_TYPE (DTO) SHOULD EXPOSE A SEPARATE DATASOURCE FOR THIS
+                    //no puede ser que el dto sea del mismo catalogo porque contaminaría el cache
+                    List<CatalogEntry> results = getAvailableCatalogs(context);
+                    context.setResults(results);
+                }else if (filter.containsKey(catalogDescriptor.getKeyField())) {
                     List<Long> keys = (List) filter.fetchCriteria(catalogDescriptor.getKeyField()).getValues();
                     //numeric id
                     List<CatalogDescriptor> results = keys.stream().
@@ -81,7 +83,17 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
 
                     context.setResults(results);
                 }
+            }else{
+                CatalogDescriptor result;
+                if(entry instanceof String){
+                     result = getDescriptorForName((String) entry, context);
+                }else{
+                    result = getDescriptorForKey((Long) entry, context);
+                }
+
+                context.setResults(Collections.singletonList(result));
             }
+        }
 
         
 

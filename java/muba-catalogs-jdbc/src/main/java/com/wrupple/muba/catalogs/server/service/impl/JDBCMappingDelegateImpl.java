@@ -73,7 +73,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	@Override
 	public String getColumnForField(CatalogActionContext context, CatalogDescriptor catalogDescriptor,
 			FieldDescriptor field, boolean qualified) {
-		if (field.isInherited() && !catalogDescriptor.isConsolidated()) {
+		if (field.isInherited() && !catalogDescriptor.getConsolidated()) {
 			return null;
 		} else {
 			if(qualified){
@@ -134,7 +134,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		String mainTable,fieldCOlumn;
 		List<String> indexes = new ArrayList<String>();
 		for (FieldDescriptor field : fields) {
-			if (!field.isEphemeral() && (catalog.isConsolidated()||!field.isInherited()||catalog.getKeyField().equals(field.getFieldId()))) {
+			if (!field.isEphemeral() && (catalog.getConsolidated()||!field.isInherited()||catalog.getKeyField().equals(field.getFieldId()))) {
 
 				dbcDataType = getDataType(field);
 				if (dbcDataType != null) {

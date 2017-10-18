@@ -34,7 +34,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 			CatalogActionRequest.NO_CACHE })
 	private int optimization /* cachePolicy */;
 
-	private boolean consolidated, revised,
+	private Boolean consolidated, revised,
 			versioned/*
 						 * persisted with jdo strategy, no namespace, saving
 						 * domain data as a field
@@ -78,6 +78,9 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	private Long version;
 	@CatalogFieldValues(defaultValueOptions = {"FIRST","ALL"})
 	private Integer storageStrategy;
+	@CatalogField(ignore = true)
+	@CatalogValue(foreignCatalog = CATALOG_ID)
+	private CatalogDescriptor parentValue;
 
 	public CatalogDescriptorImpl() {
 	}
@@ -131,17 +134,17 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	}
 
 	@Override
-	public boolean isConsolidated() {
+	public Boolean getConsolidated() {
 		return consolidated;
 	}
 
 	@Override
-	public boolean isRevised() {
+	public Boolean getRevised() {
 		return revised;
 	}
 
 	@Override
-	public void setRevised(boolean revised) {
+	public void setRevised(Boolean revised) {
 		this.revised = revised;
 		setVersioned(revised);
 	}
@@ -161,17 +164,17 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	}
 
 	@Override
-	public boolean isVersioned() {
+	public Boolean getVersioned() {
 		return versioned;
 	}
 
 	@Override
-	public void setVersioned(boolean versioned) {
+	public void setVersioned(Boolean versioned) {
 		this.versioned = versioned;
 	}
 
 
-	public void setConsolidated(boolean mergeAncestors) {
+	public void setConsolidated(Boolean mergeAncestors) {
 		this.consolidated = mergeAncestors;
 	}
 
@@ -403,7 +406,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
     @Override
     public CatalogDescriptor getParentValue() {
-        return null;
+        return parentValue;
     }
 
     @Override
@@ -414,4 +417,8 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	public void setStorageStrategy(Integer storageStrategy) {
 		this.storageStrategy = storageStrategy;
 	}
+
+    public void setParentValue(CatalogDescriptor parentValue) {
+        this.parentValue = parentValue;
+    }
 }
