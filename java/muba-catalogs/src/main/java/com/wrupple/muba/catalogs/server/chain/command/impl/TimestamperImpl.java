@@ -5,6 +5,7 @@ import com.wrupple.muba.event.domain.reserved.HasTimestamp;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.Timestamper;
 import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -14,10 +15,11 @@ import java.util.Date;
 @Singleton
 public class TimestamperImpl implements Timestamper {
 
-	
+	private final FieldAccessStrategy access;
 	@Inject
-	public TimestamperImpl() {
+	public TimestamperImpl(FieldAccessStrategy access) {
 		super();
+		this.access = access;
 	}
 
 
@@ -25,9 +27,9 @@ public class TimestamperImpl implements Timestamper {
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
-		Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getRequest().getEntryValue());
+		Instrospection instrospection = access.newSession((CatalogEntry) context.getRequest().getEntryValue());
 		CatalogEntry entry = (CatalogEntry)context.getRequest().getEntryValue();
-		context.getCatalogManager().access().setPropertyValue(HasTimestamp.FIELD, entry, new Date(), instrospection);
+		access.setPropertyValue(HasTimestamp.FIELD, entry, new Date(), instrospection);
 		return CONTINUE_PROCESSING;
 	}
 

@@ -21,7 +21,6 @@ import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 
 @Singleton
@@ -48,7 +47,6 @@ public class GarbageCollectionImpl implements GarbageCollection {
 
 				CatalogDescriptor catalog = context.getCatalogDescriptor();
 
-				SystemCatalogPlugin database = context.getCatalogManager();
 				//TODO descriptor extends identification, if we want the short version we read identifictation
 				List<CatalogEntry> names = context.getAvailableCatalogs();
 

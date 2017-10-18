@@ -9,7 +9,7 @@ import org.apache.commons.chain.Command;
  * @author japi
  *
  */
-public interface CatalogManager extends Catalog {
+public interface ActionsDictionary extends Catalog {
 	Command getNew();
 
 	Command getRead();

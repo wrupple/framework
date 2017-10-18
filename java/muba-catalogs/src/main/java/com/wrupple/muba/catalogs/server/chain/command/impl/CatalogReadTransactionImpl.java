@@ -1,20 +1,14 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogException;
+import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
-import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
-import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
-import com.wrupple.muba.catalogs.server.service.QueryReaders;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.server.domain.impl.CatalogUserTransactionImpl;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -35,7 +29,11 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     public interface JoinCondition {
         boolean match(CatalogEntry o);
     }
+    private final CatalogKeyServices keyDelegate;
 
+    private final FieldAccessStrategy access;
+
+    private final EntrySynthesizer synthesizer;
 
     private final CompleteCatalogGraph graphJoin;
 
@@ -51,9 +49,12 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     private int MIN_TREE_LEVELS;
 
     @Inject
-    public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage, @com.google.inject.name.Named("catalog.metadata.storage") String catalogPluginStorage, @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
+    public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage, @com.google.inject.name.Named("catalog.metadata.storage") String catalogPluginStorage, CatalogKeyServices keyDelegate, FieldAccessStrategy access, EntrySynthesizer synthesizer, @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
                                       QueryReaders queryers, PrimaryKeyReaders primaryKeyers, CompleteCatalogGraph graphJoin,
                                       ExplicitDataJoin join, CatalogReaderInterceptor queryRewriter) {
+        this.keyDelegate = keyDelegate;
+        this.access = access;
+        this.synthesizer = synthesizer;
 
 
         this.graphJoin = graphJoin;
@@ -78,9 +79,9 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         log.info("[Resolving catalog metadata]");
         CatalogDescriptor catalog = context.getCatalogDescriptor();
 
-        Instrospection instrospection = context.getCatalogManager().access().newSession(null);
+        Instrospection instrospection = access.newSession(null);
 
-        CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
+        CatalogResultCache cache = context.getCache(context.getCatalogDescriptor(), context);
 
         if (targetEntryId == null) {
             applySorts(filter, catalog.getAppliedSorts());
@@ -261,10 +262,10 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     public CatalogEntry readVanityId(String vanityId, CatalogDescriptor catalog, CatalogActionContext context,
                                      CatalogResultCache cache, Instrospection instrospection) throws Exception {
         CatalogEntry regreso = null;
-        if (context.getCatalogManager().isPrimaryKey(vanityId)) {
+        if (keyDelegate.isPrimaryKey(vanityId)) {
             // almost certainly an Id
             try {
-                Object primaryId = context.getCatalogManager().decodePrimaryKeyToken(vanityId);
+                Object primaryId = keyDelegate.decodePrimaryKeyToken(vanityId);
                 if(primaryId!=vanityId || catalog.getFieldDescriptor(catalog.getKeyField()).getDataType()==CatalogEntry.STRING_DATA_TYPE){
                     //FIXME in vanity id cases this query is repeated each call before querying distinguished name. Results should be cached at a higher level to catch vanityId results
                     regreso = read(primaryId, catalog, context, cache, instrospection);
@@ -386,13 +387,13 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             // not be called
             Long parentCatalogId = catalog.getParent();
             // aquire parent id
-            Object parentEntityId = context.getCatalogManager().getAllegedParentId(childEntity, instrospection);
-            // delegate deeper inheritance to another instance of an
+            Object parentEntityId = synthesizer.getAllegedParentId(childEntity, instrospection,access);
+            // delegate deeper getInheritance to another instance of an
             // AncestorAware
             // DAO
 
             log.trace("[PROCESSING CHILD ENTRY]");
-            context.getCatalogManager().processChild(childEntity,
+            synthesizer.processChildInheritance(childEntity,
                     context.getDescriptorForKey(parentCatalogId), parentEntityId,
                     context, catalog, instrospection);
         }
@@ -408,8 +409,8 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         CatalogDescriptor parent = context.getDescriptorForKey(parentCatalogId);
         Object parentEntityId;
         for (CatalogEntry childEntity : children) {
-            parentEntityId = context.getCatalogManager().getAllegedParentId(childEntity, instrospection);
-            context.getCatalogManager().processChild(childEntity, parent, parentEntityId, context, catalog,
+            parentEntityId = synthesizer.getAllegedParentId(childEntity, instrospection,access);
+            synthesizer.processChildInheritance(childEntity, parent, parentEntityId, context, catalog,
                     instrospection);
         }
     }
@@ -421,8 +422,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             for (FilterCriteria criteria : appliedCriteria) {
                 if (criteria.getEvaluate()) {
                     String operator = criteria.getOperator();
-                    Object criteriaValue = context.getCatalogManager()
-                            .synthethizeFieldValue(((String) criteria.getValue()).split(" "), context);
+                    Object criteriaValue = synthesizer.synthethizeFieldValue(((String) criteria.getValue()).split(" "), context);
                     criteria = FilterDataUtils.createSingleFieldFilter(criteria.getPath(), criteriaValue);
                     criteria.setOperator(operator);
                 }

@@ -5,10 +5,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogEvent;
 import com.wrupple.muba.catalogs.server.domain.CatalogEventImpl;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterCriteria;
-import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
 import java.util.ArrayList;
@@ -62,4 +59,6 @@ public class CatalogTransaction {
         context.getRuntimeContext().getEventBus().broadcastEvent(event,context.getRuntimeContext(),observers);
 
     }
+
+
 }

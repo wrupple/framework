@@ -29,7 +29,7 @@ public class ValueChangeListenerImpl extends AbstractComparationCommand implemen
 
 	@Inject
 	public ValueChangeListenerImpl(CatalogTriggerInterpret interpret) {
-		super();
+		super(accessStrategy);
 		this.interpret = interpret;
 	}
 

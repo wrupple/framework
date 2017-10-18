@@ -38,7 +38,7 @@ public class StakeHolderTriggerImpl implements StakeHolderTrigger {
 			throw new KnownExceptionImpl("User Identity Unknown",null, unknownUser);
 		}
 		//get fieldWriting instrospection, see ocurrences
-        FieldAccessStrategy accessor = context.getCatalogManager().access();
+        FieldAccessStrategy accessor = access;
 		//write into old the person id
 		FieldDescriptor field = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
         Instrospection instrospection = accessor.newSession(old);

@@ -35,7 +35,7 @@ public class ResolveIntent extends IntegralTest {
 
     /**
      * <ol>
-     * <li>create math problem catalog (with inheritance)</li>
+     * <li>create math problem catalog (with getInheritance)</li>
      * <li></li>
      * <li></li>
      * </ol>

@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.domain.annotations.*;
@@ -32,14 +33,14 @@ import static com.wrupple.muba.event.domain.PersistentCatalogEntity.IMAGE_FIELD;
 @Singleton
 public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
     @Inject
-    public CatalogDescriptorBuilderImpl(Provider<SystemCatalogPlugin> cms) {
+    public CatalogDescriptorBuilderImpl(JSRAnnotationsDictionary cms) {
         this.cms = cms;
     }
 
     protected static final Logger log = LoggerFactory.getLogger(CatalogDescriptorBuilderImpl.class);
 
 
-	private Provider<SystemCatalogPlugin> cms;
+	private JSRAnnotationsDictionary cms;
 
     public <T extends CatalogEntry> CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String cataogName, long numericId,
                                                                 CatalogDescriptor parent) throws  RuntimeException {
@@ -308,7 +309,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
                     Constraint built ;
 					for(Annotation an: allAnnotations){
                         try {
-                            built = this.cms.get().buildConstraint(an);
+                            built = this.cms.buildConstraint(an);
                         } catch (NoSuchMethodException e) {
                             throw new RuntimeException(e);
                         } catch (InvocationTargetException e) {

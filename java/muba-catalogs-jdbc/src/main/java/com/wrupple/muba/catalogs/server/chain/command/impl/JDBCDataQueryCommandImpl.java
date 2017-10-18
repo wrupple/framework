@@ -13,6 +13,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 		}
 
 	}
-
+	private final FieldAccessStrategy access;
 	private final JDBCMappingDelegate tableNames;
 	private final QueryRunner runner;
 	private final Provider<QueryResultHandler> rshp;
@@ -81,11 +82,12 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 	private final char DELIMITER;
 
 	@Inject
-	public JDBCDataQueryCommandImpl(QueryRunner runner, Provider<QueryResultHandler> rshp,
-			JDBCMappingDelegate tableNames, 
-			@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
-			@Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
-			@Named("catalog.domainField") String domainField, @Named("catalog.sql.delimiter") Character delimiter) {
+	public JDBCDataQueryCommandImpl(FieldAccessStrategy access, QueryRunner runner, Provider<QueryResultHandler> rshp,
+									JDBCMappingDelegate tableNames,
+									@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
+									@Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
+									@Named("catalog.domainField") String domainField, @Named("catalog.sql.delimiter") Character delimiter) {
+		this.access = access;
 		DELIMITER = delimiter;
 		this.dateFormat = dateFormat;
 		this.rshp = rshp;
@@ -189,14 +191,14 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 					for (CatalogEntry o : results) {
 						if (instrospection == null) {
-							instrospection = context.getCatalogManager().access().newSession(o);
+							instrospection = access.newSession(o);
 						}
 						log.trace("[DB secondary query for] {} ", o.getId());
 						// FIXME this is terrible, at lest use prepared
 						// statements??
 						fieldValues = runner.query(queryL, handler, o.getId());
 						log.trace("[DB results for {}] {}", o.getId(), fieldValues == null ? 0 : fieldValues.size());
-						context.getCatalogManager().access().setPropertyValue(field, o, fieldValues, instrospection);
+						access.setPropertyValue(field, o, fieldValues, instrospection);
 					}
 				}
 
@@ -237,7 +239,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 						log.warn("ignored not filteraable field criteria {}", criteria);
 					} else {
 						// field is not null, and filterable, and owned by this
-						// catalog in the inheritance hierarchy
+						// catalog in the getInheritance hierarchy
 						if (fieldDescriptor != null && (fieldDescriptor.getOwnerCatalogId() == null
 								|| catalogId.equals(fieldDescriptor.getOwnerCatalogId()))) {
 							if (writenCriteria > 0) {

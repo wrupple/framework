@@ -17,7 +17,8 @@ public class ValueChangeAuditImpl extends AbstractComparationCommand implements 
 
 	@Inject
 	public ValueChangeAuditImpl() {
-	}
+        super(accessStrategy);
+    }
 
 
 	@Override

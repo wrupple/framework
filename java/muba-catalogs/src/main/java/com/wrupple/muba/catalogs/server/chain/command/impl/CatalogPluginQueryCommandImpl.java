@@ -41,13 +41,13 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
             FilterData filter = context.getRequest().getFilter();
 
             if (filter == null) {
-                //FIXME CATALOG_TYPE (DTO) SHOULD EXPOSE A SEPARATE DATASOURCE FOR THIS PURPOSE
-                List<CatalogEntry> results = getAvailableCatalogs(context)
+                //FIXME CATALOG_TYPE (DTO) SHOULD EXPOSE A SEPARATE DATASOURCE FOR THIS
+                //no puede ser que el dto sea del mismo catalogo porque contaminaría el cache
+                List<CatalogEntry> results = getAvailableCatalogs(context);
                 context.setResults(results);
             }else if (filter.containsKey(catalogDescriptor.getKeyField())) {
                     List<Long> keys = (List) filter.fetchCriteria(catalogDescriptor.getKeyField()).getValues();
                     //numeric id
-
                     List<CatalogDescriptor> results = keys.stream().
                             map(key -> {
                                 try {
@@ -92,7 +92,6 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
 
     public List<CatalogEntry> getAvailableCatalogs(CatalogActionContext context) throws Exception {
         List<CatalogEntry> names = new ArrayList<CatalogEntry>();
-        context.getCatalogManager().modifyAvailableCatalogList(names,context);
             for (CatalogPlugin module : plugins) {
                 module.modifyAvailableCatalogList(names, context);
             }
@@ -115,12 +114,9 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
 
     private CatalogDescriptor getDescriptorForName(String distinguishedName, CatalogActionContext context) throws Exception  {
         // POLLING plugins
-        log.trace("asking main plugin for descriptor", distinguishedName);
 
-        CatalogDescriptor regreso = context.getCatalogManager().getDescriptor(distinguishedName, context);
-        if (regreso != null) {
-            return regreso;
-        }
+        CatalogDescriptor regreso;
+
         for (CatalogPlugin plugin : plugins) {
             log.trace("asking {} for descriptor", plugin);
             regreso = plugin.getDescriptor(distinguishedName, context);

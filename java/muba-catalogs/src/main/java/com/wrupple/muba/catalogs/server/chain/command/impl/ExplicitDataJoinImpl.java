@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
@@ -8,6 +10,7 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -21,8 +24,8 @@ import java.util.Set;
 public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin {
 
 	@Inject
-	public ExplicitDataJoinImpl() {
-		super();
+	public ExplicitDataJoinImpl(EntrySynthesizer inheritanceDelegate, CatalogKeyServices keydelegateValue, FieldAccessStrategy accessStrategy) {
+		super(inheritanceDelegate, keydelegateValue, accessStrategy);
 	}
 
 	@Override
@@ -32,7 +35,7 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 			return CONTINUE_PROCESSING;
 		}
 		List<CatalogEntry> result = context.getResults();
-        Instrospection instrospection = context.getCatalogManager().access().newSession(result.get(0));
+        Instrospection instrospection = access.newSession(result.get(0));
         CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
 				(String) context.getRequest().getCatalog(), context, instrospection);
 		FilterData filter = context.getRequest().getFilter();

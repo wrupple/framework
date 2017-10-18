@@ -99,4 +99,6 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
 	public void setGreatAncestor(String greatAncestor);
 
     void setStorage(List<String> strings);
+
+	void setImage(Object image);
 }

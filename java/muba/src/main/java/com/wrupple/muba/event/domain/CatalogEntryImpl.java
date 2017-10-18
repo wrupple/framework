@@ -9,7 +9,8 @@ import javax.validation.constraints.NotNull;
 public abstract class CatalogEntryImpl implements CatalogEntry {
 
 	
-	private Long id,image;
+	private Long id;
+	private Object image;
 	private String  name;
 	@NotNull
 	private Long domain;
@@ -33,11 +34,11 @@ public abstract class CatalogEntryImpl implements CatalogEntry {
 	}
 
 	@Override
-	public final Long getImage() {
+	public final Object getImage() {
 		return image;
 	}
 
-	public final void setImage(Long image) {
+	public final void setImage(Object image) {
 		this.image = image;
 	}
 

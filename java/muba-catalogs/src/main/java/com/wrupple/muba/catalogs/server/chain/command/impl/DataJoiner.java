@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.catalogs.server.service.impl.LocalizedEntityWrapper;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -7,6 +9,7 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,7 @@ import static com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils.*;
 public abstract class DataJoiner implements Command {
 
 	protected static final Logger log = LoggerFactory.getLogger(DataJoiner.class);
+
 
 	static class JoinQueryKey {
 		final String catalog;
@@ -66,11 +70,16 @@ public abstract class DataJoiner implements Command {
 		}
 
 	}
-
+	protected final EntrySynthesizer delegate;
+	protected final CatalogKeyServices keydelegate;
+	protected final FieldAccessStrategy access;
 
 	@Inject
-	public DataJoiner() {
+	public DataJoiner(EntrySynthesizer delegate, CatalogKeyServices keydelegate, FieldAccessStrategy access) {
 		super();
+		this.delegate = delegate;
+		this.keydelegate = keydelegate;
+		this.access = access;
 	}
 
 	protected Map<JoinQueryKey, Set<Object>> createFilterMap(String[][] joins, CatalogActionContext context) {
@@ -215,13 +224,13 @@ public abstract class DataJoiner implements Command {
 				throw new RuntimeException("no results to join");
 			} else {
 				log.trace("[READ JOIN DISCRIMINATORS] ");
-				putFieldValues(fieldId, results, catalog, instrospection, fieldValues,context.getCatalogManager());
+				putFieldValues(fieldId, results, catalog, instrospection, fieldValues);
 			}
 		}
 	}
 
 	private void putFieldValues(String fieldId, List<CatalogEntry> results, CatalogDescriptor catalog, Instrospection instrospection,
-			Set<Object> fieldValues, SystemCatalogPlugin cms) throws Exception {
+			Set<Object> fieldValues) throws Exception {
 		FieldDescriptor field = catalog.getFieldDescriptor(fieldId);
 		if (field == null) {
 		} else {
@@ -231,7 +240,7 @@ public abstract class DataJoiner implements Command {
 			if (field.isMultiple()) {
 				Collection<?> temp;
 				for (CatalogEntry e : results) {
-                    temp = (Collection<?>) cms.access().getPropertyValue(field, e, null, instrospection);
+                    temp = (Collection<?>) access.getPropertyValue(field, e, null, instrospection);
                     if (temp != null) {
 						for (Object o : temp) {
 							if (o != null) {
@@ -245,7 +254,7 @@ public abstract class DataJoiner implements Command {
 
 				Object value;
 				for (CatalogEntry e : results) {
-                    value = cms.access().getPropertyValue(field, e, null, instrospection);
+                    value = access.getPropertyValue(field, e, null, instrospection);
                     if (value != null) {
 						fieldValues.add(value);
 					}
@@ -480,11 +489,10 @@ public abstract class DataJoiner implements Command {
 						log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId());
 						fieldValue = null;
 					} else {
-                        fieldValue = context.getCatalogManager().access().getPropertyValue(field, object, localizedObject, instrospection);
+                        fieldValue = access.getPropertyValue(field, object, localizedObject, instrospection);
                     }
 					fieldContents.add(fieldValue);
 				}
-
 			}
 			return regreso;
 		}

@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -10,6 +11,8 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Writers;
+import com.wrupple.muba.event.server.service.ActionsDictionary;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,26 +24,29 @@ import static com.wrupple.muba.catalogs.domain.CatalogEvent.WRITE_ACTION;
 
 @Singleton
 public class CatalogUpdateTransactionImpl extends CatalogTransaction implements CatalogUpdateTransaction {
+
 	protected static final Logger log = LoggerFactory.getLogger(CatalogUpdateTransactionImpl.class);
 
-
-	
-
 	private final Writers writers;
+	private final ActionsDictionary dictionary;
+	private final EntrySynthesizer snth;
+	private final FieldAccessStrategy access;
 
 	@Inject
-	public CatalogUpdateTransactionImpl(Provider<CatalogActionCommit> catalogActionCommitProvider,
-			Writers writers) {
+	public CatalogUpdateTransactionImpl(ActionsDictionary dictionary, Provider<CatalogActionCommit> catalogActionCommitProvider,
+                                        Writers writers, EntrySynthesizer snth, FieldAccessStrategy access) {
 		super(catalogActionCommitProvider);
 		this.writers = writers;
-		
-	}
+		this.dictionary=dictionary;
+        this.snth = snth;
+        this.access = access;
+    }
 
 	@Override
 	public boolean execute(Context c) throws Exception {
 		log.trace("<{}>",this.getClass().getSimpleName());
 		CatalogActionContext context = (CatalogActionContext) c;
-		context.getCatalogManager().getRead().execute(context);
+		dictionary.getRead().execute(context);
 
 		CatalogEntry originalEntry = context.getResult();
 
@@ -59,19 +65,19 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 		CatalogDescriptor parentCatalog = null;
 		Object parentEntityId = null;
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
-            instrospection = context.getCatalogManager().access().newSession(originalEntry);
+            instrospection = access.newSession(originalEntry);
             // we are certain this catalog has a parent, otherwise this DAO
 			// would
 			// not be called
 			CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
 			parentCatalog = context.getDescriptorForKey(catalog.getParent());
-			parentEntityId = context.getCatalogManager().getAllegedParentId(originalEntry, instrospection);
+			parentEntityId = snth.getAllegedParentId(originalEntry, instrospection,access);
 
 			// synthesize parent entity from all non-inherited, passing all
 			// inherited field Values
-			CatalogEntry updatedParentEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, false, instrospection,
+			CatalogEntry updatedParentEntity = snth.synthesizeCatalogObject(updatedEntry, catalog, false, instrospection,
 					context);
-			// delegate deeper inheritance to another instance of an
+			// delegate deeper getInheritance to another instance of an
 			// AncestorAware
 			// DAO
 			//CatalogEntry originalParentEntity = context.getCatalogManager().readEntry(parentCatalog, parentEntityId, childContext);
@@ -81,19 +87,19 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 
 			// synthesize childEntity (Always will be Entity Kind) ignoring all
 			// inheritedFields
-			childEntity = context.getCatalogManager().synthesizeCatalogObject(updatedEntry, catalog, true, instrospection, context);
+			childEntity = snth.synthesizeCatalogObject(updatedEntry, catalog, true, instrospection, context);
 		}
 		dao.execute(context);
 
 		if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
 			// add inherited values to child Entity (result)
-			context.getCatalogManager().processChild(childEntity, parentCatalog, parentEntityId,
+            snth.processChildInheritance(childEntity, parentCatalog, parentEntityId,
 					context, catalog, instrospection);
 		}
 		CatalogEntry ress = context.getEntryResult();
 		context.getRuntimeContext().getTransactionHistory().didUpdate(context,ress , context.getOldValue(), dao);
 
-		CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
+		CatalogResultCache cache = context.getCache(context.getCatalogDescriptor(), context);
 		if (cache != null) {
 			cache.update(context, catalog.getDistinguishedName(), context.getOldValue(), ress);
 		}

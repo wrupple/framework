@@ -3,8 +3,10 @@ package com.wrupple.muba.catalogs.server.service.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
@@ -23,8 +25,12 @@ import java.util.List;
 @Singleton
 public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 
-	public LocalizedEntityInterceptorDAO() {
+	private final FieldAccessStrategy access;
+
+	@Inject
+	public LocalizedEntityInterceptorDAO(FieldAccessStrategy access) {
 		super();
+		this.access = access;
 	}
 
 	@Override
@@ -46,7 +52,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 		// what catalog is this localized entity pointing to?
         CatalogDescriptor pointsTo =context.triggerGet(CatalogDescriptor.CATALOG_ID,numericCatalogId);
 
-		Instrospection instrospection = context.getCatalogManager().access().newSession(pointsTo);
+		Instrospection instrospection = access.newSession(pointsTo);
 
 		// what strategy does the referenced catalog use to localize it's
 		// entities

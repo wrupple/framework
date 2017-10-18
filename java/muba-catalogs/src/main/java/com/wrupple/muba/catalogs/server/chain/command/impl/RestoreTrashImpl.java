@@ -11,6 +11,7 @@ import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.RestoreTrash;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,12 @@ import java.util.List;
 @Singleton
 public class RestoreTrashImpl implements RestoreTrash {
 	private static Logger log = LoggerFactory.getLogger(RestoreTrashImpl.class);
+    private final FieldAccessStrategy access;
 
 	@Inject
-	public RestoreTrashImpl( ) {
+	public RestoreTrashImpl(FieldAccessStrategy access) {
 		super();
+		this.access = access;
 	}
 
 	@Override
@@ -35,7 +38,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 		if (e == null) {
 			log.warn("[RESTORE ALL TRASH ITEMS]");
 
-            Instrospection instrospection = context.getCatalogManager().access().newSession(null);
+            Instrospection instrospection = access.newSession(null);
             FilterData all = FilterDataUtils.newFilterData();
 			all.setConstrained(false);
 			all.addOrdering(new FilterDataOrderingImpl(HasCatalogId.CATALOG_FIELD, false));
@@ -68,7 +71,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			String catalogId = e.getCatalog();
 			CatalogDescriptor descriptor = context.getDescriptorForName(catalogId);
 			FieldDescriptor trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
-            Instrospection instrospection = context.getCatalogManager().access().newSession(null);
+            Instrospection instrospection = access.newSession(null);
             context.getRequest().setFilter(null);
 			undelete(e, context, descriptor, trashField, instrospection);
 
@@ -92,7 +95,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			String catalogId = e.getCatalog();
 
 			CatalogEntry trashedEntry = context.get(catalogId,entryId);
-            context.getCatalogManager().access().setPropertyValue(trashField, trashedEntry, false, instrospection);
+            access.setPropertyValue(trashField, trashedEntry, false, instrospection);
 			context.write(catalogId,entryId,trashedEntry);
 
 		}

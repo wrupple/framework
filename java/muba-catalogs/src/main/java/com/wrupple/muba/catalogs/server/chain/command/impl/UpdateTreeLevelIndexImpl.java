@@ -4,6 +4,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasChildren;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +17,12 @@ import java.util.List;
 public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 
 	protected static final Logger log = LoggerFactory.getLogger(CommitCatalogActionImpl.class);
+	private final FieldAccessStrategy access;
 
 	@Inject
-	public UpdateTreeLevelIndexImpl() {
+	public UpdateTreeLevelIndexImpl(FieldAccessStrategy access) {
 		super();
+		this.access = access;
 	}
 
 	@Override
@@ -28,18 +31,18 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 		CatalogDescriptor catalog = (CatalogDescriptor) context.getCatalogDescriptor();
 		CatalogEntry newe = (CatalogEntry) context.getRequest().getEntryValue();
 		CatalogEntry olde = context.getOldValue();
-        Instrospection instrospection = context.getCatalogManager().access().newSession(newe);
+        Instrospection instrospection = access.newSession(newe);
         FieldDescriptor treeIndex = catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX);
 		FieldDescriptor childrenField = catalog.getFieldDescriptor(HasChildren.FIELD);
-        context.getCatalogManager().access().setPropertyValue(treeIndex, newe, 0, instrospection);
+		access.setPropertyValue(treeIndex, newe, 0, instrospection);
 
 		log.trace("[UpdateTreeLevelIndex]");
-        List<Object> newChildren = (List<Object>) context.getCatalogManager().access().getPropertyValue(childrenField,
+        List<Object> newChildren = (List<Object>) access.getPropertyValue(childrenField,
                 newe, null, instrospection);
 		List<Object> oldChildren = (List<Object>) (olde == null ? null
-                : context.getCatalogManager().access().getPropertyValue(childrenField, olde, null, instrospection));
+                : access.getPropertyValue(childrenField, olde, null, instrospection));
 
-        long childrenTreeIndex = (Long) context.getCatalogManager().access().getPropertyValue(treeIndex, newe, null,
+        long childrenTreeIndex = (Long) access.getPropertyValue(treeIndex, newe, null,
                 instrospection);
 		if (newChildren != null && !newChildren.isEmpty()) {
 			if (oldChildren != null) {
@@ -52,7 +55,7 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 			PersistentCatalogEntity child;
 			for (Object childId : newChildren) {
 				child =context.triggerGet(catalog.getDistinguishedName(),childId);
-                context.getCatalogManager().access().setPropertyValue(treeIndex, child, childrenTreeIndex, instrospection);
+				access.setPropertyValue(treeIndex, child, childrenTreeIndex, instrospection);
                 // FIXME update bulk
 				context.triggerWrite(catalog.getDistinguishedName(),childId,child);
 			}

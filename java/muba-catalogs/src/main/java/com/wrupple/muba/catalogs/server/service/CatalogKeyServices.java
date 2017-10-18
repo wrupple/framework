@@ -8,6 +8,9 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 
 public interface CatalogKeyServices {
 
+	boolean isJoinableValueField(FieldDescriptor field);
+
+
 	/**
 	 * encodes outgoing field values
 	 * 
@@ -40,5 +43,5 @@ public interface CatalogKeyServices {
 	
 	public  String[][] getJoins(CatalogActionContext serverSide, Object clientSide, CatalogDescriptor descriptor, String[][] customJoins, Object domain, String host) throws Exception;
 
-	public  String getIncomingForeignJoinableFieldId(CatalogDescriptor foreignDescriptor,String catalog);
+	public  String getFieldWithForeignType(CatalogDescriptor foreignDescriptor, String foreignType);
 }

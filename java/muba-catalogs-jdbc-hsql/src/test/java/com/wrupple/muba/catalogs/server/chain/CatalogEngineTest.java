@@ -25,7 +25,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 	/**
 	 * <ol>
-	 * <li>create math problem catalog (with inheritance)</li>
+	 * <li>create math problem catalog (with getInheritance)</li>
 	 * <li></li>
 	 * <li></li>
 	 * </ol>
@@ -78,7 +78,7 @@ public class CatalogEngineTest extends IntegralTest {
 		        CatalogServiceManifest.SERVICE_NAME,
                 CatalogDescriptor.DOMAIN_FIELD,
                 CatalogActionRequest.LOCALE_FIELD,
-                CatalogEntry.CATALOG_DTO,
+                CatalogDescriptor.CATALOG_ID,
 				CatalogActionRequest.READ_ACTION);
 		runtimeContext.process();
 		catalogContext = runtimeContext.getServiceContext();

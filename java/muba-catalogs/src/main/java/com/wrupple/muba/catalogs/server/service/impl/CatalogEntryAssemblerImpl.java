@@ -7,7 +7,7 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryAssembler;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -15,11 +15,11 @@ import java.util.*;
 public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 
 
-	private SystemCatalogPlugin cms;
+	private FieldAccessStrategy access;
 
 	@Inject
-	public CatalogEntryAssemblerImpl(SystemCatalogPlugin cms) {
-		this.cms=cms;
+	public CatalogEntryAssemblerImpl(FieldAccessStrategy cms) {
+		this.access =cms;
 		
 	}
 	@Override
@@ -76,7 +76,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 			size = fieldContents.size();
 			regreso = new ArrayList<T>(size);
 			for (int i = 0; i < size; i++) {
-                newEntry = (T) cms.access().synthesize(catalog);
+                newEntry = (T) access.synthesize(catalog);
                 regreso.add(newEntry);
 			}
 			break;
@@ -86,7 +86,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 		FieldDescriptor field;
 		if (newEntry != null) {
 			// at least one entry got created (logically)
-            Instrospection instrospection = cms.access().newSession(newEntry);
+            Instrospection instrospection = access.newSession(newEntry);
             for (String fieldId : containedFields) {
 				field = catalog.getFieldDescriptor(fieldId);
 				if (field != null) {
@@ -98,7 +98,7 @@ public class CatalogEntryAssemblerImpl implements CatalogEntryAssembler {
 							// entry to put field value in
 							newEntry = regreso.get(j);
 							value = fieldContents.get(j);
-                            cms.access().setPropertyValue(field, newEntry, value, instrospection);
+                            access.setPropertyValue(field, newEntry, value, instrospection);
                         }
 					}
 				}

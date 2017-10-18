@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -9,6 +10,7 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.EntryDeleteTrigger;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -19,11 +21,15 @@ import java.util.List;
 @Singleton
 public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 	private final Provider<Trash> trashp;
+	private final CatalogKeyServices keydelegate;
+	private final FieldAccessStrategy access;
 
 	@Inject
-	public EntryDeleteTriggerImpl(Provider<Trash> trashp, CatalogCreateTransaction create) {
+	public EntryDeleteTriggerImpl(Provider<Trash> trashp, CatalogKeyServices keydelegate, FieldAccessStrategy access) {
 		super();
+		this.access=access;
 		this.trashp = trashp;
+		this.keydelegate=keydelegate;
 	}
 
 	@Override
@@ -44,12 +50,11 @@ public class EntryDeleteTriggerImpl implements EntryDeleteTrigger {
 
 		for (CatalogEntry e : oldValues) {
 
-            trashed = (Boolean) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
+            trashed = (Boolean) access.getPropertyValue(field, e, null, instrospection);
             if (trashed != null && trashed) {
 				Trash trashItem = trashp.get();
 				trashItem.setName(e.getName());
-				trashItem.setEntry(
-						context.getCatalogManager().encodeClientPrimaryKeyFieldValue(e.getId(), field, catalog));
+				trashItem.setEntry(keydelegate.encodeClientPrimaryKeyFieldValue(e.getId(), field, catalog));
 				trashItem.setCatalog(catalog.getDistinguishedName());
 
 				//TODO ?? trashItem.setDomain((Long) e.getDomain());

@@ -15,6 +15,7 @@ import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.*;
+import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.*;
@@ -31,17 +32,9 @@ import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.TrashDescriptor;
-import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.KeyDomainValidator;
 import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValidator;
-import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.catalogs.server.service.Deleters;
-import com.wrupple.muba.catalogs.server.service.EntryCreators;
-import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
-import com.wrupple.muba.catalogs.server.service.QueryReaders;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.Writers;
 
 /**
  * @author japi
@@ -91,6 +84,18 @@ public class CatalogModule extends AbstractModule {
 				.toInstance("childHIdentity");
 		bind(String.class).annotatedWith(Names.named("catalog.timeline.typeDiscriminator")).toInstance("childHType");
 
+        bind(String.class).annotatedWith(Names.named(CatalogDescriptor.CATALOG_ID)).toInstance("/static/img/catalog.png");
+        bind(String.class).annotatedWith(Names.named(CatalogDescriptor.CATALOG_ID)).toInstance("/static/img/catalog.png");
+
+
+        bind(String.class).annotatedWith(Names.named(FieldDescriptor.CATALOG_ID)).toInstance( "/static/img/fields.png");
+        bind(String.class).annotatedWith(Names.named(Constraint.CATALOG_ID)).toInstance("/static/img/check.png");
+        bind(String.class).annotatedWith(Names.named(CatalogEventListener.CATALOG)).toInstance("/static/img/excecute.png");
+        bind(String.class).annotatedWith(Names.named(WebEventTrigger.CATALOG)).toInstance( "/static/img/excecute.png");
+        bind(String.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG)).toInstance("/static/img/locale.png");
+        bind(String.class).annotatedWith(Names.named(LocalizedString.CATALOG)).toInstance( "/static/img/locale.png");
+        bind(String.class).annotatedWith(Names.named(ContentRevision.CATALOG)).toInstance( "/static/img/revision.png");
+        bind(String.class).annotatedWith(Names.named(Trash.CATALOG)).toInstance( "/static/img/trash.png");
 		bind(Class.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
 				.toInstance(HasAccesablePropertyValues.class);
 		bind(Class.class).annotatedWith(Names.named(Constraint.CATALOG_ID)).toInstance(ConstraintImpl.class);
@@ -159,6 +164,10 @@ public class CatalogModule extends AbstractModule {
 		/*
 		 * Services
 		 */
+		bind(CatalogKeyServices.class).to(CatalogKeyServicesImpl.class);
+		bind(EntrySynthesizer.class).to(EntrySynthesizerImpl.class);
+		bind(JSRAnnotationsDictionary.class).to(JSRAnnotationsDictionaryImpl.class);
+		bind(ActionsDictionary.class).to(ActionsDictionaryImpl.class);
 		bind(CompleteCatalogGraph.class).to(CompleteCatalogGraphImpl.class);
 		bind(ExplicitDataJoin.class).to(ExplicitDataJoinImpl.class);
 		bind(ImplicitDataJoin.class).to(ImplicitDataJoinImpl.class);
@@ -167,7 +176,7 @@ public class CatalogModule extends AbstractModule {
 
 		bind(KeyDomainValidator.class).to(KeyDomainValidatorImpl.class);
 
-		bind(SystemCatalogPlugin.class).to(CatalogManagerImpl.class);
+		bind(SystemCatalogPlugin.class).to(SystemCatalogPluginImpl.class);
 		bind(CatalogDescriptorBuilder.class).to(CatalogDescriptorBuilderImpl.class);
 
 		bind(CatalogNormalizationConstraintValidator.class).to(CatalogNormalizationConstraintValidatorImpl.class);
@@ -241,12 +250,13 @@ public class CatalogModule extends AbstractModule {
 	@Inject
 	@Singleton
 	@Named(CatalogDescriptor.CATALOG_ID)
-	public CatalogDescriptor catalogDescriptor(@Named("catalog.metadata.storage") String catalogPluginStorage,@Named(CatalogDescriptor.CATALOG_ID) Class clazz,
+	public CatalogDescriptor catalogDescriptor(@Named(CatalogDescriptor.CATALOG_ID) String image  ,@Named("catalog.metadata.storage") String catalogPluginStorage,@Named(CatalogDescriptor.CATALOG_ID) Class clazz,
 			CatalogDescriptorBuilder builder) {
 		CatalogDescriptor r = builder.fromClass(CatalogDescriptorImpl.class, CatalogDescriptor.CATALOG_ID, "Catalogs",
 				-191191, null);
 		r.setClazz(clazz);
 		r.setStorage(Arrays.asList(CatalogReadTransaction.DEFAULT_STORAGE,catalogPluginStorage));
+		r.setImage(image);
 		return r;
 	}
 

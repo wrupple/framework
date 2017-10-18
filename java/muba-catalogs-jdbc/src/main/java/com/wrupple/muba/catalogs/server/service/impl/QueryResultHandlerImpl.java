@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.dbutils.BasicRowProcessor;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import org.slf4j.Logger;
@@ -23,30 +24,29 @@ import com.wrupple.muba.event.domain.PersistentCatalogEntity;
 import com.wrupple.muba.event.server.domain.impl.PersistentCatalogEntityImpl;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> implements QueryResultHandler {
 	protected Logger log = LoggerFactory.getLogger(QueryResultHandlerImpl.class);
 
 	private final JDBCMappingDelegate delegate;
 	private final DateFormat format;
+	private final FieldAccessStrategy access;
 
 	private CatalogRowProcessor mapper;
 	private Class<? extends CatalogEntry> clazz;
 
-	private SystemCatalogPlugin cms;
 
 	@Inject
-	public QueryResultHandlerImpl(JDBCMappingDelegate delegate, DateFormat format) {
+	public QueryResultHandlerImpl(JDBCMappingDelegate delegate, DateFormat format, FieldAccessStrategy access) {
 		super();
 		this.delegate = delegate;
 		this.format = format;
+		this.access = access;
 	}
 
 	@Override
 	public void setContext(CatalogActionContext context) throws Exception {
 		log.trace("created result haandler");
-		this.cms=context.getCatalogManager();
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		mapper = new CatalogRowProcessor(catalog);
 		clazz = catalog.getClazz();
@@ -112,7 +112,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				throw new IllegalArgumentException("cannot instantiate " + type);
 			}
 			if (instrospection == null) {
-				instrospection = cms.access().newSession((CatalogEntry) result);
+				instrospection = access.newSession((CatalogEntry) result);
 			}
 			FieldDescriptor field;
 			for (int i = 1; i <= cols; i++) {
@@ -125,7 +125,7 @@ public class QueryResultHandlerImpl extends AbstractListHandler<CatalogEntry> im
 				field = catalog.getFieldDescriptor(delegate.getFieldNameForColumn(columnName,false));
 				if (field != null) {
 					try {
-						cms.access().setPropertyValue(field, (CatalogEntry) result,
+                        access.setPropertyValue(field, (CatalogEntry) result,
 								delegate.handleColumnField(rs,field, field.getDataType(), i, format), instrospection);
 					} catch (Exception e) {
 						throw new IllegalArgumentException(e);

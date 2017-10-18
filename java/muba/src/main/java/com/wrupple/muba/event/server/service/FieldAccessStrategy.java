@@ -46,4 +46,6 @@ public interface FieldAccessStrategy extends IntrospectionStrategy {
     void parseSetInteger(String rawValue, CatalogEntry jso, FieldDescriptor fieldId, Instrospection instrospection) throws ReflectiveOperationException;
 
     void parseSetBoolean(CatalogEntry jso, FieldDescriptor field, String v, Instrospection instrospection) throws ReflectiveOperationException;
+
+
 }

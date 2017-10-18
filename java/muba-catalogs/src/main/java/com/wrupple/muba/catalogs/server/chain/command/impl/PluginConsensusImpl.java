@@ -91,7 +91,7 @@ public class PluginConsensusImpl implements PluginConsensus {
     public boolean execute(Context c) throws Exception {
 
         CatalogActionContext context = (CatalogActionContext) c;
-        //Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getRequest().getEntryValue());
+        //Instrospection instrospection = access.newSession((CatalogEntry) context.getRequest().getEntryValue());
         CatalogDescriptor catalog = (CatalogDescriptor)context.getRequest().getEntryValue();
         String name = catalog.getDistinguishedName();
 

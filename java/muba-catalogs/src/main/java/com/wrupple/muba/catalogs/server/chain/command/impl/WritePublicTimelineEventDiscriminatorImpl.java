@@ -5,6 +5,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,24 +19,26 @@ public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTim
 
 	protected static final Logger log = LoggerFactory.getLogger(CommitCatalogActionImpl.class);
 	private final String discriminatorField, catalogField;
+	private final FieldAccessStrategy access;
 
 	@Inject
-	public WritePublicTimelineEventDiscriminatorImpl(
+	public WritePublicTimelineEventDiscriminatorImpl(FieldAccessStrategy access,
 			@Named("catalog.timeline.entryDiscriminator") String discriminatorField,
 			@Named("catalog.timeline.typeDiscriminator") String catalogField) {
 		super();
 		this.discriminatorField = discriminatorField;
 		this.catalogField = catalogField;
+		this.access=access;
 	}
 
 	@Override
 	public boolean execute(Context c) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogEntry node = (CatalogEntry) context.getRequest().getEntryValue();
-        Instrospection instrospection = context.getCatalogManager().access().newSession(node);
+        Instrospection instrospection = access.newSession(node);
         CatalogDescriptor catalog = context.getCatalogDescriptor();
-        context.getCatalogManager().access().setPropertyValue(getDiscriminatorField(), node, node.getId(), instrospection);
-        context.getCatalogManager().access().setPropertyValue(getCatalogField(), node, catalog.getId(), instrospection);
+		access.setPropertyValue(getDiscriminatorField(), node, node.getId(), instrospection);
+		access.setPropertyValue(getCatalogField(), node, catalog.getId(), instrospection);
         return CONTINUE_PROCESSING;
 	}
 

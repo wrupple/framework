@@ -1,5 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -7,6 +9,7 @@ import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -20,8 +23,8 @@ import java.util.Set;
 public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin {
 
 	@Inject
-	public ImplicitDataJoinImpl() {
-		super();
+	public ImplicitDataJoinImpl(EntrySynthesizer entrySynthesizer, CatalogKeyServices keydelegateValue, FieldAccessStrategy accessStrategy) {
+		super(entrySynthesizer, keydelegateValue, accessStrategy);
 	}
 
 	@Override
@@ -32,12 +35,12 @@ public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin
 		}
 
 		List<CatalogEntry> result = context.getResults();
-        Instrospection instrospection = context.getCatalogManager().access().newSession(result.get(0));
+        Instrospection instrospection = access.newSession(result.get(0));
         CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
 				(String) context.getRequest().getCatalog(), context, instrospection);
 
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		String[][] joins = context.getCatalogManager().getJoins(context, null, descriptor, null,
+		String[][] joins = super.keydelegate.getJoins(context, null, descriptor, null,
 				context, null);
 		Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);
 

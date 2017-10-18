@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 	protected static final Logger log = LoggerFactory.getLogger(JDBCDataCreationCommandImpl.class);
 
+	private final FieldAccessStrategy access;
 	private final JDBCMappingDelegate tableNames;
 	private final SQLCompatibilityDelegate compatibility;
 
@@ -44,15 +46,16 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 	private final JDBCSingleLongKeyResultHandler keyHandler;
 
 	@Inject
-	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, CatalogReadTransaction read,
-			JDBCMappingDelegate tableNames, SQLCompatibilityDelegate compatibility, 
-			@Named("catalog.missingTableErrorCode") Integer missingTableErrorCode /*
+	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, FieldAccessStrategy access, CatalogReadTransaction read,
+									   JDBCMappingDelegate tableNames, SQLCompatibilityDelegate compatibility,
+									   @Named("catalog.missingTableErrorCode") Integer missingTableErrorCode /*
 																					 * 1146
 																					 * in
 																					 * MySQL
 																					 */,
-			@Named("catalog.sql.delimiter") Character delimiter) {
+									   @Named("catalog.sql.delimiter") Character delimiter) {
 		super(delete);
+		this.access = access;
 		this.compatibility = compatibility;
 		DELIMITER = delimiter;
 		keyHandler = new JDBCSingleLongKeyResultHandler();
@@ -71,7 +74,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		CatalogEntry e = (CatalogEntry) context.getRequest().getEntryValue();
 		e.setDomain((Long) context.getRequest().getDomain());
 		log.trace("[Will create Entry] {} in domain {}", e,e.getDomain());
-		Instrospection instrospection = context.getCatalogManager().access().newSession(e);
+		Instrospection instrospection = access.newSession(e);
 		Object id = null;
 
 		Collection<FieldDescriptor> fields = catalogDescriptor.getFieldsValues();
@@ -94,7 +97,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {
-					fieldValue = context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
+					fieldValue = access.getPropertyValue(field, e, null, instrospection);
 					if (paramz.size() > 0) {
 						values.append(",");
 						builder.append(",");
@@ -162,7 +165,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && field.isMultiple() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
+				fieldValue = access.getPropertyValue(field, e, null, instrospection);
 				if (fieldValue != null) {
 					foreignTableName = tableNames.getTableNameForCatalogField(context, catalogDescriptor, field);
 					if (foreignTableName != null) {

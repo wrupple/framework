@@ -1,12 +1,14 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.server.service.ActionsDictionary;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +26,19 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
-    private final Provider<SessionContext> exp;
-    private final Provider<EventBus> bus;
+	private final ActionsDictionary dictionary;
+    private final EntrySynthesizer synthetizationDelegate;
+	private final FieldAccessStrategy access;
 
 	@Inject
-	public CatalogTriggerInterpretImpl(Provider<CatalogServiceManifest> manifestP,
-                                       CatalogDeserializationService deserializer, @Named(SessionContext.SYSTEM)Provider<SessionContext> exp, Provider<EventBus> bus) {
+	public CatalogTriggerInterpretImpl(FieldAccessStrategy access,ActionsDictionary dictionary, Provider<CatalogServiceManifest> manifestP,
+									   CatalogDeserializationService deserializer, EntrySynthesizer synthetizationDelegate) {
 		super();
+		this.access=access;
+		this.dictionary=dictionary;
 		this.manifestP = manifestP;
 		this.deserializer = deserializer;
-        this.exp = exp;
-        this.bus = bus;
+        this.synthetizationDelegate = synthetizationDelegate;
     }
 
 
@@ -44,7 +48,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		log.trace("[INVOKE] {}", trigger);
 		String targetAction = trigger.getName();
 
-		Command command = context.getCatalogManager().getCommand(targetAction);
+		Command command = dictionary.getCommand(targetAction);
 
 		log.trace("[TRIGGER COMMAND] {}", command);
 		Object entryIdPointer = trigger.getEntry();
@@ -72,7 +76,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			}
 
 			if (entryIdPointer != null) {
-                Instrospection instrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getRequest().getEntryValue());
+                Instrospection instrospection = access.newSession((CatalogEntry) context.getRequest().getEntryValue());
                 entryIdPointer = synthethizeKeyValue(entryIdPointer, context, instrospection,
 						targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()));
 				context.getRequest().setEntry(entryIdPointer);
@@ -150,7 +154,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
     private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,
 			FieldDescriptor field) throws Exception {
 		if (entryIdPointer instanceof String) {
-			return context.getCatalogManager().synthethizeFieldValue(((String) entryIdPointer).split("\\."), context);
+			return synthetizationDelegate.synthethizeFieldValue(((String) entryIdPointer).split("\\."), context);
 		} else {
 			return entryIdPointer;
 		}
@@ -186,20 +190,20 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		context.getRequest().setCatalog(targetCatalog.getDistinguishedName());
 
-        Instrospection instrospection = context.getCatalogManager().access().newSession(synthesizedEntry);
+        Instrospection instrospection = access.newSession(synthesizedEntry);
         Collection<FieldDescriptor> fields = targetCatalog.getFieldsValues();
 		String fieldId;
 		String token;
 		Object fieldValue;
-        Instrospection lowInstrospection = context.getCatalogManager().access().newSession((CatalogEntry) context.getRequest().getEntryValue());
+        Instrospection lowInstrospection = access.newSession((CatalogEntry) context.getRequest().getEntryValue());
 
 		for (FieldDescriptor field : fields) {
 			fieldId = field.getFieldId();
 			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isEphemeral()) {
 				token = properties.get(fieldId);
 				if (token != null) {
-					fieldValue = context.getCatalogManager().synthethizeFieldValue(token.split(" "), context);
-                    context.getCatalogManager().access().setPropertyValue(field, synthesizedEntry, fieldValue, instrospection);
+					fieldValue = synthetizationDelegate.synthethizeFieldValue(token.split(" "), context);
+                    access.setPropertyValue(field, synthesizedEntry, fieldValue, instrospection);
                 }
 			}
 

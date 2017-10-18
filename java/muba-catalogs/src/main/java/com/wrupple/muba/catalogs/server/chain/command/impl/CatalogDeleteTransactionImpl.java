@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
@@ -10,7 +11,8 @@ import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Deleters;
 import com.wrupple.muba.event.domain.Instrospection;
-import org.apache.commons.chain.CatalogFactory;
+import com.wrupple.muba.event.server.service.ActionsDictionary;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
-import static com.wrupple.muba.catalogs.domain.CatalogEvent.CREATE_ACTION;
 import static com.wrupple.muba.catalogs.domain.CatalogEvent.DELETE_ACTION;
 
 @Singleton
@@ -27,18 +28,19 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 
 	protected static final Logger log = LoggerFactory.getLogger(CatalogDeleteTransactionImpl.class);
 
-	private final CatalogReadTransaction read;
-
-	private final CatalogUpdateTransaction update;
 
 
+    private final FieldAccessStrategy access;
 	private final Deleters deleters;
+	private final EntrySynthesizer synthesizer;
+	private final ActionsDictionary dictionary;
 
 	@Inject
-	public CatalogDeleteTransactionImpl(Provider<CatalogActionCommit> catalogActionCommitProvider,Deleters deleters, CatalogUpdateTransaction update, CatalogReadTransaction read, CatalogFactory factory) {
+	public CatalogDeleteTransactionImpl(Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, Deleters deleters, EntrySynthesizer synthesizer, ActionsDictionary dictionary) {
 		super(catalogActionCommitProvider);
-		this.read = read;
-		this.update = update;
+        this.access = access;
+        this.synthesizer = synthesizer;
+        this.dictionary=dictionary;
 		this.deleters = deleters;
 	}
 
@@ -48,19 +50,19 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		FieldDescriptor trashableField = catalog.getFieldDescriptor(Trash.TRASH_FIELD);
-		read.execute(context);
+		dictionary.getRead().execute(context);
 		List<CatalogEntry> originalEntries = context.getResults();
-        Instrospection instrospection = context.getCatalogManager().access().newSession(originalEntries.get(0));
+        Instrospection instrospection = access.newSession(originalEntries.get(0));
 
 		if (trashableField != null && trashableField.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE
 				&& context.getNamespaceContext().isRecycleBinEnabled()) {
 			log.trace("Trashing results");
 
 			for (CatalogEntry originalEntry : originalEntries) {
-                context.getCatalogManager().access().setPropertyValue(trashableField, originalEntry, true, instrospection);
+                access.setPropertyValue(trashableField, originalEntry, true, instrospection);
                 context.getRequest().setEntry(originalEntry.getId());
 				context.getRequest().setEntryValue(originalEntry);
-				update.execute(context);
+                dictionary.getWrite().execute(context);
 			}
 
 		} else {
@@ -75,15 +77,15 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 			// single or multiple delete
 
 			if (catalog.getGreatAncestor() != null && !catalog.isConsolidated()) {
-				context.getCatalogManager().getRead().execute(context);
-				Object parentEntityId = context.getCatalogManager().getAllegedParentId((CatalogEntry) context.getEntryResult(), instrospection);
+				dictionary.getRead().execute(context);
+				Object parentEntityId = synthesizer.getAllegedParentId((CatalogEntry) context.getEntryResult(), instrospection,access);
 				// we are certain this catalog has a parent, otherwise this DAO
 				// would
 				// not be called
 				Long parentCatalogId = catalog.getParent();
 				// if parent not found, asume it has been deleted previously
 				if (parentEntityId != null) {
-					// delegate deeper inheritance to another instance of an
+					// delegate deeper getInheritance to another instance of an
 					// AncestorAware DAO
 
 
@@ -95,7 +97,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 
 			//FIXME cache invalidation (as with remote cache invalidation) should be handled with an event
 			dao.execute(context);
-			CatalogResultCache cache = context.getCatalogManager().getCache(context.getCatalogDescriptor(), context);
+			CatalogResultCache cache = context.getCache(context.getCatalogDescriptor(), context);
 			for (CatalogEntry originalEntry : originalEntries) {
 				context.getRuntimeContext().getTransactionHistory().didDelete(context, originalEntry, dao);
 				if (cache != null) {

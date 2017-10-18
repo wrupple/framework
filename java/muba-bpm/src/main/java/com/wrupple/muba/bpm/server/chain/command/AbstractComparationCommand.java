@@ -16,16 +16,20 @@ import com.wrupple.muba.event.domain.Instrospection;
 
 public abstract class AbstractComparationCommand implements Command {
 
+	private final FieldAccessStrategy access;
 
+	protected AbstractComparationCommand(FieldAccessStrategy access) {
+		this.access = access;
+	}
 
 	@Override
 	public final boolean execute(Context c) throws Exception {
 		CatalogActionContext context = ((CatalogActionContext) c);
 
-		FieldAccessStrategy accesor = context.getCatalogManager().access();
+		FieldAccessStrategy accesor = access;
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		CatalogEntry old = context.getOldValue();
-		CatalogEntry neew = (CatalogEntry) context.getEntryValue();
+		CatalogEntry neew = (CatalogEntry) context.getRequest().getEntryValue();
 
 		Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 		Object finalValue, initialValue;

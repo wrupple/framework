@@ -8,6 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 
@@ -58,10 +59,10 @@ public class JDBCHSQLTestModule extends AbstractModule {
 	@Provides
 	@Inject
 	@Singleton
-	@Named("catalog.plugins")
-	public Object plugins() {
-		// this is what makes it purr but not as much
-		CatalogPlugin[] plugins = new CatalogPlugin[] {  };
+	@Named("catalog.plugins")//para desactivar catalogos de usuario desactivatar la storage unit de persistencia de catalogos
+	public Object plugins(SystemCatalogPlugin catalog) {
+		// this is what makes it purr
+		CatalogPlugin[] plugins = new CatalogPlugin[] { catalog };
 		return plugins;
 	}
 

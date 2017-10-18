@@ -5,15 +5,17 @@ import com.wrupple.muba.catalogs.domain.NamespaceContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.service.ActionsDictionary;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.ObjectMapper;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 import org.slf4j.Logger;
@@ -35,23 +37,28 @@ import java.util.List;
 public final class CatalogRequestInterpretImpl implements CatalogRequestInterpret {
     protected static final Logger log = LoggerFactory.getLogger(CatalogRequestInterpretImpl.class);
 
-    private final SystemCatalogPlugin cms;
     private final ObjectMapper mapper;
+    private final CatalogKeyServices keydelegate;
+    private final FieldAccessStrategy access;
     private final Provider<CatalogActionRequest> contractProvider;
     private final Provider<NamespaceContext> namespaceProvider;
 
     private final Provider<CatalogDescriptor> metadataDescriptorProvider;
     private final Provider<CatalogReadTransaction> readerProvider;
+    private final CatalogResultCache cache;
+    private final ActionsDictionary dictionary;
 
     @Inject
-    public CatalogRequestInterpretImpl(
-            SystemCatalogPlugin cms,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider) {
+    public CatalogRequestInterpretImpl(CatalogKeyServices keydelegate, FieldAccessStrategy access, CatalogResultCache cache,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider, ActionsDictionary dictionary) {
         super();
-        this.cms = cms;
+        this.keydelegate = keydelegate;
+        this.access = access;
+        this.cache=cache;
         this.contractProvider = contractProvider;
         this.namespaceProvider = namespaceProvider;
         this.metadataDescriptorProvider = metadataDescriptorProvider;
         this.readerProvider = readerProvider;
+        this.dictionary = dictionary;
         this.mapper = null;
     }
 
@@ -62,7 +69,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request = contractProvider.get();
             parent.setServiceContract(request);
         }
-        return new CatalogActionContextImpl(cms, namespaceProvider.get(), parent, request);
+        return new CatalogActionContextImpl(dictionary ,cache,namespaceProvider.get(), parent, request);
     }
 
     @Override
@@ -104,7 +111,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         Object targetEntryId = request.getEntry();
         if (targetEntryId != null) {
             try {
-                targetEntryId = cms.decodePrimaryKeyToken(targetEntryId);
+                targetEntryId = keydelegate.decodePrimaryKeyToken(targetEntryId);
                 request.setEntry(targetEntryId);
             } catch (NumberFormatException e) {
                 log.error("Primary key is not a number", e);
@@ -121,7 +128,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 // do nothing
             } else {
                 catalogDescriptor = context.getCatalogDescriptor();
-                context.getCatalogManager().access().synthesize(catalogDescriptor);
+                access.synthesize(catalogDescriptor);
                 //request.setEntryValue((CatalogEntry) catalogEntry);
                 throw new NotSupportedException("implementar deserialización ya estaa hecha en algun lado");
             }
@@ -143,7 +150,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 filterCriteriaField = fieldCriteria.getPath(0);
                 field = catalogDescriptor.getFieldDescriptor(filterCriteriaField);
                 if (field.isKey()) {
-                    fieldCriteria.setValues(cms.decodePrimaryKeyFilters(fieldCriteria.getValues()));
+                    fieldCriteria.setValues(keydelegate.decodePrimaryKeyFilters(fieldCriteria.getValues()));
                 }
             }
         }
@@ -165,7 +172,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             CatalogDescriptor result;
             if(metadataDescriptor.getDistinguishedName().equals(catalogid)){
 
-                CatalogResultCache metadataCache = context.getCatalogManager().getCache(metadataDescriptor, context);
+                CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
                 metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor);
                 log.warn("[incomplete metadata] {}",metadataDescriptor);
                 context.getRuntimeContext().getRootAncestor().put(catalogid,metadataCache);
@@ -190,8 +197,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 context.switchContract(childContext);
                 context.setCatalogDescriptor(metadataDescriptor);
 
-                CatalogResultCache metadataCache = context.getCatalogManager().getCache(metadataDescriptor, context);
-                Instrospection introspection = context.getCatalogManager().access().newSession(null);
+                CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
+                Instrospection introspection = access.newSession(null);
 
 
                 result = (CatalogDescriptor) readerProvider.get().readVanityId(catalogid, metadataDescriptor, context, metadataCache, introspection);
@@ -218,20 +225,15 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
     class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {
 
         private static final long serialVersionUID = 3599727649189964912L;
-
-
 	/*
 	 * SYSTEM CONTEXT
-	 */
+	 */  private final ActionsDictionary dictionary;
 
-        private final SystemCatalogPlugin catalogManager;
+        private final CatalogResultCache cache;
 
         private final NamespaceContext namespace;
 
         private final RuntimeContext runtimeContext;
-
-        /* usually use the root ancestor of the catalog context */
-        private TransactionHistory transaction;
 
         /*
          * INPUT
@@ -250,9 +252,10 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         private CatalogDescriptor catalogDescriptor;
 
         // not injectable, always construct with an event
-        protected CatalogActionContextImpl(SystemCatalogPlugin manager, NamespaceContext domainContext,
+        protected CatalogActionContextImpl(ActionsDictionary dictionary,CatalogResultCache cache, NamespaceContext domainContext,
                                            RuntimeContext requestContext, CatalogActionRequest catalogActionRequest) {
-            this.catalogManager = manager;
+            this.cache = cache;
+            this.dictionary=dictionary;
             if (requestContext == null) {
                 throw new NullPointerException("Must provide an excecution context");
             }
@@ -261,10 +264,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             setRequest(catalogActionRequest);
         }
 
-        @Override
-        public SystemCatalogPlugin getCatalogManager() {
-            return catalogManager;
-        }
 
         @Override
         public NamespaceContext getNamespaceContext() {
@@ -325,6 +324,13 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                     "request=" + request +
                     '}';
         }
+
+        public CatalogResultCache getCache(CatalogDescriptor catalog, CatalogActionContext context) {
+            CatalogResultCache cache = catalog.getOptimization() != 2/* NO_CACHE */ ? this.cache: null;
+
+            return cache;
+        }
+
 
         public CatalogResultSet getResultSet() {
             return resultSet;
@@ -400,7 +406,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setName(DataEvent.READ_ACTION);
             request.setFollowReferences(true);
 
-            getCatalogManager().getRead().execute(this);
+            dictionary.getRead().execute(this);
             return (T) getResult();
         }
 
@@ -411,7 +417,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setEntry(id);
             request.setFilter(o);
             request.setName(DataEvent.DELETE_ACTION);
-            getCatalogManager().getDelete().execute(this);
+            dictionary.getDelete().execute(this);
             return (List<T>) getResults();
         }
 
@@ -421,7 +427,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setEntry(null);
             request.setFilter(all);
             request.setName(DataEvent.READ_ACTION);
-            getCatalogManager().getRead().execute(this);
+            dictionary.getRead().execute(this);
             return (List<T>) getResults();
         }
 
@@ -434,7 +440,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setName(DataEvent.WRITE_ACTION);
             request.setFollowReferences(true);
 
-            getCatalogManager().getWrite().execute(this);
+            dictionary.getWrite().execute(this);
             return (T) getResult();
         }
 
@@ -446,7 +452,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setName(DataEvent.CREATE_ACTION);
             request.setFollowReferences(true);
 
-            getCatalogManager().getNew().execute(this);
+            dictionary.getNew().execute(this);
             return (T) getResult();
         }
 

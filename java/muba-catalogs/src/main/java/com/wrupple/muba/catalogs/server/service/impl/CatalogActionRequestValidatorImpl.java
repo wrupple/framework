@@ -13,7 +13,8 @@ import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogException;
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -29,13 +30,13 @@ import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogActionRequestValidatorImpl implements CatalogActionRequestValidator {
 
 	protected static final Logger log = LoggerFactory.getLogger(CatalogActionRequestValidatorImpl.class);
 
-	private final SystemCatalogPlugin dictionary;
+	private final JSRAnnotationsDictionary dictionary;
+	private final CatalogKeyServices keyDelegate;
 	//FIXME this session object should base universal privileges as it is isolated from the to-be excecuted runtime context
 	private final Provider<SessionContext> exp;
 	private final Provider<EventBus> bus;
@@ -47,9 +48,10 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final LargeStringFieldDataAccessObject lsdao;
 
 	@Inject
-	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate,@Named(SessionContext.SYSTEM) Provider<SessionContext> exp,
-											 SystemCatalogPlugin cms, Provider<EventBus> bus, LargeStringFieldDataAccessObject lsdao) {
-		this.bus = bus;
+	public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, @Named(SessionContext.SYSTEM) Provider<SessionContext> exp,
+                                             JSRAnnotationsDictionary cms, CatalogKeyServices keyDelegate, Provider<EventBus> bus, LargeStringFieldDataAccessObject lsdao) {
+        this.keyDelegate = keyDelegate;
+        this.bus = bus;
 		this.lsdao = lsdao;
 		this.exp = exp;
 
@@ -338,9 +340,10 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		};
 	}
 
+
 	private Annotation[] buildAnnotation(HasConstrains source, FieldDescriptor field) {
 		List<Constraint> constraints = source.getConstraintsValues();
-		boolean key = field != null & dictionary.isJoinableValueField(field)
+		boolean key = field != null & keyDelegate.isJoinableValueField(field)
 				&& field.isKey() /* not ephemerals */;
 		boolean normalized = field != null && field.getDefaultValueOptions() != null;
 		if (constraints == null && !key && !normalized) {
@@ -386,5 +389,6 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 		return regreso;
 	}
+
 
 }

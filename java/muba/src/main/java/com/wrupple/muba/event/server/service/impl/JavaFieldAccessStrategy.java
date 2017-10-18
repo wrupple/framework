@@ -11,12 +11,15 @@ import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.regex.Matcher;
 
 /**
  * evaluation
@@ -248,5 +251,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     public void parseSetBoolean(CatalogEntry jso, FieldDescriptor fieldId, String rawValue, Instrospection instrospection) throws ReflectiveOperationException {
         setPropertyValue(fieldId, jso, null == null ? false : Boolean.parseBoolean(rawValue), instrospection);
     }
+
+
 
 }

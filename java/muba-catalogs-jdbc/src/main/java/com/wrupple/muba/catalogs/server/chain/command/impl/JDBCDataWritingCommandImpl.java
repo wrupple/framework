@@ -10,6 +10,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implements JDBCDataWritingCommand{
 	protected static final Logger log = LoggerFactory.getLogger(JDBCDataWritingCommandImpl.class);
 
+	private final FieldAccessStrategy access;
 	private final JDBCMappingDelegate tableNames;
 	private final QueryRunner runner;
 	private final JDBCDataReadCommand read;
@@ -37,8 +39,9 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 	private String parentKey;
 
 	@Inject
-	public JDBCDataWritingCommandImpl( JDBCDataReadCommand read,Provider<CatalogUpdateTransaction> write, QueryRunner runner, JDBCMappingDelegate tableNames, @Named("catalog.ancestorKeyField") String parentKey,@Named("catalog.sql.delimiter") Character delimiter) {
+	public JDBCDataWritingCommandImpl(JDBCDataReadCommand read, Provider<CatalogUpdateTransaction> write, FieldAccessStrategy access, QueryRunner runner, JDBCMappingDelegate tableNames, @Named("catalog.ancestorKeyField") String parentKey, @Named("catalog.sql.delimiter") Character delimiter) {
 		super(write);
+		this.access = access;
 		this.parentKey=parentKey;
 		this.DELIMITER=delimiter;
 		this.runner = runner;
@@ -51,10 +54,10 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		CatalogEntry originalEntry = context.getCatalogManager().access().catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
+		CatalogEntry originalEntry = access.catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
 
 		CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
-		Instrospection instrospection = context.getCatalogManager().access().newSession(originalEntry);
+		Instrospection instrospection = access.newSession(originalEntry);
 
 		updatedEntry.setDomain((Long) originalEntry.getDomain());
 		Object id = context.getRequest().getEntry();
@@ -74,8 +77,8 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && !field.isEphemeral()) {
-				fieldValue = context.getCatalogManager().access().getPropertyValue(field, updatedEntry, null, instrospection);
-				context.getCatalogManager().access().setPropertyValue(field, originalEntry, fieldValue, instrospection);
+				fieldValue = access.getPropertyValue(field, updatedEntry, null, instrospection);
+				access.setPropertyValue(field, originalEntry, fieldValue, instrospection);
 				if (field.isMultiple() && !field.isEphemeral()) {
 					// also update (delete and create) and create multiple
 					// fields
@@ -120,7 +123,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		params.add(id);
 
 		if (descriptor.isVersioned()) {
-			Long version = (Long) context.getCatalogManager().access().getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
+			Long version = (Long) access.getPropertyValue(descriptor.getFieldDescriptor(Versioned.FIELD),
 					context.getOldValue(), null, instrospection);
 			builder.append(" && ");
 			builder.append(Versioned.FIELD);

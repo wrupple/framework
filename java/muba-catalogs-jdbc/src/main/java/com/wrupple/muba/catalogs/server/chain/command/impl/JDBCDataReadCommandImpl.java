@@ -13,6 +13,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
@@ -64,15 +65,17 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 	private final QueryRunner runner;
 	private final Provider<QueryResultHandler> rshp;
 	private final Boolean multitenant;
+	private final FieldAccessStrategy access;
 	private final DateFormat dateFormat;
 	private final char DELIMITER;
 
 	@Inject
 	public JDBCDataReadCommandImpl(QueryRunner runner, Provider<QueryResultHandler> rshp,
-			JDBCMappingDelegate tableNames,
+								   JDBCMappingDelegate tableNames,
 								   @Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
-			@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
-			@Named("catalog.sql.delimiter") Character delimiter) {
+								   @Named("system.multitenant") Boolean multitenant, FieldAccessStrategy access, DateFormat dateFormat,
+								   @Named("catalog.sql.delimiter") Character delimiter) {
+		this.access = access;
 		DELIMITER = delimiter;
 		this.dateFormat = dateFormat;
 		this.rshp = rshp;
@@ -150,9 +153,9 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 					log.trace("[DB secondary read id={}] {}", id, builder.toString());
 					fieldValues = runner.query(builder.toString(), handler, id);
 					if (instrospection == null) {
-						instrospection = context.getCatalogManager().access().newSession(r);
+						instrospection = access.newSession(r);
 					}
-					context.getCatalogManager().access().setPropertyValue(field, r, fieldValues, instrospection);
+					access.setPropertyValue(field, r, fieldValues, instrospection);
 				}
 			}
 		}

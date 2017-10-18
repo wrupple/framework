@@ -1,11 +1,14 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -16,8 +19,8 @@ import java.util.*;
 public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCatalogGraph {
 
 	@Inject
-	public CompleteCatalogGraphImpl() {
-		super();
+	public CompleteCatalogGraphImpl(EntrySynthesizer inheritanceDelegate, CatalogKeyServices keydelegateValue, FieldAccessStrategy accessStrategy) {
+		super(inheritanceDelegate, keydelegateValue, accessStrategy);
 	}
 
 	@Override
@@ -26,12 +29,12 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		if (!(context.getResults() == null || context.getResults().isEmpty())) {
 			CatalogDescriptor descriptor = context.getCatalogDescriptor();
-			String[][] joins = context.getCatalogManager().getJoins(context, null, descriptor, null,
+			String[][] joins = super.keydelegate.getJoins(context, null, descriptor, null,
 					context, null);
 
 			Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);
 			joinWithGivenJoinData(context.getResults(), context.getCatalogDescriptor(), joins,
-					context, filterMap, context.getCatalogManager().access().newSession(null));
+					context, filterMap, access.newSession(null));
 		}
 		log.trace("</{}>",this.getClass().getSimpleName());
 		return CONTINUE_PROCESSING;
@@ -50,17 +53,17 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 		CatalogEntry match;
 		String reservedField;
 		for (FieldDescriptor field : fields) {
-			if (context.getCatalogManager().isJoinableValueField(field)
+			if ( super.keydelegate.isJoinableValueField(field)
 					&& field.getCatalog().equals(joinCatalog.getDistinguishedName())) {
 				if (field.isKey()) {
 
 					Map<Object, CatalogEntry> key = null;
 					if (field.isMultiple()) {
 						reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
-						if (context.getCatalogManager().access().isWriteableProperty(reservedField, sample, instrospection)) {
+						if (access.isWriteableProperty(reservedField, sample, instrospection)) {
 							log.trace("Working field {}", field.getFieldId());
 							for (CatalogEntry e : mainResults) {
-								needs = (Collection<Object>) context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
+								needs = (Collection<Object>) access.getPropertyValue(field, e, null, instrospection);
 								if (needs != null) {
 									if (key == null) {
 										key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
@@ -70,7 +73,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 										match = key.get(required);
 										matches.add(match);
 									}
-									context.getCatalogManager().access().setPropertyValue(reservedField, e, matches, instrospection);
+									access.setPropertyValue(reservedField, e, matches, instrospection);
 								}
 
 							}
@@ -78,15 +81,15 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 						}
 					} else {
 						reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
-						if (context.getCatalogManager().access().isWriteableProperty(reservedField, sample, instrospection)) {
+						if (access.isWriteableProperty(reservedField, sample, instrospection)) {
 							log.trace("Working on to many relationship {}", field.getFieldId());
 							if (key == null) {
 								key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
 							}
 							for (CatalogEntry e : mainResults) {
-								need = context.getCatalogManager().access().getPropertyValue(field, e, null, instrospection);
+								need = access.getPropertyValue(field, e, null, instrospection);
 								match = key.get(need);
-								context.getCatalogManager().access().setPropertyValue(reservedField, e, match, instrospection);
+								access.setPropertyValue(reservedField, e, match, instrospection);
 							}
 
 						}
@@ -96,14 +99,14 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 					if (field.getSentence() == null) {
 						log.trace("Working many to one relationship {}", field.getFieldId());
 
-						reservedField = context.getCatalogManager().getIncomingForeignJoinableFieldId(joinCatalog,mainCatalog.getDistinguishedName());
+						reservedField =  super.keydelegate.getFieldWithForeignType(joinCatalog,mainCatalog.getDistinguishedName());
 						FieldDescriptor foreignField = joinCatalog.getFieldDescriptor(reservedField);
 						Object temp;
 						for (CatalogEntry e : mainResults) {
 							matches = null;
 							need = e.getId();
 							for (CatalogEntry i : joins) {
-								temp = context.getCatalogManager().access().getPropertyValue(foreignField, i, null, instrospection);
+								temp = access.getPropertyValue(foreignField, i, null, instrospection);
 								if (need.equals(temp)) {
 									if (matches == null) {
 										matches = new ArrayList<CatalogEntry>();
@@ -112,7 +115,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 								}
 							}
 
-							context.getCatalogManager().access().setPropertyValue(reservedField, e, matches, instrospection);
+							access.setPropertyValue(reservedField, e, matches, instrospection);
 						}
 					} else {
 
