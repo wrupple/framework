@@ -217,10 +217,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 if(result==null){
                     throw new CatalogException("No such catalog "+catalogid);
                 }
-
-                evaluateGreatAncestor(context, result, childContext);
-
-
                 context.switchContract(parentContext);
 
             }
@@ -231,27 +227,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
     }
 
-    @Override
-    public void evaluateGreatAncestor(CatalogActionContext realContext, CatalogDescriptor result, CatalogActionRequest tempNotRealContract) throws Exception {
-        if (result.getParent()!=null&&result.getGreatAncestor() == null) {
-            // find great ancestor
-            if(result.getRootAncestor()!=null){
-                result.setGreatAncestor(result.getRootAncestor().getDistinguishedName());
-            }else{
-                tempNotRealContract.setEntry(result.getParent());
-                readerProvider.get().execute(realContext);
-                CatalogDescriptor parent = realContext.getConvertedResult();
-                result.setParentValue(parent);
-                while (parent != null) {
-                    result.setGreatAncestor(parent.getDistinguishedName());
-                    tempNotRealContract.setEntry(parent.getParent());
-                    readerProvider.get().execute(realContext);
-                    parent.setParentValue(realContext.getConvertedResult());
-                    parent= parent.getParentValue();
-                }
-            }
-        }
-    }
 
 
     class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {

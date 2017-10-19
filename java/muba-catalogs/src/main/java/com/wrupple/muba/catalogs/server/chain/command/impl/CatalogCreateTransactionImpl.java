@@ -35,18 +35,16 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 
 	//private final CatalogActionTriggerHandler trigerer;
 	private final FieldAccessStrategy access;
-	private final CatalogKeyServices keyDelegate;
 	private final EntryCreators creators;
 	private final boolean follow;
     private final EntrySynthesizer delegate;
 
     @Inject
-	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, CatalogKeyServices keyDelegate, EntrySynthesizer delegate) {
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, EntrySynthesizer delegate) {
         super(catalogActionCommitProvider);
         this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();
 		this.access = access;
-		this.keyDelegate = keyDelegate;
         this.delegate = delegate;
     }
 
@@ -85,10 +83,11 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 				}
 			}
 		}
-		
+
 		
 		CatalogEntry parentEntry = null;
-		if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
+		String greatAncestor = delegate.evaluateGreatAncestor(context,catalog,null);
+		if (  greatAncestor!= null && !catalog.getConsolidated()) {
 
 			parentEntry= create( result, instrospection, catalog, context,context);
 		}
@@ -98,7 +97,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		CatalogEntry regreso = context.getEntryResult();
 		
 		if(regreso!=null){
-			if (parentEntry!=null &&catalog.getGreatAncestor() != null && !catalog.getConsolidated() ) {
+			if (parentEntry!=null &&greatAncestor != null && !catalog.getConsolidated() ) {
                 delegate.addInheritedValuesToChild(parentEntry,  regreso, instrospection,catalog);
 			}
 			context.getRuntimeContext().getTransactionHistory().didCreate(context, regreso, createDao);

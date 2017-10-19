@@ -1,16 +1,14 @@
 package com.wrupple.muba.catalogs.server.service;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 
 import java.io.PrintWriter;
 
 public interface EntrySynthesizer {
 
+    String evaluateGreatAncestor(CatalogActionContext realContext, CatalogDescriptor result, CatalogActionRequest tempNotRealContract) throws Exception ;
 
     /**
      * @param source           child entity from which to synthesize the ancestor

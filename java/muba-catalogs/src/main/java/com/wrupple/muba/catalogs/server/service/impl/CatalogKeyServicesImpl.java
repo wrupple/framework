@@ -2,11 +2,9 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.CatalogKey;
-import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +18,12 @@ import java.util.List;
 public class CatalogKeyServicesImpl implements CatalogKeyServices {
     protected static final Logger log = LoggerFactory.getLogger(CatalogKeyServicesImpl.class);
 
+
     @Inject
     public CatalogKeyServicesImpl(){
 
     }
+
 
 	/*
 	 * KEY SERVICES

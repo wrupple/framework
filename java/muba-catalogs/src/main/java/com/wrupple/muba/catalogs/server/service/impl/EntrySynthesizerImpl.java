@@ -1,9 +1,11 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +13,11 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,19 +31,58 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     private final String ancestorIdField;
     private final FieldAccessStrategy access;
     private final CatalogKeyServices keyDelgeate;
+    private final Provider<ActionsDictionary> dictionaryProvider;
 
 
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.token.splitter") String splitter /* "\\." */, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate) {
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.token.splitter") String splitter /* "\\." */, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider) {
         this.pattern = pattern;
         this.TOKEN_SPLITTER = splitter;
         this.ancestorIdField=ancestorIdField;
         this.access = access;
         this.keyDelgeate = keyDelgeate;
+        this.dictionaryProvider = dictionaryProvider;
     }
 	/*
 	 * INHERITANCE
 	 */
+
+    @Override
+    public String evaluateGreatAncestor(CatalogActionContext realContext, CatalogDescriptor result, CatalogActionRequest tempNotRealContract) throws Exception {
+        if (result.getParent()==null) {
+            return null;
+        }else{
+            // find great ancestor
+            if(result.getRootAncestor()!=null){
+                return result.getRootAncestor().getDistinguishedName();
+            }else{
+                List<CatalogEntry> originalResults = realContext.getResults();
+                CatalogActionRequest parentContext = realContext.getRequest();
+                if(tempNotRealContract==null){
+                    tempNotRealContract = new CatalogActionRequestImpl();
+
+                    tempNotRealContract.setName(DataEvent.READ_ACTION);
+                    tempNotRealContract.setCatalog(CatalogDescriptor.CATALOG_ID);
+                }
+                tempNotRealContract.setEntry(result.getParent());
+                dictionaryProvider.get().getRead().execute(realContext);
+                CatalogDescriptor parent = realContext.getConvertedResult();
+                result.setParentValue(parent);
+                String greatAncestor = parent.getDistinguishedName();
+                while (parent != null) {
+                     greatAncestor = parent.getDistinguishedName();
+                    tempNotRealContract.setEntry(parent.getParent());
+                    dictionaryProvider.get().getRead().execute(realContext);
+                    parent.setParentValue(realContext.getConvertedResult());
+                    parent= parent.getParentValue();
+                }
+
+                realContext.switchContract(parentContext);
+                realContext.setResults(originalResults);
+                return greatAncestor;
+            }
+        }
+    }
 
 
 

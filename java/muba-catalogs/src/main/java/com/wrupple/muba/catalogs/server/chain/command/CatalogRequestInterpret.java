@@ -7,6 +7,4 @@ import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 
 public interface CatalogRequestInterpret extends RequestInterpret {
 
-     void evaluateGreatAncestor(CatalogActionContext realContext, CatalogDescriptor result, CatalogActionRequest tempNotRealContract) throws Exception ;
-
 }

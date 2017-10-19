@@ -123,8 +123,8 @@ public class CatalogEngineTest extends IntegralTest {
         assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
         assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
         assertTrue("does metadata describe problem as inherited?",problemContract.getParentValue()!=null);
-		assertTrue("does metadata include it's ancestry?",problemContract.getGreatAncestor()!=null);
-		assertTrue("does metadata describe problem as a timeline?",problemContract.getGreatAncestor()!=null);
+		assertTrue("does metadata include it's ancestry?",problemContract.getRootAncestor()!=null);
+		assertTrue("does metadata describe problem as a timeline?",ContentNode.CATALOG_TIMELINE.equals(problemContract.getRootAncestor().getDistinguishedName()));
 
 
 
@@ -132,6 +132,7 @@ public class CatalogEngineTest extends IntegralTest {
 		runtimeContext.reset();
 		MathProblem problem = new MathProblem();
 		problem.setName(MathProblem.class.getSimpleName());
+		problem.setSolution(7l);
 		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
 		runtimeContext.setServiceContract(contract);
@@ -143,6 +144,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 		problem = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
 		assertTrue(problem.getId() != null);
+		assertTrue(problem.getSolution() != null);
 		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
 
 		log.debug("-check if problem was created-");

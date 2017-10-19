@@ -21,8 +21,6 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
     String CONSOLIDATED =  "MONOLITIC";
 
 
-    public String getGreatAncestor();
-
 	/**
 	 * @return url (also used as peerManager pseudo-key)
 	 */
@@ -72,18 +70,9 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
 	public Boolean getConsolidated();
 
 
-	public Iterator<FieldDescriptor> fieldIterator();
-
-
 	public List<FilterDataOrdering> getAppliedSorts();
 
 	public List<? extends FilterCriteria> getAppliedCriteria();
-
-	
-
-
-	public int getForeignKeyCount();
-
 
 	void setHost(String host);
 
@@ -94,9 +83,6 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
 	public void setKeyField(String idField);
 
 	public void setAppliedSorts(List<? extends FilterDataOrdering> sorts);
-
-
-	public void setGreatAncestor(String greatAncestor);
 
     void setStorage(List<String> strings);
 

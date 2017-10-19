@@ -8,6 +8,7 @@ import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
@@ -31,6 +32,7 @@ public class PluginConsensusImpl implements PluginConsensus {
     private final Provider<Object> pluginProvider;
     private final String host;
 
+    private final EntrySynthesizer entrySynthesizer;
     private final CatalogTriggerInterpret triggerInterpret;
     /*
 	 * versioning
@@ -50,7 +52,8 @@ public class PluginConsensusImpl implements PluginConsensus {
     private WritePublicTimelineEventDiscriminator inheritanceHandler;
 
     @Inject
-    public PluginConsensusImpl(@Named("catalog.plugins") Provider<Object> pluginProvider,@Named("host") String host, CatalogTriggerInterpret triggerInterpret, WritePublicTimelineEventDiscriminator inheritanceHandler) {
+    public PluginConsensusImpl(@Named("catalog.plugins") Provider<Object> pluginProvider, @Named("host") String host, EntrySynthesizer entrySynthesizer, CatalogTriggerInterpret triggerInterpret, WritePublicTimelineEventDiscriminator inheritanceHandler) {
+        this.entrySynthesizer = entrySynthesizer;
         this.triggerInterpret = triggerInterpret;
 
         this.host=host;
@@ -115,9 +118,9 @@ public class PluginConsensusImpl implements PluginConsensus {
 
         }
         if (catalog.getParent() != null) {
-
-            if (catalog.getGreatAncestor() != null && (catalog.getConsolidated()==null||!catalog.getConsolidated())
-                    && ContentNode.CATALOG_TIMELINE.equals(catalog.getGreatAncestor())) {
+            String greatAncestor = entrySynthesizer.evaluateGreatAncestor(context,catalog,null);
+            if (greatAncestor != null && (catalog.getConsolidated()==null||!catalog.getConsolidated())
+                    && ContentNode.CATALOG_TIMELINE.equals(greatAncestor)) {
 
                 triggerInterpret.addNamespaceScopeTrigger(timestamp, catalog,context);
 

@@ -366,7 +366,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
         storageUnit.execute(context);
 
-        if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
+        if (synthesizer.evaluateGreatAncestor(context,catalog,null) != null && !catalog.getConsolidated()) {
 
             // read child Results
             List<CatalogEntry> children = context.getResults();
@@ -389,7 +389,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
         storageUnit.execute(context);
 
-        if (catalog.getGreatAncestor() != null && !catalog.getConsolidated()) {
+        if (synthesizer.evaluateGreatAncestor(context,catalog,null) != null && !catalog.getConsolidated()) {
             // read child entity
             CatalogEntry childEntity = context.getEntryResult();
             // we are certain this catalog has a parent, otherwise this DAO

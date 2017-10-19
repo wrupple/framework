@@ -52,8 +52,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	private List<String> sorts, criteria;
 
-	@CatalogField(ignore = true)
-	private int foreignKeyCount = -1;
 
 	@CatalogField(ignore = true)
 	private String greatAncestor, greatDescendant, host;
@@ -150,20 +148,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	}
 
 	@Override
-	public int getForeignKeyCount() {
-		if (foreignKeyCount == -1) {
-			foreignKeyCount = 0;
-			Collection<FieldDescriptor> fs = getFieldsValues();
-			for (FieldDescriptor f : fs) {
-				if (f.isMultiple() || f.isKey() || f.isEphemeral()) {
-					foreignKeyCount++;
-				}
-			}
-		}
-		return foreignKeyCount;
-	}
-
-	@Override
 	public Boolean getVersioned() {
 		return versioned;
 	}
@@ -238,10 +222,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		}
 	}
 
-	public void setForeignKeyCount(int foreignKeyCount) {
-		this.foreignKeyCount = foreignKeyCount;
-	}
-
 	public void setJavaClass(Class<? extends CatalogEntry> javaClass) {
 		this.javaClass = javaClass;
 	}
@@ -255,10 +235,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		return this.fieldsValues.get(id);
 	}
 
-	@Override
-	public Iterator<FieldDescriptor> fieldIterator() {
-		return this.fieldsValues == null ? null : this.fieldsValues.values().iterator();
-	}
 
 	public void setLocalization(Integer localization) {
 		this.localization = localization;
