@@ -1,8 +1,8 @@
-package com.wrupple.muba.catalogs.domain;
+package com.wrupple.muba.event.domain.impl;
+
+import com.wrupple.muba.event.domain.ContentNode;
 
 import java.util.Date;
-
-import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 public class ContentNodeImpl extends CatalogEntryImpl implements ContentNode {
 
@@ -14,7 +14,7 @@ public class ContentNodeImpl extends CatalogEntryImpl implements ContentNode {
 
 	@Override
 	public String getCatalogType() {
-		return CATALOG_TIMELINE;
+		return ContentNode.CATALOG_TIMELINE;
 	}
 
 	@Override

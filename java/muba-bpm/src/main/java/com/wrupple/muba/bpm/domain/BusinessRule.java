@@ -2,9 +2,9 @@ package com.wrupple.muba.bpm.domain;
 
 import java.util.List;
 
+import com.wrupple.muba.event.domain.ContentNode;
 import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.catalogs.domain.ContentNode;
 
 /*
  * as a business rule, user are granted or denied permission to change value from a specific initial value

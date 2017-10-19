@@ -1,11 +1,7 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterData;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.*;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
 
 import java.util.List;
 

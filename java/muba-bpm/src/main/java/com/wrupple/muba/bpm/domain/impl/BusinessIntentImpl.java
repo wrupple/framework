@@ -8,6 +8,7 @@ import com.wrupple.muba.event.domain.Event;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 
 import java.util.List;
 

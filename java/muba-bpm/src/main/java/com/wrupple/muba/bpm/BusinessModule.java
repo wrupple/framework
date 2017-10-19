@@ -9,7 +9,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.impl.WorkflowEngineImpl;
 import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
-import com.wrupple.muba.catalogs.domain.ContentNode;
+import com.wrupple.muba.event.domain.ContentNode;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.ExplicitIntentImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;

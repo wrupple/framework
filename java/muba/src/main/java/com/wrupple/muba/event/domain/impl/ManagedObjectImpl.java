@@ -1,7 +1,7 @@
-package com.wrupple.muba.bpm.domain.impl;
+package com.wrupple.muba.event.domain.impl;
 
-import com.wrupple.muba.bpm.domain.ManagedObject;
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
+
+import com.wrupple.muba.event.domain.ManagedObject;
 
 /**
  * Created by japi on 29/07/17.

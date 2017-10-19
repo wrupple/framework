@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.domain;
+package com.wrupple.muba.event.domain;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.reserved.HasTimestamp;

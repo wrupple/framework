@@ -6,6 +6,7 @@ import java.util.List;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.catalogs.domain.Location;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 
 public class BPMPeerImpl extends ManagedObjectImpl implements BPMPeer {
 	private String agent,catalogUrlBase,bPUrlBase,host,publicKey,privateKey;

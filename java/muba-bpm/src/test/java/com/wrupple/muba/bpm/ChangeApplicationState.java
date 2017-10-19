@@ -9,7 +9,7 @@ import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
-import com.wrupple.muba.catalogs.domain.ContentNode;
+import com.wrupple.muba.event.domain.ContentNode;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;

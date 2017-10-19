@@ -1,8 +1,8 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.catalogs.domain.ContentNode;
+import com.wrupple.muba.event.domain.ContentNode;
 
-public interface PublicContentNode extends ContentNode{
+public interface PublicContentNode extends ContentNode {
 	
 	String getCatalogEntry();
 

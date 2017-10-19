@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.bpm.domain.impl.ManagedObjectImpl;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 

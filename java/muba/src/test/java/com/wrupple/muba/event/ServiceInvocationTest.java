@@ -85,6 +85,8 @@ public class ServiceInvocationTest extends BootstrapTest {
 
         // http://stackoverflow.com/questions/4796172/is-there-a-way-to-get-users-uid-on-linux-machine-using-java
 		//new SessionContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
+		SessionImpl sessionValue= new SessionImpl();
+		sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
 		session = new SessionContextImpl(sessionValue);
 
 	}
@@ -97,7 +99,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
 		system.fireHandler(event,session);
 
-		Integer result = event.getConvertedResult();
+		Integer result = (Integer) ((List)event.getConvertedResult()).get(0);
 		assertNotNull(result);
 		assertEquals(result.intValue(), 3);
 	}
@@ -143,7 +145,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 
         system.fireHandler/*TODO Async*/(event, session);
 
-		Double result = event.getConvertedResult();
+		Double result = (Double) ((List)event.getConvertedResult()).get(0);
 		assertNotNull(result);
 		assertEquals(result.doubleValue(), 2.5, 0);
 	}

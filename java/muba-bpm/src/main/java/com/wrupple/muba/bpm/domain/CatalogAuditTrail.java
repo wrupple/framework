@@ -1,7 +1,9 @@
 package com.wrupple.muba.bpm.domain;
 
 
-public interface CatalogAuditTrail extends ManagedObject{
+import com.wrupple.muba.event.domain.ManagedObject;
+
+public interface CatalogAuditTrail extends ManagedObject {
 	String CATALOG = "WruppleCatalogAuditTrail";
 
 	Long getAccountId();

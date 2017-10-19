@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 
 /**

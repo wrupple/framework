@@ -1,5 +1,7 @@
 package com.wrupple.muba.bpm.domain;
 
+import com.wrupple.muba.event.domain.ManagedObject;
+
 import java.util.Date;
 
 public interface BPMPeer extends ManagedObject, com.wrupple.muba.event.domain.Host {
