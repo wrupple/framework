@@ -161,8 +161,8 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 	}
 
 	@Override
-	public void setStakeHolder(Long stakeHolder) {
-		this.stakeHolder = stakeHolder;
+	public void setStakeHolder(Object stakeHolder) {
+		this.stakeHolder = (Long) stakeHolder;
 	}
 
 	@Override

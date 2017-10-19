@@ -6,6 +6,7 @@ import com.wrupple.muba.bpm.domain.WruppleActivityAction;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.service.impl.StaticCatalogDescriptorProvider;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import org.apache.commons.chain.Command;
@@ -18,39 +19,17 @@ import java.util.List;
 /**
  * Created by rarl on 10/05/17.
  */
-public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
-
-    private final Provider<CatalogDescriptor> taskDescP;
-    private final Provider<CatalogDescriptor> actionDescP;
-    private final Provider<CatalogDescriptor> toolbarDescP;
-    private final Solver solver;
+public class SolverCatalogPluginImpl extends StaticCatalogDescriptorProvider implements SolverCatalogPlugin {
 
     @Inject
-    public SolverCatalogPluginImpl(Solver solver, @Named(Task.CATALOG) Provider<CatalogDescriptor> taskDescP,
-                                   @Named(TaskToolbarDescriptor.CATALOG) Provider<CatalogDescriptor> toolbarDescP,
-                                   @Named(WruppleActivityAction.CATALOG) Provider<CatalogDescriptor> actionDescP) {
-        this.taskDescP = taskDescP;
-        this.actionDescP = actionDescP;
-        this.toolbarDescP = toolbarDescP;
-        this.solver=solver;
+    public SolverCatalogPluginImpl(Solver solver, @Named(Task.CATALOG) CatalogDescriptor taskDescP,
+                                   @Named(TaskToolbarDescriptor.CATALOG) CatalogDescriptor toolbarDescP,
+                                   @Named(WruppleActivityAction.CATALOG) CatalogDescriptor actionDescP) {
+        super.put(taskDescP);
+        super.put(actionDescP);
+        super.put(toolbarDescP);
     }
 
-    @Override
-    public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) throws RuntimeException {
-        if (Task.CATALOG.equals(catalogId)) {
-            return taskDescP.get();
-        } else if (TaskToolbarDescriptor.CATALOG.equals(catalogId)) {
-            return toolbarDescP.get();
-        } else if (WruppleActivityAction.CATALOG.equals(catalogId)) {
-            return actionDescP.get();
-        }
-        return null;
-    }
-
-    @Override
-    public CatalogDescriptor getDescriptor(Long key, CatalogActionContext context) throws RuntimeException {
-        return null;
-    }
 
     @Override
     public ValidationExpression[] getValidations() {
@@ -63,22 +42,8 @@ public class SolverCatalogPluginImpl implements SolverCatalogPlugin {
     }
 
     @Override
-    public void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) throws Exception {
-        names.add(new CatalogEntryImpl(Task.CATALOG, "Task Descriptor",
-                "/static/img/task.png"));
-        names.add(
-                new CatalogEntryImpl(WruppleActivityAction.CATALOG, "Task Action", "/static/img/action.png"));
-        names.add(new CatalogEntryImpl(TaskToolbarDescriptor.CATALOG, "Task Toolbar",
-                "/static/img/task-piece.png"));
-    }
-
-    @Override
     public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context) {
 
     }
 
-    @Override
-    public Solver getSolver() {
-        return solver;
-    }
 }

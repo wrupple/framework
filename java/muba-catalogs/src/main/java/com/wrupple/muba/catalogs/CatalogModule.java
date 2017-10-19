@@ -96,6 +96,7 @@ public class CatalogModule extends AbstractModule {
         bind(String.class).annotatedWith(Names.named(LocalizedString.CATALOG)).toInstance( "/static/img/locale.png");
         bind(String.class).annotatedWith(Names.named(ContentRevision.CATALOG)).toInstance( "/static/img/revision.png");
         bind(String.class).annotatedWith(Names.named(Trash.CATALOG)).toInstance( "/static/img/trash.png");
+
 		bind(Class.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
 				.toInstance(HasAccesablePropertyValues.class);
 		bind(Class.class).annotatedWith(Names.named(Constraint.CATALOG_ID)).toInstance(ConstraintImpl.class);

@@ -32,17 +32,17 @@ public class StaticCatalogDescriptorProvider {
     }
 
 
-    public void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) {
+    public final void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) {
         names.addAll(namemap.values());
     }
 
 
-    public CatalogDescriptor getDescriptor(Long key, CatalogActionContext context){
+    public final CatalogDescriptor getDescriptor(Long key, CatalogActionContext context){
         return keymap.get(key);
     }
 
 
-    public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) {
+    public final CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) {
 
         return namemap.get(catalogId);
 

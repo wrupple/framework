@@ -24,9 +24,4 @@ public interface CatalogEventListener extends UserDefinedCatalogJob {
 	public Boolean isAdvice();
 
 
-	Map<String, String> getParsedProperties(List<String> rawProperties, Map context);
-
-
-	void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context);
-
 }

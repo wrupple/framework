@@ -89,13 +89,22 @@ public class CatalogActionTriggerHandlerImpl  {
 
 	private static Map<String, String> parseProperties(List<String> rawProperties, CatalogEventListener trigger,
 			CatalogActionContext context) {
-		Map<String, String> regreso = trigger.getParsedProperties(rawProperties, context.getNamespaceContext());
+		Map<String, String> regreso = getParsedProperties(rawProperties, context.getNamespaceContext(),trigger);
 		if (regreso == null) {
 			regreso = parseProperties(rawProperties);
 		}
-		trigger.setParsedProperties(regreso, rawProperties, context.getNamespaceContext());
+		setParsedProperties(regreso, rawProperties, context.getNamespaceContext(),trigger);
 		return regreso;
 	}
+
+	 static Map<String, String> getParsedProperties(List<String> rawProperties, Map context, CatalogEventListener trigger) {
+		return (Map<String, String>) context.get(trigger.getCatalogType()+trigger.getId());
+	}
+
+	static void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context, CatalogEventListener trigger) {
+		context.put(trigger.getCatalogType()+trigger.getId(), parsed);
+	}
+
 
 	public static Map<String, String> parseProperties(List<String> rawProperties) {
 		if (rawProperties == null||rawProperties.isEmpty()) {

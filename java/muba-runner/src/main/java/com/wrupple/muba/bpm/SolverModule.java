@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationContextImpl;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
@@ -34,6 +35,11 @@ public class SolverModule extends AbstractModule {
         bind(ActivityRequestInterpret.class).to(ActivityRequestInterpretImpl.class).in(Singleton.class);
         bind(SolverServiceManifest.class).to(SolverServiceManifestImpl.class).in(Singleton.class);
         bind(SolverCatalogPlugin.class).to(SolverCatalogPluginImpl.class).in(Singleton.class);
+
+        bind(String.class).annotatedWith(Names.named(Task.CATALOG)).toInstance("/static/img/task.png");
+        bind(String.class).annotatedWith(Names.named(WruppleActivityAction.CATALOG)).toInstance("/static/img/action.png");
+        bind(String.class).annotatedWith(Names.named(TaskToolbarDescriptor.CATALOG)).toInstance("/static/img/task-piece.png");
+
     }
 
     @Provides @Singleton @Inject @Named(Task.CATALOG)

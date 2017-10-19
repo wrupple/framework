@@ -3,10 +3,10 @@ package com.wrupple.muba.bpm.domain;
 import java.util.List;
 
 import com.wrupple.muba.catalogs.domain.CatalogJob;
-import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
+import com.wrupple.muba.event.domain.Service;
 import com.wrupple.muba.event.domain.reserved.HasOutput;
 
-public interface Task extends HasOutput,HasDistinguishedName,CatalogJob {
+public interface Task extends HasOutput,Service,CatalogJob {
 	
 	String CATALOG = "TaskDescriptor";
 	String COMMAND_FIELD = "machineTaskCommandName";
@@ -29,8 +29,7 @@ public interface Task extends HasOutput,HasDistinguishedName,CatalogJob {
 	
 	
 	public List<? extends TaskToolbarDescriptor> getToolbarsValues();
-	
-	List<String> getUrlTokens();
+
 
     void setDistinguishedName(String driverPick);
 

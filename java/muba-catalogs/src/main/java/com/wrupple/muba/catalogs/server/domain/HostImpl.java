@@ -105,8 +105,8 @@ public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.
 		this.host=h;
 	}
 	@Override
-	public void setStakeHolder(Long stakeHolder) {
-		this.stakeHolder=stakeHolder;
+	public void setStakeHolder(Object stakeHolder) {
+		this.stakeHolder= (Long) stakeHolder;
 	}
 	@Override
 	public String getCatalogType() {
