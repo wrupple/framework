@@ -8,15 +8,21 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationContextImpl;
+import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.bpm.domain.impl.SolverServiceManifestImpl;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
+import com.wrupple.muba.bpm.server.service.impl.ProcessManagerImpl;
 import com.wrupple.muba.bpm.server.service.impl.SolverCatalogPluginImpl;
+import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 
 /**
  * Created by rarl on 10/05/17.
@@ -24,13 +30,23 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 public class SolverModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(ApplicationContext.class).to(ApplicationContextImpl.class);
 
+           /*
+        API
+         */
+        bind(ProcessManager.class).to(ProcessManagerImpl.class);
+        bind(ApplicationContext.class).to(ApplicationContextImpl.class);
+        bind(ApplicationState.class).to(ApplicationStateImpl.class);
+
+        //engine
         bind(SolverEngine.class).to(SolverEngineImpl.class);
 
+        //solver commands
         bind(DetermineSolutionFieldsDomain.class).to(DetermineSolutionFieldsDomainImpl.class).in(Singleton.class);
         bind(SynthesizeSolutionEntry.class).to(SynthesizeSolutionEntryImpl.class);
         bind(SelectSolution.class).to(SelectSolutionImpl.class);
+        //bpm bindings
+        bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
 
         bind(ActivityRequestInterpret.class).to(ActivityRequestInterpretImpl.class).in(Singleton.class);
         bind(SolverServiceManifest.class).to(SolverServiceManifestImpl.class).in(Singleton.class);
@@ -57,7 +73,7 @@ public class SolverModule extends AbstractModule {
     @Singleton
     @Named(WruppleActivityAction.CATALOG)
     public CatalogDescriptor action() {
-        return null;
+        return new CatalogDescriptorImpl();//FIXME real definition
     }
 
     @Provides
@@ -65,7 +81,7 @@ public class SolverModule extends AbstractModule {
     @Singleton
     @Named(TaskToolbarDescriptor.CATALOG)
     public CatalogDescriptor toolbar() {
-        return null;
+        return new CatalogDescriptorImpl();//FIXME real definition
     }
 
 }

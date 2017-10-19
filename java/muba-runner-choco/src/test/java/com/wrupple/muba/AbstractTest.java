@@ -25,20 +25,19 @@ public abstract class AbstractTest extends EasyMockSupport {
 
 	@Rule
 	public EasyMockRule rule = new EasyMockRule(this);
-	
-	protected Injector injector;
 
-	protected RuntimeContext runtimeContext;
+	protected Injector injector;
 
 
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices(injector.getInstance(Validator.class), injector.getInstance(ValidationGroupProvider.class), injector.getInstance(EventBus.class));
+		registerServices( injector.getInstance(EventBus.class));
 
 	}
-	
-	protected abstract void registerServices(Validator v, ValidationGroupProvider g,EventBus switchs);
+
+	protected abstract void registerServices(EventBus switchs);
+
 
 
 

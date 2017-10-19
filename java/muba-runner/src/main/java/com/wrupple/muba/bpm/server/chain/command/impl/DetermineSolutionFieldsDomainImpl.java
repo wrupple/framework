@@ -26,11 +26,9 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
 
     protected Logger log = LoggerFactory.getLogger(DetermineSolutionFieldsDomainImpl.class);
 
-    private final SolverCatalogPlugin plugin;
 
     @Inject
-    public DetermineSolutionFieldsDomainImpl(SolverCatalogPlugin plugin) {
-        this.plugin = plugin;
+    public DetermineSolutionFieldsDomainImpl(){
     }
 
     @Override
@@ -38,7 +36,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         final ApplicationContext context = (ApplicationContext) ctx;
         Task request = context.getStateValue().getTaskDescriptorValue();
 
-        final Solver solver = plugin.getSolver();
+        final Solver solver = context.getSolver();
         log.debug("Resolving Solution Type");
         String solutionType =(String) request.getCatalog();
 

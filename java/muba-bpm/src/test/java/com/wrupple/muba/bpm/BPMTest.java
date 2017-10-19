@@ -43,12 +43,6 @@ import static org.easymock.EasyMock.expect;
 
 public abstract class BPMTest extends AbstractTest {
 
-    static {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
-    }
-
-    protected Logger log = LoggerFactory.getLogger(BPMTest.class);
-
 	/*
 	 * mocks
 	 */
@@ -111,8 +105,6 @@ public abstract class BPMTest extends AbstractTest {
 			bind(CatalogFileUploadUrlHandlerTransaction.class)
 					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
 			// TODO cms test isMasked FieldDescriptor
-
-            bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
 
 		}
 

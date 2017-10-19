@@ -8,7 +8,7 @@ import com.wrupple.muba.event.domain.reserved.HasOutput;
 
 public interface Task extends HasOutput,Service,CatalogJob {
 	
-	String CATALOG = "TaskDescriptor";
+	String CATALOG = "Task";
 	String COMMAND_FIELD = "machineTaskCommandName";
 	// output is the exit place
 	String NAVIGATE_COMMAND = "navigate";

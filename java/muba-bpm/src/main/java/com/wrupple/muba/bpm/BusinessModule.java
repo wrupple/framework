@@ -35,10 +35,7 @@ public class BusinessModule  extends AbstractModule {
     protected void configure() {
         bind(Integer.class).annotatedWith(Names.named("com.wrupple.errors.unknownUser")).toInstance(0);
 
-        /*
-        API
-         */
-        bind(ProcessManager.class).to(ProcessManagerImpl.class);
+
         /*
         Service
          */
@@ -58,8 +55,7 @@ public class BusinessModule  extends AbstractModule {
          */
         bind(BusinessRequestInterpret.class).to(BusinessRequestInterpretImpl.class);
         bind(IntentResolverRequestInterpret.class).to(IntentResolverRequestInterpretImpl.class);
-        //used by BroadcastInterpretImpl
-        bind(EventSuscriptionMapper.class).to(EventSuscriptionMapperImpl.class);
+
 
         /*
         Engines

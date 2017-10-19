@@ -43,8 +43,6 @@ public class IntegralTest extends AbstractTest{
 
     protected WriteOutput mockWriter;
 
-    protected EventSuscriptionMapper mockSuscriptor;
-
     protected WriteAuditTrails mockLogger;
 
     protected Host peerValue;
@@ -70,10 +68,8 @@ public class IntegralTest extends AbstractTest{
             mockWriter = mock(WriteOutput.class);
             mockLogger = mock(WriteAuditTrails.class);
             peerValue = mock(Host.class);
-            mockSuscriptor = mock(EventSuscriptionMapper.class);
             bind(WriteAuditTrails.class).toInstance(mockLogger);
             bind(WriteOutput.class).toInstance(mockWriter);
-            bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
 
 			/*
 			 * COMMANDS
@@ -141,7 +137,6 @@ public class IntegralTest extends AbstractTest{
         expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
-        expect(mockSuscriptor.execute(anyObject(Context.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(stakeHolderValue.getDomain()).andStubReturn((Long)CatalogEntry.PUBLIC_ID);
         runtimeContext = new RuntimeContextImpl(injector.getInstance(EventBus.class),injector.getInstance( Key.get(SessionContext.class,Names.named(SYSTEM))));
         log.trace("NEW TEST EXCECUTION CONTEXT READY");

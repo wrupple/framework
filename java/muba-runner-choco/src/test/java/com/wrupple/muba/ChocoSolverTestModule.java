@@ -5,6 +5,10 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.domain.Session;
+import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 
@@ -15,6 +19,8 @@ import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
+import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
+
 /**
  * Created by rarl on 10/05/17.
  */
@@ -22,7 +28,6 @@ public class ChocoSolverTestModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(TriggerStorageStrategy.class).to(TriggerStorageStrategyImpl.class);
         bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
     }
 
@@ -53,8 +58,8 @@ public class ChocoSolverTestModule extends AbstractModule {
     @Inject
     @Singleton
     @Named("catalog.plugins")
-    public Object plugins(SolverCatalogPlugin /* domain driven */ runner, UserCatalogPlugin /* domain driven */ user) {
-        CatalogPlugin[] plugins = new CatalogPlugin[] { user,runner };
+    public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, SystemCatalogPlugin system) {
+        CatalogPlugin[] plugins = new CatalogPlugin[] { system,runner };
         return plugins;
     }
 

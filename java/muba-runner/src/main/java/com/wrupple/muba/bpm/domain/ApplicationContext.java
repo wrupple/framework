@@ -2,6 +2,7 @@ package com.wrupple.muba.bpm.domain;
 
 
 import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceContext;
 import org.apache.commons.chain.Context;
@@ -19,6 +20,8 @@ public interface ApplicationContext extends ServiceContext {
     ApplicationState getStateValue();
 
     void setStateValue(ApplicationState state);
+
+    Solver getSolver();
 
 
    /* StorageManager getStorageManager();

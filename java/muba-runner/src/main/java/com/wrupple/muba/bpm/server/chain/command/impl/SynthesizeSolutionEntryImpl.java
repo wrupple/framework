@@ -9,6 +9,7 @@ import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +25,11 @@ import java.util.List;
 public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
     protected Logger log = LoggerFactory.getLogger(SynthesizeSolutionEntryImpl.class);
 
-    private final SolverCatalogPlugin plugin;
-    private final SystemCatalogPlugin catalog;
+    private final FieldAccessStrategy plugin;
 
     @Inject
-    public SynthesizeSolutionEntryImpl(SolverCatalogPlugin plugin, SystemCatalogPlugin catalog) {
-        this.plugin = plugin;
-        this.catalog=catalog;
+    public SynthesizeSolutionEntryImpl(FieldAccessStrategy plugin) {
+        this.plugin=plugin;
     }
 
     @Override
@@ -38,13 +37,13 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
         ApplicationContext context = (ApplicationContext) ctx;
         log.info("Synthesize solution...");
         CatalogDescriptor solutionDescriptor = context.getStateValue().getSolutionDescriptor();
-        CatalogEntry solution = catalog.access().synthesize(solutionDescriptor);
+        CatalogEntry solution = plugin.synthesize(solutionDescriptor);
 
         List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariables();
 
         log.trace("solution has {} variables",variableDescriptors.size());
 
-        Instrospection solutionWritingInstrospection = catalog.access().newSession(solution);
+        Instrospection solutionWritingInstrospection = plugin.newSession(solution);
 
         FieldDescriptor fieldId;
         Object fieldValue;
@@ -52,7 +51,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
             fieldId = solutionVariable.getField();
             fieldValue = solutionVariable.getValue();
             log.debug("    {}={}",fieldId.getFieldId(),fieldValue);
-            catalog.access().setPropertyValue(fieldId,solution,fieldValue, solutionWritingInstrospection);
+            plugin.setPropertyValue(fieldId,solution,fieldValue, solutionWritingInstrospection);
         }
 
         context.getRuntimeContext().setResult(solution);

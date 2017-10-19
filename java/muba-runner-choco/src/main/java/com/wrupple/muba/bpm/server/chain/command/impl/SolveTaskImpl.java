@@ -28,7 +28,7 @@ public class SolveTaskImpl implements SolveTask {
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
         log.info("Thinking...");
-        Model model = plugin.getSolver().resolveSolverModel(context);
+        Model model = context.getSolver().resolveSolverModel(context);
 
         if(model.getSolver().solve()){
             log.info("{} solution(s) have been found",model.getSolver().getSolutionCount());

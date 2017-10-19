@@ -37,7 +37,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         Task request = context.getStateValue().getTaskDescriptorValue();
 
         log.info("Resolving problem model");
-        Model model = plugin.getSolver().resolveSolverModel(context);
+        Model model = context.getSolver().resolveSolverModel(context);
 
         ListIterator<String> activitySentence = request.getSentence().listIterator();
         JavaNativeInterfaceContext invoker = new JavaNativeInterfaceContext(model,activitySentence);

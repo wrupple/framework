@@ -7,20 +7,19 @@ import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
  * Created by japi on 29/07/17.
  */
 public class ManagedObjectImpl extends ContentNodeImpl implements ManagedObject {
-    private Long stakeHolder;
+    private Object stakeHolder;
 
 
     @Override
-    public Long getStakeHolder() {
+    public Object getStakeHolder() {
         return stakeHolder;
     }
 
-    public void setStakeHolder(Long stakeHolder) {
+    public void setStakeHolder(Object stakeHolder) {
         this.stakeHolder = stakeHolder;
     }
 
-    @Override
-    public void setStakeHolder(long stakeHolder) {
+    public void setStakeHolder(Long stakeHolder) {
 
         this.stakeHolder=stakeHolder;
     }

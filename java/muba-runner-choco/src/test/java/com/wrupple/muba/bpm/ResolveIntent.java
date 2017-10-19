@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.anyObject;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.google.inject.Key;
 import com.google.inject.name.Names;
@@ -12,7 +13,6 @@ import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
-import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
@@ -52,24 +52,31 @@ public class ResolveIntent extends IntegralTest {
 
         log.info("[-Register EquationSystemSolution catalog type-]");
 
-        //FIXME stack overflow when no parent is specified, ok when consolidated?
-        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
-                "Equation System Solution", 0,  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
-        CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
-        catalogRequest.setEntryValue(solutionContract);
+        defineConstrainedSolution(builder);
 
-        runtimeContext.setServiceContract(catalogRequest);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 
-        runtimeContext.process();
-
-        CatalogActionContext catalogContext = runtimeContext.getServiceContext();
-
-        solutionContract = catalogContext.getEntryResult();
-
-        runtimeContext.reset();
         log.info("[-create a task with problem constraints-]");
+        TaskImpl problem = createProblem();
+
+        log.info("[-post a solver request to the runner engine-]");
+        /*runtimeContext.setServiceContract(problem);
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME, FIXME allow constrains to be posted in service request sentence
+                        // x + y < 5
+                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")");
+
+        runtimeContext.process();*/
+
+
+        EquationSystemSolution solution = wrupple.fireEvent(problem,session,null);
+
+        assertTrue(solution.getX()==2);
+
+        assertTrue(solution.getY()==2);
+
+    }
+
+    private TaskImpl createProblem() throws Exception {
+        CatalogActionRequestImpl catalogRequest;
         TaskImpl problem = new TaskImpl();
         problem.setDistinguishedName("equation system");
         problem.setName("equation system");
@@ -86,32 +93,22 @@ public class ResolveIntent extends IntegralTest {
 
         catalogRequest = new CatalogActionRequestImpl();
         catalogRequest.setEntryValue(problem);
+        catalogRequest.setCatalog(Task.CATALOG);
+        catalogRequest.setName(CatalogActionRequest.CREATE_ACTION);
 
-        runtimeContext.setServiceContract(catalogRequest);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, Task.CATALOG, CatalogActionRequest.CREATE_ACTION);
+        problem = (TaskImpl) ((List)wrupple.fireEvent(catalogRequest,session,null)).get(0);
+        return problem;
+    }
 
-        runtimeContext.process();
-        catalogContext = runtimeContext.getServiceContext();
+    private void defineConstrainedSolution(CatalogDescriptorBuilder builder) throws Exception {
+        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
+                "Equation System Solution", 0,  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
 
-        problem = catalogContext.getEntryResult();
-
-        runtimeContext.reset();
-        log.info("[-post a solver request to the runner engine-]");
-        runtimeContext.setServiceContract(problem);
-        //TODO maybe CONSTRAINT is a child of solver
-        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME/*, FIXME allow constrains to be posted in service request sentence
-                        // x + y < 5
-                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"*/);
-
-        runtimeContext.process();
-
-        EquationSystemSolution solution = runtimeContext.getConvertedResult();
-
-        assertTrue(solution.getX()==2);
-
-        assertTrue(solution.getY()==2);
-
+        CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
+        catalogRequest.setEntryValue(solutionContract);
+        catalogRequest.setName( CatalogActionRequest.CREATE_ACTION);
+        catalogRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
+        wrupple.fireEvent(catalogRequest,session,null);
     }
 
 }

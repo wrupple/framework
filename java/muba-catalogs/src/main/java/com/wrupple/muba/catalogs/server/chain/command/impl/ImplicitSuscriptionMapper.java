@@ -1,8 +1,8 @@
-package com.wrupple.muba.bpm.server.chain.command.impl;
+package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
@@ -16,13 +16,15 @@ import javax.inject.Singleton;
 import java.util.*;
 
 @Singleton
-public class EventSuscriptionMapperImpl  implements EventSuscriptionMapper {
+public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
 
-    private final SystemCatalogPlugin catalog;
+    private final FieldAccessStrategy accessor;
+    private final EventBus bus;
 
     @Inject
-    public EventSuscriptionMapperImpl(SystemCatalogPlugin catalog) {
-        this.catalog = catalog;
+    public ImplicitSuscriptionMapper(FieldAccessStrategy catalog, EventBus bus) {
+        this.accessor = catalog;
+        this.bus = bus;
     }
 
     @Override
@@ -41,11 +43,17 @@ public class EventSuscriptionMapperImpl  implements EventSuscriptionMapper {
         //FIXME read explicit suscriptors from ExplicitEventSuscription catalog? (in BusinessPluginImpl)
         //FIXME Spawn Catalog context with system privileges:
         // if event stake holder has no permissions to see Observer or it's host, then the event wont get broadcasted to those poeple
-        CatalogActionContext catalogContext = catalog.spawn(context.getRuntimeContext());
-        CatalogDescriptor descriptor = context.getDescriptorForName(entry.getCatalogType());
+
+
+        CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
+        catalogRequest.setEntry(entry.getCatalogType());
+        catalogRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
+        catalogRequest.setName(CatalogActionRequest.READ_ACTION);
+        List resultzs = (List) bus.fireEvent(catalogRequest, context.getRuntimeContext(), null);
+        CatalogDescriptor descriptor = (CatalogDescriptor) (resultzs).get(0);
+
 
         Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
-        FieldAccessStrategy accessor = catalog.access();
         Set<Long> concernedPeople = null;
         Instrospection session = accessor.newSession(entry);
         for (FieldDescriptor field : fields) {
@@ -65,12 +73,12 @@ public class EventSuscriptionMapperImpl  implements EventSuscriptionMapper {
 
         if (concernedPeople != null && ! concernedPeople.isEmpty()) {
             FilterData concernedPeopleClients = FilterDataUtils.createSingleKeyFieldFilter(HasStakeHolder.STAKE_HOLDER_FIELD,new ArrayList<Long>( concernedPeople));
-            CatalogActionContext read = catalogContext;
+            CatalogActionRequestImpl read = new CatalogActionRequestImpl();
             read.setCatalog(Host.CATALOG);
             read.setFilter(concernedPeopleClients);
-            read.getCatalogManager().getRead().execute(read);
-            if(read.getResults()!=null){
-                Collection<? extends Host> results=read.getResults();
+            read.setName(DataEvent.READ_ACTION);
+            Collection<? extends Host> results = bus.fireEvent(read,context.getRuntimeContext(),null);
+            if(results!=null){
                 context.addConcernedPeers(results);
             }
         }

@@ -19,6 +19,7 @@ import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
 import com.google.inject.AbstractModule;
@@ -162,6 +163,9 @@ public class CatalogModule extends AbstractModule {
 		bind(Timestamper.class).to(TimestamperImpl.class);
 		bind(UpdateTreeLevelIndex.class).to(UpdateTreeLevelIndexImpl.class);
 		bind(WritePublicTimelineEventDiscriminator.class).to(WritePublicTimelineEventDiscriminatorImpl.class);
+        //used by BroadcastInterpretImpl
+        bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
+
 		/*
 		 * Services
 		 */
