@@ -115,15 +115,7 @@ public class PluginConsensusImpl implements PluginConsensus {
 
         }
         if (catalog.getParent() != null) {
-            if (catalog.getGreatAncestor() == null) {
-                // find great ancestor
-                CatalogDescriptor parent = context.getDescriptorForKey(catalog.getParent());
 
-                while (parent != null) {
-                    catalog.setGreatAncestor(parent.getDistinguishedName());
-                    parent = parent.getParent() == null ? null : context.getDescriptorForKey(parent.getParent());
-                }
-            }
             if (catalog.getGreatAncestor() != null && (catalog.getConsolidated()==null||!catalog.getConsolidated())
                     && ContentNode.CATALOG_TIMELINE.equals(catalog.getGreatAncestor())) {
 

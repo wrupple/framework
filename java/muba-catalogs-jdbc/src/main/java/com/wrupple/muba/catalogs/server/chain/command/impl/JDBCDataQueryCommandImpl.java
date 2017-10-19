@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
@@ -72,6 +73,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 	}
 	private final FieldAccessStrategy access;
+	private final CatalogKeyServices keyDelegate;
 	private final JDBCMappingDelegate tableNames;
 	private final QueryRunner runner;
 	private final Provider<QueryResultHandler> rshp;
@@ -82,12 +84,13 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 	private final char DELIMITER;
 
 	@Inject
-	public JDBCDataQueryCommandImpl(FieldAccessStrategy access, QueryRunner runner, Provider<QueryResultHandler> rshp,
+	public JDBCDataQueryCommandImpl(FieldAccessStrategy access, CatalogKeyServices keyDelegate, QueryRunner runner, Provider<QueryResultHandler> rshp,
 									JDBCMappingDelegate tableNames,
 									@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
 									@Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
 									@Named("catalog.domainField") String domainField, @Named("catalog.sql.delimiter") Character delimiter) {
 		this.access = access;
+		this.keyDelegate = keyDelegate;
 		DELIMITER = delimiter;
 		this.dateFormat = dateFormat;
 		this.rshp = rshp;
@@ -240,8 +243,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 					} else {
 						// field is not null, and filterable, and owned by this
 						// catalog in the getInheritance hierarchy
-						if (fieldDescriptor != null && (fieldDescriptor.getOwnerCatalogId() == null
-								|| catalogId.equals(fieldDescriptor.getOwnerCatalogId()))) {
+						if (fieldDescriptor != null && keyDelegate.isFieldOwnedBy(fieldDescriptor,catalogDescriptor)) {
 							if (writenCriteria > 0) {
 								filterStringBuffer.append(" AND ");
 							}

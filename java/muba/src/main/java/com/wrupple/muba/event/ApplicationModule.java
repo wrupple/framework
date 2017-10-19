@@ -94,7 +94,7 @@ public class ApplicationModule extends AbstractModule {
         FieldDescriptorImpl field;
 
 
-        field = new FieldDescriptorImpl().makeDefault("distinguishedName", "distinguishedName", "text",
+        field = new FieldDescriptorImpl().makeDefault("distinguishedName", "distinguishedName",
                 CatalogEntry.STRING_DATA_TYPE);
         fields.put(field.getFieldId(), field);
 
@@ -120,11 +120,11 @@ public class ApplicationModule extends AbstractModule {
         FieldDescriptorImpl field;
 
 
-        field = new FieldDescriptorImpl().makeDefault("eventValue", "event Value", "text",
+        field = new FieldDescriptorImpl().makeDefault("eventValue", "event Value",
                 CatalogEntry.CATALOG_ENTRY_DATA_TYPE);
         field.setEphemeral(true);
         fields.put(field.getFieldId(), field);
-        field = new FieldDescriptorImpl().makeDefault("observersValues", "observers Value", "text",
+        field = new FieldDescriptorImpl().makeDefault("observersValues", "observers Value",
                 CatalogEntry.CATALOG_ENTRY_DATA_TYPE);
         field.setMultiple(true);
         field.setEphemeral(true);

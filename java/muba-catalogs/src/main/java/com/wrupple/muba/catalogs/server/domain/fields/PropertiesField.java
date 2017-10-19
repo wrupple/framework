@@ -8,7 +8,7 @@ public class PropertiesField extends FieldDescriptorImpl {
 	private static final long serialVersionUID = -8200454801569314734L;
 
 	public PropertiesField() {
-		makeDefault("properties", "Properties", "multiText",
+		makeDefault("properties", "Properties",
 				CatalogEntry.STRING_DATA_TYPE);
 		setMultiple(true);
 		setSummary(false);

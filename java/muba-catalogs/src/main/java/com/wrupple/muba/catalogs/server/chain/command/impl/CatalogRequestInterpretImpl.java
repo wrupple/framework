@@ -198,12 +198,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             }else{
 
                 CatalogActionRequest parentContext = context.getRequest();
-
-
-
                 CatalogActionRequest childContext = new CatalogActionRequestImpl();
-
-
 
                 childContext.setName(DataEvent.READ_ACTION);
                 childContext.setEntry(catalogid);
@@ -211,8 +206,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
                 context.switchContract(childContext);
                 context.setCatalogDescriptor(metadataDescriptor);
-
-                CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
 
 
                 readerProvider.get().execute(context);
@@ -225,6 +218,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                     throw new CatalogException("No such catalog "+catalogid);
                 }
 
+                evaluateGreatAncestor(context, result, childContext);
+
+
                 context.switchContract(parentContext);
 
             }
@@ -235,6 +231,27 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
     }
 
+    @Override
+    public void evaluateGreatAncestor(CatalogActionContext realContext, CatalogDescriptor result, CatalogActionRequest tempNotRealContract) throws Exception {
+        if (result.getParent()!=null&&result.getGreatAncestor() == null) {
+            // find great ancestor
+            if(result.getRootAncestor()!=null){
+                result.setGreatAncestor(result.getRootAncestor().getDistinguishedName());
+            }else{
+                tempNotRealContract.setEntry(result.getParent());
+                readerProvider.get().execute(realContext);
+                CatalogDescriptor parent = realContext.getConvertedResult();
+                result.setParentValue(parent);
+                while (parent != null) {
+                    result.setGreatAncestor(parent.getDistinguishedName());
+                    tempNotRealContract.setEntry(parent.getParent());
+                    readerProvider.get().execute(realContext);
+                    parent.setParentValue(realContext.getConvertedResult());
+                    parent= parent.getParentValue();
+                }
+            }
+        }
+    }
 
 
     class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {
@@ -478,7 +495,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public CatalogDescriptor getDescriptorForKey(Long numericId) throws Exception {
-
            return triggerGet(CatalogDescriptor.CATALOG_ID,numericId);
         }
 

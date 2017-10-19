@@ -123,6 +123,9 @@ public class CatalogEngineTest extends IntegralTest {
         assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
         assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
         assertTrue("does metadata describe problem as inherited?",problemContract.getParentValue()!=null);
+		assertTrue("does metadata include it's ancestry?",problemContract.getGreatAncestor()!=null);
+		assertTrue("does metadata describe problem as a timeline?",problemContract.getGreatAncestor()!=null);
+
 
 
 		log.debug("-create math problem entry-");

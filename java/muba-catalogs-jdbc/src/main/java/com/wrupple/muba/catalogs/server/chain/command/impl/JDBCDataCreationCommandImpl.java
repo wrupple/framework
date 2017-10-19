@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
@@ -33,6 +34,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 	protected static final Logger log = LoggerFactory.getLogger(JDBCDataCreationCommandImpl.class);
 
 	private final FieldAccessStrategy access;
+	private final CatalogKeyServices keyDelegate;
 	private final JDBCMappingDelegate tableNames;
 	private final SQLCompatibilityDelegate compatibility;
 
@@ -46,7 +48,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 	private final JDBCSingleLongKeyResultHandler keyHandler;
 
 	@Inject
-	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, FieldAccessStrategy access, CatalogReadTransaction read,
+	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, FieldAccessStrategy access, CatalogKeyServices keyDelegate, CatalogReadTransaction read,
 									   JDBCMappingDelegate tableNames, SQLCompatibilityDelegate compatibility,
 									   @Named("catalog.missingTableErrorCode") Integer missingTableErrorCode /*
 																					 * 1146
@@ -56,6 +58,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 									   @Named("catalog.sql.delimiter") Character delimiter) {
 		super(delete);
 		this.access = access;
+		this.keyDelegate = keyDelegate;
 		this.compatibility = compatibility;
 		DELIMITER = delimiter;
 		keyHandler = new JDBCSingleLongKeyResultHandler();
@@ -93,7 +96,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		for (FieldDescriptor field : fields) {
 			column = tableNames.getColumnForField(context, catalogDescriptor, field, false);
 
-			if (column != null && !field.isEphemeral() && (catalogDescriptor.getConsolidated()||!field.isInherited()||catalogDescriptor.getKeyField().equals(field.getFieldId()))) {
+			if (column != null && !field.isEphemeral() && (catalogDescriptor.getConsolidated()||!keyDelegate.isInheritedField(field,catalogDescriptor)||catalogDescriptor.getKeyField().equals(field.getFieldId()))) {
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {

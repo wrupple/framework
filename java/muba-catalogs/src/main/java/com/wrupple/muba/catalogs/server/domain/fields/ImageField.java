@@ -25,6 +25,5 @@ public class ImageField extends FieldDescriptorImpl {
 		setSortable(false);
 		setSummary(true);
 		setWriteable(true);
-		setWidget("imageKey");
 	}
 }

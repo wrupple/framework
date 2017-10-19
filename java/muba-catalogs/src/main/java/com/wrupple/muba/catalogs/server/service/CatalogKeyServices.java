@@ -39,9 +39,13 @@ public interface CatalogKeyServices {
 	
 	boolean qualifiesForEncoding(FieldDescriptor field, CatalogDescriptor catalog);
 
+	boolean isInheritedField(FieldDescriptor field, CatalogDescriptor owner);
+
 	boolean isPrimaryKey(String vanityId);
 	
 	public  String[][] getJoins(CatalogActionContext serverSide, Object clientSide, CatalogDescriptor descriptor, String[][] customJoins, Object domain, String host) throws Exception;
 
 	public  String getFieldWithForeignType(CatalogDescriptor foreignDescriptor, String foreignType);
+
+    boolean isFieldOwnedBy(FieldDescriptor fieldDescriptor, CatalogDescriptor catalogDescriptor);
 }

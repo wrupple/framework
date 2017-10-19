@@ -10,7 +10,7 @@ public class SentenceField extends FieldDescriptorImpl {
 	private static final long serialVersionUID = -9053014855187693204L;
 
 	public SentenceField() {
-		makeDefault( ExplicitIntent.HANDLE_FIELD,  ExplicitIntent.HANDLE_FIELD, "multiText", CatalogEntry.STRING_DATA_TYPE);
+		makeDefault( ExplicitIntent.HANDLE_FIELD,  ExplicitIntent.HANDLE_FIELD,  CatalogEntry.STRING_DATA_TYPE);
 		setMultiple(true);
 	}
 }

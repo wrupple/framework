@@ -411,7 +411,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
     @Override
     public CatalogDescriptor getRootAncestor() {
-        return null;
+        return CatalogEntryImpl.getRootAncestor(this);
     }
 
 	public void setStorageStrategy(Integer storageStrategy) {

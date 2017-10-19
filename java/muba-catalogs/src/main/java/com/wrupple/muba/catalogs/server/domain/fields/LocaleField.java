@@ -9,7 +9,7 @@ public class LocaleField extends FieldDescriptorImpl {
 	private static final long serialVersionUID = 3934113285588652948L;
 
 	public LocaleField() {
-		makeDefault(HasLocale.LOCALE_FIELD, "Locale", "text", CatalogEntry.STRING_DATA_TYPE);
+		makeDefault(HasLocale.LOCALE_FIELD, "Locale",  CatalogEntry.STRING_DATA_TYPE);
 	}
 
 }

@@ -24,7 +24,6 @@ public class PrimaryKeyField extends FieldDescriptorImpl {
 		setSortable(false);
 		setSummary(false);
 		setWriteable(false);
-		setWidget("text");
 	}
 
 }

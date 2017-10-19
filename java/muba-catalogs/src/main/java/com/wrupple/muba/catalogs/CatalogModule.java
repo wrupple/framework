@@ -226,15 +226,15 @@ public class CatalogModule extends AbstractModule {
 		regreso.setDescriptiveField(CatalogEntry.NAME_FIELD);
 		Map<String, FieldDescriptor> fields = new LinkedHashMap<String, FieldDescriptor>();
 		FieldDescriptorImpl field;
-		field = new FieldDescriptorImpl().makeDefault("catalogId", "Catalog", "catalogPicker",
+		field = new FieldDescriptorImpl().makeDefault("catalogId", "Catalog",
 				CatalogEntry.STRING_DATA_TYPE);
 		fields.put(field.getFieldId(), field);
-		field = new FieldDescriptorImpl().makeDefault("catalogEntryId", "Entry", "genericCatalogEntryId",
+		field = new FieldDescriptorImpl().makeDefault("catalogEntryId", "Entry",
 				CatalogEntry.INTEGER_DATA_TYPE);
 		fields.put(field.getFieldId(), field);
 		field = new FieldDescriptorImpl().makeKey(HasStakeHolder.STAKE_HOLDER_FIELD, "By", Person.CATALOG, false);
 		fields.put(field.getFieldId(), field);
-		field = new FieldDescriptorImpl().makeDefault("value", "Value", "text", CatalogEntry.LARGE_STRING_DATA_TYPE);
+		field = new FieldDescriptorImpl().makeDefault("value", "Value",  CatalogEntry.LARGE_STRING_DATA_TYPE);
 		fields.put(field.getFieldId(), field);
 		regreso.setFieldsValues(fields);
 		regreso.setDistinguishedName(ContentRevision.CATALOG);

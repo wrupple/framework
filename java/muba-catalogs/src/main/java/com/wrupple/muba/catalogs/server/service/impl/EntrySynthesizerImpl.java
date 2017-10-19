@@ -1,6 +1,7 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
@@ -25,14 +26,16 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     private final String TOKEN_SPLITTER;
     private final String ancestorIdField;
     private final FieldAccessStrategy access;
+    private final CatalogKeyServices keyDelgeate;
 
 
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.token.splitter") String splitter /* "\\." */, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access) {
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.token.splitter") String splitter /* "\\." */, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate) {
         this.pattern = pattern;
         this.TOKEN_SPLITTER = splitter;
         this.ancestorIdField=ancestorIdField;
         this.access = access;
+        this.keyDelgeate = keyDelgeate;
     }
 	/*
 	 * INHERITANCE
@@ -87,17 +90,23 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
         Object value;
 
         for (FieldDescriptor field : fields) {
-            if (excludeInherited && field.isInherited()) {
+            if (excludeInherited && keyDelgeate.isInheritedField(field,catalog)) {
                 // ignore
             } else {
                 fieldId = field.getFieldId();
                 // ignore id fields
                 if (!(CatalogEntry.ID_FIELD.equals(fieldId))) {
+                        try{
+                            value = access.getPropertyValue(field, source, localizedObject, instrospection);
 
-                    value = access.getPropertyValue(field, source, localizedObject, instrospection);
-                    if (value != null) {
-                        access.setPropertyValue(field, target, value, instrospection);
-                    }
+                        }catch (Exception e){
+                            value = null;
+                        }
+                        if (value != null) {
+                            access.setPropertyValue(field, target, value, instrospection);
+                        }
+
+
                 }
             }
         }

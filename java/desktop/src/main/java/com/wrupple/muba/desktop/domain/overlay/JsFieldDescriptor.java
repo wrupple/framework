@@ -112,19 +112,6 @@ public final class JsFieldDescriptor extends JavaScriptObject implements FieldDe
 										return this.command;
 										}-*/;
 
-	@Override
-	public native boolean isInherited() /*-{
-										if (this.inherited == null) {
-										return false;
-										} else {
-										return this.inherited;
-										}
-										}-*/;
-
-	@Override
-	public native String getOwnerCatalogId() /*-{
-												return this.ownerCatalogId;
-												}-*/;
 
 	public native void setFieldId(String id) /*-{
 												this.fieldId = id;

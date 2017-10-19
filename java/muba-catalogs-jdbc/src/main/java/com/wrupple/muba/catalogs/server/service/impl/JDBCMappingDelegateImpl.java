@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 
@@ -39,14 +40,15 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	private final String BLOB_TYPE;
 	private final char DELIMITER;
 	private String parentKey;
+	private  final CatalogKeyServices keyDelegate;
 
 	@Inject
 	public JDBCMappingDelegateImpl(@Named("catalog.ancestorKeyField") String parentKey,
-			@Named("catalog.sql.delimiter") Character delimiter, @Named("catalog.sql.createTable") String cREATE_TABLE,
-			@Named("catalog.sql.booleanColumnDef") String dEFAULT_BOOLEAN_COLUMN_DEFINITION,
-			@Named("catalog.sql.primaryColumnDef") String pRIMARY_KEY_COLUMN_DEFINITION,
-			@Named("catalog.sql.foreignKeyColumnDef") String fOREIGN_KEY_COLUMN_DEFINITION,
-			@Named("catalog.sql.longStringType") String lARGE_STRING, @Named("catalog.sql.blobType") String bLOB_TYPE) {
+								   @Named("catalog.sql.delimiter") Character delimiter, @Named("catalog.sql.createTable") String cREATE_TABLE,
+								   @Named("catalog.sql.booleanColumnDef") String dEFAULT_BOOLEAN_COLUMN_DEFINITION,
+								   @Named("catalog.sql.primaryColumnDef") String pRIMARY_KEY_COLUMN_DEFINITION,
+								   @Named("catalog.sql.foreignKeyColumnDef") String fOREIGN_KEY_COLUMN_DEFINITION,
+								   @Named("catalog.sql.longStringType") String lARGE_STRING, @Named("catalog.sql.blobType") String bLOB_TYPE, CatalogKeyServices keyDelegate) {
 		super();
 		this.parentKey = parentKey;
 		DELIMITER = delimiter;
@@ -57,6 +59,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		LARGE_STRING = lARGE_STRING;
 		BLOB_TYPE = bLOB_TYPE;
 
+		this.keyDelegate = keyDelegate;
 	}
 
 	@Override
@@ -73,7 +76,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	@Override
 	public String getColumnForField(CatalogActionContext context, CatalogDescriptor catalogDescriptor,
 			FieldDescriptor field, boolean qualified) {
-		if (field.isInherited() && !catalogDescriptor.getConsolidated()) {
+		if (keyDelegate.isInheritedField(field,catalogDescriptor) && !catalogDescriptor.getConsolidated()) {
 			return null;
 		} else {
 			if(qualified){
@@ -134,7 +137,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		String mainTable,fieldCOlumn;
 		List<String> indexes = new ArrayList<String>();
 		for (FieldDescriptor field : fields) {
-			if (!field.isEphemeral() && (catalog.getConsolidated()||!field.isInherited()||catalog.getKeyField().equals(field.getFieldId()))) {
+			if (!field.isEphemeral() && (catalog.getConsolidated()||!keyDelegate.isInheritedField(field,catalog)||catalog.getKeyField().equals(field.getFieldId()))) {
 
 				dbcDataType = getDataType(field);
 				if (dbcDataType != null) {

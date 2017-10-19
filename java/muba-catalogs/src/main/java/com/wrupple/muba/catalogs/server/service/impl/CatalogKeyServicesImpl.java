@@ -106,6 +106,16 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
     }
 
     @Override
+    public boolean isInheritedField(FieldDescriptor field, CatalogDescriptor owner) {
+        if(owner.getParent()==null){
+            return false;
+        }else {
+            CatalogDescriptor parent = owner.getParentValue();
+            return parent.getFieldDescriptor(field.getFieldId())!=null;
+        }
+    }
+
+    @Override
     public Object decodePrimaryKeyToken(Object targetEntryId) {
         if (targetEntryId == null) {
             return null;
@@ -228,6 +238,13 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
         }
         throw new IllegalArgumentException(
                 "No fields in " + foreignDescriptor.getDistinguishedName() + " point to " + foreignType);
+
+    }
+
+    @Override
+    public boolean isFieldOwnedBy(FieldDescriptor fieldDescriptor, CatalogDescriptor catalogDescriptor) {
+        //a field is owned by a catalog if it is present in the catalog and not the parent
+        return catalogDescriptor.getFieldDescriptor(fieldDescriptor.getFieldId())!=null && (catalogDescriptor.getParent()==null||catalogDescriptor.getParentValue().getFieldDescriptor(fieldDescriptor.getFieldId())==null);
 
     }
 

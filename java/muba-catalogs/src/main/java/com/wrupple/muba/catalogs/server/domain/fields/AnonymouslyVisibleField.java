@@ -20,7 +20,6 @@ public class AnonymouslyVisibleField extends FieldDescriptorImpl {
 		setName("Public");
 		setSortable(false);
 		setSummary(false);
-		setWidget("checkBox");
 	}
 
 }

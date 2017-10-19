@@ -28,11 +28,6 @@ public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,H
 	public int getDataType();
 
 	/**
-	 * @return the widget
-	 */
-	public String getWidget();
-
-	/**
 	 * @return can this field be sorted?
 	 */
 	public boolean isSortable();
@@ -74,20 +69,7 @@ public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,H
 	 * @return
 	 */
 	public boolean isKey();
-	
-	/**
-	 * @return
-	 */
-	public boolean isInherited();
 
-	public void setInherited(boolean asInherited);
-	/**
-	 * @return The id of the catalog in the hierarchy that defines this field
-	 */
-	public String getOwnerCatalogId();
-	
-
-	public void setOwnerCatalogId(String catalogId);
 	
 	public String getHelp() ;
 	

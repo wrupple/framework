@@ -103,4 +103,6 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
 	void setImage(Object image);
 
 	void setConsolidated(Boolean b);
+
+    void setParentValue(CatalogDescriptor parent);
 }

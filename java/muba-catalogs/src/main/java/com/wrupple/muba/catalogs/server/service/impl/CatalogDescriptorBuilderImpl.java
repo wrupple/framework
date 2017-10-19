@@ -66,7 +66,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 		FieldDescriptorImpl[] descriptors = new FieldDescriptorImpl[cll.size()];
 
-		String id, name, widget, foreignCatalog, defaultValue;
+		String id, name,  foreignCatalog, defaultValue;
 		String[] defaultValueOptions, properties,formulaValue;
 		boolean multiple, key, ephemeral, ignore, sortable, filterable, createable, writeable, detailable, summary,
 				localized;
@@ -83,7 +83,6 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 		ForeignKey foreignKey;
 		CatalogValue foreignValue;
 		CatalogFieldSentence formula;
-		CatalogFieldWidget widgetAnnot;
 		CatalogFieldProperties props;
 
 		Field field;
@@ -92,7 +91,6 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			id = field.getName();
 			name = id;
 			declaringClass = field.getType();
-			widget = null;
 			defaultValueOptions = null;
 			foreignCatalog = null;
 			defaultValue = null;
@@ -114,7 +112,6 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			foreignKey = field.getAnnotation(ForeignKey.class);
 			foreignValue = field.getAnnotation(CatalogValue.class);
 			formula = field.getAnnotation(CatalogFieldSentence.class);
-			widgetAnnot = field.getAnnotation(CatalogFieldWidget.class);
 			props = field.getAnnotation(CatalogFieldProperties.class);
 
 
@@ -146,9 +143,6 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 			}
 
-			if (widgetAnnot != null) {
-				widget = widgetAnnot.widget();
-			}
 
 			if (defaultt != null) {
 				defaultValue = defaultt.defaultValue();
@@ -184,9 +178,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 					if (ephemeral) {
 						fieldDescriptor = new FieldDescriptorImpl().makeEphemeral(id, name, foreignCatalog, multiple);
-						if (widget != null) {
-							fieldDescriptor.setWidget(widget);
-						}
+
 						if (defaultValueOptions != null) {
 							fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));
 						}
@@ -210,9 +202,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						} else {
 
 							fieldDescriptor = new FieldDescriptorImpl().makeKey(id, name, foreignCatalog, multiple);
-							if (widget != null) {
-								fieldDescriptor.setWidget(widget);
-							}
+
 							if (defaultValueOptions != null) {
 								fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));
 							}
@@ -232,9 +222,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						}
 					} else if (id.equals(IMAGE_FIELD)) {
 						fieldDescriptor = new ImageField();
-						if (widget != null) {
-							fieldDescriptor.setWidget(widget);
-						}
+
 						fieldDescriptor.setMultiple(multiple);
 
 						if (defaultValueOptions != null) {
@@ -254,6 +242,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setSummary(summary);
 						fieldDescriptor.setWriteable(writeable);
 					} else {
+						/* FIXME widget bingings
 						if (widget == null) {
 							switch (dataType) {
 							case CatalogEntry.BOOLEAN_DATA_TYPE:
@@ -275,7 +264,8 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 							}
 						}
-						fieldDescriptor = new FieldDescriptorImpl().makeDefault(id, name, widget, dataType);
+						*/
+						fieldDescriptor = new FieldDescriptorImpl().makeDefault(id, name, dataType);
 						fieldDescriptor.setMultiple(multiple);
 
 						if (defaultValueOptions != null) {
@@ -295,12 +285,13 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 						fieldDescriptor.setSummary(summary);
 						fieldDescriptor.setWriteable(writeable);
 					}
+					/* deduced on demand
 					if (parent != null) {
 						if (parent.getFieldDescriptor(fieldDescriptor.getFieldId())!=null) {
 							fieldDescriptor.setInherited(true);
 							fieldDescriptor.setOwnerCatalogId(parent.getDistinguishedName());
 						}
-					}
+					}*/
 
                     //PARSE annotations as constraint objects
                     Annotation[] allAnnotations = field.getAnnotations();

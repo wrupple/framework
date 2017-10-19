@@ -28,7 +28,7 @@ public class TrashDescriptor extends CatalogEntryDescriptor {
 		super(Trash.CATALOG, serialVersionUID, "Trash", clazz, id, name, publicField);
 		putField(new FieldDescriptorImpl().makeKey(HasCatalogId.CATALOG_FIELD, "Catalog", CatalogDescriptor.CATALOG_ID,false));
 		putField(new FieldDescriptorImpl().makeKey(HasEntryId.ENTRY_ID_FIELD, "Entry", null,false));
-		putField(new FieldDescriptorImpl().makeDefault("restored", "Restore?", "checkBox", CatalogEntry.BOOLEAN_DATA_TYPE));
+		putField(new FieldDescriptorImpl().makeDefault("restored", "Restore?",  CatalogEntry.BOOLEAN_DATA_TYPE));
 		setParent(ContentNode.NUMERIC_ID);
 	}
 

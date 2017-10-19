@@ -23,16 +23,10 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 	@CatalogFieldValues(defaultValueOptions={"Default"})
 	int dataType;
 	private boolean masked = false, multiple = false, sortable = false, ephemeral = false, filterable = false, createable = true, writeable = true, detailable = true,
-			summary = true, inherited = false, localized = false, key = false,hardKey=false;
-	
-	@CatalogFieldWidget(widget="Widget")
-	private String widget;
-	@CatalogFieldWidget(widget="catalogPicker")
+			summary = true, localized = false, key = false,hardKey=false;
+
 	private String catalog;
 	private String fieldId,description,help, defaultValue, command;
-
-	@CatalogField(ignore=true)
-	private String ownerCatalogId;
 	
 
 	private List<String> defaultValueOptions, properties, sentence;
@@ -48,7 +42,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 	}
 	
 	public  FieldDescriptorImpl makeDefault(String id,
-			String name, String widget, Integer dataType) {
+			String name,  Integer dataType) {
 		setKey(false);
 		setCreateable(true);
 		setDataType(dataType);
@@ -61,7 +55,6 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setSortable(false);
 		setSummary(true);
 		setWriteable(true);
-		setWidget(widget);
 		return this;
 	}
 
@@ -81,7 +74,6 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setSortable(false);
 		setSummary(true);
 		setWriteable(true);
-		setWidget("genericValue");
 		return this;
 	}
 
@@ -101,7 +93,6 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setSortable(false);
 		setSummary(true);
 		setWriteable(false);
-		setWidget("genericValue");
 		return this;
 	}
 	
@@ -149,13 +140,6 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 
 
 
-	/**
-	 * @return the widget
-	 */
-	@Override
-	public String getWidget() {
-		return widget;
-	}
 
 	/**
 	 * @return the createable
@@ -244,9 +228,6 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		return catalog;
 	}
 
-	public void setWidget(String widget) {
-		this.widget = widget;
-	}
 
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
@@ -292,22 +273,6 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		this.summary = summary;
 	}
 
-	@Override
-	public boolean isInherited() {
-		return inherited;
-	}
-
-	public void setInherited(boolean inherited) {
-		this.inherited = inherited;
-	}
-
-	public String getOwnerCatalogId() {
-		return ownerCatalogId;
-	}
-
-	public void setOwnerCatalogId(String ownerCatalogId) {
-		this.ownerCatalogId = ownerCatalogId;
-	}
 
 	public boolean isLocalized() {
 		return localized;

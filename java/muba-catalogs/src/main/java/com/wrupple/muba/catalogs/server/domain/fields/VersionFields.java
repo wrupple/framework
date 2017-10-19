@@ -9,7 +9,7 @@ public class VersionFields extends FieldDescriptorImpl {
 	private static final long serialVersionUID = 3044598766227806430L;
 
 	public VersionFields() {
-		makeDefault(Versioned.FIELD, "Version", "text", CatalogEntry.INTEGER_DATA_TYPE);
+		makeDefault(Versioned.FIELD, "Version",  CatalogEntry.INTEGER_DATA_TYPE);
 		setWriteable(false);
 		setCreateable(false);
 		setDefaultValue("0");
