@@ -5,6 +5,7 @@ import java.util.List;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.*;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 /**
  * 

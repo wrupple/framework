@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.Date;
 
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 public class ContentNodeImpl extends CatalogEntryImpl implements ContentNode {
 

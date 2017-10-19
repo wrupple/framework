@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.reserved.HasResults;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;

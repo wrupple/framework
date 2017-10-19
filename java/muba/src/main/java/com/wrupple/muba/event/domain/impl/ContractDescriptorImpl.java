@@ -1,4 +1,6 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.impl;
+
+import com.wrupple.muba.event.domain.CatalogEntry;
 
 import java.util.Collection;
 

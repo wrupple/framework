@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import org.apache.commons.chain.Context;
 
 public class CatalogActionCommitImpl extends CatalogEntryImpl implements CatalogActionCommit{

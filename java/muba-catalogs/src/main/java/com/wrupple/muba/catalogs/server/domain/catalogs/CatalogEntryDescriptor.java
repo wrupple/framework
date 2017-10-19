@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;
 import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;

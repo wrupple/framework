@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
 
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.Constraint;
 
 public class ConstraintImpl extends CatalogEntryImpl implements Constraint {

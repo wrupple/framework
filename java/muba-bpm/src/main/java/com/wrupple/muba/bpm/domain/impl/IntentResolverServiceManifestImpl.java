@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.event.domain.ImplicitIntent;
-import com.wrupple.muba.event.domain.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.IntentResolverServiceManifest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 

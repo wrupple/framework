@@ -21,7 +21,7 @@ import com.wrupple.muba.bpm.server.service.impl.SolverCatalogPluginImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 
 /**

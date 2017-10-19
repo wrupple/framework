@@ -1,6 +1,7 @@
 package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.ExplicitIntentImpl;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.beanutils.BeanUtils;

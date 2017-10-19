@@ -1,11 +1,11 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.impl;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.*;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 

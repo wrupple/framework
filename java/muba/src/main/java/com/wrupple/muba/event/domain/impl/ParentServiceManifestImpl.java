@@ -1,4 +1,9 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.impl;
+
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ContractDescriptor;
+import com.wrupple.muba.event.domain.ParentServiceManifest;
+import com.wrupple.muba.event.domain.ServiceManifest;
 
 import java.util.ArrayList;
 import java.util.Arrays;

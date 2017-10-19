@@ -1,8 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.bpm.domain.Task;
-import com.wrupple.muba.event.domain.ServiceManifest;
-import com.wrupple.muba.event.domain.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;

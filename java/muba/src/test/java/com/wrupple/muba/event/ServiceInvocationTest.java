@@ -10,6 +10,7 @@ import java.util.List;
 import com.wrupple.muba.event.chain.impl.OldVesionService;
 import com.wrupple.muba.event.chain.impl.UpdatedVersionService;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import com.wrupple.muba.event.server.service.*;

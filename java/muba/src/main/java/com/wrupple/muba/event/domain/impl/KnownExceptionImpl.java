@@ -1,4 +1,4 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.impl;
 
 /**
  * Created by japi on 3/08/17.

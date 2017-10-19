@@ -1,6 +1,6 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.JavaNativeInterfaceContext;
+import com.wrupple.muba.event.domain.impl.JavaNativeInterfaceContext;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.chain.Context;

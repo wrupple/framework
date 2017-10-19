@@ -3,7 +3,7 @@ package com.wrupple.muba.catalogs.server.domain;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogEvent;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import org.apache.commons.chain.Context;
 

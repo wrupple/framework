@@ -1,10 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
 import java.util.List;
-import java.util.Map;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 
 public class CatalogEventListenerImpl extends CatalogJobImpl implements CatalogEventListener {

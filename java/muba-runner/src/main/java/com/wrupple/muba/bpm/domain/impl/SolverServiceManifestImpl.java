@@ -4,6 +4,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 
 import javax.inject.Inject;
 import javax.inject.Named;

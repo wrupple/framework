@@ -1,10 +1,9 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by japi on 19/10/17.

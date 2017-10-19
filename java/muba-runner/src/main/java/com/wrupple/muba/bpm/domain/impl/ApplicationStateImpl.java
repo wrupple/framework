@@ -1,10 +1,10 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

@@ -2,11 +2,10 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
-import com.wrupple.muba.event.domain.JavaNativeInterfaceContext;
+import com.wrupple.muba.event.domain.impl.JavaNativeInterfaceContext;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
-import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.constraints.Constraint;

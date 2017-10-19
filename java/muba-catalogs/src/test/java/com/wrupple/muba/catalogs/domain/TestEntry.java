@@ -1,6 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 /**
  * Created by japi on 14/07/17.

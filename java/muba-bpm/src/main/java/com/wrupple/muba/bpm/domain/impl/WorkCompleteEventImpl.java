@@ -4,7 +4,7 @@ import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.WorkCompleteEvent;
-import com.wrupple.muba.event.domain.ExplicitIntentImpl;
+import com.wrupple.muba.event.domain.impl.ExplicitIntentImpl;
 
 import java.util.Date;
 

@@ -1,4 +1,7 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.impl;
+
+import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.ExplicitIntent;
 
 import java.util.Arrays;
 import java.util.List;

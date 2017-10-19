@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.bpm.domain.FieldValueChange;
 
 /**

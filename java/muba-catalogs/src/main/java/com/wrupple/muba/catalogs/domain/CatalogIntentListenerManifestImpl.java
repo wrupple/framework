@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 
 import javax.inject.Inject;
 import javax.inject.Named;

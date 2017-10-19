@@ -15,7 +15,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.event.domain.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import org.junit.Test;
 
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;

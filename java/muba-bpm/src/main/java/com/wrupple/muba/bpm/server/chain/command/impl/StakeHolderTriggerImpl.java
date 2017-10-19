@@ -8,7 +8,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 import org.apache.commons.chain.Context;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.KnownExceptionImpl;
+import com.wrupple.muba.event.domain.impl.KnownExceptionImpl;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.server.chain.command.StakeHolderTrigger;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;

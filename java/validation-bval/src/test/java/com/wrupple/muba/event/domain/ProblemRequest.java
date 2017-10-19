@@ -2,6 +2,8 @@ package com.wrupple.muba.event.domain
 ;
 
 
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 

@@ -1,4 +1,4 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import org.apache.commons.chain.impl.ContextBase;

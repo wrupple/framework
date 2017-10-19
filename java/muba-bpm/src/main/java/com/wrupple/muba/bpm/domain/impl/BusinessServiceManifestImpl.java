@@ -2,10 +2,7 @@ package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.bpm.domain.BusinessIntent;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.ContractDescriptor;
-import com.wrupple.muba.event.domain.ParentServiceManifestImpl;
-import com.wrupple.muba.event.domain.ServiceManifestImpl;
-import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.event.domain.impl.ParentServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.BusinessServiceManifest;
 
 import javax.inject.Inject;

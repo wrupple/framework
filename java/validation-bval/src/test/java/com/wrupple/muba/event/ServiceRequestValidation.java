@@ -13,6 +13,8 @@ import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.ContractDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;

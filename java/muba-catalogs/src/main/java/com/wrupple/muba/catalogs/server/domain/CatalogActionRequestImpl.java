@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.annotations.AvailableCommand;
 import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;

@@ -1,4 +1,8 @@
-package com.wrupple.muba.event.domain;
+package com.wrupple.muba.event.domain.impl;
+
+import com.wrupple.muba.event.domain.BroadcastEvent;
+import com.wrupple.muba.event.domain.BroadcastQueueAppend;
+import com.wrupple.muba.event.domain.Host;
 
 public class BroadcastQueueAppendImpl extends CatalogEntryImpl implements BroadcastQueueAppend {
     private BroadcastEvent queuedElementValue;
