@@ -1,9 +1,10 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.bpm.domain.Task;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.VariableDescriptor;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -13,46 +14,75 @@ import java.util.List;
  */
 public class ApplicationStateImpl extends ManagedObjectImpl implements ApplicationState {
 
-    @NotNull
+    @CatalogField(ignore = true)
     private ServiceManifest handleValue;
+    @CatalogField(ignore = true)
     private FilterData filterData;
+    @NotNull
+    @ForeignKey(foreignCatalog = Workflow.CATALOG)
     private Long handle;
 
+    @ForeignKey(foreignCatalog = Task.CATALOG)
     private Long taskDescriptor;
+
+    @ForeignKey(foreignCatalog = ApplicationState.CATALOG)
     private Long parent;
-
+    @CatalogField(ignore = true)
     private ApplicationState parentValue;
-
-    private Object entry;
+    /*
+     * keys must be stored in encoded format
+     */
+    private String entry;
+    @ForeignKey(foreignCatalog = Session.CATALOG)
     private Object session;
-
-
+    @CatalogField(ignore = true)
     private Task taskDescriptorValue;
-    private List<Object> userSelection;
+    private List<String> userSelection;
+
+    @CatalogField(ignore = true)
     private List<CatalogEntry> userSelectionValues;
+
     private String distinguishedName;
-    private RuntimeContext excecutionContext;
-    private CatalogDescriptor solutionDescriptor;
-    private List<VariableDescriptor> solutionVariables;
+
+
+
+    @ForeignKey(foreignCatalog = CatalogDescriptor.CATALOG_ID)
+    private Long solutionDescriptor;
+    @CatalogField(ignore = true)
+    private CatalogDescriptor solutionDescriptorValue;
+    @CatalogField(ignore = true)
+    private List<VariableDescriptor> solutionVariablesValues;
+    @CatalogField(ignore = true)
     private CatalogEntry entryValue;
-    private boolean canceled,draft;
+
+    private Boolean canceled,draft;
 
     @Override
-    public boolean isCanceled() {
-        return canceled;
+    public String getCatalogType() {
+        return ApplicationState.CATALOG;
+    }
+    @Override
+    public Boolean getCanceled() {
+        return canceled==null?false:canceled;
     }
 
-    public void setCanceled(boolean canceled) {
+    public void setCanceled(Boolean canceled) {
         this.canceled = canceled;
     }
+    public Long getSolutionDescriptor() {
+        return solutionDescriptor;
+    }
 
+    public void setSolutionDescriptor(Long solutionDescriptor) {
+        this.solutionDescriptor = solutionDescriptor;
+    }
     @Override
-    public boolean isDraft() {
-        return draft;
+    public Boolean getDraft() {
+        return draft==null?false:draft;
     }
 
     @Override
-    public void setDraft(boolean draft) {
+    public void setDraft(Boolean draft) {
         this.draft = draft;
     }
 
@@ -87,7 +117,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
 
     @Override
     public void setEntry(Object entry) {
-        this.entry = entry;
+        this.entry = (String) entry;
     }
 
     @Override
@@ -129,11 +159,11 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     }
 
     @Override
-    public List<Object> getUserSelection() {
+    public List<String> getUserSelection() {
         return userSelection;
     }
 
-    public void setUserSelection(List<Object> userSelection) {
+    public void setUserSelection(List<String> userSelection) {
         this.userSelection = userSelection;
     }
 
@@ -154,33 +184,25 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
         this.distinguishedName = distinguishedName;
     }
 
-    public RuntimeContext getExcecutionContext() {
-        return excecutionContext;
+
+    @Override
+    public CatalogDescriptor getSolutionDescriptorValue() {
+        return solutionDescriptorValue;
     }
 
     @Override
-    public void setExcecutionContext(RuntimeContext excecutionContext) {
-        this.excecutionContext = excecutionContext;
+    public void setSolutionDescriptorValue(CatalogDescriptor solutionDescriptorValue) {
+        this.solutionDescriptorValue = solutionDescriptorValue;
     }
 
     @Override
-    public CatalogDescriptor getSolutionDescriptor() {
-        return solutionDescriptor;
+    public List<VariableDescriptor> getSolutionVariablesValues() {
+        return solutionVariablesValues;
     }
 
     @Override
-    public void setSolutionDescriptor(CatalogDescriptor solutionDescriptor) {
-        this.solutionDescriptor = solutionDescriptor;
-    }
-
-    @Override
-    public List<VariableDescriptor> getSolutionVariables() {
-        return solutionVariables;
-    }
-
-    @Override
-    public void setSolutionVariables(List<VariableDescriptor> solutionVariables) {
-        this.solutionVariables = solutionVariables;
+    public void setSolutionVariablesValues(List<VariableDescriptor> solutionVariablesValues) {
+        this.solutionVariablesValues = solutionVariablesValues;
     }
 
     @Override

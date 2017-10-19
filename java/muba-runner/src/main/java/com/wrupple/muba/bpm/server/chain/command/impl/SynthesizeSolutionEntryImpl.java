@@ -5,10 +5,8 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.SynthesizeSolutionEntry;
-import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -36,10 +34,10 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
         log.info("Synthesize solution...");
-        CatalogDescriptor solutionDescriptor = context.getStateValue().getSolutionDescriptor();
+        CatalogDescriptor solutionDescriptor = context.getStateValue().getSolutionDescriptorValue();
         CatalogEntry solution = plugin.synthesize(solutionDescriptor);
 
-        List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariables();
+        List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariablesValues();
 
         log.trace("solution has {} variables",variableDescriptors.size());
 

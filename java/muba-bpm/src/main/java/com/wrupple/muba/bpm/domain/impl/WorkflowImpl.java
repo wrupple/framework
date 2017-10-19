@@ -1,6 +1,7 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.bpm.domain.Task;
+import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
@@ -139,5 +140,9 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
 
     public void setExplicitSuccessor(Long explicitSuccessor) {
         this.explicitSuccessor = explicitSuccessor;
+    }
+    @Override
+    public String getCatalogType() {
+        return Workflow.CATALOG;
     }
 }

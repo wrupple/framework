@@ -140,6 +140,9 @@ public abstract class DataJoiner implements Command {
 		 */
 
 		CatalogDescriptor catalog = context.getDescriptorForName(catalogId);
+		if(catalog==null){
+			throw new NullPointerException("No such catalog "+catalogId);
+		}
 
 		List<CatalogEntry> currentMatchingEntries = getjoinCandidates(mainResults, context, catalog, foreignField,
 				fieldValues);

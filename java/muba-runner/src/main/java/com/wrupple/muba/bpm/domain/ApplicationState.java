@@ -31,23 +31,21 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
     Task getTaskDescriptorValue();
 
-    List<Object> getUserSelection();
+    List<String> getUserSelection();
 
      <T extends CatalogEntry> List<T> getUserSelectionValues();
 
-     boolean isCanceled();
-
-    void setExcecutionContext(RuntimeContext context);
+     Boolean getCanceled();
 
     void setTaskDescriptorValue(Task request);
 
-    void setSolutionDescriptor(CatalogDescriptor solutionDescriptor);
+    void setSolutionDescriptorValue(CatalogDescriptor solutionDescriptorValue);
 
-    CatalogDescriptor getSolutionDescriptor();
+    CatalogDescriptor getSolutionDescriptorValue();
 
-    void setSolutionVariables(List<VariableDescriptor> variables);
+    void setSolutionVariablesValues(List<VariableDescriptor> variables);
 
-    List<VariableDescriptor> getSolutionVariables();
+    List<VariableDescriptor> getSolutionVariablesValues();
 
     void setEntryValue(CatalogEntry booking);
 
@@ -59,9 +57,9 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
      * TODO If entry is a draft delete it when application state is deleted
      * return staging status
      */
-    boolean isDraft();
+    Boolean getDraft();
 
-    void setDraft(boolean b);
+    void setDraft(Boolean b);
 
     void setTaskDescriptor(Object id);
 

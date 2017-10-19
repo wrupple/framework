@@ -71,12 +71,16 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws InvocationTargetException, IllegalAccessException {
+    public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
         ApplicationState newState = applicationStateProvider.get();
         newState.setSession(thread.getSessionValue().getId());
         newState.setHandleValue(initialState);
+
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState,ApplicationState.CATALOG);
-        return newState;
+
+        List results = eventBus.fireEvent(createRequest, thread, null);
+
+        return (ApplicationState) results.get(0);
     }
 
     @Override
@@ -93,7 +97,7 @@ public class ProcessManagerImpl implements ProcessManager {
         request.setCatalog(ApplicationState.CATALOG);
         request.setEntry(existingApplicationStateId);
         request.setName(CatalogActionRequest.READ_ACTION);
-
+        request.setFollowReferences(true);
         List results = eventBus.fireEvent(request, session, null);
 
         return (ApplicationState) results.get(0);

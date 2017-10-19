@@ -19,6 +19,7 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 public class ChangeApplicationState extends BPMTest {
@@ -123,8 +124,8 @@ public class ChangeApplicationState extends BPMTest {
         application.setExplicitSuccessorValue(count);
         CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(application, Workflow.CATALOG);
 
-        application=wrupple.fireEvent(catalogActionRequest,session,null);
-
+        List resultss=wrupple.fireEvent(catalogActionRequest,session,null);
+        application= (WorkflowImpl) resultss.get(0);
         this.createStatisticsApplication =application;
     }
 

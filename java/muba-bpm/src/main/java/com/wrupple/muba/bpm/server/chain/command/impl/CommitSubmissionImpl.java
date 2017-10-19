@@ -54,7 +54,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
         String transactionType = applicationState.getTaskDescriptorValue().getName();
         final String catalog = (String) applicationState.getTaskDescriptorValue().getCatalog();
 
-        boolean canceled = applicationState.isCanceled();
+        boolean canceled = applicationState.getCanceled();
         Object id =applicationState.getEntry();
         if(id ==null){
             id = userOutput.getId();
@@ -72,7 +72,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
             }else{
 
-                /*boolean draft = entry.isDraft();
+                /*boolean draft = entry.getDraft();
                 if(draft){
 
                     if(canceled){

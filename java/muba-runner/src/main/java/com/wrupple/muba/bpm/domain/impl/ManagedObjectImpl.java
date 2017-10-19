@@ -23,4 +23,6 @@ public class ManagedObjectImpl extends ContentNodeImpl implements ManagedObject 
 
         this.stakeHolder=stakeHolder;
     }
+
+
 }

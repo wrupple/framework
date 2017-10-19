@@ -49,7 +49,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
 
         List results = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
         CatalogDescriptor solutionDescriptor = (CatalogDescriptor) results.get(0);
-        context.getStateValue().setSolutionDescriptor(solutionDescriptor);
+        context.getStateValue().setSolutionDescriptorValue(solutionDescriptor);
 
         //by default, all fields are eligible for solving
         Collection<FieldDescriptor> fieldValues = solutionDescriptor.getFieldsValues();
@@ -58,7 +58,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
                 filter(field -> solver.isEligible(field,context)).
                 map(field -> solver.createVariable(field,context)).
                 collect(Collectors.toList());
-        context.getStateValue().setSolutionVariables(variables);
+        context.getStateValue().setSolutionVariablesValues(variables);
 
         return CONTINUE_PROCESSING;
     }
