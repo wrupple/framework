@@ -176,7 +176,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         //item+booking;
         BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
-        bookingRequest.setHandle(item.getId());
+        bookingRequest.setImplicitIntent(item.getId());
         bookingRequest.setEntry(booking.getId());
         bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
 

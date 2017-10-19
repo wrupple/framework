@@ -1,6 +1,7 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.Task;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.event.domain.JavaNativeInterfaceContext;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
@@ -21,11 +22,11 @@ import java.util.ListIterator;
  */
 public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
-    private final SolverCatalogPlugin plugin;
+    private final ProcessManager plugin;
     private final SentenceNativeInterface nativeInterface;
 
     @Inject
-    public DefineSolutionCriteriaImpl(SolverCatalogPlugin plugin, SentenceNativeInterface nativeInterface) {
+    public DefineSolutionCriteriaImpl(ProcessManager plugin, SentenceNativeInterface nativeInterface) {
         this.plugin = plugin;
         this.nativeInterface=nativeInterface;
     }
@@ -37,7 +38,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         Task request = context.getStateValue().getTaskDescriptorValue();
 
         log.info("Resolving problem model");
-        Model model = context.getSolver().resolveSolverModel(context);
+        Model model = plugin.getSolver().resolveSolverModel(context);
 
         ListIterator<String> activitySentence = request.getSentence().listIterator();
         JavaNativeInterfaceContext invoker = new JavaNativeInterfaceContext(model,activitySentence);

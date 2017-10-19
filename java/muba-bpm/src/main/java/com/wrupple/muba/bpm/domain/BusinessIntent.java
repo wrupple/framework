@@ -8,5 +8,9 @@ public interface BusinessIntent extends ManagedObject ,DataEvent,ExplicitIntent 
 	String BusinessIntent_CATALOG = "BusinessIntent";
 	//Date getDue();
 	
+	ApplicationState getStateValue();
 
+	void setStateValue(ApplicationState applicationState);
+
+	Object getState();
 }

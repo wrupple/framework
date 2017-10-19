@@ -15,6 +15,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
 
+/*
+FIXME use in ExplicitSuscriptionMapperImpl
+		names.add(new CatalogEntryImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
+				"/static/img/notification.png"));*/
+
 @Singleton
 public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
 

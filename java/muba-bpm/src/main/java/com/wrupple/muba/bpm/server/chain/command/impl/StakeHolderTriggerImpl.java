@@ -19,11 +19,13 @@ public class StakeHolderTriggerImpl implements StakeHolderTrigger {
 
 	private static final String CHANGE_STAKEHOLDER = "com.wrupple.muba.bpm.stakeHolder";
 	private final boolean anonStakeHolder;
+	private final FieldAccessStrategy access;
 	private final int unknownUser;
 
 	@Inject
-	public StakeHolderTriggerImpl(@Named("security.anonStakeHolder")Boolean anonStakeHolder, @Named("com.wrupple.errors.unknownUser") Integer unknownUser) {
+	public StakeHolderTriggerImpl(@Named("security.anonStakeHolder") Boolean anonStakeHolder, FieldAccessStrategy access, @Named("com.wrupple.errors.unknownUser") Integer unknownUser) {
 		this.anonStakeHolder=anonStakeHolder;
+		this.access = access;
 		this.unknownUser=unknownUser;
 	}
 
@@ -38,14 +40,14 @@ public class StakeHolderTriggerImpl implements StakeHolderTrigger {
 			throw new KnownExceptionImpl("User Identity Unknown",null, unknownUser);
 		}
 		//get fieldWriting instrospection, see ocurrences
-        FieldAccessStrategy accessor = access;
+
 		//write into old the person id
 		FieldDescriptor field = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
-        Instrospection instrospection = accessor.newSession(old);
-		Long stakeHolder= (Long) accessor.getPropertyValue(field, old, null, instrospection);
+        Instrospection instrospection = access.newSession(old);
+		Long stakeHolder= (Long) access.getPropertyValue(field, old, null, instrospection);
 		if(stakeHolder==null || !context.getRuntimeContext().getSession().hasPermission(CHANGE_STAKEHOLDER+":"+catalog.getDistinguishedName())){
 			System.err.println("[set stakeHolder]"+actualStakeHolder);
-			accessor.setPropertyValue( field, (CatalogEntry) old, actualStakeHolder, accessor.newSession((CatalogEntry) old));
+			access.setPropertyValue( field, (CatalogEntry) old, actualStakeHolder, access.newSession((CatalogEntry) old));
 		}
 		
 		return CONTINUE_PROCESSING;

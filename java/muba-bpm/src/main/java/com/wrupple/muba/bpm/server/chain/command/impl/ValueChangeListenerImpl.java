@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.domain.reserved.HasFieldId;
@@ -21,14 +23,15 @@ import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 
 @Singleton
 public class ValueChangeListenerImpl extends AbstractComparationCommand implements ValueChangeListener {
 
-	private final CatalogTriggerInterpret interpret;
+	private final Provider<CatalogTriggerInterpret> interpret;
 
 	@Inject
-	public ValueChangeListenerImpl(CatalogTriggerInterpret interpret) {
+	public ValueChangeListenerImpl(Provider<CatalogTriggerInterpret> interpret, FieldAccessStrategy accessStrategy) {
 		super(accessStrategy);
 		this.interpret = interpret;
 	}
@@ -40,19 +43,18 @@ public class ValueChangeListenerImpl extends AbstractComparationCommand implemen
 		if ((initialValue == null && finalValue != null)
 				|| (initialValue != null && !initialValue.equals(finalValue))) {
 
-			// TODO this means mny unecesary map searches when no triggers are
-			// provided
+			// TODO this means mny unecesary  searches when no triggers are provided
 			List<ValueChangeTrigger> changeTriggers = (List<ValueChangeTrigger>) context
 					.get(ValueChangeListener.CONTEXT_TRIGGERS_KEY);
 			if (changeTriggers == null) {
-				CatalogActionContext spawned = context.getCatalogManager().spawn(context);
+				CatalogActionRequestImpl spawned = new CatalogActionRequestImpl();
 				FilterData filterData = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,
-						(String)context.getCatalog());
+						(String)context.getRequest().getCatalog());
 				filterData.setConstrained(false);
 				filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getFieldId()));
 				spawned.setFilter(filterData);
-				spawned.getCatalogManager().getRead().execute(spawned);
-				changeTriggers = spawned.getResults();
+
+				changeTriggers = context.getRuntimeContext().getEventBus().fireEvent(spawned,context.getRuntimeContext(),null);
 				context.put(CONTEXT_TRIGGERS_KEY, changeTriggers);
 			}
 			if (changeTriggers != null) {
@@ -63,7 +65,7 @@ public class ValueChangeListenerImpl extends AbstractComparationCommand implemen
 						// TODO this mean unecesary instances
 						Map<String, String> properties = CatalogActionTriggerHandlerImpl
 								.parseProperties(trigger.getProperties());
-						interpret.invokeTrigger( properties, context, trigger);
+						interpret.get().invokeTrigger( properties, context, trigger);
 					}
 
 				}

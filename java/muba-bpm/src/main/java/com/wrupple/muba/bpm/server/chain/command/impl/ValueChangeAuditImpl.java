@@ -9,6 +9,7 @@ import com.wrupple.muba.bpm.server.chain.command.ValueChangeAudit;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class ValueChangeAuditImpl extends AbstractComparationCommand implements ValueChangeAudit {
 
 	@Inject
-	public ValueChangeAuditImpl() {
+	public ValueChangeAuditImpl(FieldAccessStrategy accessStrategy) {
         super(accessStrategy);
     }
 
@@ -27,7 +28,8 @@ public class ValueChangeAuditImpl extends AbstractComparationCommand implements 
 
 
 		FieldValueChangeImpl fieldValueChange = new FieldValueChangeImpl();
-        fieldValueChange.setDomain((Long) context.getDomain());
+		//FIXME value of the changed entry
+        fieldValueChange.setDomain((Long) context.getNamespaceContext().getId());
         fieldValueChange.setCatalog(catalog.getDistinguishedName());
         fieldValueChange.setName(field.getFieldId());
         fieldValueChange.setOldValue(codedInitialValue);

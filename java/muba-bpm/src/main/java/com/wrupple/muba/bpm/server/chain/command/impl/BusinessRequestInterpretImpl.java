@@ -1,6 +1,7 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.*;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.RuntimeContext;
@@ -23,11 +24,13 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     protected Logger log = LoggerFactory.getLogger(BusinessRequestInterpretImpl.class);
 
 
-    private Provider<ApplicationContext> proveedor;
+    private final Provider<ApplicationContext> proveedor;
+    private final ProcessManager bpm;
 
     @Inject
-    public BusinessRequestInterpretImpl(Provider<ApplicationContext> proveedor) {
+    public BusinessRequestInterpretImpl(Provider<ApplicationContext> proveedor, ProcessManager bpm) {
         this.proveedor = proveedor;
+        this.bpm = bpm;
     }
 
     @Override
@@ -47,25 +50,14 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
         if(state==null){
             Object existingApplicationStateId = contract.getState();
 
-
-
             if(existingApplicationStateId==null){
-                //FIXME recover application state by session id?
-                //create new application state
-                state= context.getProcessManager().acquireContext(contract.getStateValue(),thread.getSession());
-
+                throw new NullPointerException("business intent bound to no application");
             }else{
-                //recover application state
-                CatalogActionRequestImpl request= new CatalogActionRequestImpl();
-                //FIXME create/read application context of the right type
-                request.setCatalog(ApplicationState.CATALOG);
-                request.setEntry(existingApplicationStateId);
-                request.setName(CatalogActionRequest.READ_ACTION);
 
-                state=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
+                state= bpm.requirereContext(existingApplicationStateId,thread);
             }
 
-
+            contract.setStateValue(state);
         }
         setWorkingTask(state,context);
 

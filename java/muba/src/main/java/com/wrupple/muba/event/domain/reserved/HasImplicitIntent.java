@@ -1,6 +1,7 @@
 package com.wrupple.muba.event.domain.reserved;
 
 import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.ImplicitIntent;
 
 /**
  * Created by japi on 14/10/17.

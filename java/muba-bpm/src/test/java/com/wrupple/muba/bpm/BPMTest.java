@@ -17,6 +17,7 @@ import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.EventBus;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import java.io.InputStream;
@@ -111,6 +113,7 @@ public abstract class BPMTest extends AbstractTest {
 		@Provides
 		@Inject
 		@Singleton
+		@Named(SessionContext.SYSTEM)
 		public SessionContext sessionContext() {
 
 
@@ -219,7 +222,7 @@ public abstract class BPMTest extends AbstractTest {
 
         replayAll();
 
-		session = injector.getInstance(SessionContext.class);
+		session = injector.getInstance(Key.get(SessionContext.class,Names.named(SessionContext.SYSTEM)));
 		wrupple = injector.getInstance(EventBus.class);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 	}

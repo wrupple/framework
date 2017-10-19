@@ -88,6 +88,13 @@ public class BusinessModule  extends AbstractModule {
         bind(ApplicationState.class).to(ApplicationStateImpl.class);
         bind(WorkCompleteEvent.class).to(WorkCompleteEventImpl.class);
         bind(BusinessIntent.class).to(BusinessIntentImpl.class);
+        //a host can have many sessions that can have many application states
+        bind(String.class).annotatedWith(Names.named(Host.CATALOG)).toInstance( "/static/img/session.png");
+
+        bind(String.class).annotatedWith(Names.named(Workflow.CATALOG)).toInstance("/static/img/process.png");
+
+        bind(String.class).annotatedWith(Names.named(WorkRequest.CATALOG)).toInstance("/static/img/notification.png");
+
     }
 
     @Provides

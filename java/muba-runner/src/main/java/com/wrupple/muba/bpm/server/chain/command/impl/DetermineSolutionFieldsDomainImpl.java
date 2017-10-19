@@ -4,8 +4,8 @@ import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.server.chain.command.DetermineSolutionFieldsDomain;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.bpm.server.service.Solver;
-import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.DataEvent;
@@ -26,9 +26,11 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
 
     protected Logger log = LoggerFactory.getLogger(DetermineSolutionFieldsDomainImpl.class);
 
+    private final ProcessManager bpm;
 
     @Inject
-    public DetermineSolutionFieldsDomainImpl(){
+    public DetermineSolutionFieldsDomainImpl(ProcessManager bpm){
+        this.bpm = bpm;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         final ApplicationContext context = (ApplicationContext) ctx;
         Task request = context.getStateValue().getTaskDescriptorValue();
 
-        final Solver solver = context.getSolver();
+        final Solver solver = bpm.getSolver();
         log.debug("Resolving Solution Type");
         String solutionType =(String) request.getCatalog();
 

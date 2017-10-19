@@ -1,5 +1,6 @@
 package com.wrupple.muba.bpm.domain.impl;
 
+import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.WorkCompleteEvent;
@@ -12,6 +13,49 @@ public class WorkCompleteEventImpl extends ExplicitIntentImpl implements WorkCom
     private Task taskDescriptorValue;
     private Long stakeHolder;
     private Date timestamp;
+    private Object entry;
+    private Object entryValue;
+
+    @Override
+    public Object getState() {
+        return state;
+    }
+
+    public void setState(Object state) {
+        this.state = state;
+    }
+
+    private Object state;
+    private ApplicationState stateValue;
+
+    @Override
+    public Object getEntry() {
+        return entry;
+    }
+
+    @Override
+    public void setEntry(Object entry) {
+        this.entry = entry;
+    }
+
+    @Override
+    public Object getEntryValue() {
+        return entryValue;
+    }
+
+    public void setEntryValue(Object entryValue) {
+        this.entryValue = entryValue;
+    }
+
+    @Override
+    public ApplicationState getStateValue() {
+        return stateValue;
+    }
+
+    @Override
+    public void setStateValue(ApplicationState stateValue) {
+        this.stateValue = stateValue;
+    }
 
     @Override
     public Workflow getHandleValue() {

@@ -35,6 +35,11 @@ public class IntentResolverContextImpl extends ContextBase implements IntentReso
 
     }
 
+    @Override
+    public void setDomain(Long domain) {
+
+    }
+
     public final Long getDomain() {
         return null;
     }

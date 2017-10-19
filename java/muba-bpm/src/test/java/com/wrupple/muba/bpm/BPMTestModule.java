@@ -6,6 +6,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 
@@ -59,8 +60,8 @@ public class BPMTestModule extends AbstractModule {
     @javax.inject.Inject
     @javax.inject.Singleton
     @Named("catalog.plugins")
-    public Object plugins(BusinessPlugin bpm, SolverCatalogPlugin /* domain driven */ runner, UserCatalogPlugin /* domain driven */ user) {
-        CatalogPlugin[] plugins = new CatalogPlugin[] { runner,bpm ,user};
+    public Object plugins(BusinessPlugin bpm, SolverCatalogPlugin runner, SystemCatalogPlugin system) {
+        CatalogPlugin[] plugins = new CatalogPlugin[] { runner,bpm ,system};
         return plugins;
     }
 

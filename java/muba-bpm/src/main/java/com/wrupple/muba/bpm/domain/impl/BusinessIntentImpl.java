@@ -4,6 +4,8 @@ import com.wrupple.muba.bpm.domain.BusinessIntent;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
@@ -21,14 +23,12 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
             foreignCatalog = ApplicationState.CATALOG
     )
     private ApplicationState stateValue;
-    @CatalogValue(
-            foreignCatalog = Workflow.CATALOG
-    )
-    private Workflow handleValue;
-    @ForeignKey(
-            foreignCatalog = Workflow.CATALOG
-    )
-    private Long handle;
+
+    @CatalogField(ignore = true)
+    private Workflow implicitIntentValue;
+    @ForeignKey(foreignCatalog = Workflow.CATALOG)
+    private Object implicitIntent;
+
     private Object entry;
     private CatalogEntry entryValue;
     private String catalog;
@@ -36,6 +36,29 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
     private Exception error;
     private List<String> sentence;
 
+    @Override
+    public Workflow getImplicitIntentValue() {
+        return implicitIntentValue;
+    }
+
+    @Override
+    public void setImplicitIntentValue(Event stateValue) {
+        this.implicitIntentValue= (Workflow) stateValue;
+    }
+
+    public void setImplicitIntentValue(Workflow implicitIntentValue) {
+        this.implicitIntentValue = implicitIntentValue;
+    }
+
+    @Override
+    public Object getImplicitIntent() {
+        return implicitIntent;
+    }
+
+    @Override
+    public void setImplicitIntent(Object implicitIntent) {
+        this.implicitIntent = implicitIntent;
+    }
 
     @Override
     public String getCatalogType() {
@@ -75,8 +98,8 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
     }
 
     @Override
-    public void setStateValue(CatalogEntry applicationState) {
-        setStateValue((ApplicationState)applicationState);
+    public void setStateValue(ApplicationState applicationState) {
+        this.stateValue=applicationState;
     }
 
     @Override
@@ -103,25 +126,7 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
         this.sentence = sentence;
     }
 
-    public void setStateValue(ApplicationState stateValue) {
-        this.stateValue = stateValue;
-    }
 
-    public Workflow getHandleValue() {
-        return handleValue;
-    }
-
-    public void setHandleValue(Workflow handleValue) {
-        this.handleValue = handleValue;
-    }
-
-    public Long getHandle() {
-        return handle;
-    }
-
-    public void setHandle(Long handle) {
-        this.handle = handle;
-    }
 
     @Override
     public String getCatalog() {

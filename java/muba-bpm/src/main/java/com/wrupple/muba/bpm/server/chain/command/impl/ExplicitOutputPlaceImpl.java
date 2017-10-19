@@ -15,7 +15,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 	public boolean execute(Context ctx) throws Exception {
 		RuntimeContext context = (RuntimeContext) ctx;
 		WorkCompleteEvent event = (WorkCompleteEvent) context.getServiceContract();
-		ApplicationState state= (ApplicationState) event.
+		ApplicationState state= (ApplicationState) event.getStateValue();
 
         Workflow nextItem = findNextTreeNode(event, state);
 		state.setHandleValue(nextItem);

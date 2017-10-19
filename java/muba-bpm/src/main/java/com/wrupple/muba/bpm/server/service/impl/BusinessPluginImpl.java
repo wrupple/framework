@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
+import com.wrupple.muba.catalogs.server.service.impl.StaticCatalogDescriptorProvider;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.bpm.domain.*;
@@ -47,138 +48,95 @@ import org.apache.commons.chain.Command;
  *
  */
 @Singleton
-public class BusinessPluginImpl implements BusinessPlugin {
-    private final Provider<CatalogDescriptor> appItem;
+public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implements BusinessPlugin {
 
 
-    private final Provider<CatalogDescriptor> notificationProvider;
-
-    private final Provider<CatalogDescriptor> serviceManifestProvider;
-
-    private final CatalogTriggerInterpret triggerInterpret;
+    private final Provider<CatalogTriggerInterpret> triggerInterpret;
 
 	private final Command[] catalogActions;
-    private final Provider<CatalogDescriptor> state;
 
 
     @Inject
 	public BusinessPluginImpl(ValueChangeListener changeListener,
                               ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
-							  @Named(ApplicationState.CATALOG) Provider<CatalogDescriptor> state,
-                              @Named(Workflow.CATALOG) Provider<CatalogDescriptor> appItem,
+							  @Named(ApplicationState.CATALOG) CatalogDescriptor state,
+                              @Named(Workflow.CATALOG) CatalogDescriptor appItem,
                               // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
-                              @Named(WorkRequest.CATALOG) Provider<CatalogDescriptor> notificationProvider,
+                              @Named(WorkRequest.CATALOG) CatalogDescriptor notificationProvider,
                               // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
-                              @Named(ServiceManifest.CATALOG) Provider<CatalogDescriptor> serviceManifestProvider, CatalogTriggerInterpret triggerInterpret) {
-        this.serviceManifestProvider = serviceManifestProvider;
-        this.triggerInterpret = triggerInterpret;
-		this.notificationProvider = notificationProvider;
-        this.state=state;
-		this.appItem=appItem;
+                              @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifestProvider, Provider<CatalogTriggerInterpret> triggerInterpret) {
 
+        this.triggerInterpret = triggerInterpret;
+		super.put(serviceManifestProvider);
+		super.put(state);
+		super.put(appItem);
+		super.put(notificationProvider);
 		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
 	}
 
-	@Override
-	public CatalogDescriptor getDescriptor(Long key, CatalogActionContext context)  {
-
-		if (key.equals(serviceManifestProvider.get().getId())) {
-			return serviceManifestProvider.get();
-		}
-		return null;
-	}
 
 	@Override
-	public CatalogDescriptor getDescriptor(String catalogId, CatalogActionContext context) {
-		if (Workflow.CATALOG.equals(catalogId)) {
-			return appItem.get();
-		} else if (WorkRequest.CATALOG.equals(catalogId)) {
-			return notificationProvider.get();
-		}else if (ApplicationState.CATALOG.equals(catalogId)) {
-            return state.get();
-        }/* else if (BPMPeer.NUMERIC_ID.equals(catalogId)) {
-			return clientProvider.get();
-		} else if (VegetateAuthenticationToken.CATALOG_TIMELINE.equals(catalogId)) {
-			return authTokenDescriptor.get();
-		}*/
-		return null;
-	}
-
-	@Override
-	public void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) {
-		/* FIXME use in EventSuscriptionMapper
-		names.add(new CatalogEntryImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
-				"/static/img/notification.png"));*/
-		//a host can have many sessions that can have many application states
-		names.add(new CatalogEntryImpl(Host.CATALOG, "Open Sessions", "/static/img/session.png"));
-		names.add(new CatalogEntryImpl(Workflow.CATALOG, "Process", "/static/img/process.png"));
-		names.add(new CatalogEntryImpl(WorkRequest.CATALOG, WorkRequest.CATALOG,
-				"/static/img/notification.png"));
-		// organization catalog as visible?
-	}
-
-	@Override
-	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) {
+	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
 		FieldDescriptor stakeHolderField = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
 		CatalogEventListenerImpl e;
 		if (stakeHolderField != null && !stakeHolderField.isMultiple()
 				&& stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
 				&& Person.CATALOG.equals(stakeHolderField.getCatalog())) {
 
-			if (catalog.getStorage() == CatalogDescriptor.SECURE) {
+			if (catalog.getStorage().contains("secure")) {
 				e = new CatalogEventListenerImpl();
-				e.setAction(0);
+				e.setAction(0l);
 				e.setAdvice(true);
-				e.getSentence(CheckSecureConditions.class.getSimpleName());
+				e.setName(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
-                triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+                triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
 				e = new CatalogEventListenerImpl();
-				e.setAction(1);
+				e.setAction(1l);
 				e.setAdvice(true);
-				e.getSentence(CheckSecureConditions.class.getSimpleName());
+				e.setName(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
-                triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+                triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
 				e = new CatalogEventListenerImpl();
-				e.setAction(2);
+				e.setAction(2l);
 				e.setAdvice(true);
-				e.getSentence(CheckSecureConditions.class.getSimpleName());
+				e.setName(CheckSecureConditions.class.getSimpleName());
 				e.setFailSilence(false);
 				e.setStopOnFail(true);
-                triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+                triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 			}
 
 			stakeHolderField.setWriteable(false);
 
 			e = new CatalogEventListenerImpl();
-			e.setAction(0);
+			e.setAction(0l);
 			e.setAdvice(true);
-			e.getSentence(StakeHolderTrigger.class.getSimpleName());
+			e.setName(StakeHolderTrigger.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+            triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 			// asi como los triggers se agregan, modificadores de permisos
 			// especificos, alteran los filtros o la visibilidad de una entrada
 			// ((CatalogDescriptor) catalog).setStakeHolderProtected(true);
 
 			e = new CatalogEventListenerImpl();
-			e.setAction(1);
+			e.setAction(1l);
 			e.setAdvice(true);
-			e.getSentence(ValueChangeAudit.class.getSimpleName());
+			e.setName(ValueChangeAudit.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+            triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
 			e = new CatalogEventListenerImpl();
-			e.setAction(1);
+			e.setAction(1l);
 			e.setAdvice(false);
-			e.getSentence(ValueChangeListener.class.getSimpleName());
+			e.setName(ValueChangeListener.class.getSimpleName());
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(e, catalog,context);
+            triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
 			// FIXME writing (or reading require signed private key authentication)
 

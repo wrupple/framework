@@ -1,17 +1,21 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.bpm.server.service.Solver;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.SessionContext;
-import org.apache.commons.beanutils.BeanUtils;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /*SequentialProcessManger imports
 import com.google.gwt.core.client.JavaScriptObject;
@@ -55,22 +59,44 @@ import com.wrupple.vegetate.shared.services.PeerManager;
 @Singleton
 public class ProcessManagerImpl implements ProcessManager {
 
-    private final SystemCatalogPlugin catalog;
+    private final EventBus eventBus;
+    private final Solver solver;
     private final Provider<ApplicationState> applicationStateProvider;
 
     @Inject
-    public ProcessManagerImpl(SystemCatalogPlugin catalog, Provider<ApplicationState> applicationStateProvider) {
-        this.catalog = catalog;
+    public ProcessManagerImpl(EventBus eventBus, Solver solver, Provider<ApplicationState> applicationStateProvider) {
+        this.eventBus = eventBus;
+        this.solver = solver;
         this.applicationStateProvider = applicationStateProvider;
     }
 
     @Override
-    public ApplicationState acquireContext(CatalogEntry copyFieldValuesFrom, SessionContext thread) throws InvocationTargetException, IllegalAccessException {
+    public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws InvocationTargetException, IllegalAccessException {
         ApplicationState newState = applicationStateProvider.get();
-        BeanUtils.copyProperties(newState,copyFieldValuesFrom);
         newState.setSession(thread.getSessionValue().getId());
+        newState.setHandleValue(initialState);
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState,ApplicationState.CATALOG);
         return newState;
+    }
+
+    @Override
+    public Solver getSolver() {
+        return solver;
+    }
+
+    @Override
+    public ApplicationState requirereContext(Object existingApplicationStateId, RuntimeContext session) throws Exception {
+
+        //recover application state
+        CatalogActionRequestImpl request= new CatalogActionRequestImpl();
+        //FIXME create/read application context of the right type
+        request.setCatalog(ApplicationState.CATALOG);
+        request.setEntry(existingApplicationStateId);
+        request.setName(CatalogActionRequest.READ_ACTION);
+
+        List results = eventBus.fireEvent(request, session, null);
+
+        return (ApplicationState) results.get(0);
     }
 /* Sequential Process Manager
 	private static final String PROCESS_USER_AREA_CLASS = "application-content-area";

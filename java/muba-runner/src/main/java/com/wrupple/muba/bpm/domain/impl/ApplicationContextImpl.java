@@ -14,32 +14,14 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class ApplicationContextImpl extends ContextBase implements ApplicationContext {
-    private final ProcessManager processManager;
     private RuntimeContext runtimeContext;
-    private final Solver solver;
 
     public void setStateValue(ApplicationState stateValue) {
         this.stateValue = stateValue;
     }
 
-    @Override
-    public Solver getSolver() {
-        return solver;
-    }
 
     private ApplicationState stateValue;
-
-
-    @Inject
-    public ApplicationContextImpl(ProcessManager processManager, Solver solver) {
-        this.processManager = processManager;
-        this.solver = solver;
-    }
-
-    @Override
-    public ProcessManager getProcessManager() {
-        return processManager;
-    }
 
     @Override
     public ApplicationContext setRuntimeContext(RuntimeContext requestContext) {
