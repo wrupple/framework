@@ -109,7 +109,9 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
     public boolean isInheritedField(FieldDescriptor field, CatalogDescriptor owner) {
         if(owner.getParent()==null){
             return false;
-        }else {
+        }else if(owner.getKeyField().equals(field.getFieldId())){
+            return false;
+        }else{
             CatalogDescriptor parent = owner.getParentValue();
             return parent.getFieldDescriptor(field.getFieldId())!=null;
         }

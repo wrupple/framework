@@ -32,16 +32,19 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     private final FieldAccessStrategy access;
     private final CatalogKeyServices keyDelgeate;
     private final Provider<ActionsDictionary> dictionaryProvider;
+    private final CatalogDescriptor metadataDescriptor;
+
 
 
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.token.splitter") String splitter /* "\\." */, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider) {
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.token.splitter") String splitter /* "\\." */, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider, @Named(CatalogDescriptor.CATALOG_ID) CatalogDescriptor metadataDescriptor) {
         this.pattern = pattern;
         this.TOKEN_SPLITTER = splitter;
         this.ancestorIdField=ancestorIdField;
         this.access = access;
         this.keyDelgeate = keyDelgeate;
         this.dictionaryProvider = dictionaryProvider;
+        this.metadataDescriptor = metadataDescriptor;
     }
 	/*
 	 * INHERITANCE
@@ -53,11 +56,12 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
             return null;
         }else{
             // find great ancestor
-            if(result.getRootAncestor()!=null){
+            if(result.getRootAncestor()!=null&&result.getRootAncestor()!=result){
                 return result.getRootAncestor().getDistinguishedName();
             }else{
                 List<CatalogEntry> originalResults = realContext.getResults();
                 CatalogActionRequest parentContext = realContext.getRequest();
+                CatalogDescriptor orinalMetadata = realContext.getCatalogDescriptor();
                 if(tempNotRealContract==null){
                     tempNotRealContract = new CatalogActionRequestImpl();
 
@@ -65,18 +69,26 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
                     tempNotRealContract.setCatalog(CatalogDescriptor.CATALOG_ID);
                 }
                 tempNotRealContract.setEntry(result.getParent());
+                realContext.switchContract(tempNotRealContract);
+                realContext.setCatalogDescriptor(metadataDescriptor);
+
                 dictionaryProvider.get().getRead().execute(realContext);
                 CatalogDescriptor parent = realContext.getConvertedResult();
                 result.setParentValue(parent);
                 String greatAncestor = parent.getDistinguishedName();
                 while (parent != null) {
                      greatAncestor = parent.getDistinguishedName();
-                    tempNotRealContract.setEntry(parent.getParent());
-                    dictionaryProvider.get().getRead().execute(realContext);
-                    parent.setParentValue(realContext.getConvertedResult());
-                    parent= parent.getParentValue();
-                }
+                     if(parent.getParent()==null){
+                         parent = null;
+                     }else{
+                         tempNotRealContract.setEntry(parent.getParent());
+                         dictionaryProvider.get().getRead().execute(realContext);
+                         parent.setParentValue(realContext.getConvertedResult());
+                         parent= parent.getParentValue();
+                     }
 
+                }
+                realContext.setCatalogDescriptor(orinalMetadata);
                 realContext.switchContract(parentContext);
                 realContext.setResults(originalResults);
                 return greatAncestor;
