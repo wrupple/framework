@@ -60,7 +60,6 @@ public class IntegralTest extends AbstractTest{
     private WriteAuditTrails mockLogger;
     private Session stakeHolderValue;
     protected EventBus wrupple;
-    protected SessionContext session;
 
 
 
@@ -94,16 +93,6 @@ public class IntegralTest extends AbstractTest{
                     .toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
             // TODO cms test isMasked FieldDescriptor
 
-        }
-
-        @Provides
-        @Inject
-        @Singleton
-        @Named(SYSTEM)
-        public SessionContext sessionContext() {
-
-
-            return new SessionContextImpl(stakeHolderValue);
         }
 
         @Provides
@@ -192,7 +181,6 @@ public class IntegralTest extends AbstractTest{
         expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
         expect(stakeHolderValue.getId()).andStubReturn(CatalogEntry.PUBLIC_ID);
 
-        session = injector.getInstance( Key.get(SessionContext.class, Names.named(SYSTEM)));
         wrupple = injector.getInstance(EventBus.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }

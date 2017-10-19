@@ -193,6 +193,15 @@ public class CatalogModule extends AbstractModule {
 	/*
 	 * CONFIGURATION
 	 */
+    @Provides
+    @Singleton
+    @Inject
+    @Named(Session.CATALOG)
+    public CatalogDescriptor session(CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(SessionImpl.class, Session.CATALOG, "Sessions", -1911198,
+                null);
+        return r;
+    }
 
 	@Provides
 	@Singleton
