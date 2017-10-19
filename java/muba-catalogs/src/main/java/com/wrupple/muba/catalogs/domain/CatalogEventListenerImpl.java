@@ -106,5 +106,9 @@ public class CatalogEventListenerImpl extends CatalogJobImpl implements CatalogE
 		this.systemEvent = systemEvent;
 	}
 
+    @Override
+    public String getCatalogType() {
+        return CatalogEventListener.CATALOG;
+    }
 
 }

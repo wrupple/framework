@@ -344,7 +344,7 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 			if (this.serviceContext != this && this.serviceContext instanceof HasResult) {
 				return ((HasResult<T>) this.serviceContext).getConvertedResult();
 			} else {
-				return null;
+				return (T) this.result;
 			}
 
 		} else {
@@ -355,11 +355,15 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
     @Override
     public <T> List<T> getResults() {
-        if (this.serviceContext != this && this.serviceContext instanceof HasResult) {
+        if (this.serviceContext != this && this.serviceContext instanceof HasResults) {
             return ((HasResults<T>) this.serviceContext).getResults();
 
         } else {
-            return null;
+            if(result instanceof  List){
+            	return (List<T>) result;
+			}else{
+            	return Collections.singletonList((T) result);
+			}
         }
     }
 

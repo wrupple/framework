@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by japi on 19/10/17.
  */
-public class CatalogJobImpl extends CatalogEntryImpl implements CatalogJob {
+public abstract class CatalogJobImpl extends CatalogEntryImpl implements CatalogJob {
 
     @CatalogField(filterable = true)
     private String catalog;
@@ -71,10 +71,6 @@ public class CatalogJobImpl extends CatalogEntryImpl implements CatalogJob {
         return null;
     }
 
-    @Override
-    public String getCatalogType() {
-        return CatalogEventListener.CATALOG;
-    }
 
 
     @Override

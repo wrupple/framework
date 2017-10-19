@@ -67,8 +67,8 @@ public class ResolveIntent extends IntegralTest {
         runtimeContext.process();*/
 
 
-        EquationSystemSolution solution = wrupple.fireEvent(problem,session,null);
-
+        List results = wrupple.fireEvent(problem, session, null);
+        EquationSystemSolution solution = (EquationSystemSolution) results.get(0);
         assertTrue(solution.getX()==2);
 
         assertTrue(solution.getY()==2);

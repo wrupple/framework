@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
+import com.wrupple.muba.catalogs.domain.CatalogEventListener;
 import com.wrupple.muba.catalogs.domain.CatalogJobImpl;
 import com.wrupple.muba.event.domain.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
@@ -82,5 +83,11 @@ public class TaskImpl extends CatalogJobImpl implements Task {
     @Override
     public void setOutputField(String outputField) {
         this.outputField = outputField;
+    }
+
+
+    @Override
+    public String getCatalogType() {
+        return Task.CATALOG;
     }
 }

@@ -31,24 +31,12 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 
     private void createApplication() throws Exception {
 
-        CatalogActionRequestImpl catalogActionRequest = new CatalogActionRequestImpl();
 
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 
         log.info("[-Register Statistics catalog type-]");
 
-        //FIXME stack overflow when no parent is specified, ok when consolidated?
-        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(Statistics.class, Statistics.CATALOG,
-                "Table Statistics",  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
-        solutionContract.setConsolidated(true);
-        catalogActionRequest.setEntryValue(solutionContract);
-
-
-        catalogActionRequest.setEntryValue(solutionContract);
-        catalogActionRequest.setName(DataEvent.CREATE_ACTION);
-        catalogActionRequest.setFollowReferences(true);
-        catalogActionRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
-        wrupple.fireEvent(catalogActionRequest,session,null);
+        defineSolutionTemplate( builder);
 
 
 
@@ -98,6 +86,23 @@ public class ExplicitWorkflowRequestTest extends BPMTest {
 
 
         super.createMockDrivers();
+    }
+
+    private void defineSolutionTemplate( CatalogDescriptorBuilder builder) throws Exception {
+        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(Statistics.class, Statistics.CATALOG,
+                "Table Statistics",  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
+        solutionContract.setConsolidated(true);
+
+        CatalogActionRequestImpl catalogActionRequest = new CatalogActionRequestImpl();
+
+        catalogActionRequest.setEntryValue(solutionContract);
+
+
+        catalogActionRequest.setEntryValue(solutionContract);
+        catalogActionRequest.setName(DataEvent.CREATE_ACTION);
+        catalogActionRequest.setFollowReferences(true);
+        catalogActionRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
+        wrupple.fireEvent(catalogActionRequest,session,null);
     }
 
     /**

@@ -45,7 +45,8 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         solutionTypeInquiry.setCatalog(CatalogDescriptor.CATALOG_ID);
         solutionTypeInquiry.setName(DataEvent.READ_ACTION);
 
-        CatalogDescriptor solutionDescriptor = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
+        List results = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
+        CatalogDescriptor solutionDescriptor = (CatalogDescriptor) results.get(0);
         context.getStateValue().setSolutionDescriptor(solutionDescriptor);
 
         //by default, all fields are eligible for solving

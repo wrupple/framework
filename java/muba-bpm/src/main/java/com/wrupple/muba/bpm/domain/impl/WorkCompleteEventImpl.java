@@ -37,8 +37,8 @@ public class WorkCompleteEventImpl extends ExplicitIntentImpl implements WorkCom
     }
 
     @Override
-    public void setStakeHolder(long stakeHolder) {
-        this.stakeHolder=stakeHolder;
+    public void setStakeHolder(Object stakeHolder) {
+        this.stakeHolder= (Long) stakeHolder;
     }
 
     public void setStakeHolder(Long stakeHolder) {

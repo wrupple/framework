@@ -25,13 +25,17 @@ public class SessionContextDTOImpl implements SessionContextDTO {
 	public String getStakeHolder() {
 		return stakeHolder;
 	}
+
+	@Override
+	public void setStakeHolder(Object stakeHolder) {
+		throw new IllegalArgumentException("cannot change session stakeHolder");
+	}
+
 	public BPMPeer getPeer() {
 		return peer;
 	}
-	@Override
-	public void setStakeHolder(long stakeHolder) {
-		throw new IllegalArgumentException("cannot change session stakeHolder");
-	}
+
+
 	
 	
 }
