@@ -77,7 +77,7 @@ public class InferNextTaskImpl implements InferNextTask {
     }
 
     private Task getNextWorkflowTask(List<Long> workflow, Workflow application, ApplicationState state) {
-        int index = workflow.indexOf(state.getTaskDescriptor());
+        int index = workflow.indexOf(state.getTaskDescriptorValue().getId());
         index++;
         if(index<workflow.size()){
             return application.getProcessValues().get(index);
