@@ -13,10 +13,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.server.service.KeyDomainValidator;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
@@ -52,8 +49,9 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 
 			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
 			context.setCatalog(foreignCatalog);
+			context.setName(DataEvent.READ_ACTION);
 			SessionContext runtime = this.exp.get();
-			if (unique || nativeInterface.isCollection(value)) {
+			if (unique && nativeInterface.isCollection(value)) {
 				Collection<Object> colection = (Collection<Object>) value;
 				Set<Object> uniqueCollection = new HashSet<Object>();
 				for (Object p : colection) {

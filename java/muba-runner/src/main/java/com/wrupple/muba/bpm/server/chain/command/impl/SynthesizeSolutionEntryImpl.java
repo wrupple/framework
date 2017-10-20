@@ -34,7 +34,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
         log.info("Synthesize solution...");
-        CatalogDescriptor solutionDescriptor = context.getStateValue().getSolutionDescriptorValue();
+        CatalogDescriptor solutionDescriptor = context.getStateValue().getCatalogValue();
         CatalogEntry solution = plugin.synthesize(solutionDescriptor);
 
         List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariablesValues();

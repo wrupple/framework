@@ -49,6 +49,11 @@ public class ChangeApplicationState extends BPMTest {
         assertTrue("statistics dont exist",statistics!=null);
         assertTrue("statistics not created",statistics.getId()!=null);
 
+
+        List results = wrupple.fireEvent(applicationState, session, null);
+         statistics= (Statistics) results.get(0);
+
+
         assertTrue("statistics not updated",statistics.getCount()!=null);
         assertTrue("statistics not updated",statistics.getCount().longValue()>0);
 

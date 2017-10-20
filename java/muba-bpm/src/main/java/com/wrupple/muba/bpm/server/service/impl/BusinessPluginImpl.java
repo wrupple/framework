@@ -59,8 +59,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
     @Inject
 	public BusinessPluginImpl(ValueChangeListener changeListener,
                               ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
-							  @Named(ApplicationState.CATALOG) CatalogDescriptor state,
-                              @Named(Workflow.CATALOG) CatalogDescriptor appItem,
+
                               // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
                               @Named(WorkRequest.CATALOG) CatalogDescriptor notificationProvider,
                               // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
@@ -68,8 +67,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 
         this.triggerInterpret = triggerInterpret;
 		super.put(serviceManifestProvider);
-		super.put(state);
-		super.put(appItem);
+
 		super.put(notificationProvider);
 		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
 	}

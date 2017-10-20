@@ -46,7 +46,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 			        return (Workflow) output;
                 }else{
                     /* TODO IF ANY OF THE OUTPUT FIELDS CONTAIN A WORKFLOW USE IT
-                    CatalogDescriptor result = currentState.getSolutionDescriptorValue();
+                    CatalogDescriptor result = currentState.getCatalogValue();
 
                     Collection<FieldDescriptor> fields = result.getFieldsValues();
                     String applicationItemId = null;

@@ -19,7 +19,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private ServiceManifest handleValue;
     @CatalogField(ignore = true)
     private FilterData filterData;
-    @NotNull
+
     @ForeignKey(foreignCatalog = Workflow.CATALOG)
     private Long handle;
 
@@ -34,8 +34,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
      * keys must be stored in encoded format
      */
     private String entry;
-    @ForeignKey(foreignCatalog = Session.CATALOG)
-    private Object session;
+
     @CatalogField(ignore = true)
     private Task taskDescriptorValue;
     private List<String> userSelection;
@@ -46,17 +45,27 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private String distinguishedName;
 
 
+    private String catalog;
 
     @ForeignKey(foreignCatalog = CatalogDescriptor.CATALOG_ID)
     private Long solutionDescriptor;
     @CatalogField(ignore = true)
-    private CatalogDescriptor solutionDescriptorValue;
+    private CatalogDescriptor catalogValue;
     @CatalogField(ignore = true)
     private List<VariableDescriptor> solutionVariablesValues;
     @CatalogField(ignore = true)
     private CatalogEntry entryValue;
 
     private Boolean canceled,draft;
+    @Override
+    public String getCatalog() {
+        return catalog;
+    }
+
+    @Override
+    public void setCatalog(String catalog) {
+        this.catalog = catalog;
+    }
 
     @Override
     public String getCatalogType() {
@@ -187,13 +196,13 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
 
 
     @Override
-    public CatalogDescriptor getSolutionDescriptorValue() {
-        return solutionDescriptorValue;
+    public CatalogDescriptor getCatalogValue() {
+        return catalogValue;
     }
 
     @Override
-    public void setSolutionDescriptorValue(CatalogDescriptor solutionDescriptorValue) {
-        this.solutionDescriptorValue = solutionDescriptorValue;
+    public void setCatalogValue(CatalogDescriptor catalogValue) {
+        this.catalogValue = catalogValue;
     }
 
     @Override
@@ -231,12 +240,4 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
         this.parentValue = parentValue;
     }
 
-    public Object getSession() {
-        return session;
-    }
-
-    @Override
-    public void setSession(Object session) {
-        this.session = session;
-    }
 }

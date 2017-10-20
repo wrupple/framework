@@ -10,7 +10,9 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.bpm.domain.Task;
+import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
+import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.EquationSystemSolution;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
@@ -57,7 +59,9 @@ public class ResolveIntent extends IntegralTest {
 
         log.info("[-create a task with problem constraints-]");
         TaskImpl problem = createProblem(session);
-
+        ApplicationStateImpl state = new ApplicationStateImpl();
+        state.setTaskDescriptorValue(problem);
+        state.setDomain(session.getSessionValue().getDomain());
         log.info("[-post a solver request to the runner engine-]");
         /*runtimeContext.setServiceContract(problem);
         runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME, FIXME allow constrains to be posted in service request sentence
@@ -67,7 +71,7 @@ public class ResolveIntent extends IntegralTest {
         runtimeContext.process();*/
 
 
-        List results = wrupple.fireEvent(problem, session, null);
+        List results = wrupple.fireEvent(state, session, null);
         EquationSystemSolution solution = (EquationSystemSolution) results.get(0);
         assertTrue(solution.getX()==2);
 

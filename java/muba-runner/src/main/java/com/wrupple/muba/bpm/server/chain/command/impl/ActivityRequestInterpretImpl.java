@@ -2,7 +2,7 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.Task;
-import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.*;
@@ -17,19 +17,21 @@ import javax.inject.Provider;
 public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
 
     private final Provider<ApplicationContext> activityContextProvider;
+    private final ProcessManager bpm;
 
 
     @Inject
     public ActivityRequestInterpretImpl(
-                                        Provider<ApplicationContext> activityContextProvider){
+            Provider<ApplicationContext> activityContextProvider, ProcessManager bpm){
 
         this.activityContextProvider=activityContextProvider;
+        this.bpm = bpm;
     }
 
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
         ApplicationContext r = activityContextProvider.get();
-
+r.setStateValue((ApplicationState) requestContext.getServiceContract());
         return r.setRuntimeContext(requestContext);
     }
 
@@ -42,7 +44,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
             if(requestContext.getServiceContract() instanceof ApplicationState){
                 state = (ApplicationState) requestContext.getServiceContract();
             }else{
-                state = new ApplicationStateImpl();
+                state = bpm.acquireContext(null,requestContext.getSession());
             }
             context.setStateValue(state);
         }

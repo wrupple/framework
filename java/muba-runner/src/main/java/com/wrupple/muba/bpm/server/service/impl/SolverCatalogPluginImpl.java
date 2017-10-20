@@ -1,8 +1,6 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
-import com.wrupple.muba.bpm.domain.Task;
-import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
-import com.wrupple.muba.bpm.domain.WruppleActivityAction;
+import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -22,12 +20,14 @@ import java.util.List;
 public class SolverCatalogPluginImpl extends StaticCatalogDescriptorProvider implements SolverCatalogPlugin {
 
     @Inject
-    public SolverCatalogPluginImpl(Solver solver, @Named(Task.CATALOG) CatalogDescriptor taskDescP,
+    public SolverCatalogPluginImpl(Solver solver, @Named(Workflow.CATALOG) CatalogDescriptor appItem, @Named(ApplicationState.CATALOG) CatalogDescriptor state, @Named(Task.CATALOG) CatalogDescriptor taskDescP,
                                    @Named(TaskToolbarDescriptor.CATALOG) CatalogDescriptor toolbarDescP,
                                    @Named(WruppleActivityAction.CATALOG) CatalogDescriptor actionDescP) {
         super.put(taskDescP);
         super.put(actionDescP);
         super.put(toolbarDescP);
+        super.put(state);
+        super.put(appItem);
     }
 
 

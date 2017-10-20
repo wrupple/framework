@@ -73,7 +73,6 @@ public class ProcessManagerImpl implements ProcessManager {
     @Override
     public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
         ApplicationState newState = applicationStateProvider.get();
-        newState.setSession(thread.getSessionValue().getId());
         newState.setHandleValue(initialState);
 
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState,ApplicationState.CATALOG);

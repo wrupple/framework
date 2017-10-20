@@ -10,11 +10,10 @@ import java.util.List;
  * The reference to this contract is found in the runtineContext
  *
  */
-public interface ApplicationState extends HasDistinguishedName,ManagedObject,HasEntryId,HasParentValue<Long,ApplicationState>{
+public interface ApplicationState extends HasDistinguishedName,ManagedObject,HasEntryId,HasParentValue<Long,ApplicationState>,Event{
 
      String CATALOG = "ApplicationState";
 
-     void setSession(Object sessionid);
 
     ServiceManifest getHandleValue();
     void setHandleValue(ServiceManifest applicationItemValue);
@@ -35,9 +34,9 @@ public interface ApplicationState extends HasDistinguishedName,ManagedObject,Has
 
     void setTaskDescriptorValue(Task request);
 
-    void setSolutionDescriptorValue(CatalogDescriptor solutionDescriptorValue);
+    void setCatalogValue(CatalogDescriptor catalogValue);
 
-    CatalogDescriptor getSolutionDescriptorValue();
+    CatalogDescriptor getCatalogValue();
 
     void setSolutionVariablesValues(List<VariableDescriptor> variables);
 

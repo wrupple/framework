@@ -7,10 +7,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.impl.ApplicationContextImpl;
-import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
-import com.wrupple.muba.bpm.domain.impl.TaskImpl;
-import com.wrupple.muba.bpm.domain.impl.SolverServiceManifestImpl;
+import com.wrupple.muba.bpm.domain.impl.*;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
@@ -21,6 +18,8 @@ import com.wrupple.muba.bpm.server.service.impl.SolverCatalogPluginImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.domain.ContentNode;
+import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 
@@ -56,6 +55,32 @@ public class SolverModule extends AbstractModule {
         bind(String.class).annotatedWith(Names.named(WruppleActivityAction.CATALOG)).toInstance("/static/img/action.png");
         bind(String.class).annotatedWith(Names.named(TaskToolbarDescriptor.CATALOG)).toInstance("/static/img/task-piece.png");
 
+    }
+
+
+    @Provides
+    @Singleton
+    @Inject
+    @Named(Workflow.CATALOG)
+    public CatalogDescriptor activity(
+            CatalogDescriptorBuilder builder, @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest) {
+        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Workflow",
+                -900190, serviceManifest);
+
+        return r;
+    }
+
+
+    @Provides
+    @Singleton
+    @Inject
+    @Named(ApplicationState.CATALOG)
+    public CatalogDescriptor application(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
+                                         CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(ApplicationStateImpl.class, ApplicationState.CATALOG, "Thread",
+                -990094, timeline);
+        r.setClazz(ApplicationStateImpl.class);
+        return r;
     }
 
     @Provides @Singleton @Inject @Named(Task.CATALOG)

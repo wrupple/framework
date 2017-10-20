@@ -96,17 +96,6 @@ public class BusinessModule  extends AbstractModule {
 
     }
 
-    @Provides
-    @Singleton
-    @Inject
-    @Named(Workflow.CATALOG)
-    public CatalogDescriptor activity(
-            CatalogDescriptorBuilder builder, @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest) {
-        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Workflow",
-                -900190, serviceManifest);
-
-        return r;
-    }
 
 
     @Provides
@@ -134,17 +123,6 @@ public class BusinessModule  extends AbstractModule {
         return r;
     }
 
-    @Provides
-    @Singleton
-    @Inject
-    @Named(ApplicationState.CATALOG)
-    public CatalogDescriptor application(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
-            CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(ApplicationStateImpl.class, ApplicationState.CATALOG, "Thread",
-                -990094, timeline);
-        r.setClazz(ApplicationStateImpl.class);
-        return r;
-    }
 
     @Provides
     @Singleton
