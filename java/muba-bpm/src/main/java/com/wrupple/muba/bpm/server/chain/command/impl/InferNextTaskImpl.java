@@ -1,6 +1,5 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.google.inject.Provider;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
@@ -17,18 +16,19 @@ import java.util.List;
 public class InferNextTaskImpl implements InferNextTask {
     protected static final Logger log = LoggerFactory.getLogger(InferNextTaskImpl.class);
 
-    private final Provider<WorkCompleteEvent> eventProvider;
+    private final WorkflowEngine outputHandler;
 
     @Inject
-    public InferNextTaskImpl(Provider<WorkCompleteEvent> eventProvider) {
-        this.eventProvider = eventProvider;
+    public InferNextTaskImpl(WorkflowEngine outputHandler) {
+
+        this.outputHandler = outputHandler;
     }
 
     @Override
     public boolean execute(Context ctx) throws Exception {
 
         ApplicationContext context = (ApplicationContext) ctx;
-
+        ApplicationState state = context.getStateValue();
          /*
             BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
         bookingRequest.setHandle(item.getId());
@@ -37,17 +37,15 @@ public class InferNextTaskImpl implements InferNextTask {
 
         */
 
-        Workflow item = (Workflow) context.getStateValue().getHandleValue();
+        Workflow item = (Workflow)state.getHandleValue();
 
-        Task nextTask = getNextWorkflowTask(item.getProcess(),item,context.getStateValue());
+        Task nextTask = getNextWorkflowTask(item.getProcess(),item,state);
         if(nextTask==null){
 
             // PROCESAR SALIDA Y CAMBIAR DE PROCESO ( ReadNextPlace )
             //state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
+            // output handler a clear example of when NOT to use events (sync same cotext=
 
-            WorkCompleteEvent event = eventProvider.get();
-
-            event.setCatalog((String) context.getStateValue().getTaskDescriptorValue().getCatalog());
             String command = item.getExit();
             if(command==null){
                 if(item.getExplicitSuccessorValue()==null){
@@ -58,18 +56,17 @@ public class InferNextTaskImpl implements InferNextTask {
 
             }
 
-            event.setName(command);
-            event.setResult(context.getStateValue().getEntryValue());
-            event.setStateValue(context.getStateValue());
+           context.setName(command);
 
             log.info("firing workflow finished event to survey output Handlers");
-            context.getRuntimeContext().getEventBus().fireEvent(event,context.getRuntimeContext(),null);
-
-            context.getStateValue().setHandleValue(event.getHandleValue());
-            nextTask= event.getTaskDescriptorValue();
-
+            outputHandler.execute(context);
+            state = context.getStateValue();
+            Workflow newItem = (Workflow) state.getHandleValue();
+            if(newItem.isClearOutput()){
+                state.setEntryValue(null);
+            }
+            nextTask= newItem.getProcessValues().get(0);
         }
-
         context.getStateValue().setTaskDescriptorValue(nextTask);
         context.getStateValue().setTaskDescriptor(nextTask.getId());
 

@@ -20,8 +20,6 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
         ApplicationContext context = (ApplicationContext) ctx;
             ApplicationState applicationState = context.getStateValue();
 
-            applicationState.setEntryValue((CatalogEntry) context.getRuntimeContext().getServiceContract());
-
             CatalogActionRequestImpl request= new CatalogActionRequestImpl();
             //FIXME update application context of the right type
             request.setCatalog(ApplicationState.CATALOG);
@@ -32,6 +30,7 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
         List results=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
 
         applicationState = (ApplicationState) results.get(0);
+        context.setStateValue(applicationState);
             //commit
             context.getRuntimeContext().setResult(applicationState/* request.getEntryValue()*/);
         return CONTINUE_PROCESSING;

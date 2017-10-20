@@ -169,10 +169,6 @@ public abstract class BPMTest extends AbstractTest {
 
         switchs.getIntentInterpret().registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
 
-        WorkflowServiceManifest taskManger = injector.getInstance(WorkflowServiceManifest.class);
-
-        switchs.getIntentInterpret().registerService(taskManger, injector.getInstance(WorkflowEngine.class), null,bpm);
-
         switchs.getIntentInterpret().registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
 
 

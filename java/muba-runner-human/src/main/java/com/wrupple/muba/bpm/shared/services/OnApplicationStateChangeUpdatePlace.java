@@ -8,7 +8,7 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
  * When a catalog update event is fired for an application state we update desktop place
  * Created by japi on 24/08/17.
  */
-public class ApplicationStateUpdatePlaceImpl implements CatalogEventHandler {
+public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler {
 
     public void onApplicationStateChanged(ApplicationState e){
 

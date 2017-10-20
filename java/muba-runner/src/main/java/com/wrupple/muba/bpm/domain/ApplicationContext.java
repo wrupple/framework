@@ -20,6 +20,5 @@ public interface ApplicationContext extends ServiceContext {
     void setStateValue(ApplicationState state);
 
 
-
-
+    void setName(String command);
 }

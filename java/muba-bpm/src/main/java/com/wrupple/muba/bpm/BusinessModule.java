@@ -31,6 +31,8 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 public class BusinessModule  extends AbstractModule {
     @Override
     protected void configure() {
+        bind(String.class).annotatedWith(Names.named("bpm.dictionary.outputHandler")).toInstance("mine");
+
         bind(Integer.class).annotatedWith(Names.named("com.wrupple.errors.unknownUser")).toInstance(0);
 
 
@@ -39,7 +41,6 @@ public class BusinessModule  extends AbstractModule {
          */
         bind(BusinessServiceManifest.class).to(BusinessServiceManifestImpl.class);
         bind(IntentResolverServiceManifest.class).to(IntentResolverServiceManifestImpl.class);
-        bind(WorkflowServiceManifest.class).to(WorkflowServiceManifestImpl.class);
 
         /*
         Context
@@ -60,11 +61,12 @@ public class BusinessModule  extends AbstractModule {
          */
         bind(IntentResolverEngine.class).to(IntentResolverEngineImpl.class);
         bind(BusinessEngine.class).to(BusinessEngineImpl.class);
-        bind(WorkflowEngine.class).to(WorkflowEngineImpl.class);
+
 
         /*
         Commands
          */
+        bind(WorkflowEngine.class).to(WorkflowEngineImpl.class);
         bind(CommitSubmission.class).to(CommitSubmissionImpl.class);
         bind(InferNextTask.class).to(InferNextTaskImpl.class);
         bind(UpdateApplicationContext.class).to(UpdateApplicationContextImpl.class);
@@ -84,7 +86,6 @@ public class BusinessModule  extends AbstractModule {
          *
          */
         bind(ApplicationState.class).to(ApplicationStateImpl.class);
-        bind(WorkCompleteEvent.class).to(WorkCompleteEventImpl.class);
         bind(BusinessIntent.class).to(BusinessIntentImpl.class);
         //a host can have many sessions that can have many application states
         bind(String.class).annotatedWith(Names.named(Host.CATALOG)).toInstance( "/static/img/session.png");
@@ -120,17 +121,6 @@ public class BusinessModule  extends AbstractModule {
         return r;
     }
 
-    @Provides
-    @Singleton
-    @Inject
-    @Named(WorkCompleteEvent.CATALOG)
-    public CatalogDescriptor done(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
-            CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(WorkCompleteEventImpl.class, WorkCompleteEvent.CATALOG, "Work Completed",
-                -990092, timeline);
-        r.setClazz(WorkRequestImpl.class);
-        return r;
-    }
 
     @Provides
     @Singleton

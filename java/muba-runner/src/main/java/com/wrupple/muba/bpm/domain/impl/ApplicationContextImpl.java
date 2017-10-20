@@ -15,9 +15,15 @@ import javax.inject.Singleton;
 @Singleton
 public class ApplicationContextImpl extends ContextBase implements ApplicationContext {
     private RuntimeContext runtimeContext;
+    private String name;
 
     public void setStateValue(ApplicationState stateValue) {
         this.stateValue = stateValue;
+    }
+
+    @Override
+    public void setName(String command) {
+        this.name=command;
     }
 
 
@@ -37,5 +43,9 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     @Override
     public RuntimeContext getRuntimeContext() {
         return runtimeContext;
+    }
+
+    public String getName() {
+        return name;
     }
 }
