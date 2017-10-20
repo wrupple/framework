@@ -43,7 +43,9 @@ public class ChangeApplicationState extends BPMTest {
 
         // when thread returns statistics should be updated (assertion)
 
-        Statistics statistics = (Statistics) applicationState.getEntryValue();
+        BusinessIntent intent = (BusinessIntent) applicationState.getEntryValue();
+
+        Statistics statistics = (Statistics) intent.getConvertedResult();
 
         assertTrue("statistics dont exist",statistics!=null);
         assertTrue("statistics not created",statistics.getId()!=null);

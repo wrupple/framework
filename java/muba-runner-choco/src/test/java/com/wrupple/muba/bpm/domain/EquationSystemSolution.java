@@ -1,7 +1,7 @@
 package com.wrupple.muba.bpm.domain;
 
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -9,7 +9,7 @@ import javax.validation.constraints.Min;
 /**
  * Created by rarl on 10/05/17.
  */
-public class EquationSystemSolution extends ContentNodeImpl  {
+public class EquationSystemSolution extends ContentNodeImpl {
     public static final String CATALOG = "EquationSystemSolution";
     // x in [0,5]
     @Min(0)

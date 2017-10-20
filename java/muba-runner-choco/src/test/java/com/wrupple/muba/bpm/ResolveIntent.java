@@ -43,6 +43,7 @@ public class ResolveIntent extends IntegralTest {
      */
     @Test
     public void equationSolverTest() throws Exception {
+        SessionContext session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 
         // expectations
@@ -51,11 +52,11 @@ public class ResolveIntent extends IntegralTest {
 
         log.info("[-Register EquationSystemSolution catalog type-]");
 
-        defineConstrainedSolution(builder);
+        defineConstrainedSolution(builder, session);
 
 
         log.info("[-create a task with problem constraints-]");
-        TaskImpl problem = createProblem();
+        TaskImpl problem = createProblem(session);
 
         log.info("[-post a solver request to the runner engine-]");
         /*runtimeContext.setServiceContract(problem);
@@ -74,7 +75,7 @@ public class ResolveIntent extends IntegralTest {
 
     }
 
-    private TaskImpl createProblem() throws Exception {
+    private TaskImpl createProblem( SessionContext session ) throws Exception {
         CatalogActionRequestImpl catalogRequest;
         TaskImpl problem = new TaskImpl();
         problem.setDistinguishedName("equation system");
@@ -99,7 +100,7 @@ public class ResolveIntent extends IntegralTest {
         return problem;
     }
 
-    private void defineConstrainedSolution(CatalogDescriptorBuilder builder) throws Exception {
+    private void defineConstrainedSolution(CatalogDescriptorBuilder builder, SessionContext session) throws Exception {
         CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
                 "Equation System Solution", 0,  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
 

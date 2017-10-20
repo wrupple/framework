@@ -4,10 +4,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ContentNode;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.domain.ContentNode;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;

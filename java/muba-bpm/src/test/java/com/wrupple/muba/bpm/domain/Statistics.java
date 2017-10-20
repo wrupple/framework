@@ -1,5 +1,6 @@
 package com.wrupple.muba.bpm.domain;
 
+import com.wrupple.muba.event.domain.ContentNode;
 import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 
@@ -29,5 +30,11 @@ public class Statistics extends ContentNodeImpl implements HasCatalogId{
 
     public void setCount(Long count) {
         this.count = count;
+    }
+
+
+    @Override
+    public String getCatalogType() {
+        return getClass().getSimpleName();
     }
 }

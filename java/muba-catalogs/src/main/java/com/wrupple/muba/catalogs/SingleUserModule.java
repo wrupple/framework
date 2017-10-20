@@ -1,5 +1,10 @@
 package com.wrupple.muba.catalogs;
 
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.Session;
+import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.impl.SessionImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 
@@ -15,6 +20,9 @@ import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogResultCacheImpl;
 import com.wrupple.muba.event.server.service.impl.LargeStringFieldDataAccessObjectImpl;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class SingleUserModule extends AbstractModule {
 
@@ -45,4 +53,26 @@ public class SingleUserModule extends AbstractModule {
 	public CatalogNamespace publicNamespace() {
 		return new PublicNamespace();
 	}
+
+	@Provides
+	@Inject
+	@javax.inject.Singleton
+	@Named(SessionContext.SYSTEM)
+	public SessionContext sessionContext(@Named(SessionContext.SYSTEM) Session stakeHolderValue) {
+
+
+		return new SessionContextImpl(stakeHolderValue);
+	}
+
+	@Provides
+	@Inject
+	@javax.inject.Singleton
+	@Named(SessionContext.SYSTEM)
+	public Session sessionContext() {
+		SessionImpl sessionValue= new SessionImpl();
+		sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
+		sessionValue.setId(CatalogEntry.PUBLIC_ID);
+		return sessionValue;
+	}
+
 }

@@ -9,6 +9,8 @@ import com.wrupple.muba.bpm.server.chain.command.UpdateApplicationContext;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import org.apache.commons.chain.Context;
 
+import java.util.List;
+
 /**
  * Created by japi on 18/08/17.
  */
@@ -27,8 +29,9 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
             request.setEntry(applicationState.getId());
             request.setEntryValue(applicationState);
 
-        applicationState=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
+        List results=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
 
+        applicationState = (ApplicationState) results.get(0);
             //commit
             context.getRuntimeContext().setResult(applicationState/* request.getEntryValue()*/);
         return CONTINUE_PROCESSING;

@@ -3,17 +3,16 @@ package com.wrupple.muba.catalogs.server.domain;
 import java.util.Date;
 import java.util.List;
 
-import com.wrupple.muba.catalogs.domain.ContentNodeImpl;
 import com.wrupple.muba.event.domain.Host;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 
-public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.domain.Host {
+public class HostImpl extends ManagedObjectImpl implements com.wrupple.muba.event.domain.Host {
 	
 
 	private static final long serialVersionUID = -671577088785926566L;
 
 	private Date expirationDate;
 	
-	private Long stakeHolder;
 	private String agent;
 	private Integer channel;
 	private Integer stakeHolderIndex;
@@ -33,10 +32,7 @@ public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.
 	public void setProperties(List<String> properties) {
 		this.properties = properties;
 	}
-	
-	public Long getStakeHolder() {
-		return stakeHolder;
-	}
+
 	public String getAgent() {
 		return agent;
 	}
@@ -103,10 +99,6 @@ public class HostImpl extends ContentNodeImpl implements com.wrupple.muba.event.
 	@Override
 	public void setHost(String h) {
 		this.host=h;
-	}
-	@Override
-	public void setStakeHolder(Object stakeHolder) {
-		this.stakeHolder= (Long) stakeHolder;
 	}
 	@Override
 	public String getCatalogType() {

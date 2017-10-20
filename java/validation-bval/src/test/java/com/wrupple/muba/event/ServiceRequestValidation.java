@@ -1,5 +1,6 @@
 package com.wrupple.muba.event;
 
+import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -9,13 +10,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
+import com.google.inject.Key;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.ContractDescriptorImpl;
 import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.impl.SessionImpl;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
+import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
@@ -84,7 +90,8 @@ public class ServiceRequestValidation extends MubaTest {
 	@Before
 	@Override
 	public void setUp() throws Exception {
-		runtimeContext = injector.getInstance(RuntimeContext.class);
+		runtimeContext = new RuntimeContextImpl(injector.getInstance(EventBus.class),injector.getInstance( Key.get(SessionContext.class,Names.named(SYSTEM))));
+
 	}
 
 	@Test
@@ -112,7 +119,11 @@ public class ServiceRequestValidation extends MubaTest {
 		// version 1.1, nesting return double (1 + ( 1.1*(1+1) ) )
 		runtimeContext.setSentence(ADDITION, UPGRADED_VERSION, "1", MULTIPLICATION, "1.1", ADDITION,
 				UPGRADED_VERSION, "1", "malformedToken");
-		runtimeContext.process();
+		try{
+            runtimeContext.process();
+        }catch (IllegalArgumentException e){
+		    log.info("expected exception thrown");
+        }
 		assertEquals(9, runtimeContext.nextIndex());
 		//some error must be thrown or validation constraint shown when the application has no servicesregistered
 		assertNotNull(runtimeContext.getConstraintViolations());
@@ -130,13 +141,26 @@ public class ServiceRequestValidation extends MubaTest {
 		}
 
 		@Provides
+		@Inject
 		@Singleton
-		public SessionContext session() {
-			Session sessionValue=createNiceMock(Session.class);
-			//(1, person, "localhost", host, CatalogEntry.PUBLIC_ID);
-			return new SessionContextImpl(sessionValue);
+		@Named(SessionContext.SYSTEM)
+		public SessionContext sessionContext(@Named(SessionContext.SYSTEM) Session stakeHolderValue) {
 
+
+			return new SessionContextImpl(stakeHolderValue);
 		}
+
+		@Provides
+		@Inject
+		@Singleton
+		@Named(SessionContext.SYSTEM)
+		public Session sessionContext() {
+			SessionImpl sessionValue= new SessionImpl();
+			sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
+			sessionValue.setId(CatalogEntry.PUBLIC_ID);
+			return sessionValue;
+		}
+
 
 	}
 	private abstract class UpdatedVersionService implements Command {

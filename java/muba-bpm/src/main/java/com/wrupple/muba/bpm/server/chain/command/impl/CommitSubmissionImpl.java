@@ -10,6 +10,7 @@ import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Created by japi on 18/08/17.
@@ -141,9 +142,8 @@ public class CommitSubmissionImpl implements CommitSubmission {
         //no commit required for select
         entryCommit.setFollowReferences(true);
 
-        userOutput = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
-
-
+        List results = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
+        userOutput = (CatalogEntry) results.get(0);
         applicationState.setEntryValue(userOutput);
         return CONTINUE_PROCESSING;
     }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

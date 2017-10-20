@@ -149,7 +149,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	@Override
 	public Boolean getVersioned() {
-		return versioned;
+		return versioned==null? false :versioned;
 	}
 
 	@Override

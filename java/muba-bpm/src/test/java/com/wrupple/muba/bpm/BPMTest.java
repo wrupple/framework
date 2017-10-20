@@ -51,7 +51,6 @@ public abstract class BPMTest extends AbstractTest {
 	private WriteOutput mockWriter;
 
 	private WriteAuditTrails mockLogger;
-    private Session stakeHolderValue;
     protected EventBus wrupple;
 	protected SessionContext session;
 
@@ -92,7 +91,6 @@ public abstract class BPMTest extends AbstractTest {
 			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
 
 			// mocks
-            stakeHolderValue = mock(Session.class);
 			mockWriter = mock(WriteOutput.class);
 			mockLogger = mock(WriteAuditTrails.class);
 			bind(WriteAuditTrails.class).toInstance(mockLogger);
@@ -107,16 +105,6 @@ public abstract class BPMTest extends AbstractTest {
 					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
 			// TODO cms test isMasked FieldDescriptor
 
-		}
-
-		@Provides
-		@Inject
-		@Singleton
-		@Named(SessionContext.SYSTEM)
-		public SessionContext sessionContext() {
-
-
-			return new SessionContextImpl(stakeHolderValue);
 		}
 
 		@Provides
@@ -216,8 +204,6 @@ public abstract class BPMTest extends AbstractTest {
 	public void setUp() throws Exception {
 		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
 		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
-        expect(stakeHolderValue.getId()).andStubReturn(CatalogEntry.PUBLIC_ID);
 
         replayAll();
 

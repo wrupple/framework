@@ -5,6 +5,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

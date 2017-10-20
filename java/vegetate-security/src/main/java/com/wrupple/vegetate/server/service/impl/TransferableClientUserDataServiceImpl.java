@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.bpm.domain.SessionContextDTOImpl;
-import com.wrupple.muba.bpm.server.service.TransferableClientUserDataService;
 import com.wrupple.muba.catalogs.server.services.SessionContext;
 
 @Singleton
