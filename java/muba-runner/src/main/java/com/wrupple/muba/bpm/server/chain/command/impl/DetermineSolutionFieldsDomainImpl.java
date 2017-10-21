@@ -52,11 +52,11 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         context.getStateValue().setCatalogValue(solutionDescriptor);
 
         //by default, all fields are eligible for solving
-        Collection<FieldDescriptor> fieldValues = solutionDescriptor.getFieldsValues();
         log.debug("Resolving problem variable names");
-        List<VariableDescriptor> variables  = fieldValues.stream().
-                filter(field -> solver.isEligible(field,context)).
-                map(field -> solver.createVariable(field,context)).
+        List<VariableDescriptor> variables  = solutionDescriptor.getFieldsValues().stream().
+                map(field -> solver.isEligible(field,context)).
+                filter(e->e!=null).
+                map(eligibility -> eligibility.createVariable()).
                 collect(Collectors.toList());
         context.getStateValue().setSolutionVariablesValues(variables);
 

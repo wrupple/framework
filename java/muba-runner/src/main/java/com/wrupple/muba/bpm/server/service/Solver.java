@@ -8,11 +8,15 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
  * Created by rarl on 11/05/17.
  */
 public interface Solver {
-    <T> T resolveSolverModel(ApplicationContext context);
 
-    boolean isEligible(FieldDescriptor field,ApplicationContext context);
+    VariableEligibility isEligible(FieldDescriptor field,ApplicationContext context);
 
-    VariableDescriptor createVariable(FieldDescriptor field,ApplicationContext context);
+    /**
+     *
+     * @param context
+     * @return true if a solution has been found
+     */
+    boolean solve(ApplicationContext context);
 
-    void assignVariableValue(VariableDescriptor variable, String userInput);
+    void register(SolverPlugin plugin);
 }

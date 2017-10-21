@@ -20,6 +20,8 @@ public class EquationSystemSolution extends ContentNodeImpl {
     @CatalogFieldValues(defaultValueOptions = {"2","3","8"})
     private int y;
 
+    private String solverWitness;
+
     public int getX() {
         return x;
     }
@@ -43,4 +45,11 @@ public class EquationSystemSolution extends ContentNodeImpl {
         return CATALOG;
     }
 
+    public String getSolverWitness() {
+        return solverWitness;
+    }
+
+    public void setSolverWitness(String solverWitness) {
+        this.solverWitness = solverWitness;
+    }
 }

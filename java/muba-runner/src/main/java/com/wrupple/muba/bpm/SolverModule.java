@@ -12,9 +12,11 @@ import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.bpm.server.service.impl.ProcessManagerImpl;
 import com.wrupple.muba.bpm.server.service.impl.SolverCatalogPluginImpl;
+import com.wrupple.muba.bpm.server.service.impl.SolverImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
@@ -29,6 +31,11 @@ import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 public class SolverModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(Solver.class).to(SolverImpl.class).in(Singleton.class);
+
+
+        bind(DefineSolutionCriteria.class).to(DefineSolutionCriteriaImpl.class).in(Singleton.class);
+        bind(SolveTask.class).to(SolveTaskImpl.class);
 
            /*
         API

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.EventRegistry;
+import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import org.apache.commons.chain.Context;
 
 import javax.transaction.UserTransaction;
@@ -33,4 +34,9 @@ public interface EventBus
 
     boolean resume(RuntimeContext runtimeContext) throws Exception;
 
+    boolean hasInterpret(String next);
+
+    NaturalLanguageInterpret getInterpret(String next);
+
+    void registerInterpret(String constraint, NaturalLanguageInterpret constraintInterpret);
 }

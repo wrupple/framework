@@ -7,8 +7,6 @@ import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
 import org.apache.commons.chain.Context;
-import org.chocosolver.solver.Model;
-import org.chocosolver.solver.constraints.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +15,8 @@ import java.util.Arrays;
 import java.util.ListIterator;
 
 /**
+ * uses event bus sentence interpret to invoke solvers via unaware apis
+ *
  * Created by rarl on 11/05/17.
  */
 public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
@@ -36,33 +36,24 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         final ApplicationContext context = (ApplicationContext) ctx;
         Task request = context.getStateValue().getTaskDescriptorValue();
 
-        log.info("Resolving problem model");
-        Model model = plugin.getSolver().resolveSolverModel(context);
-
         ListIterator<String> activitySentence = request.getSentence().listIterator();
-        JavaNativeInterfaceContext invoker = new JavaNativeInterfaceContext(model,activitySentence);
         log.debug("exposing problem variables to native apit ivoker");
 
-        Arrays.stream(model.getVars()).forEach(var -> invoker.put(var.getName(),var));
-
         log.debug("posting solution constraints from task definition");
-        processNextConstraint(invoker,activitySentence,model,request,context);
+        processNextConstraint(activitySentence,context);
         log.debug("posting solution constraints from excecution context");
         activitySentence = context.getRuntimeContext().getSentence().listIterator();
-        processNextConstraint(invoker,activitySentence,model,request,context);
+        processNextConstraint(activitySentence,context);
 
         return CONTINUE_PROCESSING;
     }
 
-    private void processNextConstraint(JavaNativeInterfaceContext invokerContext, ListIterator<String> sentence, Model model, Task request, ApplicationContext context) throws Exception {
+    private void processNextConstraint(ListIterator<String> sentence,  ApplicationContext context) throws Exception {
         if(sentence.hasNext()){
             String next = sentence.next();
             //TODO USE CHILD SERVICES LIKE ServiceRequestValidation
-            if(Task.CONSTRAINT.equals(next)){
-                invokerContext.sentenceIterator=sentence;
-                nativeInterface.execute(invokerContext);
-                postConstraint(invokerContext);
-                processNextConstraint(invokerContext,sentence,model,request,context);
+            if(context.getRuntimeContext().getEventBus().hasInterpret(next)){
+                context.getRuntimeContext().getEventBus().getInterpret(next).run(sentence,context);
             }else{
                 log.warn("no constraint definition was found");
                 sentence.previous();
@@ -72,12 +63,5 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         }
     }
 
-    private void postConstraint(JavaNativeInterfaceContext invokerContext) {
-        log.info("posting new solution constraint");
-        Constraint constraint = (Constraint) invokerContext.result;
-        constraint.post();
-        if(log.isDebugEnabled()){
-            log.debug("    "+constraint.toString());
-        }
-    }
+
 }

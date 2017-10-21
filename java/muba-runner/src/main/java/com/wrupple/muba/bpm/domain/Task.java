@@ -14,7 +14,6 @@ public interface Task extends HasOutput,Service,CatalogJob {
 	String NAVIGATE_COMMAND = "navigate";
 	// output is detail of selected place
 	String SELECT_COMMAND = "select";
-	final String CONSTRAINT = "constraint";
 
 	
 	

@@ -3,7 +3,9 @@ package com.wrupple.muba.event.server.service.impl;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -16,10 +18,7 @@ import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
-import com.wrupple.muba.event.server.service.EventRegistry;
-import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import com.wrupple.muba.event.server.service.FilterNativeInterface;
-import com.wrupple.muba.event.server.service.IntrospectionStrategy;
+import com.wrupple.muba.event.server.service.*;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
 import org.slf4j.Logger;
@@ -194,5 +193,27 @@ public class EventBusImpl extends ContextBase implements EventBus {
     @Override
     public boolean resume(RuntimeContext runtimeContext) throws Exception {
         return process.execute(runtimeContext);
+    }
+    Map<String,NaturalLanguageInterpret> interpretMap;
+    private Map<String,NaturalLanguageInterpret> getInterpretMap(){
+        if(interpretMap==null){
+            interpretMap= new HashMap<>();
+        }
+        return interpretMap;
+    }
+
+    @Override
+    public boolean hasInterpret(String next) {
+        return getInterpretMap().containsKey(next);
+    }
+
+    @Override
+    public NaturalLanguageInterpret getInterpret(String next) {
+        return getInterpretMap().get(next);
+    }
+
+    @Override
+    public void registerInterpret(String constraint, NaturalLanguageInterpret constraintInterpret) {
+        getInterpretMap().put(constraint, constraintInterpret);
     }
 }

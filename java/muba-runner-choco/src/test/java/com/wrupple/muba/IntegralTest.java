@@ -11,6 +11,8 @@ import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.bpm.server.service.VariableConsensus;
+import com.wrupple.muba.bpm.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
@@ -67,6 +69,8 @@ public class IntegralTest extends AbstractTest{
 
         @Override
         protected void configure() {
+            bind(VariableConsensus.class).to(ArbitraryDesicion.class);
+            bind(String.class).annotatedWith(Names.named("choco.model.key")).toInstance("_model");
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 

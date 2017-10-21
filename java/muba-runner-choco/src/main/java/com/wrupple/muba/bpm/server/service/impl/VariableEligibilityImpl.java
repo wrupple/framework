@@ -1,10 +1,10 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
-import com.wrupple.muba.bpm.server.service.Solver;
+import com.wrupple.muba.bpm.server.service.ChocoModelResolver;
+import com.wrupple.muba.bpm.server.service.VariableEligibility;
 import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import org.chocosolver.solver.Model;
@@ -13,51 +13,36 @@ import org.chocosolver.solver.variables.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by rarl on 11/05/17.
- */
-public class SolverImpl implements Solver {
-    private static final String MODEL_KEY = "com.wrupple.muba.solver.model";
-    protected Logger log = LoggerFactory.getLogger(SolverImpl.class);
+public class VariableEligibilityImpl implements VariableEligibility {
+    protected Logger log = LoggerFactory.getLogger(VariableEligibilityImpl.class);
+    private final ChocoModelResolver delegate;
+    private FieldDescriptor field;
+    private ApplicationContext context;
 
-    @Override
-    public <T> T resolveSolverModel(ApplicationContext context) {
-        log.info("Resolving problem model");
-        Model model = (Model) context.get(MODEL_KEY);
-        if(model==null){
-            model = createSolverModel(context);
-            context.put(MODEL_KEY,model);
-        }
-        return (T)model;
+    @Inject
+    public VariableEligibilityImpl(ChocoModelResolver delegate) {
+        this.delegate = delegate;
     }
 
     @Override
-    public boolean isEligible(FieldDescriptor field,ApplicationContext context) {
-        //only integer fields with constraints or defined domains are eligible
-        boolean eligibility = field.getDataType()== CatalogEntry.INTEGER_DATA_TYPE && ((field.getDefaultValueOptions()!=null && !field.getDefaultValueOptions().isEmpty())
-                || (field.getConstraintsValues()!=null && !field.getConstraintsValues().isEmpty()));
-
-        if(!eligibility){
-            log.debug("field {} is not eligible as a solution variable",field.getFieldId());
-        }
-
-        return eligibility;
+    public VariableEligibility of(FieldDescriptor field, ApplicationContext context) {
+        this.field=field;
+        this.context=context;
+        return this;
     }
 
     @Override
-    public VariableDescriptor createVariable(FieldDescriptor field,ApplicationContext context) {
-        return new VariableDescriptorImpl(makeIntegerVariable(field, resolveSolverModel( context)),field);
+    public VariableDescriptor createVariable() {
+        return     new VariableDescriptorImpl(makeIntegerVariable(field,delegate.resolveSolverModel( context)),field);
     }
 
-    @Override
-    public void assignVariableValue(VariableDescriptor variable, String userInput) {
-        throw new RuntimeException("Not supported in machine solver");
-    }
+
 
 
     private Variable makeIntegerVariable(FieldDescriptor field, Model model ) {
@@ -122,8 +107,5 @@ public class SolverImpl implements Solver {
         return regreso;
     }
 
-    private Model createSolverModel(ApplicationContext context) {
-        Model model = new Model(context.getStateValue().getDistinguishedName());
-        return model;
-    }
+
 }

@@ -3,9 +3,7 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.chain.command.SolveTask;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
-import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
-import org.chocosolver.solver.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +26,12 @@ public class SolveTaskImpl implements SolveTask {
     @Override
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
-        log.info("Thinking...");
-        Model model = plugin.getSolver().resolveSolverModel(context);
+        log.info("Thinking synchronously...");
 
-        if(model.getSolver().solve()){
-            log.info("{} solution(s) have been found",model.getSolver().getSolutionCount());
-            if(log.isTraceEnabled()){
-                model.getSolver().showSolutions();
-            }
-        }/*else if(model.getSolver().hasReachedLimit()){
+        if(plugin.getSolver().solve(context)){
+
+        }
+        /*else if(model.getSolver().hasReachedLimit()){
             //System.out.println("The could not find a solution nor prove that none exists in the given limits");
         }*/else{
             throw new IllegalStateException("No viable solution found for problem");
