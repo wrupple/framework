@@ -1,7 +1,6 @@
 package com.wrupple.muba.bpm.server.service;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.VariableDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 
 /**
@@ -18,5 +17,5 @@ public interface Solver {
      */
     boolean solve(ApplicationContext context);
 
-    void register(SolverPlugin plugin);
+    void register(Runner plugin);
 }

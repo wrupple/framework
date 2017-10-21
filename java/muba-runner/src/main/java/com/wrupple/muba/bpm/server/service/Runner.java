@@ -3,7 +3,7 @@ package com.wrupple.muba.bpm.server.service;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 
-public interface SolverPlugin {
+public interface Runner {
 
     boolean canHandle(FieldDescriptor field, ApplicationContext context);
 

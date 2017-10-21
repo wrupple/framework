@@ -6,7 +6,5 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 
 public interface VariableEligibility {
 
-    VariableEligibility of(FieldDescriptor field,ApplicationContext context);
-
     VariableDescriptor createVariable();
 }

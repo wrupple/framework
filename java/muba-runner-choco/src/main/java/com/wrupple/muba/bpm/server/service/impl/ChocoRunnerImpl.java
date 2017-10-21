@@ -2,7 +2,7 @@ package com.wrupple.muba.bpm.server.service.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.server.service.ChocoModelResolver;
-import com.wrupple.muba.bpm.server.service.ChocoPlugin;
+import com.wrupple.muba.bpm.server.service.ChocoRunner;
 import com.wrupple.muba.bpm.server.service.VariableEligibility;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
@@ -13,14 +13,14 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
-public class ChocoPluginImpl implements ChocoPlugin {
+public class ChocoRunnerImpl implements ChocoRunner {
 
-    private final Provider<VariableEligibility> eligibilityProvider;
+    private final Provider<FutureChocoVariable> future;
     private final ChocoModelResolver delegate;
 
     @Inject
-    public ChocoPluginImpl(Provider<VariableEligibility> eligibilityProvider, ChocoModelResolver delegate) {
-        this.eligibilityProvider = eligibilityProvider;
+    public ChocoRunnerImpl(Provider<FutureChocoVariable> future, ChocoModelResolver delegate) {
+        this.future = future;
         this.delegate = delegate;
     }
 
@@ -36,7 +36,7 @@ public class ChocoPluginImpl implements ChocoPlugin {
 
     @Override
     public VariableEligibility handleAsVariable(FieldDescriptor field, ApplicationContext context) {
-        return eligibilityProvider.get().of(field,context);
+        return future.get().of(field,context);
     }
 
     @Override

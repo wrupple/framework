@@ -23,7 +23,7 @@ public class SolverServiceManifestImpl extends ServiceManifestImpl implements So
         super(SERVICE_NAME, "1.0", descriptor, Arrays.asList(new String[] {
                 //the only service token defined points to the Id of the task to perform, all other tokens
                 //are defined by the task's specific url tokens list
-                CatalogKey.ID_FIELD
+                //whatever is here is passed to each runner
         }));
     }
 }

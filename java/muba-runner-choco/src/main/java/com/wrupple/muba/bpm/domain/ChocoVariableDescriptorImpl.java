@@ -10,11 +10,11 @@ import org.chocosolver.solver.variables.impl.RealVarImpl;
 /**
  * Created by rarl on 17/05/17.
  */
-public class VariableDescriptorImpl implements VariableDescriptor{
+public class ChocoVariableDescriptorImpl implements VariableDescriptor{
     private final Variable variable;
     private final FieldDescriptor field;
 
-    public VariableDescriptorImpl(Variable variable, FieldDescriptor field) {
+    public ChocoVariableDescriptorImpl(Variable variable, FieldDescriptor field) {
         this.variable = variable;
         this.field = field;
     }

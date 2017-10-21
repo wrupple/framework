@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
  */
 public class EquationSystemSolution extends ContentNodeImpl {
     public static final String CATALOG = "EquationSystemSolution";
+    public static final String WITNESS_FIELD ="solverWitness";
     // x in [0,5]
     @Min(0)
     @Max(5)

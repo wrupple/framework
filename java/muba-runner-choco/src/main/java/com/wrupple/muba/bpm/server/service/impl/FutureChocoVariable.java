@@ -2,7 +2,7 @@ package com.wrupple.muba.bpm.server.service.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
-import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
+import com.wrupple.muba.bpm.domain.ChocoVariableDescriptorImpl;
 import com.wrupple.muba.bpm.server.service.ChocoModelResolver;
 import com.wrupple.muba.bpm.server.service.VariableEligibility;
 import com.wrupple.muba.event.domain.Constraint;
@@ -19,18 +19,18 @@ import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
 
-public class VariableEligibilityImpl implements VariableEligibility {
-    protected Logger log = LoggerFactory.getLogger(VariableEligibilityImpl.class);
+public class FutureChocoVariable implements VariableEligibility {
+    protected Logger log = LoggerFactory.getLogger(FutureChocoVariable.class);
     private final ChocoModelResolver delegate;
     private FieldDescriptor field;
     private ApplicationContext context;
 
     @Inject
-    public VariableEligibilityImpl(ChocoModelResolver delegate) {
+    public FutureChocoVariable(ChocoModelResolver delegate) {
         this.delegate = delegate;
     }
 
-    @Override
+
     public VariableEligibility of(FieldDescriptor field, ApplicationContext context) {
         this.field=field;
         this.context=context;
@@ -39,7 +39,7 @@ public class VariableEligibilityImpl implements VariableEligibility {
 
     @Override
     public VariableDescriptor createVariable() {
-        return     new VariableDescriptorImpl(makeIntegerVariable(field,delegate.resolveSolverModel( context)),field);
+        return     new ChocoVariableDescriptorImpl(makeIntegerVariable(field,delegate.resolveSolverModel( context)),field);
     }
 
 

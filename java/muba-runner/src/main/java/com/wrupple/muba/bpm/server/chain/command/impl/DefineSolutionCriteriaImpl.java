@@ -42,7 +42,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         log.debug("posting solution constraints from task definition");
         processNextConstraint(activitySentence,context);
         log.debug("posting solution constraints from excecution context");
-        activitySentence = context.getRuntimeContext().getSentence().listIterator();
+        activitySentence = context.getRuntimeContext();
         processNextConstraint(activitySentence,context);
 
         return CONTINUE_PROCESSING;
@@ -54,8 +54,9 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
             //TODO USE CHILD SERVICES LIKE ServiceRequestValidation
             if(context.getRuntimeContext().getEventBus().hasInterpret(next)){
                 context.getRuntimeContext().getEventBus().getInterpret(next).run(sentence,context);
+                processNextConstraint(sentence,context);
             }else{
-                log.warn("no constraint definition was found");
+                log.trace(" {} does not seem to be an interpret dn",next);
                 sentence.previous();
             }
         }else{

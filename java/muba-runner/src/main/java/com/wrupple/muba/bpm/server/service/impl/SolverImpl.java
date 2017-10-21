@@ -1,6 +1,6 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
-import com.wrupple.muba.bpm.server.service.SolverPlugin;
+import com.wrupple.muba.bpm.server.service.Runner;
 import com.wrupple.muba.bpm.server.service.VariableConsensus;
 import com.wrupple.muba.bpm.server.service.VariableEligibility;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Created by rarl on 11/05/17.
@@ -26,30 +25,30 @@ public class SolverImpl implements Solver {
     protected Logger log = LoggerFactory.getLogger(SolverImpl.class);
 
 
-    private final List<SolverPlugin> delegates;
+    private final List<Runner> runners;
     private final VariableConsensus reducer;
 
     @Inject
     public SolverImpl(VariableConsensus reducer) {
-        this.delegates=new ArrayList<>(3);
+        this.runners =new ArrayList<>(3);
         this.reducer = reducer;
     }
 
     @Override
     public boolean solve(ApplicationContext context) {
 
-        return delegates.stream().
+        return runners.stream().
                 map(plugin -> plugin.solve(context)).
                 reduce( false,(a, b) -> a || b);
     }
 
     @Override
-    public void register(SolverPlugin plugin) {
-        delegates.add(plugin);
+    public void register(Runner plugin) {
+        runners.add(plugin);
     }
 
     public VariableEligibility isEligible(FieldDescriptor field, ApplicationContext context) {
-        Optional<SolverPlugin> eligible = delegates.stream().
+        Optional<Runner> eligible = runners.stream().
                 filter(
                         plugin -> plugin.canHandle(field, context)
                 ).reduce(reducer);
