@@ -70,7 +70,6 @@ public class IntegralTest extends AbstractTest{
         @Override
         protected void configure() {
             bind(VariableConsensus.class).to(ArbitraryDesicion.class);
-            bind(String.class).annotatedWith(Names.named("choco.model.key")).toInstance("_model");
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 

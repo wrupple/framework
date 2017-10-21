@@ -23,13 +23,13 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class ChangeApplicationState extends BPMTest {
+public class SubmitToApplicationTest extends BPMTest {
     private WorkflowImpl createStatisticsApplication;
 
 
 
 
-	@Test
+	@Test(expected = IllegalStateException.class)
 	public void explicitOutputPlace() throws Exception {
         createApplication();
         ProcessManager bpm = injector.getInstance(ProcessManager.class);
@@ -49,13 +49,14 @@ public class ChangeApplicationState extends BPMTest {
         assertTrue("statistics dont exist",statistics!=null);
         assertTrue("statistics not created",statistics.getId()!=null);
 
-
+        //if state changed, next problem should be unsolvable and throw an exception
         List results = wrupple.fireEvent(applicationState, session, null);
+/*    if problem where solvable
          statistics= (Statistics) results.get(0);
 
 
         assertTrue("statistics not updated",statistics.getCount()!=null);
-        assertTrue("statistics not updated",statistics.getCount().longValue()>0);
+        assertTrue("statistics not updated",statistics.getCount().longValue()>0);*/
 
 
 	}

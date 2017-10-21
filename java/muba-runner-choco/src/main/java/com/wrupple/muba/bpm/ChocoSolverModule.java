@@ -1,6 +1,7 @@
 package com.wrupple.muba.bpm;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.server.service.ChocoModelResolver;
 import com.wrupple.muba.bpm.server.service.ChocoRunner;
 import com.wrupple.muba.bpm.server.service.VariableEligibility;
@@ -15,6 +16,8 @@ public class ChocoSolverModule extends AbstractModule{
 
     @Override
     protected void configure() {
+        bind(String.class).annotatedWith(Names.named("choco.model.key")).toInstance("_chocomodel");
+
         bind(ChocoRunner.class).to(ChocoRunnerImpl.class);
         bind(VariableEligibility.class).to(FutureChocoVariable.class);
         bind(ChocoModelResolver.class).to(ChocoModelResolverImpl.class);
