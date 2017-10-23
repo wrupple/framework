@@ -9,12 +9,13 @@ import javax.inject.Singleton;
 
 @Singleton
 public class SentenceField extends FieldDescriptorImpl {
+	final String FIELD = "sentence";
 
 	private static final long serialVersionUID = -9053014855187693204L;
 
 	@Inject
 	public SentenceField() {
-		makeDefault( ExplicitIntent.HANDLE_FIELD,  ExplicitIntent.HANDLE_FIELD,  CatalogEntry.STRING_DATA_TYPE);
+		makeDefault( FIELD, FIELD,  STRING_DATA_TYPE);
 		setMultiple(true);
 	}
 }

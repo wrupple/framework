@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ExplicitIntent extends Event,HasSentence,HasImplicitIntent {
 
-	final String HANDLE_FIELD = "sentence";
+
     String CATALOG = "ExplicitIntent";
 
 
