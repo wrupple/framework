@@ -1,28 +1,28 @@
 package com.wrupple.muba.event;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.wrupple.muba.BootstrapTest;
 import com.wrupple.muba.event.chain.impl.OldVesionService;
 import com.wrupple.muba.event.chain.impl.UpdatedVersionService;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ContractDescriptor;
+import com.wrupple.muba.event.domain.ExplicitIntent;
+import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.service.impl.*;
 import org.apache.commons.chain.CatalogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.wrupple.muba.BootstrapTest;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
+import java.util.Arrays;
+import java.util.List;
 
-public class ServiceInvocationTest extends BootstrapTest {
+import static org.junit.Assert.*;
+
+public class EventListenerTest extends BootstrapTest {
 
 	private EventBus system;
 
@@ -30,7 +30,7 @@ public class ServiceInvocationTest extends BootstrapTest {
 			Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), CatalogEntryImpl.class);
 
 
-	public ServiceInvocationTest() {
+    public EventListenerTest() {
 
 
 		LargeStringFieldDataAccessObject largeStringDelegate= new LargeStringFieldDataAccessObjectImpl();
@@ -45,7 +45,7 @@ public class ServiceInvocationTest extends BootstrapTest {
         this.system = new EventBusImpl(interpret,dispatcher, System.out,System.in,false,null,filterer,null,instrospector, null);
 
 
-		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });
+        List<String> grammar = Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME);
 
 		ServiceManifest multiply = new ServiceManifestImpl(MULTIPLICATION, DEFAULT_VERSION, operationContract, grammar);
 		ServiceManifest addInt = new ServiceManifestImpl(ADDITION, DEFAULT_VERSION, operationContract, grammar);
