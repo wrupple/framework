@@ -17,11 +17,11 @@
 		<module>muba-catalogs-jdbc-hsql</module>
 		<module>muba-runner</module>
 		<module>muba-runner-choco</module>
-		<module>muba-runner-async</module>
-		<module>muba-runner-human</module>
-		<module>muba-catalogs-format</module>
+        <!--<module>muba-runner-async</module>
+        <module>muba-runner-human</module>
+        <module>muba-catalogs-format</module>-->
 		<module>muba-bpm</module>
-		<module>vegetate-security</module>
+        <!--<module>vegetate-security</module>-->
 	</modules>
 
 

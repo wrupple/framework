@@ -1,8 +1,10 @@
 import sbt._
-import Keys._
 
 object Wrupple extends Build {
-  import Dependencies._
+  val muba = "com.wrupple.muba"
 
   val NamePrefix = "wrupple-"
+
+  val version = "1.0"
+
 }
