@@ -1,105 +1,127 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.chain.command.JDBCDataQueryCommand;
+import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl.MultipleFieldResultsHandler;
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
+import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
+import com.wrupple.muba.catalogs.server.service.SQLDelegate;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import org.apache.commons.chain.Context;
+import org.apache.commons.collections.KeyValue;
+import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.apache.commons.dbutils.QueryRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-
-import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
-import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import org.apache.commons.chain.Context;
-import org.apache.commons.dbutils.QueryRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.JDBCDataQueryCommand;
-import com.wrupple.muba.catalogs.server.chain.command.impl.JDBCDataReadCommandImpl.MultipleFieldResultsHandler;
-import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
-import com.wrupple.muba.catalogs.server.service.QueryResultHandler;
-import com.wrupple.muba.event.domain.Instrospection;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.util.*;
 
 @Singleton
 public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
 	protected static final Logger log = LoggerFactory.getLogger(JDBCDataQueryCommandImpl.class);
-
-	static class FilterDataPayload {
-		final StringBuilder filterStringBuffer;
-		final Object[] parameterValues;
-
-		public FilterDataPayload(StringBuilder filterStringBuffer, Object[] parameterValues) {
-			super();
-			if (filterStringBuffer == null) {
-				filterStringBuffer = new StringBuilder();
-			}
-			this.filterStringBuffer = filterStringBuffer;
-			this.parameterValues = parameterValues;
-		}
-
-		public String getFilter() {
-			if (filterStringBuffer == null) {
-				return "";
-			}
-			String filter = filterStringBuffer.toString();
-			if (filter != null) {
-				if (filter.trim().isEmpty()) {
-					return "";
-				}
-			}
-			return filter;
-		}
-
-		public Object[] getParameterValues() {
-			return parameterValues;
-		}
-
-		public StringBuilder getFilterStringBuffer() {
-			return filterStringBuffer;
-		}
-
-		public void resetStringBuffer() {
-			filterStringBuffer.setLength(0);
-		}
-
-	}
-	private final FieldAccessStrategy access;
-	private final CatalogKeyServices keyDelegate;
-	private final JDBCMappingDelegate tableNames;
-	private final QueryRunner runner;
-	private final Provider<QueryResultHandler> rshp;
-	private final Boolean multitenant;
-	private final DateFormat dateFormat;
-	private final int missingTableErrorCode;
-	private final String domainField;
-	private final char DELIMITER;
+    private final SQLDelegate delegate;
 
 	@Inject
-	public JDBCDataQueryCommandImpl(FieldAccessStrategy access, CatalogKeyServices keyDelegate, QueryRunner runner, Provider<QueryResultHandler> rshp,
-									JDBCMappingDelegate tableNames,
-									@Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
-									@Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
-									@Named("catalog.domainField") String domainField, @Named("catalog.sql.delimiter") Character delimiter) {
-		this.access = access;
-		this.keyDelegate = keyDelegate;
-		DELIMITER = delimiter;
-		this.dateFormat = dateFormat;
-		this.rshp = rshp;
-		this.runner = runner;
-		this.tableNames = tableNames;
-		this.domainField = domainField;
-		this.multitenant = multitenant;
-		this.missingTableErrorCode = missingTableErrorCode;
-	}
+    public JDBCDataQueryCommandImpl(SQLDelegate delegate, FieldAccessStrategy access, CatalogKeyServices keyDelegate, QueryRunner runner, Provider<QueryResultHandler> rshp,
+                                    JDBCMappingDelegate tableNames,
+                                    @Named("system.multitenant") Boolean multitenant, DateFormat dateFormat,
+                                    @Named("catalog.missingTableErrorCode") Integer missingTableErrorCode,
+                                    @Named("catalog.domainField") String domainField, @Named("catalog.sql.delimiter") Character delimiter) {
+        this.access = access;
+        this.keyDelegate = keyDelegate;
+        DELIMITER = delimiter;
+        this.dateFormat = dateFormat;
+        this.rshp = rshp;
+        this.runner = runner;
+        this.tableNames = tableNames;
+        this.domainField = domainField;
+        this.multitenant = multitenant;
+        this.missingTableErrorCode = missingTableErrorCode;
+        this.delegate = delegate;
+    }
+
+    private final FieldAccessStrategy access;
+    private final CatalogKeyServices keyDelegate;
+    private final JDBCMappingDelegate tableNames;
+    private final QueryRunner runner;
+    private final Provider<QueryResultHandler> rshp;
+    private final Boolean multitenant;
+    private final DateFormat dateFormat;
+    private final int missingTableErrorCode;
+    private final String domainField;
+    private final char DELIMITER;
+
+    private FilterDataPayload getFilters(CatalogActionContext context, CatalogDescriptor catalogDescriptor,
+                                         List<? extends FilterCriteria> criterias) throws InstantiationException, IllegalAccessException {
+        List<Object> values;
+        Long domain = context.getRequest().getDomain();
+        StringBuilder filterStringBuffer = null;
+        List<KeyValue> partitions;
+        if (this.multitenant && this.domainField != null) {
+
+            partitions = (List) Arrays.asList(new DefaultKeyValue(this.domainField, domain));
+        } else {
+            partitions = Collections.EMPTY_LIST;
+        }
+
+
+        if (criterias == null || criterias.isEmpty()) {
+            filterStringBuffer = new StringBuilder(200);
+            delegate.buildQueryHeader(tableNames, filterStringBuffer, 0, catalogDescriptor, context, partitions);
+            values = null;
+        } else {
+            int criteriaSize = criterias.size();
+            int buffersize = 50 + criteriaSize + 1 * 15;
+            filterStringBuffer = new StringBuilder(buffersize);
+            int writenCriteria = delegate.buildQueryHeader(tableNames, filterStringBuffer, criteriaSize, catalogDescriptor, context, partitions);
+            values = new ArrayList<Object>(criteriaSize);
+            FilterCriteria criteria;
+            String rootField;
+            FieldDescriptor fieldDescriptor;
+            String catalogId = catalogDescriptor.getDistinguishedName();
+            for (int i = 0; i < criteriaSize; i++) {
+                criteria = criterias.get(i);
+                if (criteria != null) {
+                    rootField = criteria.getPath(0);
+                    fieldDescriptor = catalogDescriptor.getFieldDescriptor(rootField);
+                    if (fieldDescriptor == null || !fieldDescriptor.isFilterable()) {
+                        // ignore
+                        log.warn("ignored not filteraable field criteria {}", criteria);
+                    } else {
+                        // field is not null, and filterable, and owned by this
+                        // catalog in the getInheritance hierarchy
+                        if (fieldDescriptor != null && keyDelegate.isFieldOwnedBy(fieldDescriptor, catalogDescriptor)) {
+                            if (writenCriteria > 0) {
+                                filterStringBuffer.append(" AND ");
+                            }
+
+                            filterStringBuffer.append("(");
+                            writeFilterDeclaration(filterStringBuffer, criteria, values, i, fieldDescriptor,
+                                    catalogDescriptor, context);
+                            filterStringBuffer.append(")");
+                            writenCriteria++;
+                        } else {
+                        }
+                    }
+
+                }
+            }
+            if (filterStringBuffer.length() < 5) {
+                filterStringBuffer.setLength(0);
+            }
+        }
+
+        return new FilterDataPayload(filterStringBuffer, values == null ? null : values.toArray());
+    }
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
@@ -213,81 +235,46 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 		return CONTINUE_PROCESSING;
 	}
 
-	private FilterDataPayload getFilters(CatalogActionContext context, CatalogDescriptor catalogDescriptor,
-			List<? extends FilterCriteria> criterias) throws InstantiationException, IllegalAccessException {
-		List<Object> values;
-		Long domain = (Long) context.getRequest().getDomain();
-		StringBuilder filterStringBuffer = null;
-		if (criterias == null || criterias.isEmpty()) {
-			filterStringBuffer = new StringBuilder(200);
-			buildQueryHeader(filterStringBuffer, 0, catalogDescriptor, context, domain);
-			values = null;
-		} else {
-			int criteriaSize = criterias.size();
-			int buffersize = 50 + criteriaSize + 1 * 15;
-			filterStringBuffer = new StringBuilder(buffersize);
-			int writenCriteria = buildQueryHeader(filterStringBuffer, criteriaSize, catalogDescriptor, context, domain);
-			values = new ArrayList<Object>(criteriaSize);
-			FilterCriteria criteria;
-			String rootField;
-			FieldDescriptor fieldDescriptor;
-			String catalogId = catalogDescriptor.getDistinguishedName();
-			for (int i = 0; i < criteriaSize; i++) {
-				criteria = criterias.get(i);
-				if (criteria != null) {
-					rootField = criteria.getPath(0);
-					fieldDescriptor = catalogDescriptor.getFieldDescriptor(rootField);
-					if (fieldDescriptor == null || !fieldDescriptor.isFilterable()) {
-						// ignore
-						log.warn("ignored not filteraable field criteria {}", criteria);
-					} else {
-						// field is not null, and filterable, and owned by this
-						// catalog in the getInheritance hierarchy
-						if (fieldDescriptor != null && keyDelegate.isFieldOwnedBy(fieldDescriptor,catalogDescriptor)) {
-							if (writenCriteria > 0) {
-								filterStringBuffer.append(" AND ");
-							}
+    static class FilterDataPayload {
+        final StringBuilder filterStringBuffer;
+        final Object[] parameterValues;
 
-							filterStringBuffer.append("(");
-							writeFilterDeclaration(filterStringBuffer, criteria, values, i, fieldDescriptor,
-									catalogDescriptor, context);
-							filterStringBuffer.append(")");
-							writenCriteria++;
-						} else {
-						}
-					}
+        public FilterDataPayload(StringBuilder filterStringBuffer, Object[] parameterValues) {
+            super();
+            if (filterStringBuffer == null) {
+                filterStringBuffer = new StringBuilder();
+            }
+            this.filterStringBuffer = filterStringBuffer;
+            this.parameterValues = parameterValues;
+        }
 
-				}
-			}
-			if (filterStringBuffer.length() < 5) {
-				filterStringBuffer.setLength(0);
-			}
-		}
+        public String getFilter() {
+            if (filterStringBuffer == null) {
+                return "";
+            }
+            String filter = filterStringBuffer.toString();
+            if (filter != null) {
+                if (filter.trim().isEmpty()) {
+                    return "";
+                }
+            }
+            return filter;
+        }
 
-		return new FilterDataPayload(filterStringBuffer, values == null ? null : values.toArray());
+        public Object[] getParameterValues() {
+            return parameterValues;
+        }
+
+        public StringBuilder getFilterStringBuffer() {
+            return filterStringBuffer;
+        }
+
+        public void resetStringBuffer() {
+            filterStringBuffer.setLength(0);
+        }
+
 	}
 
-	private int buildQueryHeader(StringBuilder filterStringBuffer, int criteriaSize,
-			CatalogDescriptor catalogDescriptor, CatalogActionContext context, Long domain) {
-		filterStringBuffer.append("SELECT * FROM ");
-		filterStringBuffer.append(DELIMITER);
-		tableNames.getTableNameForCatalog(catalogDescriptor, context, filterStringBuffer);
-		filterStringBuffer.append(DELIMITER);
-
-		if (criteriaSize > 0 || (this.multitenant && this.domainField != null)) {
-			filterStringBuffer.append(" WHERE ");
-			if (this.multitenant && this.domainField != null) {
-				filterStringBuffer.append(DELIMITER);
-				filterStringBuffer.append(this.domainField);
-				filterStringBuffer.append(DELIMITER);
-				filterStringBuffer.append("=");
-				filterStringBuffer.append(domain);
-				return 1;
-			}
-		}
-		// return the ammount of written criterias
-		return 0;
-	}
 
 	private void writeFilterDeclaration(StringBuilder buffer, FilterCriteria criteria, List<Object> v,
 			int criteriaIndex, FieldDescriptor fieldDescriptor, CatalogDescriptor catalogDescriptor,

@@ -1,44 +1,42 @@
 package com.wrupple.muba.catalogs;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.server.chain.command.impl.*;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogEventImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
+import com.wrupple.muba.catalogs.server.domain.HostImpl;
+import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
+import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
+import com.wrupple.muba.catalogs.server.domain.catalogs.TrashDescriptor;
+import com.wrupple.muba.catalogs.server.service.*;
+import com.wrupple.muba.catalogs.server.service.impl.*;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
+import com.wrupple.muba.event.domain.impl.SessionImpl;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
+import com.wrupple.muba.event.server.service.ActionsDictionary;
+import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValidator;
+import com.wrupple.muba.event.server.service.KeyDomainValidator;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import com.google.inject.Singleton;
-import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.domain.CatalogEvent;
-import com.wrupple.muba.catalogs.domain.CatalogEventListener;
-import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
-import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.catalogs.server.chain.command.impl.*;
-import com.wrupple.muba.catalogs.server.domain.*;
-import com.wrupple.muba.catalogs.server.service.*;
-import com.wrupple.muba.catalogs.server.service.impl.*;
-import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
-import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
-import com.wrupple.muba.event.domain.impl.SessionImpl;
-import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
-import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
-import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.domain.HostImpl;
-import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
-import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
-import com.wrupple.muba.catalogs.server.domain.catalogs.TrashDescriptor;
-import com.wrupple.muba.event.server.service.ActionsDictionary;
-import com.wrupple.muba.event.server.service.KeyDomainValidator;
-import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValidator;
 
 /**
  * @author japi
@@ -68,10 +66,11 @@ public class CatalogModule extends AbstractModule {
 		String rawPattern = "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}";
 		// 2014-01-18T00:35:03.463Z
 		String datePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-
-		bind(String.class).annotatedWith(Names.named("catalog.storage.secure")).toInstance("Secure");
-		bind(String.class).annotatedWith(Names.named("catalog.metadata.storage")).toInstance(CatalogDescriptor.CATALOG_ID);
-		bind(String.class).annotatedWith(Names.named("template.token.splitter")).toInstance("\\.");
+        //"default" catalog storage is not actually set, but but an unrecognized storage will resolve to default
+        bind(String.class).annotatedWith(Names.named("catalog.storage")).toInstance("default");
+        bind(String.class).annotatedWith(Names.named("catalog.storage.secure")).toInstance("Secure");
+        bind(String.class).annotatedWith(Names.named("catalog.storage.metadata")).toInstance(CatalogDescriptor.CATALOG_ID);
+        bind(String.class).annotatedWith(Names.named("template.token.splitter")).toInstance("\\.");
 		Pattern pattern = Pattern.compile(rawPattern);
 		bind(Pattern.class).annotatedWith(Names.named("template.pattern")).toInstance(pattern);
 
@@ -267,13 +266,13 @@ public class CatalogModule extends AbstractModule {
 	@Inject
 	@Singleton
 	@Named(CatalogDescriptor.CATALOG_ID)
-	public CatalogDescriptor catalogDescriptor(@Named(CatalogDescriptor.CATALOG_ID) String image  ,@Named("catalog.metadata.storage") String catalogPluginStorage,@Named(CatalogDescriptor.CATALOG_ID) Class clazz,
-			CatalogDescriptorBuilder builder) {
+    public CatalogDescriptor catalogDescriptor(@Named(CatalogDescriptor.CATALOG_ID) String image, @Named("catalog.storage.metadata") String catalogPluginStorage, @Named("catalog.storage") String defaultStorage, @Named(CatalogDescriptor.CATALOG_ID) Class clazz,
+                                               CatalogDescriptorBuilder builder) {
 		CatalogDescriptor r = builder.fromClass(CatalogDescriptorImpl.class, CatalogDescriptor.CATALOG_ID, "Catalogs",
 				-191191, null);
 		r.setClazz(clazz);
-		r.setStorage(Arrays.asList(CatalogReadTransaction.DEFAULT_STORAGE,catalogPluginStorage));
-		r.setImage(image);
+        r.setStorage(Arrays.asList(defaultStorage, catalogPluginStorage));
+        r.setImage(image);
 		return r;
 	}
 

@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
-			<artifactId>muba-catalogs</artifactId>
+            <artifactId>muba-catalogs-sql</artifactId>
 			<version>${muba.version}</version>
 		</dependency>
 		<dependency>

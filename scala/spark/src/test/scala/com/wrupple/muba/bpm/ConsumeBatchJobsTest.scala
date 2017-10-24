@@ -1,4 +1,4 @@
-package echo
+package com.wrupple.muba.bpm
 
 import com.google.inject.{Guice, Injector, Module}
 import com.wrupple.muba.event.EventBus
@@ -18,7 +18,6 @@ class ConsumeBatchJobsTest extends FunSuite with BeforeAndAfter with MockitoSuga
 
 
   def init(m: List[Module]): Unit = {
-
     injector = Guice.createInjector(m.asJava)
     registerServices(injector.getInstance(classOf[EventBus]))
   }

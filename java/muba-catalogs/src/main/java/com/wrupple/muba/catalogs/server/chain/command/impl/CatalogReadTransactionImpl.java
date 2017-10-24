@@ -1,13 +1,14 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogPluginQueryCommand;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
+import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
+import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
 import com.wrupple.muba.catalogs.server.service.*;
+import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
-import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -49,7 +50,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     private int MIN_TREE_LEVELS;
 
     @Inject
-    public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage, @com.google.inject.name.Named("catalog.metadata.storage") String catalogPluginStorage, CatalogKeyServices keyDelegate, FieldAccessStrategy access, EntrySynthesizer synthesizer, @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
+    public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage, @com.google.inject.name.Named("catalog.storage.metadata") String catalogPluginStorage, CatalogKeyServices keyDelegate, FieldAccessStrategy access, EntrySynthesizer synthesizer, @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
                                       QueryReaders queryers, PrimaryKeyReaders primaryKeyers, CompleteCatalogGraph graphJoin,
                                       ExplicitDataJoin join, CatalogReaderInterceptor queryRewriter) {
         this.keyDelegate = keyDelegate;

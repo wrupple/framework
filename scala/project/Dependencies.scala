@@ -3,14 +3,17 @@ import sbt._
 object Dependencies {
 
 
+  lazy val bpm = Wrupple.muba % "muba-bpm" % Wrupple.version
+  lazy val sql = Wrupple.muba % "muba-catalogs-sql" % Wrupple.version
+  lazy val hsql = Wrupple.muba % "muba-catalogs-jdbc-hsql" % Wrupple.version
+  lazy val choco = Wrupple.muba % "muba-runner-choco" % Wrupple.version
+  lazy val bval = Wrupple.muba % "validation-bval" % Wrupple.version
+
   lazy val slf4j = "org.slf4j" % "slf4j-simple" % "1.7.21"
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
   lazy val mockito = "org.mockito" % "mockito-core" % "2.10.0"
   lazy val mockitoInline = "org.mockito" % "mockito-inline" % "2.10.0"
-  lazy val bpm = Wrupple.muba % "muba-bpm" % Wrupple.version
-  lazy val hsql = Wrupple.muba % "muba-catalogs-jdbc-hsql" % Wrupple.version
-  lazy val choco = Wrupple.muba % "muba-runner-choco" % Wrupple.version
-  lazy val bval = Wrupple.muba % "validation-bval" % Wrupple.version
+
   val commonDependencies: Seq[ModuleID] = Seq(
     bpm,
     slf4j % "test",
@@ -30,6 +33,7 @@ object Dependencies {
 
   val apiDependencies    : Seq[ModuleID] = commonDependencies
   val sparkDependencies  : Seq[ModuleID] = commonDependencies ++ Seq(
+    sql,
     hsql % "test",
     choco % "test",
     bval % "test",
