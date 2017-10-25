@@ -1,19 +1,12 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
-import com.wrupple.muba.event.domain.*;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.BeanUtilsBean;
+import com.wrupple.muba.event.domain.ContractDescriptor;
+import com.wrupple.muba.event.domain.ParentServiceManifest;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.server.chain.command.EventDispatcher;
+import com.wrupple.muba.event.server.chain.command.RequestInterpret;
+import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.chain.Command;
@@ -21,9 +14,15 @@ import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.event.server.chain.command.EventDispatcher;
-import com.wrupple.muba.event.server.chain.command.RequestInterpret;
-import com.wrupple.muba.event.server.service.ValidationGroupProvider;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public class EventDispatcherImpl implements EventDispatcher {
@@ -58,9 +57,9 @@ public class EventDispatcherImpl implements EventDispatcher {
 		
 		
 		if (requestContext.hasNext()) {
-			if (log.isTraceEnabled()) {
-				log.info("[ SENTENCE] {}", (Object) requestContext.getSentence().subList(requestContext.nextIndex(),
-						requestContext.getSentence().size()));
+            if (log.isDebugEnabled()) {
+                log.info("[ SENTENCE] {}", requestContext.getSentence().subList(requestContext.nextIndex(),
+                        requestContext.getSentence().size()));
 			}
 			if (validator == null) {
 
@@ -86,9 +85,11 @@ public class EventDispatcherImpl implements EventDispatcher {
 		requestContext.setServiceManifest(manifest);
 		log.debug("VALIDATING CONTRACT {}:", manifest.getServiceId(),contract);
 
-		if (contract == null) {
+        if (contract == null) {
+            contract = manifest.getCatalogValue().getClazz().newInstance();
+            requestContext.setServiceContract(contract);
+        }
 
-		} else {
 			List<String> tokens = requestContext.getServiceManifest().getGrammar();
 			log.trace("Incomming contract {}", contract);
 			for (int i = 0; i < tokens.size(); i++) {
@@ -132,9 +133,9 @@ public class EventDispatcherImpl implements EventDispatcher {
 					throw new IllegalArgumentException("Contract violates constrains");
 				}
 			}
-		}
 
-		if (requestContext.getSession().hasPermissionsToProcessContext(requestContext,
+
+        if (requestContext.getSession().hasPermissionsToProcessContext(requestContext,
 				requestContext.getServiceManifest())) {
 
 			log.trace("excecution permission GRANTED for request {}, transaction will begin on {}",

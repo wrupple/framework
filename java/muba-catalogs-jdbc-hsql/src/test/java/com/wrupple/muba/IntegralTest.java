@@ -90,7 +90,7 @@ public class IntegralTest extends AbstractTest{
     }
 
     public IntegralTest() {
-        init(new IntegralTestModule(), new JDBCHSQLTestModule(), new HSQLDBModule(), new JDBCModule(),
+        init(new IntegralTestModule(), new JDBCHSQLTestModule(), new HSQLDBModule(), new JDBCModule(), new SQLModule(),
                 new ValidationModule(), new SingleUserModule(), new CatalogModule(), new ApplicationModule());
     }
 

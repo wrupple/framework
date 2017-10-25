@@ -1,24 +1,25 @@
 package com.wrupple.muba.catalogs.server.chain;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.junit.Assert.assertTrue;
-
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
-import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.domain.Argument;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
+import com.wrupple.muba.catalogs.domain.MathProblem;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import org.junit.Test;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
-
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class CatalogEngineTest extends IntegralTest {
 
@@ -63,8 +64,8 @@ public class CatalogEngineTest extends IntegralTest {
 		problemContract = catalogContext.getEntryResult();
 		assertTrue(problemContract.getId() != null);
         assertTrue(problemContract.getDomain() != null);
-        assertTrue(((Long)problemContract.getDomain()).longValue()==CatalogEntry.PUBLIC_ID);
-        assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
+		assertTrue(problemContract.getDomain().longValue() == CatalogEntry.PUBLIC_ID);
+		assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
         assertTrue("does metadata provide problem's parent type?",problemContract.getParentValue()!=null);
 
         assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
@@ -77,7 +78,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 		runtimeContext.reset();
 
-		runtimeContext.setServiceContract(new CatalogActionRequestImpl());
+		runtimeContext.setServiceContract(null);
 		runtimeContext.setSentence(
 		        CatalogServiceManifest.SERVICE_NAME,
                 CatalogDescriptor.DOMAIN_FIELD,

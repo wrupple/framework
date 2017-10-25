@@ -1,13 +1,5 @@
 package com.wrupple.muba.bpm;
 
-import static com.wrupple.muba.bpm.domain.EquationSystemSolution.WITNESS_FIELD;
-import static org.easymock.EasyMock.anyObject;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
@@ -15,25 +7,30 @@ import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.ApplicationStateImpl;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.bpm.server.service.ChocoRunner;
-import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.Runner;
+import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.VariableEligibility;
 import com.wrupple.muba.bpm.server.service.impl.ChocoInterpret;
-import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import org.apache.commons.chain.Context;
 import org.junit.Test;
 
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+
+import static com.wrupple.muba.bpm.domain.EquationSystemSolution.WITNESS_FIELD;
+import static org.junit.Assert.assertTrue;
 
 /*
  * GreatestAnomalyRangePicker
  * AdjustErrorByDriverDistance
  */
 public class HelloWorldTest extends IntegralTest {
-
     private static final String GREETING_SUBJECT = "world!";
 /*
  * GreatestAnomalyRangePicker

@@ -17,10 +17,7 @@ import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
 import com.wrupple.muba.bpm.server.service.VariableConsensus;
 import com.wrupple.muba.bpm.server.service.impl.ArbitraryDesicion;
-import com.wrupple.muba.catalogs.CatalogModule;
-import com.wrupple.muba.catalogs.HSQLDBModule;
-import com.wrupple.muba.catalogs.JDBCModule;
-import com.wrupple.muba.catalogs.SingleUserModule;
+import com.wrupple.muba.catalogs.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
 import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
@@ -124,7 +121,8 @@ public abstract class BPMTest extends AbstractTest {
                 new SolverModule(),
                 new HSQLDBModule(),
                 new JDBCModule(),
-				new ValidationModule(),
+                new SQLModule(),
+                new ValidationModule(),
                 new SingleUserModule(),
                 new CatalogModule(),
                 new ApplicationModule());

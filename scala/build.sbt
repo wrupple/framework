@@ -1,6 +1,5 @@
 name := Wrupple.NamePrefix + "root"
 
-
 lazy val common = project.
     settings(Common.settings: _*)
 

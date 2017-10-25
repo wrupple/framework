@@ -1,28 +1,24 @@
 package com.wrupple.muba.event.server.domain.impl;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
-import javax.transaction.UserTransaction;
-import javax.validation.ConstraintViolation;
-
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.TransactionHistory;
+import com.wrupple.muba.event.domain.annotations.Sentence;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.reserved.HasLocale;
+import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.event.domain.reserved.HasResults;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 
-import com.wrupple.muba.event.domain.annotations.Sentence;
-import com.wrupple.muba.event.domain.reserved.HasLocale;
-import com.wrupple.muba.event.domain.reserved.HasResult;
+import javax.transaction.UserTransaction;
+import javax.validation.ConstraintViolation;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
 
 @Sentence
 public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
@@ -36,7 +32,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	public static final String SCOPED_WRITER = "muba.event.writer";
 	public static final String SCOPED_BUFFER = SCOPED_WRITER + ".buffer";
 
-	private List<String> sentence;
+    //@Sentence
+    private List<String> sentence;
 	private int nextIndex, error;
 
 	private ServiceManifest serviceManifest;

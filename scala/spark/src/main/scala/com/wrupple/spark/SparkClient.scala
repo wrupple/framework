@@ -6,12 +6,15 @@ import com.wrupple.muba.ValidationModule
 import com.wrupple.muba.bpm.domain.{BusinessServiceManifest, IntentResolverServiceManifest, SolverServiceManifest}
 import com.wrupple.muba.bpm.server.chain.command.{ActivityRequestInterpret, BusinessRequestInterpret, IntentResolverRequestInterpret}
 import com.wrupple.muba.bpm.server.chain.{BusinessEngine, IntentResolverEngine, SolverEngine}
+import com.wrupple.muba.bpm.server.service.impl.ChocoInterpret
+import com.wrupple.muba.bpm.server.service.{ChocoRunner, Solver}
 import com.wrupple.muba.bpm.{BusinessModule, ConstraintSolverModule, SolverModule}
 import com.wrupple.muba.catalogs._
 import com.wrupple.muba.catalogs.domain.{CatalogActionFilterManifest, CatalogIntentListenerManifest, CatalogServiceManifest}
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine
 import com.wrupple.muba.catalogs.server.chain.command._
-import com.wrupple.muba.event.domain.{BroadcastServiceManifest, SessionContext}
+import com.wrupple.muba.event.domain.{BroadcastServiceManifest, Constraint, SessionContext}
+import com.wrupple.muba.event.server.ExplicitIntentInterpret
 import com.wrupple.muba.event.server.chain.PublishEvents
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret
 import com.wrupple.muba.event.{ApplicationModule, EventBus}
@@ -47,8 +50,18 @@ class SparkClient(val userConfig: Module) {
 
   val event = injector.getInstance(classOf[EventBus]);
   val session = injector.getInstance(Key.get(classOf[SessionContext], Names.named(SessionContext.SYSTEM)))
+  val solver = injector.getInstance(classOf[com.wrupple.muba.bpm.server.service.Solver])
 
   registerServices(event)
+
+  val constraintInterpret: ChocoInterpret = injector.getInstance(classOf[ChocoInterpret])
+  event.registerInterpret(Constraint.EVALUATING_VARIABLE, constraintInterpret)
+  val plugin: ChocoRunner = injector.getInstance(classOf[ChocoRunner])
+  injector.getInstance(classOf[Solver]).register(plugin)
+
+
+  val greeter: ExplicitIntentInterpret = injector.getInstance(classOf[ExplicitIntentInterpret])
+  event.registerInterpret(":", greeter)
 
   protected def registerServices(switchs: EventBus): Unit = {
     /*
