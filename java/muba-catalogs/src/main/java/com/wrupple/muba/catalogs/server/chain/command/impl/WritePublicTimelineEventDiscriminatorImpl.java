@@ -1,10 +1,10 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.WritePublicTimelineEventDiscriminator;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -17,8 +17,8 @@ import javax.inject.Singleton;
 @Singleton
 public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTimelineEventDiscriminator {
 
-	protected static final Logger log = LoggerFactory.getLogger(CommitCatalogActionImpl.class);
-	private final String discriminatorField, catalogField;
+    protected static final Logger log = LoggerFactory.getLogger(WritePublicTimelineEventDiscriminatorImpl.class);
+    private final String discriminatorField, catalogField;
 	private final FieldAccessStrategy access;
 
 	@Inject

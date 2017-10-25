@@ -1,42 +1,39 @@
 package com.wrupple.muba.catalogs.server.service;
 
-        import static org.easymock.EasyMock.anyObject;
-        import static org.junit.Assert.assertTrue;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.name.Names;
+import com.wrupple.muba.ValidationModule;
+import com.wrupple.muba.catalogs.CatalogModule;
+import com.wrupple.muba.catalogs.CatalogTestModule;
+import com.wrupple.muba.catalogs.SingleUserModule;
+import com.wrupple.muba.catalogs.domain.TestEntry;
+import com.wrupple.muba.catalogs.domain.Trash;
+import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.event.ApplicationModule;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.FormatDictionary;
+import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
+import org.easymock.EasyMockSupport;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-        import java.io.InputStream;
-        import java.io.OutputStream;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import javax.transaction.UserTransaction;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-        import javax.inject.Inject;
-        import javax.inject.Named;
-        import javax.inject.Singleton;
-        import javax.transaction.UserTransaction;
-
-        import com.google.inject.Guice;
-        import com.google.inject.Injector;
-        import com.wrupple.muba.ValidationModule;
-        import com.wrupple.muba.event.domain.Instrospection;
-        import com.wrupple.muba.event.domain.*;
-        import com.wrupple.muba.catalogs.CatalogTestModule;
-        import com.wrupple.muba.catalogs.domain.*;
-        import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
-        import com.wrupple.muba.catalogs.server.chain.command.*;
-        import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-        import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
-        import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-        import com.wrupple.muba.event.server.service.FormatDictionary;
-        import org.easymock.EasyMockSupport;
-        import org.junit.Before;
-        import org.junit.Test;
-
-        import com.google.inject.AbstractModule;
-        import com.google.inject.Provides;
-        import com.google.inject.name.Names;
-        import com.wrupple.muba.event.ApplicationModule;
-        import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
-        import com.wrupple.muba.catalogs.CatalogModule;
-        import com.wrupple.muba.catalogs.SingleUserModule;
-        import org.slf4j.Logger;
-        import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertTrue;
 
 public class JavaFieldAccessStrategyTest extends EasyMockSupport {
     protected Logger log = LoggerFactory.getLogger(JavaFieldAccessStrategyTest.class);
@@ -56,8 +53,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
             // mocks
-            WriteOutput mockWriter = mock(WriteOutput.class);
-            WriteAuditTrails mockLogger = mock(WriteAuditTrails.class);
              peerValue= mock(Host.class);
             mockSuscriptor = mock(EventSuscriptionMapper.class);
             bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
@@ -75,8 +70,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
             bind(DataDeleteCommand.class).toInstance(mockDelete);
 
 
-            bind(WriteAuditTrails.class).toInstance(mockLogger);
-            bind(WriteOutput.class).toInstance(mockWriter);
 
 
             bind(FormatDictionary.class).toInstance(mock(FormatDictionary.class));

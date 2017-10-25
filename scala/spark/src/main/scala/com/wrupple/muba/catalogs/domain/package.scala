@@ -2,7 +2,6 @@ package com.wrupple.muba.catalogs
 
 package object domain {
 
-  val CONTEXT_RESULTFRAME: String = "catalog.last.df"
   val SCHEMA_FIELD = "schema";
   val REGISTRY_CATALOG = "SparkTableRegistry"
   val FIELD_DN_HIVE_DESCRIPTION = "col_name"

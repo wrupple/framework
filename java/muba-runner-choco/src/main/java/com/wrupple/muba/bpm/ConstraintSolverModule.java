@@ -12,7 +12,7 @@ import com.wrupple.muba.bpm.server.service.impl.FutureChocoVariable;
 /**
  * Created by japi on 11/05/17.
  */
-public class ChocoSolverModule extends AbstractModule{
+public class ConstraintSolverModule extends AbstractModule {
 
     @Override
     protected void configure() {

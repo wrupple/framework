@@ -9,6 +9,7 @@ object Dependencies {
   lazy val choco = Wrupple.muba % "muba-runner-choco" % Wrupple.version
   lazy val bval = Wrupple.muba % "validation-bval" % Wrupple.version
 
+  lazy val guice = "com.google.inject" % "guice" % "4.1.0"
   lazy val slf4j = "org.slf4j" % "slf4j-simple" % "1.7.21"
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
   lazy val mockito = "org.mockito" % "mockito-core" % "2.10.0"
@@ -16,6 +17,7 @@ object Dependencies {
 
   val commonDependencies: Seq[ModuleID] = Seq(
     bpm,
+    guice,
     slf4j % "test",
     scalaTest % "test",
     mockito % "test",
@@ -34,9 +36,9 @@ object Dependencies {
   val apiDependencies    : Seq[ModuleID] = commonDependencies
   val sparkDependencies  : Seq[ModuleID] = commonDependencies ++ Seq(
     sql,
-    hsql % "test",
-    choco % "test",
-    bval % "test",
+    hsql,
+    choco,
+    bval,
       "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope,
       "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope,
       "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope

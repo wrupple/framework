@@ -1,9 +1,9 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasChildren;
-import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.catalogs.server.chain.command.UpdateTreeLevelIndex;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -16,8 +16,8 @@ import java.util.List;
 @Singleton
 public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 
-	protected static final Logger log = LoggerFactory.getLogger(CommitCatalogActionImpl.class);
-	private final FieldAccessStrategy access;
+    protected static final Logger log = LoggerFactory.getLogger(UpdateTreeLevelIndexImpl.class);
+    private final FieldAccessStrategy access;
 
 	@Inject
 	public UpdateTreeLevelIndexImpl(FieldAccessStrategy access) {
@@ -28,8 +28,8 @@ public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 	@Override
 	public boolean execute(Context ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
-		CatalogDescriptor catalog = (CatalogDescriptor) context.getCatalogDescriptor();
-		CatalogEntry newe = (CatalogEntry) context.getRequest().getEntryValue();
+        CatalogDescriptor catalog = context.getCatalogDescriptor();
+        CatalogEntry newe = (CatalogEntry) context.getRequest().getEntryValue();
 		CatalogEntry olde = context.getOldValue();
         Instrospection instrospection = access.newSession(newe);
         FieldDescriptor treeIndex = catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX);

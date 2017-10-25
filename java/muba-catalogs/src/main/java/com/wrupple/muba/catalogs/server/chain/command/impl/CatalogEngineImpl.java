@@ -1,26 +1,23 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import org.apache.commons.chain.CatalogFactory;
+import org.apache.commons.chain.generic.LookupCommand;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.chain.Command;
-import org.apache.commons.chain.impl.ChainBase;
-
-import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.command.CommitCatalogAction;
-import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.catalogs.server.chain.command.WriteAuditTrails;
-import com.wrupple.muba.catalogs.server.chain.command.WriteOutput;
-
 @Singleton
-public final class CatalogEngineImpl extends ChainBase implements CatalogEngine {
-	
+public final class CatalogEngineImpl extends LookupCommand implements CatalogEngine {
+
+
 	@Inject
-	public CatalogEngineImpl(CommitCatalogAction commit,
-			 WriteAuditTrails audit,
-			WriteOutput /*CMS*/ writer) {
-		super(new Command[] {  commit,
-				 writer, audit});
-	}
+    public CatalogEngineImpl(CatalogFactory factory) {
+        super(factory);
+        super.setCatalogName(CatalogActionRequest.NAME_FIELD);
+        super.setNameKey(CatalogActionRequest.NAME_FIELD);
+    }
+
 
 }

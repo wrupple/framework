@@ -1,53 +1,40 @@
 package com.wrupple.muba;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bpm.ChocoSolverModule;
+import com.wrupple.muba.bpm.ConstraintSolverModule;
 import com.wrupple.muba.bpm.SolverModule;
-import com.wrupple.muba.bpm.domain.Driver;
 import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.bpm.server.service.VariableConsensus;
 import com.wrupple.muba.bpm.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
+import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
+import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
+import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.BroadcastServiceManifest;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
-import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
-import com.wrupple.muba.event.server.service.ValidationGroupProvider;
-import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
 import org.junit.Before;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
-import javax.validation.Validator;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 
 public class IntegralTest extends AbstractTest{
@@ -57,9 +44,7 @@ public class IntegralTest extends AbstractTest{
 	 * mocks
 	 */
 
-    private WriteOutput mockWriter;
 
-    private WriteAuditTrails mockLogger;
     private Session stakeHolderValue;
     protected EventBus wrupple;
 
@@ -82,10 +67,6 @@ public class IntegralTest extends AbstractTest{
 
             // mocks
             stakeHolderValue = mock(Session.class);
-            mockWriter = mock(WriteOutput.class);
-            mockLogger = mock(WriteAuditTrails.class);
-            bind(WriteAuditTrails.class).toInstance(mockLogger);
-            bind(WriteOutput.class).toInstance(mockWriter);
 
 			/*
 			 * COMMANDS
@@ -118,7 +99,7 @@ public class IntegralTest extends AbstractTest{
     public IntegralTest() {
         init(new IntegralTestModule(),
                 new ChocoSolverTestModule(),
-                new ChocoSolverModule(),
+                new ConstraintSolverModule(),
                 new SolverModule(),
                 new HSQLDBModule(),
                 new JDBCModule(),
@@ -179,8 +160,6 @@ public class IntegralTest extends AbstractTest{
 
     @Before
     public void setUp() throws Exception {
-        expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
         expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
         expect(stakeHolderValue.getId()).andStubReturn(CatalogEntry.PUBLIC_ID);
 

@@ -1,13 +1,12 @@
-package com.wrupple.muba.bpm.server.chain.command.impl;
+package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import com.wrupple.muba.catalogs.server.chain.command.WriteOutput;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.generic.LookupCommand;
 
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.catalogs.server.chain.command.WriteOutput;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 /**
  * Finds a 
  * 

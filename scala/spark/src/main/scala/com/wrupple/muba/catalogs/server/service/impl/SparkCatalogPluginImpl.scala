@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl
 
+/*
 import java.lang
 import javax.inject.{Inject, Singleton}
 
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.sql.SQLContext
 
 import scala.collection.JavaConverters._
+
 
 
 @Singleton
@@ -44,3 +46,4 @@ class SparkCatalogPluginImpl @Inject()(
     context.setResults(java.util.Arrays.asList(catalogs: _*))
   }
 }
+*/

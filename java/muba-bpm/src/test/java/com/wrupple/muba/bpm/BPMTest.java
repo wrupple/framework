@@ -1,13 +1,17 @@
 package com.wrupple.muba.bpm;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.bpm.domain.*;
+import com.wrupple.muba.bpm.domain.BusinessServiceManifest;
+import com.wrupple.muba.bpm.domain.Driver;
+import com.wrupple.muba.bpm.domain.IntentResolverServiceManifest;
+import com.wrupple.muba.bpm.domain.SolverServiceManifest;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
 import com.wrupple.muba.bpm.server.chain.SolverEngine;
-import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.bpm.server.chain.command.IntentResolverRequestInterpret;
@@ -17,42 +21,32 @@ import com.wrupple.muba.catalogs.CatalogModule;
 import com.wrupple.muba.catalogs.HSQLDBModule;
 import com.wrupple.muba.catalogs.JDBCModule;
 import com.wrupple.muba.catalogs.SingleUserModule;
-import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
+import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
+import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
+import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
+import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.BroadcastServiceManifest;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
-import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.catalogs.server.chain.command.impl.*;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
-import org.apache.commons.chain.Command;
 import org.junit.Before;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
-
 public abstract class BPMTest extends AbstractTest {
 
-	/*
-	 * mocks
-	 */
-
-	private WriteOutput mockWriter;
-
-	private WriteAuditTrails mockLogger;
     protected EventBus wrupple;
 	protected SessionContext session;
 
@@ -93,11 +87,6 @@ public abstract class BPMTest extends AbstractTest {
 			bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
 			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
 
-			// mocks
-			mockWriter = mock(WriteOutput.class);
-			mockLogger = mock(WriteAuditTrails.class);
-			bind(WriteAuditTrails.class).toInstance(mockLogger);
-			bind(WriteOutput.class).toInstance(mockWriter);
 
 			/*
 			 * COMMANDS
@@ -131,7 +120,7 @@ public abstract class BPMTest extends AbstractTest {
 		init(new IntegralTestModule(),
                 new BPMTestModule(),
                 new BusinessModule(),
-                new ChocoSolverModule(),
+                new ConstraintSolverModule(),
                 new SolverModule(),
                 new HSQLDBModule(),
                 new JDBCModule(),
@@ -201,15 +190,11 @@ public abstract class BPMTest extends AbstractTest {
 
 	@Before
 	public void setUp() throws Exception {
-		expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-		expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-
-        replayAll();
 
 		session = injector.getInstance(Key.get(SessionContext.class,Names.named(SessionContext.SYSTEM)));
 		wrupple = injector.getInstance(EventBus.class);
-		log.trace("NEW TEST EXCECUTION CONTEXT READY");
-	}
+        log.trace("NEW TEST EXCECUTION ENVIROMENT READY");
+    }
 
 
 

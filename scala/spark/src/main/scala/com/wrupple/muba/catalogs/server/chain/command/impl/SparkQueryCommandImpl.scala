@@ -1,20 +1,18 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl
 
-import javax.inject.{Inject, Provider, Singleton}
+import javax.inject.{Inject, Singleton}
 
-import com.wrupple.muba.catalogs.domain.{CatalogActionContext, _}
+import com.wrupple.muba.catalogs.domain.CatalogActionContext
+import com.wrupple.muba.catalogs.domain.impl.SparkLazyList
 import com.wrupple.muba.catalogs.server.chain.command.SparkQueryCommand
-import com.wrupple.muba.catalogs.server.domain.LazyList
-import com.wrupple.muba.catalogs.server.service.{SQLDelegate, TableMapper}
+import com.wrupple.muba.catalogs.server.service.TableMapper
 import org.apache.commons.chain.{Command, Context}
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.sql.SQLContext
 
-import scala.collection.JavaConverters._
-
 
 @Singleton
-class SparkQueryCommandImpl @Inject()(val resultProvider: Provider[LazyList], val tableMapper: TableMapper, val delegate: SQLDelegate,
+class SparkQueryCommandImpl @Inject()(val tableMapper: TableMapper, val delegate: SQLDelegate,
                                       val sqlContext: SQLContext
                                      ) extends SparkQueryCommand with Logging {
 
@@ -29,13 +27,14 @@ class SparkQueryCommandImpl @Inject()(val resultProvider: Provider[LazyList], va
 
     val dfResults = sqlContext.sql(builder.toString);
 
-    context.asScala.put(CONTEXT_RESULTFRAME, dfResults);
 
     //FIXME filters
 
-    val results = resultProvider.get();
+    val results = new SparkLazyList(catalogDescriptor, tableMapper)
     //results.setResolver(this);
     results.setSubject(dfResults);
+
+    context.setResults(results);
 
     return Command.CONTINUE_PROCESSING;
   }

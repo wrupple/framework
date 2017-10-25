@@ -1,9 +1,9 @@
 package com.wrupple.muba.catalogs.server.chain;
 
-import org.apache.commons.chain.Chain;
+import org.apache.commons.chain.Command;
 
-public interface CatalogEngine extends Chain {
-	
+public interface CatalogEngine extends Command {
+
 
 }
 	

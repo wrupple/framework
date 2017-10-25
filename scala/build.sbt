@@ -1,7 +1,5 @@
 name := Wrupple.NamePrefix + "root"
 
-scalaVersion := "2.10.5"
-
 
 lazy val common = project.
     settings(Common.settings: _*)

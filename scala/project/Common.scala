@@ -1,9 +1,8 @@
+import sbt.Keys._
 import sbt._
-import Keys._
 
 object Common {
 
-  val swVersion = "1.0"
 
   lazy val copyDependencies = TaskKey[Unit]("copy-dependencies")
 
@@ -16,10 +15,10 @@ object Common {
   }
   
   val settings: Seq[Def.Setting[_]] = Seq(
-    version := swVersion,
-    organization := "com.wrupple",
+    version := Wrupple.version,
+    organization := Wrupple.muba,
     scalaVersion := "2.10.5",
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7"), //, "-Xmx2G"),
+    javacOptions ++= Seq("-source", "1.8", "-target", "1.8"), //, "-Xmx2G"),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
     resolvers += Opts.resolver.mavenLocalFile,
     copyDepTask,

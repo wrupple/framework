@@ -145,9 +145,8 @@ public class CatalogModule extends AbstractModule {
 		 * Commands
 		 */
 
-		bind(CommitCatalogAction.class).to(CommitCatalogActionImpl.class);
-
-		bind(CatalogCreateTransaction.class).to(CatalogCreateTransactionImpl.class);
+        bind(WriteOutput.class).to(WriteOutputImpl.class);
+        bind(CatalogCreateTransaction.class).to(CatalogCreateTransactionImpl.class);
 		bind(CatalogReadTransaction.class).to(CatalogReadTransactionImpl.class);
 		bind(CatalogUpdateTransaction.class).to(CatalogUpdateTransactionImpl.class);
 		bind(CatalogDeleteTransaction.class).to(CatalogDeleteTransactionImpl.class);

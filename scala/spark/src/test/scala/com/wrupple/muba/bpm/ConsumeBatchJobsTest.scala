@@ -1,12 +1,9 @@
 package com.wrupple.muba.bpm
 
-import com.google.inject.{Guice, Injector, Module}
-import com.wrupple.muba.event.EventBus
 import org.apache.logging.log4j.scala.Logging
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSuite}
 
-import scala.collection.JavaConverters._
 
 class ConsumeBatchJobsTest extends FunSuite with BeforeAndAfter with MockitoSugar with Logging {
 
@@ -14,17 +11,6 @@ class ConsumeBatchJobsTest extends FunSuite with BeforeAndAfter with MockitoSuga
 
   System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
 
-  protected var injector: Injector = null
-
-
-  def init(m: List[Module]): Unit = {
-    injector = Guice.createInjector(m.asJava)
-    registerServices(injector.getInstance(classOf[EventBus]))
-  }
-
-  protected def registerServices(switchs: EventBus): Unit = {
-    println("register services!!");
-  }
 
 
   /*
