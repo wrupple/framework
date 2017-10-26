@@ -1,19 +1,14 @@
 package com.wrupple.muba.event.server.service.impl;
 
-import javax.inject.Named;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-import javax.validation.ConstraintViolation;
-
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.chain.command.EventDispatcher;
+import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.event.server.chain.command.EventDispatcher;
-import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
+import javax.inject.Named;
+import javax.transaction.*;
+import javax.validation.ConstraintViolation;
 
 public class ServiceInvocationThread extends Thread {
 	private static final Logger log = LoggerFactory.getLogger(EventDispatcherImpl.class);
@@ -32,7 +27,7 @@ public class ServiceInvocationThread extends Thread {
 
 	@Override
 	public void run() {
-		UserTransaction transaction = requestContext.getEventBus().getTransaction();
+        UserTransaction transaction = requestContext.getTransactionHistory();
 
 		try {
 			try {

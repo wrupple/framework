@@ -1,4 +1,4 @@
-package com.wrupple.spark
+package com.wrupple
 
 import com.google.inject.name.Names
 import com.google.inject.{Guice, Injector, Key, Module}
@@ -34,7 +34,9 @@ class SparkClient(val userConfig: Module) {
     ,
     new SolverModule
     ,
-    new SparkModule
+    /*new SparkModule
+    ,*/
+    new SQLModule
     ,
     new HSQLDBModule
     ,

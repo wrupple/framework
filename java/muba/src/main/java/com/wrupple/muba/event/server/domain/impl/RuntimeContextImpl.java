@@ -585,8 +585,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 	private TransactionHistory assertTransaction() {
 		if (transaction == null) {
-			transaction = new CatalogUserTransactionImpl(getEventBus().getTransaction());
-		}
+            transaction = new CatalogUserTransactionImpl(null/*TODO*/);
+        }
 		return (TransactionHistory) transaction;
 	}
 

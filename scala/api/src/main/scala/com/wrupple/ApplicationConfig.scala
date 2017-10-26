@@ -1,4 +1,4 @@
-package com.wrupple.spark
+package com.wrupple
 
 import java.io.PrintWriter
 import javax.inject.{Inject, Named}

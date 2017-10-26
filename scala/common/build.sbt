@@ -1,1 +1,0 @@
-name := Wrupple.NamePrefix + "common"

@@ -28,7 +28,7 @@ public class ActionsDictionaryImpl extends CatalogBase implements ActionsDiction
 
     @Inject
     public ActionsDictionaryImpl(CatalogFactory factory, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete
-        ,PluginConsensus consensus,  GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, CatalogFileUploadTransaction upload, CatalogFileUploadUrlHandlerTransaction url, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named("catalog.plugins") Provider<Object> pluginProvider) {
+            , PluginConsensus consensus, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named("catalog.plugins") Provider<Object> pluginProvider) {
         this.create = create;
         this.read = read;
         this.write = write;
@@ -59,13 +59,13 @@ public class ActionsDictionaryImpl extends CatalogBase implements ActionsDiction
         addCommand(UpdateTreeLevelIndex.class.getSimpleName(), treeIndexHandler);
         addCommand(WritePublicTimelineEventDiscriminator.class.getSimpleName(), inheritanceHandler);
         addCommand(Timestamper.class.getSimpleName(), timestamper);
-        addCommand("url", url);
+        addCommand(CatalogFileUploadUrlHandlerTransaction.class.getSimpleName(), null/*FIXME*/);
 
         addCommand(CatalogActionRequest.CREATE_ACTION, create);
         addCommand(CatalogActionRequest.READ_ACTION, read);
         addCommand(CatalogActionRequest.WRITE_ACTION, write);
         addCommand(CatalogActionRequest.DELETE_ACTION, delete);
-        addCommand(CatalogActionRequest.UPLOAD_ACTION, upload);
+        addCommand(CatalogFileUploadTransaction.class.getSimpleName(), null/*FIXME*/);
 
     }
 

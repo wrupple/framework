@@ -170,7 +170,8 @@ public class CatalogModule extends AbstractModule {
 		/*
 		 * Services
 		 */
-		bind(CatalogKeyServices.class).to(CatalogKeyServicesImpl.class);
+        bind(CatalogDeserializationService.class).to(CatalogDeserializationServiceImpl.class);
+        bind(CatalogKeyServices.class).to(CatalogKeyServicesImpl.class);
 		bind(EntrySynthesizer.class).to(EntrySynthesizerImpl.class);
 		bind(JSRAnnotationsDictionary.class).to(JSRAnnotationsDictionaryImpl.class);
 		bind(ActionsDictionary.class).to(ActionsDictionaryImpl.class);

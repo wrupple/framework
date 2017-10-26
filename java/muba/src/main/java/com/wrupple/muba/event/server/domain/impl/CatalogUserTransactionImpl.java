@@ -1,23 +1,18 @@
 package com.wrupple.muba.event.server.domain.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.CatalogKey;
+import com.wrupple.muba.event.domain.ServiceContext;
+import com.wrupple.muba.event.domain.TransactionHistory;
+import com.wrupple.muba.event.server.chain.command.UserCommand;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wrupple.muba.event.server.chain.command.UserCommand;
+import javax.transaction.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CatalogUserTransactionImpl implements TransactionHistory {
 
@@ -37,13 +32,15 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 
 	@Override
 	public void begin() throws NotSupportedException, SystemException {
-		localTransaction.begin();
+        if (localTransaction != null)
+            localTransaction.begin();
 	}
 
 	@Override
 	public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
 			SecurityException, IllegalStateException, SystemException {
-		localTransaction.commit();
+        if (localTransaction != null)
+            localTransaction.commit();
 		status = javax.transaction.Status.STATUS_COMMITTING;
 		status = javax.transaction.Status.STATUS_COMMITTED;
 	}
@@ -55,7 +52,8 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 
 	@Override
 	public void rollback() throws IllegalStateException, SecurityException, SystemException {
-		localTransaction.rollback();
+        if (localTransaction != null)
+            localTransaction.rollback();
 		status = Status.STATUS_ROLLING_BACK;
 
 		try {
@@ -70,36 +68,38 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 
 	@Override
 	public void setRollbackOnly() throws IllegalStateException, SystemException {
-		localTransaction.setRollbackOnly();
+        if (localTransaction != null)
+            localTransaction.setRollbackOnly();
 		status = javax.transaction.Status.STATUS_MARKED_ROLLBACK;
 	}
 
 	@Override
 	public void setTransactionTimeout(int arg0) throws SystemException {
-		localTransaction.setTransactionTimeout(arg0);
+        if (localTransaction != null)
+            localTransaction.setTransactionTimeout(arg0);
 	}
 	@Override
 	public <T extends CatalogEntry> void didRead(ServiceContext catalog, List<T> r, UserCommand dao) {
-		history.didRead(r, dao, (Context)catalog);
-	}
+        history.didRead(r, dao, catalog);
+    }
 	@Override
 	public <T extends CatalogEntry> void didRead(ServiceContext catalog, T r, UserCommand dao) {
-		history.didRead((Context)catalog, r, dao);
-	}
+        history.didRead(catalog, r, dao);
+    }
 	@Override
 	public <T extends CatalogEntry> void didCreate(ServiceContext catalog, CatalogEntry regreso,
 			UserCommand createDao) {
-		history.didCreate((Context)catalog, regreso, createDao);
-	}
+        history.didCreate(catalog, regreso, createDao);
+    }
 	@Override
 	public <T extends CatalogEntry> void didUpdate(ServiceContext catalog, T original, T outDatedEntry,
 			UserCommand dao) {
-		history.didUpdate((Context)catalog, original, outDatedEntry, dao);
-	}
+        history.didUpdate(catalog, original, outDatedEntry, dao);
+    }
 	@Override
 	public <T extends CatalogEntry> void didDelete(ServiceContext catalog, T r, UserCommand dao) {
-		history.didDelete((Context)catalog, r, dao);
-	}
+        history.didDelete(catalog, r, dao);
+    }
 
 	public enum CatalogAction {
 		CREATE,UPDATE,READ,DELETE

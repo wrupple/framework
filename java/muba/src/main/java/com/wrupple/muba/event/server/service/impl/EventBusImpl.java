@@ -1,19 +1,5 @@
 package com.wrupple.muba.event.server.service.impl;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
-import javax.transaction.UserTransaction;
-
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
@@ -23,6 +9,18 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Singleton
 public class EventBusImpl extends ContextBase implements EventBus {
@@ -35,10 +33,8 @@ public class EventBusImpl extends ContextBase implements EventBus {
     private final InputStream in;
 	private final EventRegistry intentInterpret;
     private final EventDispatcher process;
-	private final Provider<UserTransaction> transactionProvider;
     private final Boolean parallel;
     private final CatalogDescriptor handleField;
-    private UserTransaction transaction;
 
     private final FilterNativeInterface filterer;
 
@@ -46,15 +42,14 @@ public class EventBusImpl extends ContextBase implements EventBus {
     private final Provider<BroadcastEvent> queueElementProvider;
 
     @Inject
-	public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, Provider<UserTransaction> transactionProvider, FilterNativeInterface filterer, @Named(ServiceManifest.CATALOG) CatalogDescriptor handleField, FieldAccessStrategy instrospector, Provider<BroadcastEvent> queueElementProvider) {
-		super();
+    public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, @Named("event.parallel") Boolean parallel, FilterNativeInterface filterer, @Named(ServiceManifest.CATALOG) CatalogDescriptor handleField, FieldAccessStrategy instrospector, Provider<BroadcastEvent> queueElementProvider) {
+        super();
 		this.parallel=parallel;
 		this.process=process;
 		this.out=out;
 		this.in = in;
 		this.outputWriter = new PrintWriter(out);
         this.intentInterpret = intentInterpret;
-        this.transactionProvider=transactionProvider;
         this.filterer = filterer;
 
         this.handleField=handleField;
@@ -63,14 +58,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
         this.queueElementProvider = queueElementProvider;
     }
 
-    @Override
-    public UserTransaction getTransaction() {
-        if (transaction == null) {
-            transaction = transactionProvider == null ? null : transactionProvider.get();
-        }
-        return transaction;
-    }
-
+    //TODO public UserTransaction getTransaction() {
 
 
 

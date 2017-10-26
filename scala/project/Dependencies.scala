@@ -2,6 +2,10 @@ import sbt._
 
 object Dependencies {
 
+  val sparkVersion = "1.6.0"
+
+  val sparkDependencyScope = "provided"
+
 
   lazy val bpm = Wrupple.muba % "muba-bpm" % Wrupple.version
   lazy val sql = Wrupple.muba % "muba-catalogs-sql" % Wrupple.version
@@ -16,6 +20,10 @@ object Dependencies {
   lazy val mockitoInline = "org.mockito" % "mockito-inline" % "2.10.0"
 
   val commonDependencies: Seq[ModuleID] = Seq(
+    sql,
+    hsql,
+    choco,
+    bval,
     bpm,
     guice,
     slf4j % "test",
@@ -24,54 +32,15 @@ object Dependencies {
     mockitoInline % "test",
   "org.apache.logging.log4j" %% "log4j-api-scala" % "11.0",
   "org.apache.logging.log4j" % "log4j-api" % "2.8.2",
-  "org.apache.logging.log4j" % "log4j-core" % "2.8.2"/* % Runtime,*/
+    "org.apache.logging.log4j" % "log4j-core" % "2.8.2"
   )
 
-  val sparkVersion = "1.6.0"
-
-
-  val sparkDependencyScope = "provided"
-
-
   val apiDependencies    : Seq[ModuleID] = commonDependencies
+
   val sparkDependencies  : Seq[ModuleID] = commonDependencies ++ Seq(
-    sql,
-    hsql,
-    choco,
-    bval,
       "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope,
       "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope,
       "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope
-//    "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope,
-//    "org.apache.spark" %% "spark-mllib" % sparkVersion % sparkDependencyScope,
-//    "org.apache.spark" %% "spark-streaming" % sparkVersion % sparkDependencyScope,
   )
-  /*val webDependencies    : Seq[ModuleID] = commonDependencies ++ json ++ {
-    Seq(
-      //jdbc,
-      //cache,
-      // ws
-      //specs2 % Test
-    )
-<dependency>
-			<groupId>com.wrupple.muba</groupId>
-			<artifactId>muba-catalogs-jdbc-hsql</artifactId>
-			<version>${muba.version}</version>
-			<scope>test</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>com.wrupple.muba</groupId>
-			<artifactId>muba-runner-choco</artifactId>
-			<version>${muba.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.wrupple.muba</groupId>
-			<artifactId>validation-bval</artifactId>
-			<version>${muba.version}</version>
-			<scope>test</scope>
-		</dependency>
-  }*/
 }

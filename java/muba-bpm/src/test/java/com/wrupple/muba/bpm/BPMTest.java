@@ -2,7 +2,6 @@ package com.wrupple.muba.bpm;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
-import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.bpm.domain.BusinessServiceManifest;
@@ -21,13 +20,11 @@ import com.wrupple.muba.catalogs.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
 import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
@@ -38,7 +35,6 @@ import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import org.junit.Before;
 
-import javax.transaction.UserTransaction;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -85,31 +81,10 @@ public abstract class BPMTest extends AbstractTest {
 			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
 
 
-			/*
-			 * COMMANDS
-			 */
-
-			bind(CatalogFileUploadTransaction.class).toInstance(mock(CatalogFileUploadTransaction.class));
-			bind(CatalogFileUploadUrlHandlerTransaction.class)
-					.toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
-			// TODO cms test isMasked FieldDescriptor
 
 		}
 
-		@Provides
-		public UserTransaction localTransaction() {
-			return mock(UserTransaction.class);
-		}
 
-		@Provides
-		public Trash trash() {
-			return mock(Trash.class);
-		}
-
-		@Provides
-		public CatalogDeserializationService catalogDeserializationService() {
-			return mock(CatalogDeserializationService.class);
-		}
 
 	}
 
