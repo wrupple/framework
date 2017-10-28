@@ -42,7 +42,8 @@ public class EventListenerTest extends BootstrapTest {
         ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
 
-        this.system = new EventBusImpl(interpret, dispatcher, System.out, System.in, false, filterer, null, instrospector, null);
+        EventBusImpl.IntentDelegate delegate = new IntentDelegateImpl();
+        this.system = new EventBusImpl(interpret, dispatcher, System.out, System.in, instrospector, null, delegate);
 
 
         List<String> grammar = Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME);

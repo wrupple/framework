@@ -65,14 +65,22 @@
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>muba-catalogs-jdbc-hsql</artifactId>
 			<version>${muba.version}</version>
+            <scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>validation-bval</artifactId>
 			<version>${muba.version}</version>
-		</dependency>
-	</dependencies>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.wrupple.muba</groupId>
+            <artifactId>muba-lambda</artifactId>
+            <version>${muba.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 	<build>
 		<resources>
 			<resource>

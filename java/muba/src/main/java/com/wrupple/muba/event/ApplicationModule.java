@@ -1,15 +1,19 @@
 package com.wrupple.muba.event;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
+import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.event.server.chain.command.impl.BroadcastInterpretImpl;
+import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import com.wrupple.muba.event.server.chain.command.impl.JavaSentenceNativeInterface;
 import com.wrupple.muba.event.server.chain.command.impl.PublishEventsImpl;
 import com.wrupple.muba.event.server.domain.impl.BroadcastContextImpl;
@@ -19,13 +23,7 @@ import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.service.impl.*;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.BeanUtilsBean2;
-import org.apache.commons.beanutils.converters.LongConverter;
 import org.apache.commons.chain.CatalogFactory;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.name.Names;
-import com.wrupple.muba.event.server.chain.command.EventDispatcher;
-import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,12 +32,8 @@ public class ApplicationModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-        //ConvertUtils.register(new LongConverter(null), Long.class);
-        //BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
-        BeanUtilsBean2.getInstance().getConvertUtils().register(new LongConverter(null), Long.class);
-        BeanUtilsBean2.getInstance().getConvertUtils().register(false, true, 0);
+
         BeanUtilsBean.setInstance(BeanUtilsBean2.getInstance());
-        bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
         bind(String.class).annotatedWith(Names.named("chain.unknownService")).toInstance("chain.unknownService");
         bind(FieldDescriptor.class).annotatedWith(Names.named("event.sentence")).to(SentenceField.class);
 

@@ -1,40 +1,38 @@
 package com.wrupple.muba.event;
 
-import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.name.Names;
+import com.wrupple.muba.MubaTest;
+import com.wrupple.muba.ValidationModule;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.ContractDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.impl.SessionImpl;
+import com.wrupple.muba.event.domain.reserved.HasResult;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
+import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
+import com.wrupple.muba.event.server.service.impl.LambdaModule;
+import org.apache.commons.chain.Command;
+import org.apache.commons.chain.Context;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import javax.transaction.UserTransaction;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.transaction.UserTransaction;
-
-import com.google.inject.Key;
-import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.ContractDescriptorImpl;
-import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
-import com.wrupple.muba.event.domain.impl.SessionImpl;
-import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
-import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Names;
-import com.wrupple.muba.MubaTest;
-import com.wrupple.muba.ValidationModule;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.reserved.HasResult;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
+import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ServiceRequestValidation extends MubaTest {
 
@@ -47,12 +45,12 @@ public class ServiceRequestValidation extends MubaTest {
 
 	public ServiceRequestValidation() {
 		super();
-		init(new MockModule(), new ValidationModule(), new ApplicationModule());
-	}
+        init(new MockModule(), new ValidationModule(), new LambdaModule(), new ApplicationModule());
+    }
 	
 	protected void registerServices(EventBus switchs) {
-		List<String> grammar = Arrays.asList(new String[] { FIRST_OPERAND_NAME, SECOND_OPERAND_NAME });
-		ContractDescriptor operationContract = new ContractDescriptorImpl(
+        List<String> grammar = Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME);
+        ContractDescriptor operationContract = new ContractDescriptorImpl(
 				Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), ProblemRequest.class);
 		ServiceManifest multiply = new ServiceManifestImpl(MULTIPLICATION, DEFAULT_VERSION, operationContract,grammar);
 		ServiceManifest addInt = new ServiceManifestImpl(ADDITION, DEFAULT_VERSION, operationContract, grammar);
@@ -133,7 +131,8 @@ public class ServiceRequestValidation extends MubaTest {
 
 		@Override
 		protected void configure() {
-			bind(UserTransaction.class).toInstance(mock(UserTransaction.class));
+            bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
+            bind(UserTransaction.class).toInstance(mock(UserTransaction.class));
 			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
 			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 			mockSuscriptor = mock(EventSuscriptionMapper.class);
@@ -170,14 +169,14 @@ public class ServiceRequestValidation extends MubaTest {
 		public boolean execute(Context context) throws Exception {
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
-			log.debug("Excecuting on {},{}", first, second);
-			Map<String, ServiceManifest> versions = runtimeContext.getEventBus().getIntentInterpret().getRootService()
+            log.debug("{} for: {},{}", this.getClass().getSimpleName(), first, second);
+            Map<String, ServiceManifest> versions = runtimeContext.getEventBus().getIntentInterpret().getRootService()
 					.getVersions(second);
 			// is there an operation named like this?
 			if (versions == null) {
 
-				log.trace("excecuting operation with operands {},{}", first, second);
-				((HasResult) context).setResult(operation(Double.parseDouble(first), Double.parseDouble(second)));
+                log.trace("excecuting operation with operands: {},{}", first, second);
+                ((HasResult) context).setResult(operation(Double.parseDouble(first), Double.parseDouble(second)));
 				return CONTINUE_PROCESSING;
 			} else {
 				log.trace("will invoke nested service {}", second);

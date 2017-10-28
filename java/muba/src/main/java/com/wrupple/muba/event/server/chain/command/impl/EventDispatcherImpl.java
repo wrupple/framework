@@ -171,7 +171,7 @@ public class EventDispatcherImpl implements EventDispatcher {
 		String key, value;
 		if ( explicitInterpret == null) {
 			log.debug("no explicit contract interpret");
-			if (tokens != null) {
+			if (tokens != null && requestContext.hasNext()) {
 				log.trace("read-copy known grammar properties into service context");
 
 				for (int i = 0; i < tokens.size(); i++) {
@@ -185,8 +185,8 @@ public class EventDispatcherImpl implements EventDispatcher {
 					}
 				}
 			}
-			
-			if(contract != null){
+
+			if (contract != null && contract != context) {
 				ContractDescriptor descriptor = requestContext.getServiceManifest().getCatalogValue();
 				if (descriptor != null) {
 					Collection<String> fields = descriptor.getFieldsIds();

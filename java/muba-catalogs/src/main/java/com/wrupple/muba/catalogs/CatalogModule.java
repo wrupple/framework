@@ -30,6 +30,8 @@ import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.CatalogNormalizationConstraintValidator;
 import com.wrupple.muba.event.server.service.KeyDomainValidator;
+import org.apache.commons.beanutils.BeanUtilsBean2;
+import org.apache.commons.beanutils.converters.LongConverter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,8 +48,11 @@ public class CatalogModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-
-	    /*
+//ConvertUtils.register(new LongConverter(null), Long.class);
+		//BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
+		BeanUtilsBean2.getInstance().getConvertUtils().register(new LongConverter(null), Long.class);
+		BeanUtilsBean2.getInstance().getConvertUtils().register(false, true, 0);
+		/*
 	     * Event Handlers
 	     */
         bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);

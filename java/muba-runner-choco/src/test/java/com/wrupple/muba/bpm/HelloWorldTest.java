@@ -164,7 +164,7 @@ private static final String CONSTRAINT = "constraint";
     static class GreeterInterpret implements NaturalLanguageInterpret {
 
         @Override
-        public void run(ListIterator<String> sentence, Context c) throws Exception {
+        public void run(ListIterator<String> sentence, Context c, String interpretGivenName) throws Exception {
             ApplicationContext context = (ApplicationContext) c;
             ApplicationState state = context.getStateValue();
             (

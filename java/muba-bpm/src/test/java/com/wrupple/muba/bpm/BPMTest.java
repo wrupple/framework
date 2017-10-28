@@ -33,6 +33,7 @@ import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
+import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import org.junit.Before;
 
 import java.io.InputStream;
@@ -65,29 +66,6 @@ public abstract class BPMTest extends AbstractTest {
 	}
 
 
-    class IntegralTestModule extends AbstractModule {
-
-		@Override
-		protected void configure() {
-			bind(VariableConsensus.class).to(ArbitraryDesicion.class);
-			bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
-			bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-
-			// this makes JDBC the default storage unit
-			bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
-			bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
-			bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
-			bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
-			bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
-
-
-
-		}
-
-
-
-	}
-
 	public BPMTest() {
 		init(new IntegralTestModule(),
                 new BPMTestModule(),
@@ -100,9 +78,32 @@ public abstract class BPMTest extends AbstractTest {
                 new ValidationModule(),
                 new SingleUserModule(),
                 new CatalogModule(),
+                new LambdaModule(),
                 new ApplicationModule());
 
 	}
+
+    class IntegralTestModule extends AbstractModule {
+
+        @Override
+        protected void configure() {
+            bind(VariableConsensus.class).to(ArbitraryDesicion.class);
+            bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
+            bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
+            bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
+
+            // this makes JDBC the default storage unit
+            bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
+            bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
+            bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
+            bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
+            bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
+
+
+        }
+
+
+    }
 
 	@Override
 	protected void registerServices(EventBus switchs) {

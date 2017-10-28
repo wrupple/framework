@@ -24,7 +24,7 @@ public class ExplicitIntentInterpret implements NaturalLanguageInterpret {
     }
 
     @Override
-    public void run(ListIterator<String> sentence, Context context) throws Exception {
+    public void run(ListIterator<String> sentence, Context context, String interpretGivenName) throws Exception {
 
         List<String> tokens = new ArrayList<String>();
         while (sentence.hasNext()) {

@@ -9,6 +9,7 @@ import com.wrupple.muba.bpm.server.service.impl.ArbitraryDesicion
 
 object Configuracion extends AbstractModule {
   override def configure() = {
+    bind(classOf[Boolean]).annotatedWith(Names.named("event.parallel")).toInstance(true)
     bind(classOf[String]).annotatedWith(Names.named("host")).toInstance("localhost")
     bind(classOf[VariableConsensus]).to(classOf[ArbitraryDesicion])
     bind(classOf[OutputStream]).annotatedWith(Names.named("System.out")).toInstance(System.out)

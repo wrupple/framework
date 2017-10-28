@@ -8,7 +8,6 @@ object Dependencies {
 
 
   lazy val bpm = Wrupple.muba % "muba-bpm" % Wrupple.version
-  lazy val sql = Wrupple.muba % "muba-catalogs-sql" % Wrupple.version
   lazy val hsql = Wrupple.muba % "muba-catalogs-jdbc-hsql" % Wrupple.version
   lazy val choco = Wrupple.muba % "muba-runner-choco" % Wrupple.version
   lazy val bval = Wrupple.muba % "validation-bval" % Wrupple.version
@@ -20,7 +19,6 @@ object Dependencies {
   lazy val mockitoInline = "org.mockito" % "mockito-inline" % "2.10.0"
 
   val commonDependencies: Seq[ModuleID] = Seq(
-    sql,
     hsql,
     choco,
     bval,

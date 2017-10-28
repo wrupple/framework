@@ -1,32 +1,30 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.BroadcastContext;
+import com.wrupple.muba.event.domain.BroadcastEvent;
+import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collection;
-import java.util.stream.Stream;
 
 @Singleton
 public class PublishEventsImpl    implements PublishEvents {
+
+
+    private final StreamingDelegate delegate;
     protected static final Logger log = LoggerFactory.getLogger(PublishEventsImpl.class);
 
-    private final boolean parallel;
-    private final Provider<BroadcastQueueAppend> queueProvider;
-
     @Inject
-	public PublishEventsImpl(@Named("event.parallel") Boolean parallel,  Provider<BroadcastQueueAppend> queueProvider) {
-		super();
-		this.parallel = parallel.booleanValue();
-        this.queueProvider = queueProvider;
-	}
+    public PublishEventsImpl(StreamingDelegate delegate) {
+        super();
+        this.delegate = delegate;
+    }
 
     @Override
     public boolean execute(Context ctx) throws Exception {
@@ -42,22 +40,8 @@ public class PublishEventsImpl    implements PublishEvents {
         if(concernedPeers==null){
             log.debug("no peer concerned in event");
         }else{
-            Stream<Host> s = parallel?concernedPeers.parallelStream():concernedPeers.stream();
-
             log.debug("streaming event to concerned peers");
-            s.forEach((Host host) -> {
-                BroadcastQueueAppend queue = queueProvider.get();
-                queue.setHostValue(host);
-                queue.setQueuedElementValue(queueElement);
-                queue.setCatalog(queueElement.getEventValue().getCatalogType());
-                try {
-                    log.debug("Append to broadcast channel of host {}",host);
-                    eventBus.fireEvent(queue, context.getRuntimeContext(), null);
-                } catch (Exception e) {
-                    log.error("failed to append event to host broadcast queue",e);
-                }
-                //return queue;
-            });
+            delegate.streamToConcernedPeers(context, queueElement, eventBus, concernedPeers);
         }
 
 
@@ -66,6 +50,12 @@ public class PublishEventsImpl    implements PublishEvents {
         return CONTINUE_PROCESSING;
 
     }
+
+    public interface StreamingDelegate {
+        void streamToConcernedPeers(BroadcastContext context, BroadcastEvent queueElement, EventBus eventBus, Collection<Host> concernedPeers) throws Exception;
+
+    }
+
 
 
 	

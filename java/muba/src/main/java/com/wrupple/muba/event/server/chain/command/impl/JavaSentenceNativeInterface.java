@@ -7,11 +7,10 @@ import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by rarl on 11/05/17.
@@ -19,6 +18,14 @@ import java.util.stream.Stream;
 @Singleton
 public class JavaSentenceNativeInterface implements SentenceNativeInterface {
     protected Logger log = LoggerFactory.getLogger(JavaSentenceNativeInterface.class);
+
+    private final Delegate delgeate;
+
+
+    @Inject
+    public JavaSentenceNativeInterface(Delegate delgeate) {
+        this.delgeate = delgeate;
+    }
 
     @Override
     public boolean execute(Context ctx) throws Exception {
@@ -50,13 +57,12 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
                 parmeters=getherParameters(sentenceIterator);
             }
 
-
-            Stream<Method> matches = Arrays.stream(methods).filter(method ->method.getName().equals(methodName));
-
+            Collection<Method> possiblemethods;
             if(parameterCount>0){
-                matches = matches.filter(method ->method.getParameterCount()==parameterCount);
+                possiblemethods = delgeate.findMethod(methods, methodName, parameterCount);
+            } else {
+                possiblemethods = delgeate.findMethod(methods, methodName);
             }
-            Collection<Method> possiblemethods = matches.collect(Collectors.toList());
 
             for(Method method : possiblemethods) {
                 sentenceIterator = parmeters.listIterator();
@@ -90,6 +96,12 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
         log.debug("</{}>",this.getClass().getSimpleName());
 
         return CONTINUE_PROCESSING;
+    }
+
+    public interface Delegate {
+        Collection<Method> findMethod(Method[] methods, String methodName, int parameterCount);
+
+        Collection<Method> findMethod(Method[] methods, String methodName);
     }
 
     private List<String> getherParameters(ListIterator<String> sentenceIterator) {

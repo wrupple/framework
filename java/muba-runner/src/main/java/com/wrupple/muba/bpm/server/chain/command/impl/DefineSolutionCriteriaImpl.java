@@ -1,17 +1,15 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.Task;
-import com.wrupple.muba.bpm.server.service.ProcessManager;
-import com.wrupple.muba.event.domain.impl.JavaNativeInterfaceContext;
-import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
+import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
+import com.wrupple.muba.bpm.server.service.ProcessManager;
+import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Arrays;
 import java.util.ListIterator;
 
 /**
@@ -51,9 +49,8 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     private void processNextConstraint(ListIterator<String> sentence,  ApplicationContext context) throws Exception {
         if(sentence.hasNext()){
             String next = sentence.next();
-            //TODO USE CHILD SERVICES LIKE ServiceRequestValidation
             if(context.getRuntimeContext().getEventBus().hasInterpret(next)){
-                context.getRuntimeContext().getEventBus().getInterpret(next).run(sentence,context);
+                context.getRuntimeContext().getEventBus().getInterpret(next).run(sentence, context, next);
                 processNextConstraint(sentence,context);
             }else{
                 log.trace(" {} does not seem to be an interpret dn",next);

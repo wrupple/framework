@@ -1,7 +1,6 @@
 package com.wrupple.muba;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.ConstraintSolverModule;
 import com.wrupple.muba.bpm.SolverModule;
@@ -14,11 +13,9 @@ import com.wrupple.muba.catalogs.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
 import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
-import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
@@ -26,9 +23,9 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
+import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import org.junit.Before;
 
-import javax.transaction.UserTransaction;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -46,12 +43,28 @@ public class IntegralTest extends AbstractTest{
     protected EventBus wrupple;
 
 
+    public IntegralTest() {
+        init(new IntegralTestModule(),
+                new ChocoSolverTestModule(),
+                new ConstraintSolverModule(),
+                new SolverModule(),
+                new HSQLDBModule(),
+                new JDBCModule(),
+                new SQLModule(),
+                new ValidationModule(),
+                new SingleUserModule(),
+                new CatalogModule(),
+                new LambdaModule(),
+                new ApplicationModule());
+
+    }
 
     class IntegralTestModule extends AbstractModule {
 
         @Override
         protected void configure() {
             bind(VariableConsensus.class).to(ArbitraryDesicion.class);
+            bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 
@@ -65,46 +78,9 @@ public class IntegralTest extends AbstractTest{
             // mocks
             stakeHolderValue = mock(Session.class);
 
-			/*
-			 * COMMANDS
-			 */
-
-            bind(CatalogFileUploadTransaction.class).toInstance(mock(CatalogFileUploadTransaction.class));
-            bind(CatalogFileUploadUrlHandlerTransaction.class)
-                    .toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
-            // TODO cms test isMasked FieldDescriptor
 
         }
 
-        @Provides
-        public UserTransaction localTransaction() {
-            return mock(UserTransaction.class);
-        }
-
-        @Provides
-        public Trash trash() {
-            return mock(Trash.class);
-        }
-
-        @Provides
-        public CatalogDeserializationService catalogDeserializationService() {
-            return mock(CatalogDeserializationService.class);
-        }
-
-    }
-
-    public IntegralTest() {
-        init(new IntegralTestModule(),
-                new ChocoSolverTestModule(),
-                new ConstraintSolverModule(),
-                new SolverModule(),
-                new HSQLDBModule(),
-                new JDBCModule(),
-                new SQLModule(),
-                new ValidationModule(),
-                new SingleUserModule(),
-                new CatalogModule(),
-                new ApplicationModule());
 
     }
 
