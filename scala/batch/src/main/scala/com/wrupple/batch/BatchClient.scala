@@ -2,7 +2,7 @@ package com.wrupple.batch
 
 import com.google.inject.name.Names
 import com.google.inject.{Guice, Injector, Key, Module}
-import com.wrupple.batch.service.BatchJobInterpret
+import com.wrupple.batch.service.{BatchJobInterpret, BatchJobRunner}
 import com.wrupple.muba.ValidationModule
 import com.wrupple.muba.bpm.domain._
 import com.wrupple.muba.bpm.server.chain.command.{ActivityRequestInterpret, BusinessRequestInterpret, IntentResolverRequestInterpret}
@@ -65,7 +65,7 @@ class BatchClient(val userConfig: Module) {
   solver.register(injector.getInstance(classOf[ChocoRunner]))
 
   event.registerInterpret(BATCH, injector.getInstance(classOf[BatchJobInterpret]))
-  solver.register(injector.getInstance(classOf[ChocoRunner]))
+  solver.register(injector.getInstance(classOf[BatchJobRunner]))
 
 
   val greeter: ExplicitIntentInterpret = injector.getInstance(classOf[ExplicitIntentInterpret])
