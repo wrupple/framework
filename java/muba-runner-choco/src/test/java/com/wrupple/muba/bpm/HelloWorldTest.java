@@ -117,7 +117,7 @@ private static final String CONSTRAINT = "constraint";
 
         assertTrue(solution.getY() == 2);
         assertTrue("custom solver not used :(", solution.getSolverWitness() != null);
-        assertTrue("custom phrase did not run :(", solution.getSolverWitness().contains(GREETING_SUBJECT));
+        assertTrue("custom phrase did not resolve :(", solution.getSolverWitness().contains(GREETING_SUBJECT));
 
         log.info(solution.getSolverWitness());
 
@@ -164,7 +164,7 @@ private static final String CONSTRAINT = "constraint";
     static class GreeterInterpret implements NaturalLanguageInterpret {
 
         @Override
-        public void run(ListIterator<String> sentence, Context c, String interpretGivenName) throws Exception {
+        public void resolve(ListIterator<String> sentence, Context c, String interpretGivenName) throws Exception {
             ApplicationContext context = (ApplicationContext) c;
             ApplicationState state = context.getStateValue();
             (

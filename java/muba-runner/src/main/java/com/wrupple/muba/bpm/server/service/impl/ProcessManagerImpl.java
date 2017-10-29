@@ -14,7 +14,6 @@ import com.wrupple.muba.event.domain.SessionContext;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /*SequentialProcessManger imports
@@ -162,13 +161,13 @@ public class ProcessManagerImpl implements ProcessManager {
 */
 
 /*
-	@Override
+    @Override
 	public <I, O> void processSwitch(Process<I, O> newProcess, String localizedName, I input, final StateTransition<O> callback,
 			ProcessContextServices oldContext) {
 		// logical detach, and set callback result to null
 		final ProcessKiller killer = new ProcessKiller(callback);
 
-		// Create a new context for the new process to run on
+		// Create a new context for the new process to resolve on
 		TaskPresenter childTaskPresenter = oldContext.getNestedTaskPresenter().spawnChild(killer);
 		childTaskPresenter.setUserContentClass(PROCESS_USER_AREA_CLASS);
 		childTaskPresenter.setProcessName(localizedName, oldContext.getProcessLocalizedName());

@@ -1,20 +1,18 @@
 package com.wrupple.muba.bpm;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.junit.Assert.assertTrue;
-
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
-import com.wrupple.muba.event.domain.ContentNode;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ContentNode;
+import com.wrupple.muba.event.domain.DataEvent;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import org.junit.Test;
@@ -22,9 +20,11 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertTrue;
+
 
 public class SubmitToApplicationTest extends BPMTest {
-    private WorkflowImpl createStatisticsApplication;
+    private WorkflowImpl createStatisticsWorkflow;
 
 
 
@@ -34,8 +34,8 @@ public class SubmitToApplicationTest extends BPMTest {
         createApplication();
         ProcessManager bpm = injector.getInstance(ProcessManager.class);
 
-       //createStatisticsApplication
-        ApplicationState applicationState = bpm.acquireContext(createStatisticsApplication, session);
+        //createStatisticsWorkflow
+        ApplicationState applicationState = bpm.acquireContext(createStatisticsWorkflow, session);
 
         postSolutionToApplication(applicationState);
 
@@ -123,18 +123,18 @@ public class SubmitToApplicationTest extends BPMTest {
         task.setCatalog(Statistics.CATALOG);
         task.setName(DataEvent.CREATE_ACTION);
 
-        WorkflowImpl application = new WorkflowImpl();
-        application.setName("Create");
-        application.setProcessValues( Arrays.asList(task));
+        WorkflowImpl workflow = new WorkflowImpl();
+        workflow.setName("Create");
+        workflow.setProcessValues(Arrays.asList(task));
         //////////////////////////////////////////////////////////////////
         //                  TEST (configuration state) SUBJECT          //
         //////////////////////////////////////////////////////////////////
-        application.setExplicitSuccessorValue(count);
-        CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(application, Workflow.CATALOG);
+        workflow.setExplicitSuccessorValue(count);
+        CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(workflow, Workflow.CATALOG);
 
         List resultss=wrupple.fireEvent(catalogActionRequest,session,null);
-        application= (WorkflowImpl) resultss.get(0);
-        this.createStatisticsApplication =application;
+        workflow = (WorkflowImpl) resultss.get(0);
+        this.createStatisticsWorkflow = workflow;
     }
 
     private void defineSolutionTemplate( CatalogDescriptorBuilder builder) throws Exception {

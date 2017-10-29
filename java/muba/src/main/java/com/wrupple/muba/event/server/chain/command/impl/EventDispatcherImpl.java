@@ -68,12 +68,12 @@ public class EventDispatcherImpl implements EventDispatcher {
 				requestContext.setConstraintViolations(violations);
 				if (!(violations == null || violations.isEmpty())) {
 					log.error("excecution request encountered constraint violations ");
-					if (log.isTraceEnabled()) {
+					//if (log.isWarnEnabled()) {
 						for (ConstraintViolation<?> v : violations) {
-							log.trace("{}", v.getMessage());
+							log.warn("{}", v.getMessage());
 						}
-					}
-                    throw new IllegalArgumentException();
+					//}
+					throw new IllegalArgumentException();
 				}
 			}
 		} else {

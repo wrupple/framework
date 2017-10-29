@@ -10,8 +10,8 @@ public interface WebEventTrigger extends UserDefinedCatalogJob,HasDistinguishedN
 	
 
 	/**
-	 * @return run on stakeHolder's authority?, basic auth, vegetate sign
-	 */
+     * @return resolve on stakeHolder's authority?, basic auth, vegetate sign
+     */
 	int getAuthorizationMethod();
 	
 

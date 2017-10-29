@@ -4,9 +4,7 @@ object Dependencies {
 
   val sparkVersion = "1.6.0"
 
-  val sparkDependencyScope = "provided"
-
-
+  lazy val lambda = Wrupple.muba % "muba-lambda" % Wrupple.version
   lazy val bpm = Wrupple.muba % "muba-bpm" % Wrupple.version
   lazy val hsql = Wrupple.muba % "muba-catalogs-jdbc-hsql" % Wrupple.version
   lazy val choco = Wrupple.muba % "muba-runner-choco" % Wrupple.version
@@ -23,6 +21,7 @@ object Dependencies {
     choco,
     bval,
     bpm,
+    lambda,
     guice,
     slf4j % "test",
     scalaTest % "test",
@@ -36,9 +35,7 @@ object Dependencies {
   val apiDependencies    : Seq[ModuleID] = commonDependencies
 
   val sparkDependencies  : Seq[ModuleID] = commonDependencies ++ Seq(
-      "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope,
-      "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope,
-      "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope
+    "org.apache.spark" %% "spark-launcher" % sparkVersion
   )
 
 }

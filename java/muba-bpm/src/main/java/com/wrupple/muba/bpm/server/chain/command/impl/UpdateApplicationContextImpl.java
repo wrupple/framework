@@ -1,12 +1,10 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.BusinessIntent;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.server.chain.command.UpdateApplicationContext;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
 import org.apache.commons.chain.Context;
 
 import java.util.List;
@@ -26,7 +24,7 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setEntry(applicationState.getId());
             request.setEntryValue(applicationState);
-
+        request.setFollowReferences(true);
         List results=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
 
         applicationState = (ApplicationState) results.get(0);

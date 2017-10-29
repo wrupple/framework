@@ -50,7 +50,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         if(sentence.hasNext()){
             String next = sentence.next();
             if(context.getRuntimeContext().getEventBus().hasInterpret(next)){
-                context.getRuntimeContext().getEventBus().getInterpret(next).run(sentence, context, next);
+                context.getRuntimeContext().getEventBus().getInterpret(next).resolve(sentence, context, next);
                 processNextConstraint(sentence,context);
             }else{
                 log.trace(" {} does not seem to be an interpret dn",next);
