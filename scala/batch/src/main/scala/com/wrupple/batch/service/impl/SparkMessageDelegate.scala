@@ -13,7 +13,7 @@ class SparkMessageDelegate extends BatchMessageDelegate with Logging {
     logger.info(s"using jar ${"file://home/prtrods/testIsban/carlos/ODSbatch.jar"}")
 
     //https://stackoverflow.com/questions/32095428/move-file-from-local-to-hdfs
-    val handle: SparkAppHandle = new SparkLauncher()
+    val launcher: SparkLauncher = new SparkLauncher()
       .setAppResource("file:///home/prtrods/testIsban/carlos/ODSbatch.jar")
       //.setAppResource("file:////home/ALTECMEXICO/z563926/workspace/usr/ODS/src/ODSbatch/target/ODSbatch-bundled-0.1.jar")
       .setMainClass("mx.isban.ods.examples.WordCount")
@@ -28,7 +28,14 @@ class SparkMessageDelegate extends BatchMessageDelegate with Logging {
         "--output=hdfs://mgtdtlktvlmx101.dev.mx.corp:8020/dev/landing/ods/",
       "--runner=SparkRunner"
     )
-      .startApplication(
+    //https://stackoverflow.com/questions/41444552/receiving-result-from-spark-job-launched-using-sparklauncher
+    //http://henningpetersen.com/post/22/running-apache-spark-jobs-from-applications
+    //https://stackoverflow.com/questions/31754328/spark-launcher-waiting-for-job-completion-infinitely
+    //https://stackoverflow.com/questions/2745206/output-in-a-table-format-in-javas-system-out
+    //launcher.launch().waitFor()
+
+    //works with no return
+    launcher.startApplication(
         new Listener() {
           override def infoChanged(sparkAppHandle: SparkAppHandle) = {
             logger.info(sparkAppHandle.getState.toString)
@@ -38,7 +45,8 @@ class SparkMessageDelegate extends BatchMessageDelegate with Logging {
             logger.info(sparkAppHandle.getState.toString)
           }
         }
-      );
+    ).wait();
+
 
     job.setResult(-1);
     job

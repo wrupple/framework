@@ -86,54 +86,58 @@ public class EventDispatcherImpl implements EventDispatcher {
 		log.debug("VALIDATING CONTRACT {}:", manifest.getServiceId(),contract);
 
         if (contract == null) {
-            contract = manifest.getCatalogValue().getClazz().newInstance();
-            requestContext.setServiceContract(contract);
+            if (manifest.getCatalogValue().getClazz() != null) {
+                contract = manifest.getCatalogValue().getClazz().newInstance();
+                requestContext.setServiceContract(contract);
+            }
         }
 
-			List<String> tokens = requestContext.getServiceManifest().getGrammar();
-			log.trace("Incomming contract {}", contract);
-			for (int i = 0; i < tokens.size(); i++) {
-				key = tokens.get(i);
 
-				if (PropertyUtils.isWriteable(contract, key)
-						&& (PropertyUtils.getProperty(contract, key) == null || sentenceOverContract)) {
+        if (contract != null) {
+            List<String> tokens = requestContext.getServiceManifest().getGrammar();
+            log.trace("Incomming contract {}", contract);
+            for (int i = 0; i < tokens.size(); i++) {
+                key = tokens.get(i);
 
-					if (requestContext.hasNext()) {
-						value = requestContext.next();
-					} else {
-						value = null;
-					}
-					if(value!=null){
-						log.trace("service grammar defined contract key {}={}", key, value);
+                if (PropertyUtils.isWriteable(contract, key)
+                        && (PropertyUtils.getProperty(contract, key) == null || sentenceOverContract)) {
 
-						BeanUtilsBean2.getInstance().setProperty(contract,key,value);
-					}
-				} else {
-					log.error("token \"{}\" from service grammar was not recognized by contract and was ignored ",key);
-					log.trace("stop analizing sentence");
-					requestContext.setNextWordIndex(requestContext.previousIndex());
-					break;
-				}
+                    if (requestContext.hasNext()) {
+                        value = requestContext.next();
+                    } else {
+                        value = null;
+                    }
+                    if (value != null) {
+                        log.trace("service grammar defined contract key {}={}", key, value);
 
-			}
+                        BeanUtilsBean2.getInstance().setProperty(contract, key, value);
+                    }
+                } else {
+                    log.error("token \"{}\" from service grammar was not recognized by contract and was ignored ", key);
+                    log.trace("stop analizing sentence");
+                    requestContext.setNextWordIndex(requestContext.previousIndex());
+                    break;
+                }
 
-			if (validator == null) {
-			} else {
-				violations = (Set) validator.validate(contract, groups);
-				requestContext.setConstraintViolations(violations);
-				if (!(violations == null || violations.isEmpty())) {
-					log.error("contract violates restrictions");
-					if (log.isDebugEnabled()) {
-						for (ConstraintViolation<?> v : violations) {
-							log.debug(v.getLeafBean().toString());
-							log.debug("\t{} : {}",v.getPropertyPath(),v.getMessage());
-						}
-					}
-                    log.debug("</{}>",this.getClass().getSimpleName());
-					throw new IllegalArgumentException("Contract violates constrains");
-				}
-			}
+            }
 
+            if (validator == null) {
+            } else {
+                violations = (Set) validator.validate(contract, groups);
+                requestContext.setConstraintViolations(violations);
+                if (!(violations == null || violations.isEmpty())) {
+                    log.error("contract violates restrictions");
+                    if (log.isDebugEnabled()) {
+                        for (ConstraintViolation<?> v : violations) {
+                            log.debug(v.getLeafBean().toString());
+                            log.debug("\t{} : {}", v.getPropertyPath(), v.getMessage());
+                        }
+                    }
+                    log.debug("</{}>", this.getClass().getSimpleName());
+                    throw new IllegalArgumentException("Contract violates constrains");
+                }
+            }
+        }
 
         if (requestContext.getSession().hasPermissionsToProcessContext(requestContext,
 				requestContext.getServiceManifest())) {

@@ -19,6 +19,8 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,9 +53,9 @@ public class ServiceRequestValidation extends MubaTest {
 	protected void registerServices(EventBus switchs) {
         List<String> grammar = Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME);
         ContractDescriptor operationContract = new ContractDescriptorImpl(
-				Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), ProblemRequest.class);
-		ServiceManifest multiply = new ServiceManifestImpl(MULTIPLICATION, DEFAULT_VERSION, operationContract,grammar);
-		ServiceManifest addInt = new ServiceManifestImpl(ADDITION, DEFAULT_VERSION, operationContract, grammar);
+                Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), null);
+        ServiceManifest multiply = new ServiceManifestImpl(MULTIPLICATION, DEFAULT_VERSION, operationContract, grammar);
+        ServiceManifest addInt = new ServiceManifestImpl(ADDITION, DEFAULT_VERSION, operationContract, grammar);
 		ServiceManifest addDouble = new ServiceManifestImpl(ADDITION, UPGRADED_VERSION, operationContract, grammar);
 
 
@@ -105,6 +107,7 @@ public class ServiceRequestValidation extends MubaTest {
 		assertNotNull(result);
 		assertEquals(result.doubleValue(), 3.2, 0);
 	}
+
 
 	@Test
 	public void validation() throws Exception {
@@ -162,13 +165,18 @@ public class ServiceRequestValidation extends MubaTest {
 
 
 	}
-	private abstract class UpdatedVersionService implements Command {
+
+    private abstract static class UpdatedVersionService implements Command {
+
+        protected Logger log = LoggerFactory.getLogger(UpdatedVersionService.class);
+
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public boolean execute(Context context) throws Exception {
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
+            RuntimeContext runtimeContext = (RuntimeContext) context;
             log.debug("{} for: {},{}", this.getClass().getSimpleName(), first, second);
             Map<String, ServiceManifest> versions = runtimeContext.getEventBus().getIntentInterpret().getRootService()
 					.getVersions(second);
@@ -198,18 +206,21 @@ public class ServiceRequestValidation extends MubaTest {
 		protected abstract Double operation(Double first, Double second);
 	}
 
-	private abstract class OldVesionService implements Command {
+    private abstract static class OldVesionService implements Command {
 
-		@SuppressWarnings("unchecked")
-		@Override
-		public boolean execute(Context context) throws Exception {
+        protected Logger log = LoggerFactory.getLogger(UpdatedVersionService.class);
+
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean execute(Context context) throws Exception {
 			log.debug("Excecuting {}", OldVesionService.class);
 			String first = (String) context.get(FIRST_OPERAND_NAME);
 			String second = (String) context.get(SECOND_OPERAND_NAME);
 
-			log.trace("default OPERANDS {},{}", first, second);
-			((RuntimeContext) context).setResult(operation(Integer.parseInt(first), Integer.parseInt(second)));
-			return CONTINUE_PROCESSING;
+            log.trace(" for: {},{}", first, second);
+            ((RuntimeContext) context).setResult(operation(Integer.parseInt(first), Integer.parseInt(second)));
+            return CONTINUE_PROCESSING;
 
 		}
 
