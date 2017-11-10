@@ -6,26 +6,40 @@ import com.wrupple.batch.service.{BatchJobRunner, BatchMessageDelegate, BatchMod
 import com.wrupple.muba.bpm.domain.{ApplicationContext, VariableDescriptor}
 import com.wrupple.muba.bpm.server.service.VariableEligibility
 import com.wrupple.muba.event.domain.FieldDescriptor
+import org.apache.logging.log4j.scala.Logging
 
-class BatchJobRunnerImpl @Inject()(resolver: BatchModelResolver, messanger: BatchMessageDelegate) extends BatchJobRunner {
-
-
-  override def solve(applicationContext: ApplicationContext): Boolean = !resolver.
-    getJobsToRun(applicationContext).
-    map(job => messanger.send(job)).
-    filter(job => resolver.hasResult(applicationContext, job))
-    .isEmpty
+class BatchJobRunnerImpl @Inject()(resolver: BatchModelResolver, messanger: BatchMessageDelegate)
+  extends BatchJobRunner with Logging {
 
 
-  override def canHandle(fieldDescriptor: FieldDescriptor, applicationContext: ApplicationContext): Boolean = resolver.isInJobList(fieldDescriptor, applicationContext)
+  override def solve(applicationContext: ApplicationContext): Boolean = {
+    logger.debug("Solving batch jobs if available");
+    !resolver.
+      getJobsToRun(applicationContext).
+      map(job => messanger.send(job)).
+      filter(job => resolver.hasResult(applicationContext, job))
+      .isEmpty
+  }
 
-  override def handleAsVariable(fieldDescriptor: FieldDescriptor, applicationContext: ApplicationContext): VariableEligibility = new VariableEligibility {
-    override def createVariable(): VariableDescriptor = new VariableDescriptor {
-      override def getField: FieldDescriptor = fieldDescriptor
 
-      override def getValue: AnyRef = resolver.getReducedJobOutput(fieldDescriptor, applicationContext);
+  override def canHandle(fieldDescriptor: FieldDescriptor, applicationContext: ApplicationContext): Boolean = {
+    if (logger.delegate.isTraceEnabled) {
+      logger.trace(s"is ${fieldDescriptor.getFieldId} solvable by batch?")
+    }
+    resolver.isInJobList(fieldDescriptor, applicationContext)
+  }
+
+  override def handleAsVariable(fieldDescriptor: FieldDescriptor, applicationContext: ApplicationContext): VariableEligibility = {
+
+    if (logger.delegate.isTraceEnabled) {
+      logger.trace(s"future batch variable for ${fieldDescriptor.getFieldId}")
+    }
+
+    new VariableEligibility {
+      override def createVariable(): VariableDescriptor = new BatchVariableDescriptor(fieldDescriptor, applicationContext, resolver)
     }
   }
 
 
 }
+

@@ -25,7 +25,6 @@ import scala.collection.JavaConverters._
 
 class BatchClient(val userConfig: Module) {
 
-
   val injector: Injector = Guice.createInjector(Array(userConfig
     ,
     new BatchModule
@@ -56,7 +55,6 @@ class BatchClient(val userConfig: Module) {
   val session = injector.getInstance(Key.get(classOf[SessionContext], Names.named(SessionContext.SYSTEM)))
   val bpm: ProcessManager = injector.getInstance(classOf[ProcessManager])
 
-  //createStatisticsWorkflow
   private val solver = injector.getInstance(classOf[Solver]);
 
   registerServices(event)

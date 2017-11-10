@@ -3,8 +3,7 @@ package com.wrupple.muba.bpm.server.chain.command.impl;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
-import com.wrupple.muba.bpm.server.service.ProcessManager;
-import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
+import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,23 +18,19 @@ import java.util.ListIterator;
  */
 public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
-    private final ProcessManager plugin;
-    private final SentenceNativeInterface nativeInterface;
 
     @Inject
-    public DefineSolutionCriteriaImpl(ProcessManager plugin, SentenceNativeInterface nativeInterface) {
-        this.plugin = plugin;
-        this.nativeInterface=nativeInterface;
+    public DefineSolutionCriteriaImpl() {
     }
 
     protected Logger log = LoggerFactory.getLogger(DefineSolutionCriteriaImpl.class);
+
     @Override
     public boolean execute(Context ctx) throws Exception {
         final ApplicationContext context = (ApplicationContext) ctx;
         Task request = context.getStateValue().getTaskDescriptorValue();
 
         ListIterator<String> activitySentence = request.getSentence().listIterator();
-        log.debug("exposing problem variables to native apit ivoker");
 
         log.debug("posting solution constraints from task definition");
         processNextConstraint(activitySentence,context);
@@ -50,10 +45,12 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         if(sentence.hasNext()){
             String next = sentence.next();
             if(context.getRuntimeContext().getEventBus().hasInterpret(next)){
-                context.getRuntimeContext().getEventBus().getInterpret(next).resolve(sentence, context, next);
+                NaturalLanguageInterpret interpret = context.getRuntimeContext().getEventBus().getInterpret(next);
+                log.trace(" {} token signals usage of interpret {}", next, interpret);
+                interpret.resolve(sentence, context, next);
                 processNextConstraint(sentence,context);
             }else{
-                log.trace(" {} does not seem to be an interpret dn",next);
+                log.trace(" {} does not seem to be an interpret DN", next);
                 sentence.previous();
             }
         }else{

@@ -9,13 +9,11 @@ import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.DataEvent;
-import com.wrupple.muba.event.domain.FieldDescriptor;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,6 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         CatalogDescriptor solutionDescriptor = (CatalogDescriptor) results.get(0);
         context.getStateValue().setCatalogValue(solutionDescriptor);
 
-        //by default, all fields are eligible for solving
         log.debug("Resolving problem variable names");
         List<VariableDescriptor> variables  = solutionDescriptor.getFieldsValues().stream().
                 map(field -> solver.isEligible(field,context)).
