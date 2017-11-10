@@ -4,10 +4,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wrupple.muba</groupId>
-	<artifactId>muba-runner-async</artifactId>
+    <artifactId>vegetate</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
-	<name>Async Human Task Runner</name>
+    <name>Async Task Runner</name>
 	<description>This kingdom's equivalent of hibernate</description>
 	<properties>
 		<muba.version>1.0</muba.version>
