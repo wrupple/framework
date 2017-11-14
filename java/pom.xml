@@ -9,6 +9,7 @@
 	<version>1.0</version>
 	<name>Human Interaction API</name>
 	<modules>
+		<module>commons-chain</module>
 		<module>muba</module>
         <!--<module>vegetate</module>-->
         <module>muba-lambda</module>

@@ -92,7 +92,6 @@ public class EventDispatcherImpl implements EventDispatcher {
             }
         }
 
-
         if (contract != null) {
             List<String> tokens = requestContext.getServiceManifest().getGrammar();
             log.trace("Incomming contract {}", contract);
@@ -108,7 +107,7 @@ public class EventDispatcherImpl implements EventDispatcher {
                         value = null;
                     }
                     if (value != null) {
-                        log.trace("service grammar defined contract key {}={}", key, value);
+						log.debug("service grammar defined contract key {}={}", key, value);
 
                         BeanUtilsBean2.getInstance().setProperty(contract, key, value);
                     }
@@ -127,11 +126,11 @@ public class EventDispatcherImpl implements EventDispatcher {
                 requestContext.setConstraintViolations(violations);
                 if (!(violations == null || violations.isEmpty())) {
                     log.error("contract violates restrictions");
-                    if (log.isDebugEnabled()) {
-                        for (ConstraintViolation<?> v : violations) {
-                            log.debug(v.getLeafBean().toString());
-                            log.debug("\t{} : {}", v.getPropertyPath(), v.getMessage());
-                        }
+					if (log.isInfoEnabled()) {
+						for (ConstraintViolation<?> v : violations) {
+							log.info(v.getLeafBean().toString());
+							log.info("\t{} : {}", v.getPropertyPath(), v.getMessage());
+						}
                     }
                     log.debug("</{}>", this.getClass().getSimpleName());
                     throw new IllegalArgumentException("Contract violates constrains");
