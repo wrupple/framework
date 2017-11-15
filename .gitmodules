@@ -1,3 +1,3 @@
-[submodule "java/commons-chain"]
-	path = java/commons-chain
-	url = https://github.com/apache/commons-chain.git
+[submodule "java/apache-chain"]
+	path = java/apache-chain
+	url = https://github.com/wrupple/commons-chain.git
