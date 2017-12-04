@@ -1,26 +1,20 @@
-package com.wrupple.muba.catalogs.server.service.impl;
+package com.wrupple.muba.event.server.service.impl;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.reflect.Type;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidatorContext;
-
-import org.apache.bval.jsr.AnnotationProcessor;
-import org.apache.bval.jsr.ApacheValidatorFactory;
-import org.apache.bval.jsr.AppendValidationToMeta;
-import org.apache.bval.jsr.ConstraintValidatorContextImpl;
-import org.apache.bval.jsr.GroupValidationContext;
+import com.wrupple.muba.event.server.service.ContextAwareValidator;
+import com.wrupple.muba.event.server.service.PropertyValidationContext;
+import org.apache.bval.jsr.*;
 import org.apache.bval.model.MetaBean;
 import org.apache.bval.model.MetaProperty;
 import org.apache.bval.model.Validation;
 import org.apache.bval.util.AccessStrategy;
 
-import com.wrupple.muba.event.server.service.ContextAwareValidator;
-import com.wrupple.muba.event.server.service.PropertyValidationContext;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.validation.Constraint;
+import javax.validation.ConstraintValidatorContext;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.reflect.Type;
 
 @Singleton
 public class ContextAwareValidatorImpl implements ContextAwareValidator {

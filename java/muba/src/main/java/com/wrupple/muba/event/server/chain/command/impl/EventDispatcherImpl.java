@@ -87,8 +87,11 @@ public class EventDispatcherImpl implements EventDispatcher {
 
         if (contract == null) {
             if (manifest.getCatalogValue().getClazz() != null) {
-                contract = manifest.getCatalogValue().getClazz().newInstance();
-                requestContext.setServiceContract(contract);
+                if (!manifest.getCatalogValue().getClazz().isInterface()) {
+                    contract = manifest.getCatalogValue().getClazz().newInstance();
+                    requestContext.setServiceContract(contract);
+                }
+
             }
         }
 

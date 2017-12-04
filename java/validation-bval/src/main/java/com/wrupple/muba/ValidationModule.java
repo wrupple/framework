@@ -1,18 +1,5 @@
 package com.wrupple.muba;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.Validation;
-import javax.validation.ValidationProviderResolver;
-import javax.validation.Validator;
-import javax.validation.spi.ValidationProvider;
-
-import org.apache.bval.jsr.ApacheValidationProvider;
-import org.apache.bval.jsr.ApacheValidatorConfiguration;
-import org.apache.bval.jsr.ApacheValidatorFactory;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -21,9 +8,20 @@ import com.wrupple.muba.event.server.service.AvailableCommandValidator;
 import com.wrupple.muba.event.server.service.ContextAwareValidator;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import com.wrupple.muba.event.server.service.impl.AvailableCommandValidatorImpl;
+import com.wrupple.muba.event.server.service.impl.ConstraintValidatorFactoryImpl;
+import com.wrupple.muba.event.server.service.impl.ContextAwareValidatorImpl;
 import com.wrupple.muba.event.server.service.impl.DefaultValidationGroupProvider;
-import com.wrupple.muba.catalogs.server.service.impl.ConstraintValidatorFactoryImpl;
-import com.wrupple.muba.catalogs.server.service.impl.ContextAwareValidatorImpl;
+import org.apache.bval.jsr.ApacheValidationProvider;
+import org.apache.bval.jsr.ApacheValidatorConfiguration;
+import org.apache.bval.jsr.ApacheValidatorFactory;
+
+import javax.validation.ConstraintValidatorFactory;
+import javax.validation.Validation;
+import javax.validation.ValidationProviderResolver;
+import javax.validation.Validator;
+import javax.validation.spi.ValidationProvider;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ValidationModule extends AbstractModule {
 
