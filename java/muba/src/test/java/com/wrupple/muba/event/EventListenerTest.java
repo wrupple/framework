@@ -9,11 +9,17 @@ import com.wrupple.muba.event.domain.ExplicitIntent;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
+import com.wrupple.muba.event.server.chain.command.ValidateContract;
+import com.wrupple.muba.event.server.chain.command.ValidateRequest;
+import com.wrupple.muba.event.server.chain.command.impl.BindServiceImpl;
+import com.wrupple.muba.event.server.chain.command.impl.DispatchImpl;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
+import com.wrupple.muba.event.server.chain.command.impl.IncorporateImpl;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.service.impl.*;
 import org.apache.commons.chain.CatalogFactory;
+import org.apache.commons.chain.Context;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +44,19 @@ public class EventListenerTest extends BootstrapTest {
 		FilterNativeInterface filterer=new JavaFilterNativeInterfaceImpl(oni);
 		FieldAccessStrategy instrospector=new JavaFieldAccessStrategy(null,oni);
 
-        EventDispatcher dispatcher = new EventDispatcherImpl(null,null);
+
+        EventDispatcher dispatcher = new EventDispatcherImpl(new ValidateRequest() {
+            @Override
+            public boolean execute(Context context) throws Exception {
+                return CONTINUE_PROCESSING;
+            }
+        }, new BindServiceImpl(), new IncorporateImpl(), new ValidateContract() {
+            @Override
+            public boolean execute(Context context) throws Exception {
+                return CONTINUE_PROCESSING;
+            }
+        }, new DispatchImpl());
+
         ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
 

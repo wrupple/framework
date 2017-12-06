@@ -13,6 +13,7 @@ import com.wrupple.muba.catalogs.domain.TestEntry;
 import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.ApplicationModule;
+import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
@@ -108,7 +109,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
     }
 
     public JavaFieldAccessStrategyTest() {
-        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new CatalogTestModule(), new ValidationModule(),new SingleUserModule(), new CatalogModule(), new ApplicationModule());
+        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new CatalogTestModule(), new ValidationModule(), new SingleUserModule(), new CatalogModule(), new DispatcherModule(), new ApplicationModule());
 
     }
 

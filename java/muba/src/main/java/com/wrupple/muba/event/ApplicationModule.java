@@ -55,7 +55,8 @@ public class ApplicationModule extends AbstractModule {
 		/*
 		 * Commands
 		 */
-		bind(EventDispatcher.class).to(EventDispatcherImpl.class);
+
+        bind(EventDispatcher.class).to(EventDispatcherImpl.class);
         bind(PublishEvents.class).to(PublishEventsImpl.class);
         bind(BroadcastInterpret.class).to(BroadcastInterpretImpl.class);
 		/*bind(EventRegistry.class).to(EventRegistryImpl.class);

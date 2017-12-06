@@ -1,35 +1,31 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
+import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.reserved.HasConstrains;
+import com.wrupple.muba.event.server.service.ContextAwareValidator;
+import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
+import com.wrupple.muba.event.server.service.PropertyValidationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.validation.ConstraintValidatorContext;
-
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
-import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.wrupple.muba.event.server.service.ContextAwareValidator;
-import com.wrupple.muba.event.server.service.PropertyValidationContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.reserved.HasConstrains;
-import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
-import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
-import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
-import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 
 public class CatalogActionRequestValidatorImpl implements CatalogActionRequestValidator {
 
@@ -67,7 +63,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	@Override
 	public boolean isValid(CatalogActionRequest req, final ConstraintValidatorContext validationContext) {
 
-        log.info("[Validate] {}",req);
+        log.info("[ValidateContract] {}", req);
         if(req.getParentValue()==null){
             log.warn("root request");
         }
@@ -262,7 +258,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			List results =null;
 			try {
 				//TODO event always returns fill result list, can we make it so it doesnt have to wrap single results?ss
-				results = (List) bus.get().fireEvent(context, system, null);
+                results = bus.get().fireEvent(context, system, null);
 
 			} catch (Exception e) {
 				throw new RuntimeException(e);

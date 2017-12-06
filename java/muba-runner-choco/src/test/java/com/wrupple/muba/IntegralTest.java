@@ -17,6 +17,7 @@ import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.event.ApplicationModule;
+import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -55,6 +56,7 @@ public class IntegralTest extends AbstractTest{
                 new SingleUserModule(),
                 new CatalogModule(),
                 new LambdaModule(),
+                new DispatcherModule(),
                 new ApplicationModule());
 
     }

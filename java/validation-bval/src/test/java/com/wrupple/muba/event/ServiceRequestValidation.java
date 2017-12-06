@@ -47,8 +47,8 @@ public class ServiceRequestValidation extends MubaTest {
 
 	public ServiceRequestValidation() {
 		super();
-        init(new MockModule(), new ValidationModule(), new LambdaModule(), new ApplicationModule());
-    }
+		init(new MockModule(), new ValidationModule(), new LambdaModule(), new DispatcherModule(), new ApplicationModule());
+	}
 	
 	protected void registerServices(EventBus switchs) {
         List<String> grammar = Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME);
@@ -123,8 +123,8 @@ public class ServiceRequestValidation extends MubaTest {
 		try{
             runtimeContext.process();
         }catch (IllegalArgumentException e){
-		    log.info("expected exception thrown");
-        }
+			log.info("expected exception thrown", e);
+		}
 		assertEquals(9, runtimeContext.nextIndex());
 		//some error must be thrown or validation constraint shown when the application has no servicesregistered
 		assertNotNull(runtimeContext.getConstraintViolations());
