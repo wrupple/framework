@@ -1,14 +1,14 @@
 package com.wrupple.muba.catalogs.domain;
 
-import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 import java.util.List;
 
 /**
  * Created by japi on 19/10/17.
  */
-public abstract class CatalogJobImpl extends CatalogEntryImpl implements CatalogJob {
+public abstract class CatalogActionConstraintImpl extends CatalogEntryImpl implements CatalogActionConstraint {
 
     @CatalogField(filterable = true)
     private String catalog;

@@ -1,13 +1,13 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import com.wrupple.muba.bpm.domain.BusinessIntent;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.BusinessIntent;
+import com.wrupple.muba.bpm.domain.Workflow;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Event;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
-import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
 
     @CatalogField(ignore = true)
     private Workflow implicitIntentValue;
-    @ForeignKey(foreignCatalog = Workflow.CATALOG)
+    @ForeignKey(foreignCatalog = Workflow.WORKFLOW_CATALOG)
     private Object implicitIntent;
 
     private Object entry;

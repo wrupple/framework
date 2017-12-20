@@ -57,6 +57,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.wrupple.muba</groupId>
+            <artifactId>validation-bval</artifactId>
+            <version>${muba.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 

@@ -11,7 +11,7 @@
 	<modules>
 		<module>apache-chain</module>
 		<module>muba</module>
-        <!--<module>vegetate</module>-->
+        <module>vegetate</module>
         <module>muba-lambda</module>
 		<module>validation-bval</module>
 		<module>muba-catalogs</module>
@@ -21,9 +21,13 @@
 		<module>muba-catalogs-jdbc-hsql</module>
 		<module>muba-runner</module>
 		<module>muba-runner-choco</module>
-        <!--<module>muba-runner-human</module>
+        <module>muba-runner-human</module>
+        <!--
         <module>muba-catalogs-format</module>-->
 		<module>muba-bpm</module>
+        <module>muba-worker</module>
+        <module>muba-worker-text</module>
+
         <!--<module>vegetate-security</module>-->
 	</modules>
 

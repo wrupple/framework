@@ -1,10 +1,10 @@
 package com.wrupple.muba.catalogs.domain;
 
-import java.util.List;
-
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 
-public class CatalogEventListenerImpl extends CatalogJobImpl implements CatalogEventListener {
+import java.util.List;
+
+public class CatalogEventListenerImpl extends CatalogActionConstraintImpl implements CatalogEventListener {
 
 	private static final long serialVersionUID = 1609115127939733426L;
 

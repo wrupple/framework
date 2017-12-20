@@ -30,7 +30,7 @@ import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.ContainerContext;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
@@ -43,7 +43,7 @@ import java.io.OutputStream;
 public abstract class BPMTest extends AbstractTest {
 
     protected EventBus wrupple;
-	protected SessionContext session;
+    protected ContainerContext session;
 
     protected void createMockDrivers() throws Exception {
 		CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) injector.getInstance(CatalogDescriptorBuilder.class).fromClass(Driver.class, Driver.CATALOG,
@@ -167,8 +167,8 @@ public abstract class BPMTest extends AbstractTest {
 	@Before
 	public void setUp() throws Exception {
 
-		session = injector.getInstance(Key.get(SessionContext.class,Names.named(SessionContext.SYSTEM)));
-		wrupple = injector.getInstance(EventBus.class);
+        session = injector.getInstance(Key.get(ContainerContext.class, Names.named(ContainerContext.SYSTEM)));
+        wrupple = injector.getInstance(EventBus.class);
         log.trace("NEW TEST EXCECUTION ENVIROMENT READY");
     }
 

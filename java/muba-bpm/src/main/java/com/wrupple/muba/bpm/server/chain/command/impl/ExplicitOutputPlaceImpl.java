@@ -1,10 +1,11 @@
 package com.wrupple.muba.bpm.server.chain.command.impl;
 
+import com.wrupple.muba.bpm.domain.Application;
 import com.wrupple.muba.bpm.domain.ApplicationContext;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.bpm.server.chain.command.ExplicitOutputPlace;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import org.apache.commons.chain.Context;
 
 public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
@@ -24,8 +25,8 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 		return CONTINUE_PROCESSING;
 	}
 
-	private Workflow findNextTreeNode( ApplicationState currentState ) {
-        Workflow currentItem = (Workflow) currentState.getHandleValue();
+	private Application findNextTreeNode(ApplicationState currentState) {
+		Application currentItem = (Application) currentState.getHandleValue();
 
 
 
@@ -43,17 +44,17 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
             CatalogEntry output = getApplicationOutput(currentState);
 			if (output != null) {
 			    if(isWorkflow(output)){
-			        return (Workflow) output;
-                }else{
+					return (Application) output;
+				}else{
                     /* TODO IF ANY OF THE OUTPUT FIELDS CONTAIN A WORKFLOW USE IT
-                    CatalogDescriptor result = currentState.getCatalogValue();
+					CatalogDescriptor result = currentState.getCatalogValue();
 
                     Collection<FieldDescriptor> fields = result.getFieldsValues();
                     String applicationItemId = null;
                     for (FieldDescriptor field : fields) {
                         // TODO make field configurable
                         if (field.isKey() && !field.isMultiple() && field.getCatalog() != null
-                                && Workflow.CATALOG.equals(field.getCatalog())) {
+                                && Workflow.WORKFLOW_CATALOG.equals(field.getCatalog())) {
 
                             applicationItemId = GWTUtils.getAttribute(output, field.getFieldId());
                             get valuefrom joined data field
@@ -67,14 +68,14 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 
 			}
 		} else {
-			return currentItem.getExplicitSuccessorValue();
+			return (Application) currentItem.getExplicitSuccessorValue();
 		}
         throw new IllegalArgumentException("unable to determine followup Activiy");
 	}
 
     private boolean isWorkflow(CatalogEntry output) {
-	    return output.getCatalogType().equals(Workflow.CATALOG);
-    }
+		return output.getCatalogType().equals(Application.CATALOG);
+	}
 
     private CatalogEntry getApplicationOutput(ApplicationState currentState) {
 	    if(currentState.getEntryValue()==null){

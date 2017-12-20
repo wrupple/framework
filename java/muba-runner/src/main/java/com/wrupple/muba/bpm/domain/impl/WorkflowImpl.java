@@ -1,11 +1,11 @@
 package com.wrupple.muba.bpm.domain.impl;
 
 import com.wrupple.muba.bpm.domain.Task;
-import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
-import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
+import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 
 import java.util.List;
 
@@ -14,14 +14,8 @@ import java.util.List;
  */
 public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
 
-    private Long peer;
-    private String description,outputField,exit,cancel,error;
-    private List<Long> dependencies;
-    @ForeignKey(foreignCatalog = Workflow.CATALOG)
-    private Long explicitSuccessor;
-    @CatalogField(ignore = true)
-    @CatalogValue(foreignCatalog = Workflow.CATALOG)
-    private Workflow explicitSuccessorValue;
+    private String outputField;
+
     private boolean clearOutput;
     @ForeignKey(foreignCatalog = Task.CATALOG)
     private List<Long> process;
@@ -29,14 +23,6 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
     @CatalogValue(foreignCatalog = Task.CATALOG)
     private List<Task> processValues;
 
-    @Override
-    public Workflow getExplicitSuccessorValue() {
-        return explicitSuccessorValue;
-    }
-
-    public void setExplicitSuccessorValue(Workflow explicitSuccessorValue) {
-        this.explicitSuccessorValue = explicitSuccessorValue;
-    }
 
     @Override
     public boolean isClearOutput() {
@@ -47,62 +33,6 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
         this.clearOutput = clearOutput;
     }
 
-
-
-    @Override
-
-    public Long getPeer() {
-        return peer;
-    }
-
-    public void setPeer(Long peer) {
-        this.peer = peer;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getExit() {
-        return exit;
-    }
-
-    public void setExit(String exit) {
-        this.exit = exit;
-    }
-
-    @Override
-    public String getCancel() {
-        return cancel;
-    }
-
-    public void setCancel(String cancel) {
-        this.cancel = cancel;
-    }
-
-    @Override
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    @Override
-    public List<Long> getDependencies() {
-        return dependencies;
-    }
-
-    public void setDependencies(List<Long> dependencies) {
-        this.dependencies = dependencies;
-    }
 
     @Override
     public List<Long> getProcess() {
@@ -133,15 +63,8 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
         this.outputField = outputField;
     }
 
-    public Long getExplicitSuccessor() {
-        return explicitSuccessor;
-    }
-
-    public void setExplicitSuccessor(Long explicitSuccessor) {
-        this.explicitSuccessor = explicitSuccessor;
-    }
     @Override
     public String getCatalogType() {
-        return Workflow.CATALOG;
+        return Workflow.WORKFLOW_CATALOG;
     }
 }

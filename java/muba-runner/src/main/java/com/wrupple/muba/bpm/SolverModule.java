@@ -18,8 +18,8 @@ import com.wrupple.muba.bpm.server.service.impl.ProcessManagerImpl;
 import com.wrupple.muba.bpm.server.service.impl.SolverCatalogPluginImpl;
 import com.wrupple.muba.bpm.server.service.impl.SolverImpl;
 import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitSuscriptionMapper;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.ContentNode;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
@@ -68,10 +68,10 @@ public class SolverModule extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(Workflow.CATALOG)
+    @Named(Workflow.WORKFLOW_CATALOG)
     public CatalogDescriptor activity(
             CatalogDescriptorBuilder builder, @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest) {
-        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.CATALOG, "Workflow",
+        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.WORKFLOW_CATALOG, "Workflow",
                 -900190, serviceManifest);
 
         return r;

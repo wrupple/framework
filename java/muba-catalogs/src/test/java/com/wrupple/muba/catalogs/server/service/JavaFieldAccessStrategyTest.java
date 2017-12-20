@@ -17,7 +17,7 @@ import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
+import com.wrupple.muba.event.server.domain.impl.ContainerContextImpl;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.FormatDictionary;
 import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
@@ -48,13 +48,11 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
     class JavaFieldAccessStrategyTestModule extends AbstractModule {
 
-        Host peerValue;
         @Override
         protected void configure() {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
             // mocks
-             peerValue= mock(Host.class);
             mockSuscriptor = mock(EventSuscriptionMapper.class);
             bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
 
@@ -84,11 +82,11 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
        @Provides
         @Inject
         @Singleton
-       @Named(SessionContext.SYSTEM)
-       public SessionContext sessionContext() {
-            Session stakeHolderValue = createNiceMock(Session.class);
+       @Named(ContainerContext.SYSTEM)
+       public ContainerContext sessionContext() {
+           Container stakeHolderValue = createNiceMock(Container.class);
 
-            return new SessionContextImpl(stakeHolderValue);
+           return new ContainerContextImpl(stakeHolderValue);
         }
 
         @Provides

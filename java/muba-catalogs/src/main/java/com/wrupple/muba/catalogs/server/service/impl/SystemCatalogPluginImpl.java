@@ -1,12 +1,12 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.google.inject.Inject;
-import com.wrupple.muba.catalogs.domain.CatalogEventListener;
-import com.wrupple.muba.catalogs.server.service.*;
-import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
+import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +36,8 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
             @Named(Trash.CATALOG) CatalogDescriptor trashP,
             @Named(ContentRevision.CATALOG) CatalogDescriptor revisionP,
             @Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
-            @Named(Session.CATALOG) CatalogDescriptor session,
-             Provider<CatalogTriggerInterpret> triggerInterpret) {
+            @Named(Container.CATALOG) CatalogDescriptor session,
+            Provider<CatalogTriggerInterpret> triggerInterpret) {
         super();
         this.triggerInterpretProvider = triggerInterpret;
         super.put(fieldProvider);

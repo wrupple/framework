@@ -2,8 +2,10 @@ package com.wrupple.muba.bpm;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import com.wrupple.muba.bpm.server.chain.command.*;
-import com.wrupple.muba.bpm.server.chain.command.impl.*;
+import com.wrupple.muba.bpm.server.chain.command.DefineSolutionCriteria;
+import com.wrupple.muba.bpm.server.chain.command.SolveTask;
+import com.wrupple.muba.bpm.server.chain.command.UserInteractionState;
+import com.wrupple.muba.bpm.server.chain.command.impl.DefineSolutionCriteriaImpl;
 import com.wrupple.muba.bpm.server.service.Solver;
 import com.wrupple.muba.bpm.server.service.impl.HumanSolverImpl;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
@@ -19,8 +21,6 @@ public class HumanSolverModule extends AbstractModule{
         bind(Solver.class).to(HumanSolverImpl.class).in(Singleton.class);
 
         bind(SolveTask.class).to(UserInteractionState.class);
-
-        bind(UserInteractionState.class).to(PlainTextUserInteractionState.class);
 
         bind(FieldConversionStrategy.class).to(FieldConversionStrategyImpl.class);
 

@@ -1,13 +1,10 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
-import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
@@ -87,11 +84,11 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         // set namespace
 
         if (request.getDomain()==null || request.getDomain().longValue()==CatalogEntry.CURRENT_NAMESPACE) {
-            context.getNamespaceContext().setId((Long) context.getRuntimeContext().getSession().
-                    getSessionValue().
+            context.getNamespaceContext().setId(context.getRuntimeContext().getSession().
+                    getContainerValue().
                     getDomain(), context);
         }  else {
-            context.getNamespaceContext().setId((Long) request.getDomain(), context);
+            context.getNamespaceContext().setId(request.getDomain(), context);
         }
 
         request.setDomain((Long) context.getNamespaceContext().getId());
@@ -285,7 +282,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
         public long getPersonId() throws Exception {
-            return (Long) getSession().getSessionValue().getStakeHolder();
+            return (Long) getSession().getContainerValue().getStakeHolder();
         }
 
 
@@ -348,7 +345,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
 
-        public SessionContext getSession() {
+        public ContainerContext getSession() {
             return this.runtimeContext.getSession();
         }
 
@@ -593,7 +590,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public void setResult(CatalogEntry catalogEntry) {
-            setResults((List) Collections.singletonList(catalogEntry));
+            setResults(Collections.singletonList(catalogEntry));
         }
 
         @Override

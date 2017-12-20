@@ -2,12 +2,8 @@ package com.wrupple.muba.bpm.server.service;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.Workflow;
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.ContainerContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.SessionContext;
-
-import java.lang.reflect.InvocationTargetException;
 
 public interface ProcessManager {
     /**
@@ -16,7 +12,7 @@ public interface ProcessManager {
      * @param thread
      * @return
      */
-    ApplicationState acquireContext(Workflow startingState, SessionContext thread) throws Exception;
+    ApplicationState acquireContext(Workflow startingState, ContainerContext thread) throws Exception;
 
 
     Solver getSolver();

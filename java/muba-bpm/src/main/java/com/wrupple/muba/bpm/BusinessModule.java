@@ -6,24 +6,26 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
-import com.wrupple.muba.bpm.server.chain.impl.WorkflowEngineImpl;
-import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
-import com.wrupple.muba.event.domain.ContentNode;
-import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.ExplicitIntentImpl;
-import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.bpm.domain.*;
 import com.wrupple.muba.bpm.domain.impl.*;
 import com.wrupple.muba.bpm.server.chain.BusinessEngine;
 import com.wrupple.muba.bpm.server.chain.IntentResolverEngine;
+import com.wrupple.muba.bpm.server.chain.WorkflowEngine;
 import com.wrupple.muba.bpm.server.chain.command.*;
 import com.wrupple.muba.bpm.server.chain.command.impl.*;
 import com.wrupple.muba.bpm.server.chain.impl.BusinessEngineImpl;
+import com.wrupple.muba.bpm.server.chain.impl.WorkflowEngineImpl;
+import com.wrupple.muba.bpm.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.bpm.server.service.BusinessPlugin;
 import com.wrupple.muba.bpm.server.service.impl.BusinessPluginImpl;
-import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.ExplicitIntent;
+import com.wrupple.muba.event.domain.Host;
+import com.wrupple.muba.event.domain.ImplicitIntent;
+import com.wrupple.muba.event.domain.impl.ExplicitIntentImpl;
+import com.wrupple.muba.event.server.service.EventRegistry;
+import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 
 /**
  * Created by japi on 11/08/17.
@@ -90,7 +92,7 @@ public class BusinessModule  extends AbstractModule {
         //a host can have many sessions that can have many application states
         bind(String.class).annotatedWith(Names.named(Host.CATALOG)).toInstance( "/static/img/session.png");
 
-        bind(String.class).annotatedWith(Names.named(Workflow.CATALOG)).toInstance("/static/img/process.png");
+        bind(String.class).annotatedWith(Names.named(Workflow.WORKFLOW_CATALOG)).toInstance("/static/img/process.png");
 
         bind(String.class).annotatedWith(Names.named(WorkRequest.CATALOG)).toInstance("/static/img/notification.png");
 

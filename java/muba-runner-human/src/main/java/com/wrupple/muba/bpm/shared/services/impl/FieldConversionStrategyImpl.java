@@ -1,21 +1,19 @@
 package com.wrupple.muba.bpm.shared.services.impl;
 
-import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterCriteria;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.FilterCriteria;
+import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.List;
-
-
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Implemented from GWTFieldConversionStrategyImpl
@@ -23,13 +21,13 @@ import java.util.Collection;
 @Singleton
 public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
-    private final SystemCatalogPlugin access;
+    private final FieldAccessStrategy access;
     private final ObjectNativeInterface nativeInterface;
 
     private final FilterNativeInterface filterer;
 
     @Inject
-    public FieldConversionStrategyImpl(SystemCatalogPlugin access, ObjectNativeInterface nativeInterface, FilterNativeInterface filterer) {
+    public FieldConversionStrategyImpl(FieldAccessStrategy access, ObjectNativeInterface nativeInterface, FilterNativeInterface filterer) {
         this.access = access;
         this.nativeInterface = nativeInterface;
         this.filterer = filterer;
@@ -91,7 +89,7 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
             }
         }
         return false;
-    };
+    }
 
 
     @Override
@@ -124,9 +122,9 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
 
         int dataType = field == null ? -1 : field.getDataType();
         if (value == null) {
-            access.access().deleteAttribute(jso, field.getFieldId(), instrospection);
+            access.deleteAttribute(jso, field.getFieldId(), instrospection);
         } else if (nativeInterface.isCollection(value)) {
-            access.access().setPropertyValue(field,jso,nativeInterface.unwrapAsNativeCollection((Collection) value), instrospection);
+            access.setPropertyValue(field, jso, nativeInterface.unwrapAsNativeCollection((Collection) value), instrospection);
         } else if (value instanceof Number) {
 
             // FIXME some runtimes (browser) may require to unwrap the java object
@@ -138,45 +136,45 @@ public class FieldConversionStrategyImpl implements FieldConversionStrategy {
                 access.setAttribute(jso, field, v.doubleValue(),instrospection);
             }
             */
-            access.access().setPropertyValue(field,jso,value, instrospection);
+            access.setPropertyValue(field, jso, value, instrospection);
         } else if (value instanceof String) {
             String v = (String) value;
             v = getSendableString(v);
             if (v == null) {
-                access.access().deleteAttribute(jso, field.getFieldId(), instrospection);
+                access.deleteAttribute(jso, field.getFieldId(), instrospection);
             }else{
                 if(field.isMultiple()){
-                    access.access().setPropertyValue(field,jso,nativeInterface.eval(v), instrospection);
+                    access.setPropertyValue(field, jso, nativeInterface.eval(v), instrospection);
                 }else{
                     try {
                         switch (dataType) {
                             case CatalogEntry.BOOLEAN_DATA_TYPE:
-                                access.access().parseSetBoolean(jso, field, v, instrospection);
+                                access.parseSetBoolean(jso, field, v, instrospection);
                                 break;
                             case CatalogEntry.INTEGER_DATA_TYPE:
                                 if(field.isKey()){
                                     //TODO distinguish client and server runtime cus KEYS ARE ALWAYS SUPPOSED TO BE STRINGS CLIENT-SIDE,
-                                    access.access().setPropertyValue(field,jso,v, instrospection);
+                                    access.setPropertyValue(field, jso, v, instrospection);
                                     //access.setAttribute(jso, fieldId, v);
                                 }else{
-                                    access.access().parseSetInteger(v,jso,field, instrospection);
+                                    access.parseSetInteger(v, jso, field, instrospection);
                                 }
                                 break;
                             case CatalogEntry.NUMERIC_DATA_TYPE:
-                                access.access().parseSetDouble(v,jso,field, instrospection);
+                                access.parseSetDouble(v, jso, field, instrospection);
                                 break;
                             default:
-                                access.access().setPropertyValue(field,jso,v, instrospection);
+                                access.setPropertyValue(field, jso, v, instrospection);
                         }
                     } catch (Exception e) {
-                        access.access().setPropertyValue(field,jso,v, instrospection);
+                        access.setPropertyValue(field, jso, v, instrospection);
                         //access.setAttribute(jso, fieldId, v);
                     }
                 }
             }
 
         } else {
-            access.access().setPropertyValue(field,jso,value, instrospection);
+            access.setPropertyValue(field, jso, value, instrospection);
             //access.setAttribute(jso, fieldId, value);
         }
     }

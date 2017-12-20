@@ -15,7 +15,7 @@ import com.wrupple.muba.event.server.chain.command.impl.BindServiceImpl;
 import com.wrupple.muba.event.server.chain.command.impl.DispatchImpl;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import com.wrupple.muba.event.server.chain.command.impl.IncorporateImpl;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
+import com.wrupple.muba.event.server.domain.impl.ContainerContextImpl;
 import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.service.impl.*;
 import org.apache.commons.chain.CatalogFactory;
@@ -103,10 +103,10 @@ public class EventListenerTest extends BootstrapTest {
 	public void prepare() {
 
         // http://stackoverflow.com/questions/4796172/is-there-a-way-to-get-users-uid-on-linux-machine-using-java
-		//new SessionContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
-		SessionImpl sessionValue= new SessionImpl();
-		sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
-		session = new SessionContextImpl(sessionValue);
+        //new ContainerContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
+        ContainerImpl sessionValue = new ContainerImpl();
+        sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
+        session = new ContainerContextImpl(sessionValue);
 
 	}
 

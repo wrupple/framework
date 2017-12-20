@@ -31,7 +31,7 @@ public class StreamingIntentDelegate implements EventBusImpl.IntentDelegate {
     }
 
     @Override
-    public List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception {
+    public List<Object> handleExplicitIntent(ContainerContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception {
         if (parallel) {
             return handlers.parallelStream().map(handler -> {
                 try {

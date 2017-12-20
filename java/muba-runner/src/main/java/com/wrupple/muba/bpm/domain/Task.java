@@ -1,33 +1,32 @@
 package com.wrupple.muba.bpm.domain;
 
-import java.util.List;
-
-import com.wrupple.muba.catalogs.domain.CatalogJob;
+import com.wrupple.muba.catalogs.domain.CatalogActionConstraint;
 import com.wrupple.muba.event.domain.Service;
 import com.wrupple.muba.event.domain.reserved.HasOutput;
 
-public interface Task extends HasOutput,Service,CatalogJob {
-	
-	String CATALOG = "Task";
+import java.util.List;
+
+public interface Task extends HasOutput, Service, CatalogActionConstraint, Job {
+
+    String CATALOG = "Task";
 	String COMMAND_FIELD = "machineTaskCommandName";
 	// output is the exit place
 	String NAVIGATE_COMMAND = "navigate";
 	// output is detail of selected place
 	String SELECT_COMMAND = "select";
 
-	
-	
-	public List<Long> getUserActions();
+
+    List<Long> getUserActions();
 
 
 	/**
 	 * 
 	 * @return
 	 */
-	public List<Long> getToolbars();
-	
-	
-	public List<? extends TaskToolbarDescriptor> getToolbarsValues();
+    List<Long> getToolbars();
+
+
+    List<? extends TaskToolbarDescriptor> getToolbarsValues();
 
 
     void setDistinguishedName(String driverPick);

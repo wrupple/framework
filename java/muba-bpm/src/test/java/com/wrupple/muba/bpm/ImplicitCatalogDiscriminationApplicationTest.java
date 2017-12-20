@@ -1,21 +1,24 @@
 package com.wrupple.muba.bpm;
 
 
-import static org.easymock.EasyMock.anyObject;
-import static org.junit.Assert.assertTrue;
-
-import com.wrupple.muba.bpm.domain.impl.BusinessIntentImpl;
-import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.bpm.domain.*;
-import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
+import com.wrupple.muba.bpm.domain.impl.ApplicationImpl;
+import com.wrupple.muba.bpm.domain.impl.BusinessIntentImpl;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
-import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+
+import static org.junit.Assert.assertTrue;
 
 
 public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
@@ -81,9 +84,9 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
 
         log.trace("[-create booking data handling application item-]");
-        WorkflowImpl item = new WorkflowImpl();
+        ApplicationImpl item = new ApplicationImpl();
 
-        item.setDistinguishedName("createTrip");;
+        item.setDistinguishedName("createTrip");
         item.setProcessValues(Arrays.asList(pickDriver,updateBooking));
         //this tells bpm to use this application to resolve bookings
         item.setCatalog(bookingDescriptor.getDistinguishedName());
@@ -96,7 +99,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         runtimeContext.setServiceContract(action);
         runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, Workflow.CATALOG, CatalogActionRequest.CREATE_ACTION);
+                CatalogActionRequest.LOCALE_FIELD, Workflow.WORKFLOW_CATALOG, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
 

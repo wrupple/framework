@@ -3,6 +3,7 @@ package com.wrupple.muba.bpm;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.domain.*;
+import com.wrupple.muba.bpm.domain.impl.ApplicationImpl;
 import com.wrupple.muba.bpm.domain.impl.TaskImpl;
 import com.wrupple.muba.bpm.domain.impl.WorkflowImpl;
 import com.wrupple.muba.bpm.server.service.ProcessManager;
@@ -115,7 +116,7 @@ public class SubmitToApplicationTest extends BPMTest {
         );
          */
 
-        WorkflowImpl count = new WorkflowImpl();
+        WorkflowImpl count = new ApplicationImpl();
         count.setName("Count");
         count.setProcessValues( Arrays.asList(task));
 
@@ -123,17 +124,17 @@ public class SubmitToApplicationTest extends BPMTest {
         task.setCatalog(Statistics.CATALOG);
         task.setName(DataEvent.CREATE_ACTION);
 
-        WorkflowImpl workflow = new WorkflowImpl();
+        ApplicationImpl workflow = new ApplicationImpl();
         workflow.setName("Create");
         workflow.setProcessValues(Arrays.asList(task));
         //////////////////////////////////////////////////////////////////
         //                  TEST (configuration state) SUBJECT          //
         //////////////////////////////////////////////////////////////////
         workflow.setExplicitSuccessorValue(count);
-        CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(workflow, Workflow.CATALOG);
+        CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(workflow, Workflow.WORKFLOW_CATALOG);
 
         List resultss=wrupple.fireEvent(catalogActionRequest,session,null);
-        workflow = (WorkflowImpl) resultss.get(0);
+        workflow = (ApplicationImpl) resultss.get(0);
         this.createStatisticsWorkflow = workflow;
     }
 

@@ -2,9 +2,9 @@ package com.wrupple.muba.catalogs.domain;
 
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
-public interface UserDefinedCatalogJob extends HasStakeHolder,CatalogJob {
-	
-	String SERIALIZED = "serializedEntry";
+public interface UserDefinedCatalogActionConstraint extends HasStakeHolder, CatalogActionConstraint {
+
+    String SERIALIZED = "serializedEntry";
 
 	
 	Boolean getRunAsStakeHolder();

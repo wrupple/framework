@@ -1,16 +1,14 @@
 package com.wrupple.muba.event.domain;
 
-import java.util.Date;
-
 import org.apache.commons.chain.Context;
 
-import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
+import java.util.Date;
 
-public interface SessionContext extends Context {
+public interface ContainerContext extends Context {
 
 	String SYSTEM = "wrupple";
 
-    Session getSessionValue();
+    Container getContainerValue();
 
 	<T> T getStakeHolderPrincipal(Class<T> clazz);
 

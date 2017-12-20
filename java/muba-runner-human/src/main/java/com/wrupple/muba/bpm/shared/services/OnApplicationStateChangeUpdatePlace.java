@@ -2,6 +2,7 @@ package com.wrupple.muba.bpm.shared.services;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
+import org.apache.commons.chain.Context;
 
 /**
  *
@@ -11,14 +12,14 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
 public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler {
 
     public void onApplicationStateChanged(ApplicationState e){
-
+        /*
         final PlaceController pc = context.getPlaceController();
 
         StandardActivityCommand.determineFieldUrlParameters(result,p,properties,output);
 
         //conditions from GWT desktop (AbstractCommitUserTransactionImpl CommitEditTransaction CommitSelectTransaction)... do commit
 
-        if (userOutput == null) {
+        if (userOutput == null) {*/
                 /*
                  *
                  *  esta llamad en realidad solo tiene sentido en el cliente (paquete runner human), pero esta logica no se debe perder, y debe realizarse aqui mismo
@@ -30,7 +31,7 @@ public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler 
                  *
                  * Buscar "History url" en
                  */
-
+/*
             context.getHumanSolver().putPlaceParameter(saveTo, null);
         }else{
             String unencodedString;
@@ -56,8 +57,13 @@ public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler 
             context.getDesktopManager().putPlaceParameter(saveTo, unencodedString);
         }
 
+*/
 
+    }
 
+    @Override
+    public boolean execute(Context context) throws Exception {
+        return false;
     }
 
     /*

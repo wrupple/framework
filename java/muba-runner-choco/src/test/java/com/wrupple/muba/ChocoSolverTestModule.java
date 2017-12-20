@@ -6,9 +6,6 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.event.domain.Session;
-import com.wrupple.muba.event.domain.SessionContext;
-import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 
@@ -18,8 +15,6 @@ import javax.inject.Singleton;
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-
-import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
 
 /**
  * Created by rarl on 10/05/17.

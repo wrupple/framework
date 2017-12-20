@@ -21,8 +21,8 @@ import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.ContainerImpl;
 import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
-import com.wrupple.muba.event.domain.impl.SessionImpl;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
@@ -203,9 +203,9 @@ public class CatalogModule extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(Session.CATALOG)
+    @Named(Container.CATALOG)
     public CatalogDescriptor session(CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(SessionImpl.class, Session.CATALOG, "Sessions", -1911198,
+        CatalogDescriptor r = builder.fromClass(ContainerImpl.class, Container.CATALOG, "Sessions", -1911198,
                 null);
         return r;
     }

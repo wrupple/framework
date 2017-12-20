@@ -1,14 +1,12 @@
 package com.wrupple.muba.event.domain.impl;
 
+import com.wrupple.muba.event.domain.Container;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.domain.Person;
-import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
-import java.util.Date;
-
-public class SessionImpl extends ManagedObjectImpl implements Session {
+public class ContainerImpl extends ManagedObjectImpl implements Container {
     @ForeignKey(foreignCatalog = Host.CATALOG)
     private Long peer;
     @CatalogField(ignore = true)

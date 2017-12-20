@@ -1,25 +1,25 @@
 package com.wrupple.muba.event.domain;
 
+import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.reserved.*;
+import org.apache.commons.chain.Context;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.reserved.*;
-import org.apache.commons.chain.Context;
-
 public interface RuntimeContext extends Context, HasValidations, HasLocale, ListIterator<String>, CatalogKey,
 		HasParentValue<Object,RuntimeContext>, HasResult<Object> ,HasResults<Object> {
 
-	final int Unauthorized = 401;
-	final int PaymentRequired = 402;
+    int Unauthorized = 401;
+    int PaymentRequired = 402;
 
 	String FORMAT = "format";
 
 	EventBus getEventBus();
 
-	SessionContext getSession();
+    ContainerContext getSession();
 
 	void reset();
 
@@ -33,9 +33,9 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	void setFormat(String defaultFormat);
 
-	public List<String> getSentence();
+    List<String> getSentence();
 
-	public void setSentence(List<String> pathTokens);
+    void setSentence(List<String> pathTokens);
 
 	String getFormat();
 
@@ -43,9 +43,9 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	//// BPMPeer client =
 	//// BusinessEventSuscriptionManager.getPeerByEncodedId(remembermeToken);
-	public String getCallbackFunction();
+    String getCallbackFunction();
 
-	public void setCallbackFunction(String callbackFunction);
+    void setCallbackFunction(String callbackFunction);
 
 	Object getServiceContract();
 
@@ -74,9 +74,9 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	void serErrot(int error);
 
-	public void setTotalResponseSize(long length);
+    long getTotalResponseSize();
 
-	public long getTotalResponseSize();
+    void setTotalResponseSize(long length);
 
 	void setServiceManifest(ServiceManifest manifest);
 
@@ -88,7 +88,7 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	void setResult(Object result);
 
-	public String deduceLocale(Context domainContext);
+    String deduceLocale(Context domainContext);
 
 	void setSentence(String... words);
 

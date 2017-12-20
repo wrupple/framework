@@ -1,9 +1,9 @@
 package com.wrupple.muba.event.server.domain.impl;
 
 import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.domain.ContainerContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceManifest;
-import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.domain.TransactionHistory;
 import com.wrupple.muba.event.domain.annotations.Sentence;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
@@ -40,8 +40,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	private Object serviceContract;
 
 	private Context serviceContext;
-	private final SessionContext session;
-	private final EventBus eventBus;
+    private final ContainerContext session;
+    private final EventBus eventBus;
 
 	private String locale, format, callbackFunction, id;
 	private boolean scopedWriting;
@@ -54,8 +54,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	private Set<ConstraintViolation<?>> constraintViolations;
 	private ListIterator<String> wordIterator;
 
-	public RuntimeContextImpl(EventBus appication, SessionContext session, RuntimeContext parent) {
-		super();
+    public RuntimeContextImpl(EventBus appication, ContainerContext session, RuntimeContext parent) {
+        super();
 		this.eventBus = appication;
 		this.session = session;
 		this.parentValue = parent;
@@ -67,8 +67,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	}
 
 
-	public RuntimeContextImpl(EventBus appication, SessionContext session) {
-		this( appication, session, null);
+    public RuntimeContextImpl(EventBus appication, ContainerContext session) {
+        this( appication, session, null);
 	}
 
 	@Override
@@ -76,8 +76,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 
 		// excecution
 		if (getLocale() == null || HasLocale.LOCALE_FIELD.equals(getLocale())) {
-			SessionContext session = getSession();
-			String locale = (String) session.get(HasLocale.LOCALE_FIELD);
+            ContainerContext session = getSession();
+            String locale = (String) session.get(HasLocale.LOCALE_FIELD);
 
 			// session
 			if (locale == null || HasLocale.LOCALE_FIELD.equals(locale)) {
@@ -216,8 +216,8 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	}
 
 	@Override
-	public SessionContext getSession() {
-		return session;
+    public ContainerContext getSession() {
+        return session;
 	}
 
 	@Override

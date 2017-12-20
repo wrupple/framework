@@ -15,7 +15,7 @@ public class IntentDelegateImpl implements EventBusImpl.IntentDelegate {
     protected static final Logger log = LoggerFactory.getLogger(EventBusImpl.class);
 
     @Override
-    public List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception {
+    public List<Object> handleExplicitIntent(ContainerContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception {
 
         RuntimeContextImpl runtimeContext = new RuntimeContextImpl(eventBus, session, parentTimeline);
         for (ExplicitIntent handler : handlers) {

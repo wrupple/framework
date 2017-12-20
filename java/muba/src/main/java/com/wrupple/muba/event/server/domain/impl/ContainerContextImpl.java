@@ -1,19 +1,21 @@
 package com.wrupple.muba.event.server.domain.impl;
 
-import java.util.Date;
-
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.Container;
+import com.wrupple.muba.event.domain.ContainerContext;
+import com.wrupple.muba.event.domain.ServiceManifest;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 
+import java.util.Date;
+
 //ShiroSessionContext little brother
-public class SessionContextImpl extends ContextBase implements SessionContext {
-	private static final long serialVersionUID = 2234214815822637184L;
+public class ContainerContextImpl extends ContextBase implements ContainerContext {
+    private static final long serialVersionUID = 2234214815822637184L;
 
-	private Session sessionValue;
+    private Container containerValue;
 
-    public SessionContextImpl(Session sessionValue) {
-        this.sessionValue=sessionValue;
+    public ContainerContextImpl(Container containerValue) {
+        this.containerValue = containerValue;
     }
 
     @Override
@@ -45,16 +47,16 @@ public class SessionContextImpl extends ContextBase implements SessionContext {
     @Override
     public void setStakeHolder(Long stakeHolder) {
 
-        sessionValue.setStakeHolder(stakeHolder);
+        containerValue.setStakeHolder(stakeHolder);
     }
 
 
     @Override
-    public Session getSessionValue() {
-        return sessionValue;
+    public Container getContainerValue() {
+        return containerValue;
     }
 
-    public void setSessionValue(Session sessionValue) {
-        this.sessionValue = sessionValue;
+    public void setContainerValue(Container containerValue) {
+        this.containerValue = containerValue;
     }
 }

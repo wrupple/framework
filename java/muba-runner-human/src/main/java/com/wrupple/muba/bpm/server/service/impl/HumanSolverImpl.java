@@ -1,9 +1,9 @@
 package com.wrupple.muba.bpm.server.service.impl;
 
 import com.wrupple.muba.bpm.domain.ApplicationContext;
-import com.wrupple.muba.bpm.domain.VariableDescriptor;
-import com.wrupple.muba.bpm.domain.VariableDescriptorImpl;
 import com.wrupple.muba.bpm.server.service.HumanSolver;
+import com.wrupple.muba.bpm.server.service.Runner;
+import com.wrupple.muba.bpm.server.service.VariableEligibility;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 
@@ -25,23 +25,17 @@ public class HumanSolverImpl implements HumanSolver {
 
 
     @Override
-    public <T> T resolveSolverModel(ApplicationContext context) {
-        return (T) context;
+    public VariableEligibility isEligible(FieldDescriptor field, ApplicationContext context) {
+        return null;
     }
 
     @Override
-    public boolean isEligible(FieldDescriptor field, ApplicationContext context) {
-        return field.isWriteable();
+    public boolean solve(ApplicationContext context) {
+        return false;
     }
 
     @Override
-    public VariableDescriptor createVariable(FieldDescriptor field, ApplicationContext context) {
-        return new VariableDescriptorImpl(field);
-    }
+    public void register(Runner plugin) {
 
-    @Override
-    public void assignVariableValue(VariableDescriptor variable, String userInput) {
-        Object intputValue = access.convertToPersistentValue(userInput, variable.getField());
-        ((VariableDescriptorImpl)variable).setValue(intputValue);
     }
 }

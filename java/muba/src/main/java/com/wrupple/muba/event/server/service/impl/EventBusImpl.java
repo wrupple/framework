@@ -99,12 +99,12 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
     @Override
-    public boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception {
+    public boolean fireHandler(ExplicitIntent event, ContainerContext session) throws Exception {
         return fireHandler(event,session,null);
     }
 
 
-    public boolean fireHandler(ExplicitIntent event, SessionContext session, RuntimeContext parentTimeline) throws Exception {
+    public boolean fireHandler(ExplicitIntent event, ContainerContext session, RuntimeContext parentTimeline) throws Exception {
         RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
         return fireHandlerWithRuntime(event,runtimeContext);
     }
@@ -114,7 +114,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
         return fireonRuntimeline(implicitRequestContract,parent.getSession(),handlerCriterion,parent);
     }
 
-    public <T> T fireonRuntimeline(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline) throws Exception {
+    public <T> T fireonRuntimeline(Event implicitRequestContract, ContainerContext session, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline) throws Exception {
         List<ServiceManifest> manifests = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
 
         if(manifests==null || manifests.isEmpty()){
@@ -146,12 +146,12 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
     @Override
-    public <T> T fireEvent(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
+    public <T> T fireEvent(Event implicitRequestContract, ContainerContext session, List<FilterCriteria> handlerCriterion) throws Exception {
         return fireonRuntimeline(implicitRequestContract, session, handlerCriterion, null);
     }
 
     public interface IntentDelegate {
-        List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception;
+        List<Object> handleExplicitIntent(ContainerContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception;
 
         List<ExplicitIntent> interpretImlicitIntent(Event implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, EventBusImpl eventBus);
 

@@ -1,12 +1,13 @@
 package com.wrupple.muba.bpm.domain.impl;
 
-import java.util.List;
-
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.TaskToolbarDescriptor;
-import com.wrupple.muba.catalogs.domain.CatalogJobImpl;
+import com.wrupple.muba.catalogs.domain.CatalogActionConstraintImpl;
+import com.wrupple.muba.event.domain.CatalogEntry;
 
-public class TaskImpl extends CatalogJobImpl implements Task {
+import java.util.List;
+
+public class TaskImpl extends CatalogActionConstraintImpl implements Task {
 
 
     private List<Long> userActions;
@@ -87,4 +88,62 @@ public class TaskImpl extends CatalogJobImpl implements Task {
     public String getCatalogType() {
         return Task.CATALOG;
     }
+
+
+    private String description, exit, cancel, error;
+    private List<Long> dependencies;
+
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getExit() {
+        return exit;
+    }
+
+    public void setExit(String exit) {
+        this.exit = exit;
+    }
+
+    @Override
+    public String getCancel() {
+        return cancel;
+    }
+
+    public void setCancel(String cancel) {
+        this.cancel = cancel;
+    }
+
+    @Override
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    @Override
+    public List<Long> getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(List<Long> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+
+    @Override
+    public CatalogEntry getExplicitSuccessorValue() {
+        return null;
+    }
+
+
 }

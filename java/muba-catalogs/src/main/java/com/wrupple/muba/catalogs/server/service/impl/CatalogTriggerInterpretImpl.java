@@ -1,12 +1,12 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
-import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
-import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
@@ -64,8 +64,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 
 	@Override
-	public void invokeTrigger(Map<String, String> properties, CatalogActionContext context, UserDefinedCatalogJob trigger)
-			throws Exception {
+    public void invokeTrigger(Map<String, String> properties, CatalogActionContext context, UserDefinedCatalogActionConstraint trigger)
+            throws Exception {
 		log.trace("[INVOKE] {}", trigger);
 		String targetAction = trigger.getName();
 
@@ -185,7 +185,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	}
 
 	/*@Override
-	public void configureContext(CatalogActionContext context, UserDefinedCatalogJob trigger, Long domain,
+    public void configureContext(CatalogActionContext context, UserDefinedCatalogActionConstraint trigger, Long domain,
 			TransactionHistory transaction) throws Exception {
 
 		String targetAction = trigger.getSentence();
