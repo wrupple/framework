@@ -7,13 +7,13 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.MubaTest;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.ContainerImpl;
 import com.wrupple.muba.event.domain.impl.ContractDescriptorImpl;
 import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
+import com.wrupple.muba.event.domain.impl.SessionImpl;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-import com.wrupple.muba.event.server.domain.impl.ContainerContextImpl;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.wrupple.muba.event.domain.ContainerContext.SYSTEM;
+import static com.wrupple.muba.event.domain.SessionContext.SYSTEM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -90,7 +90,7 @@ public class ServiceRequestValidation extends MubaTest {
 	@Before
 	@Override
 	public void setUp() throws Exception {
-        runtimeContext = new RuntimeContextImpl(injector.getInstance(EventBus.class), injector.getInstance(Key.get(ContainerContext.class, Names.named(SYSTEM))));
+        runtimeContext = new RuntimeContextImpl(injector.getInstance(EventBus.class), injector.getInstance(Key.get(SessionContext.class, Names.named(SYSTEM))));
 
 	}
 
@@ -145,19 +145,19 @@ public class ServiceRequestValidation extends MubaTest {
 		@Provides
 		@Inject
 		@Singleton
-        @Named(ContainerContext.SYSTEM)
-        public ContainerContext sessionContext(@Named(ContainerContext.SYSTEM) Container stakeHolderValue) {
+        @Named(SessionContext.SYSTEM)
+        public SessionContext sessionContext(@Named(SessionContext.SYSTEM) Session stakeHolderValue) {
 
 
-            return new ContainerContextImpl(stakeHolderValue);
+            return new SessionContextImpl(stakeHolderValue);
         }
 
 		@Provides
 		@Inject
 		@Singleton
-        @Named(ContainerContext.SYSTEM)
-        public Container sessionContext() {
-            ContainerImpl sessionValue = new ContainerImpl();
+        @Named(SessionContext.SYSTEM)
+        public Session sessionContext() {
+            SessionImpl sessionValue = new SessionImpl();
             sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
 			sessionValue.setId(CatalogEntry.PUBLIC_ID);
 			return sessionValue;

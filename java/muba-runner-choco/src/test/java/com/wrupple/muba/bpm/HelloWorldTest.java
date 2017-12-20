@@ -73,7 +73,7 @@ private static final String CONSTRAINT = "constraint";
      */
     @Test
     public void equationSolverTest() throws Exception {
-        ContainerContext session = injector.getInstance(Key.get(ContainerContext.class, Names.named(ContainerContext.SYSTEM)));
+        SessionContext session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
 
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
 
@@ -101,7 +101,7 @@ private static final String CONSTRAINT = "constraint";
         TaskImpl problem = createProblem(session);
         ApplicationStateImpl state = new ApplicationStateImpl();
         state.setTaskDescriptorValue(problem);
-        state.setDomain(session.getContainerValue().getDomain());
+        state.setDomain(session.getSessionValue().getDomain());
         log.info("[-post a solver request to the runner engine-]");
         /*runtimeContext.setServiceContract(problem);
         runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME, FIXME allow constrains to be posted in service request sentence
@@ -123,7 +123,7 @@ private static final String CONSTRAINT = "constraint";
 
     }
 
-    private TaskImpl createProblem(ContainerContext session) throws Exception {
+    private TaskImpl createProblem(SessionContext session) throws Exception {
         CatalogActionRequestImpl catalogRequest;
         TaskImpl problem = new TaskImpl();
         problem.setDistinguishedName("equation system");
@@ -149,7 +149,7 @@ private static final String CONSTRAINT = "constraint";
         return problem;
     }
 
-    private void defineConstrainedSolution(CatalogDescriptorBuilder builder, ContainerContext session) throws Exception {
+    private void defineConstrainedSolution(CatalogDescriptorBuilder builder, SessionContext session) throws Exception {
         CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) builder.fromClass(EquationSystemSolution.class, EquationSystemSolution.CATALOG,
                 "Equation System Solution", 0, injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
 

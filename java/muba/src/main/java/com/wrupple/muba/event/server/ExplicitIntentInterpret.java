@@ -1,8 +1,8 @@
 package com.wrupple.muba.event.server;
 
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.ContainerContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import org.apache.commons.chain.Context;
@@ -31,8 +31,8 @@ public class ExplicitIntentInterpret implements NaturalLanguageInterpret {
             tokens.add(sentence.next());
         }
 
-        if (context instanceof ContainerContext) {
-            context = new RuntimeContextImpl(bus, (ContainerContext) context);
+        if (context instanceof SessionContext) {
+            context = new RuntimeContextImpl(bus, (SessionContext) context);
         }
         ((RuntimeContext) context).setSentence(tokens);
         ((RuntimeContext) context).setServiceContract(null);

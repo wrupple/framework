@@ -11,9 +11,9 @@
 	<modules>
 		<module>apache-chain</module>
 		<module>muba</module>
-        <module>vegetate</module>
         <module>muba-lambda</module>
 		<module>validation-bval</module>
+        <!--<module>vegetate</module>-->
 		<module>muba-catalogs</module>
         <module>muba-catalogs-sql</module>
 		<module>muba-catalogs-jdbc</module>
@@ -27,7 +27,7 @@
 		<module>muba-bpm</module>
         <module>muba-worker</module>
         <module>muba-worker-text</module>
-
+        <module>muba-worker-gwt</module>
         <!--<module>vegetate-security</module>-->
 	</modules>
 

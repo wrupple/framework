@@ -36,7 +36,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
             @Named(Trash.CATALOG) CatalogDescriptor trashP,
             @Named(ContentRevision.CATALOG) CatalogDescriptor revisionP,
             @Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
-            @Named(Container.CATALOG) CatalogDescriptor session,
+            @Named(Session.CATALOG) CatalogDescriptor session,
             Provider<CatalogTriggerInterpret> triggerInterpret) {
         super();
         this.triggerInterpretProvider = triggerInterpret;

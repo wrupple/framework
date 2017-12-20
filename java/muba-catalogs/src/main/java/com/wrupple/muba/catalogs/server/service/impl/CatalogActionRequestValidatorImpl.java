@@ -34,7 +34,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final JSRAnnotationsDictionary dictionary;
 	private final CatalogKeyServices keyDelegate;
 	//FIXME this session object should base universal privileges as it is isolated from the to-be excecuted runtime context
-    private final Provider<ContainerContext> exp;
+    private final Provider<SessionContext> exp;
     private final Provider<EventBus> bus;
 	private final ContextAwareValidator delegate;
 	/*
@@ -44,7 +44,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final LargeStringFieldDataAccessObject lsdao;
 
 	@Inject
-    public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, @Named(ContainerContext.SYSTEM) Provider<ContainerContext> exp,
+    public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, @Named(SessionContext.SYSTEM) Provider<SessionContext> exp,
                                              JSRAnnotationsDictionary cms, CatalogKeyServices keyDelegate, Provider<EventBus> bus, LargeStringFieldDataAccessObject lsdao) {
         this.keyDelegate = keyDelegate;
         this.bus = bus;
@@ -247,7 +247,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, Long domain, CatalogActionRequest req) throws InvocationTargetException, IllegalAccessException {
 		if (descriptor == null) {
 //at this point this very validator should allow this as a valid  request no more questions asked
-            ContainerContext system = this.exp.get();
+            SessionContext system = this.exp.get();
             CatalogActionRequestImpl context = new CatalogActionRequestImpl();
 				context.setDomain(domain);
 				context.setParentValue(req);

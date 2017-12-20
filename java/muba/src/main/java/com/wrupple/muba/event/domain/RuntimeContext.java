@@ -19,7 +19,7 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	EventBus getEventBus();
 
-    ContainerContext getSession();
+    SessionContext getSession();
 
 	void reset();
 

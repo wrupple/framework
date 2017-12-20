@@ -8,8 +8,8 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.ContainerContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.SessionContext;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -70,7 +70,7 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public ApplicationState acquireContext(Workflow initialState, ContainerContext thread) throws Exception {
+    public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
         ApplicationState newState = applicationStateProvider.get();
         newState.setHandleValue(initialState);
 

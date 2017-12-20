@@ -22,11 +22,11 @@ public interface EventBus
 
     void broadcastEvent(Event event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
 
-    boolean fireHandler(ExplicitIntent event, ContainerContext session) throws Exception;
+    boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception;
 
     <T> T fireEvent(Event implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception;
 
-    <T> T fireEvent(Event implicitRequestContract, ContainerContext session, List<FilterCriteria> handlerCriterion) throws Exception;
+    <T> T fireEvent(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception;
 
     boolean resume(RuntimeContext runtimeContext) throws Exception;
 

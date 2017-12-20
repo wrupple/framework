@@ -21,7 +21,7 @@ import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Container;
+import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
@@ -40,7 +40,7 @@ public class IntegralTest extends AbstractTest{
 	 */
 
 
-    private Container stakeHolderValue;
+    private Session stakeHolderValue;
     protected EventBus wrupple;
 
 
@@ -78,7 +78,7 @@ public class IntegralTest extends AbstractTest{
             bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
 
             // mocks
-            stakeHolderValue = mock(Container.class);
+            stakeHolderValue = mock(Session.class);
 
 
         }

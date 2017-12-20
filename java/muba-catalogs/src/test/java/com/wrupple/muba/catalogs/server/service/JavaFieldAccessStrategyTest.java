@@ -17,7 +17,7 @@ import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
-import com.wrupple.muba.event.server.domain.impl.ContainerContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.FormatDictionary;
 import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
@@ -82,11 +82,11 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
        @Provides
         @Inject
         @Singleton
-       @Named(ContainerContext.SYSTEM)
-       public ContainerContext sessionContext() {
-           Container stakeHolderValue = createNiceMock(Container.class);
+       @Named(SessionContext.SYSTEM)
+       public SessionContext sessionContext() {
+           Session stakeHolderValue = createNiceMock(Session.class);
 
-           return new ContainerContextImpl(stakeHolderValue);
+           return new SessionContextImpl(stakeHolderValue);
         }
 
         @Provides

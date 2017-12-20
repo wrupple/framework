@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface ImplicitEventResolver {
 
+    void registerService(Registration registration);
 
     List<ServiceManifest> resolveHandlers(String intentType);
 
@@ -23,7 +24,7 @@ public interface ImplicitEventResolver {
 
     ParentServiceManifest getRootService();
 
-    void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret, ParentServiceManifest parent);
+    ExplicitIntent resolveIntent(ImplicitIntent intent, RuntimeContext context) throws Exception;
 
     //contract interpret per type? bpm?
     void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret);
@@ -38,9 +39,17 @@ public interface ImplicitEventResolver {
      */
     RequestInterpret getExplicitIntentInterpret(RuntimeContext context);
 
-    public ExplicitIntent resolveIntent(ImplicitIntent intent, RuntimeContext context) throws Exception;
+    ExplicitIntent resolveIntent(Event implicitRequestContract, ServiceManifest manifest, RuntimeContext parentTimeline);
 
-    public ExplicitIntent resolveIntent(Event implicitRequestContract, ServiceManifest manifest, RuntimeContext parentTimeline);
+    interface Registration {
+        ServiceManifest getManifest();
+
+        Command getService();
+
+        RequestInterpret getContractInterpret();
+
+        ParentServiceManifest getParent();
+    }
 
 
     CatalogFactory getDictionaryFactory();

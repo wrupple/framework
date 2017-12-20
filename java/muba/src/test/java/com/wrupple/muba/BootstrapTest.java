@@ -1,6 +1,6 @@
 package com.wrupple.muba;
 
-import com.wrupple.muba.event.server.domain.impl.ContainerContextImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
@@ -26,7 +26,7 @@ public class BootstrapTest extends EasyMockSupport {
 	@Rule
 	public final EasyMockRule rule = new EasyMockRule(this);
 	// @Mock
-    protected ContainerContextImpl session;
+    protected SessionContextImpl session;
 
 
 	// @TestSubject protected ParentServiceManifest muba;

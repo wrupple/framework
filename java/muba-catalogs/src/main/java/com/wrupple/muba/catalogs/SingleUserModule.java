@@ -11,10 +11,10 @@ import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogResultCacheImpl;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Container;
-import com.wrupple.muba.event.domain.ContainerContext;
-import com.wrupple.muba.event.domain.impl.ContainerImpl;
-import com.wrupple.muba.event.server.domain.impl.ContainerContextImpl;
+import com.wrupple.muba.event.domain.Session;
+import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.impl.SessionImpl;
+import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.event.server.service.impl.LargeStringFieldDataAccessObjectImpl;
 import org.apache.commons.chain.Context;
@@ -56,19 +56,19 @@ public class SingleUserModule extends AbstractModule {
 	@Provides
 	@Inject
 	@javax.inject.Singleton
-    @Named(ContainerContext.SYSTEM)
-    public ContainerContext sessionContext(@Named(ContainerContext.SYSTEM) Container stakeHolderValue) {
+    @Named(SessionContext.SYSTEM)
+    public SessionContext sessionContext(@Named(SessionContext.SYSTEM) Session stakeHolderValue) {
 
 
-        return new ContainerContextImpl(stakeHolderValue);
+        return new SessionContextImpl(stakeHolderValue);
     }
 
 	@Provides
 	@Inject
 	@javax.inject.Singleton
-    @Named(ContainerContext.SYSTEM)
-    public Container sessionContext() {
-        ContainerImpl sessionValue = new ContainerImpl();
+    @Named(SessionContext.SYSTEM)
+    public Session sessionContext() {
+        SessionImpl sessionValue = new SessionImpl();
         sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
 		sessionValue.setId(CatalogEntry.PUBLIC_ID);
 		return sessionValue;

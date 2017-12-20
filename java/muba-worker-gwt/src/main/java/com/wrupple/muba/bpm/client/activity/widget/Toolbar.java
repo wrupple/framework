@@ -1,0 +1,19 @@
+package com.wrupple.muba.bpm.client.activity.widget;
+
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.logical.shared.HasResizeHandlers;
+import com.google.web.bindery.event.shared.EventBus;
+import com.wrupple.muba.bpm.client.services.ProcessContextServices;
+import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
+import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
+import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+
+public interface Toolbar extends HumanTaskProcessor<JavaScriptObject,JavaScriptObject>,HasResizeHandlers {
+
+    void initialize(final JsTaskToolbarDescriptor toolbarDescriptor,
+                    JsProcessTaskDescriptor parameter,
+                    JsTransactionApplicationContext contextParameters, final EventBus bus,
+                    final ProcessContextServices contextServices);
+
+    void setType(String s);
+}

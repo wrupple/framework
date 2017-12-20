@@ -85,7 +85,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         if (request.getDomain()==null || request.getDomain().longValue()==CatalogEntry.CURRENT_NAMESPACE) {
             context.getNamespaceContext().setId(context.getRuntimeContext().getSession().
-                    getContainerValue().
+                    getSessionValue().
                     getDomain(), context);
         }  else {
             context.getNamespaceContext().setId(request.getDomain(), context);
@@ -282,7 +282,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
         public long getPersonId() throws Exception {
-            return (Long) getSession().getContainerValue().getStakeHolder();
+            return (Long) getSession().getSessionValue().getStakeHolder();
         }
 
 
@@ -345,7 +345,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
 
-        public ContainerContext getSession() {
+        public SessionContext getSession() {
             return this.runtimeContext.getSession();
         }
 
