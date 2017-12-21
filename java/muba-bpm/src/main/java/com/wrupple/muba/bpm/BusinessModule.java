@@ -68,6 +68,7 @@ public class BusinessModule  extends AbstractModule {
         /*
         Commands
          */
+
         bind(WorkflowEngine.class).to(WorkflowEngineImpl.class);
         bind(CommitSubmission.class).to(CommitSubmissionImpl.class);
         bind(InferNextTask.class).to(InferNextTaskImpl.class);
@@ -92,7 +93,7 @@ public class BusinessModule  extends AbstractModule {
         //a host can have many sessions that can have many application states
         bind(String.class).annotatedWith(Names.named(Host.CATALOG)).toInstance( "/static/img/session.png");
 
-        bind(String.class).annotatedWith(Names.named(Workflow.WORKFLOW_CATALOG)).toInstance("/static/img/process.png");
+        bind(String.class).annotatedWith(Names.named(Application.CATALOG)).toInstance("/static/img/process.png");
 
         bind(String.class).annotatedWith(Names.named(WorkRequest.CATALOG)).toInstance("/static/img/notification.png");
 

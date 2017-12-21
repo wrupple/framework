@@ -1,9 +1,9 @@
 package com.wrupple.muba.bpm.domain.impl;
 
+import com.wrupple.muba.bpm.domain.Application;
 import com.wrupple.muba.bpm.domain.ApplicationState;
 import com.wrupple.muba.bpm.domain.Task;
 import com.wrupple.muba.bpm.domain.VariableDescriptor;
-import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
@@ -25,7 +25,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     @CatalogField(ignore = true)
     private FilterData filterData;
 
-    @ForeignKey(foreignCatalog = Workflow.WORKFLOW_CATALOG)
+    @ForeignKey(foreignCatalog = Application.CATALOG)
     private Long handle;
 
     @ForeignKey(foreignCatalog = Task.CATALOG)

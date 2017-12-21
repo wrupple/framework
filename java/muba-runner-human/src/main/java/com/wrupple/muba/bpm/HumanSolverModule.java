@@ -7,7 +7,6 @@ import com.wrupple.muba.bpm.server.chain.command.SolveTask;
 import com.wrupple.muba.bpm.server.chain.command.UserInteractionState;
 import com.wrupple.muba.bpm.server.chain.command.impl.DefineSolutionCriteriaImpl;
 import com.wrupple.muba.bpm.server.service.Solver;
-import com.wrupple.muba.bpm.server.service.impl.HumanSolverImpl;
 import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.bpm.shared.services.impl.FieldConversionStrategyImpl;
 

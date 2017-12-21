@@ -1,8 +1,9 @@
 package com.wrupple.muba.desktop.client.activity.impl;
 
+import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.impl.TransactionalActivity;
+import com.wrupple.muba.bpm.client.activity.SequentialActivity;
 import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
 import com.wrupple.muba.cms.client.services.impl.SimpleContentManager;
 import com.wrupple.muba.desktop.client.activity.CatalogEntryReadActivity;
@@ -11,8 +12,8 @@ import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
 import com.wrupple.muba.desktop.client.services.logic.impl.ActivityVegetateEventHandler;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 
-public class ContentViewingActivity extends TransactionalActivity implements
-		CatalogEntryReadActivity {
+public class ContentViewingActivity extends AbstractActivity implements
+        CatalogEntryReadActivity, SequentialActivity {
 
 	@Inject
 	public ContentViewingActivity(ProcessManager pm, DesktopManager dm,

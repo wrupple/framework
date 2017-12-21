@@ -131,7 +131,7 @@ public class SubmitToApplicationTest extends BPMTest {
         //                  TEST (configuration state) SUBJECT          //
         //////////////////////////////////////////////////////////////////
         workflow.setExplicitSuccessorValue(count);
-        CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(workflow, Workflow.WORKFLOW_CATALOG);
+        CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(workflow, Application.CATALOG);
 
         List resultss=wrupple.fireEvent(catalogActionRequest,session,null);
         workflow = (ApplicationImpl) resultss.get(0);

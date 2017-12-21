@@ -9,7 +9,7 @@ import javax.inject.Inject;
 public class BroadcastEventHandlerImpl extends ImplicitEventResolverRegistration {
 
     @Inject
-    protected BroadcastEventHandlerImpl(BroadcastServiceManifest manifest, PublishEvents engine, BroadcastInterpret interpret) {
-        super(manifest);
+    public BroadcastEventHandlerImpl(BroadcastServiceManifest manifest, PublishEvents engine, BroadcastInterpret interpret) {
+        super(manifest, engine, interpret, null);
     }
 }

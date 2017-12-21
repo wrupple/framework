@@ -22,13 +22,11 @@ import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.BroadcastServiceManifest;
+import com.wrupple.muba.event.domain.Event;
 import com.wrupple.muba.event.domain.SessionContext;
-import com.wrupple.muba.event.server.ExplicitIntentInterpret;
-import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
+import com.wrupple.muba.event.server.service.impl.BroadcastEventHandlerImpl;
 
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class ApplicationContainer {
     private final Solver solver;
     private final Injector injector;
 
-    public <T extends Module, V extends ImplicitEventResolver.Registration> ApplicationContainer(List<T> modules, List<V> eventHandlers) {
+    public <T extends Module, V extends ImplicitEventResolver.Registration> ApplicationContainer(List<T> modules, List<Class<V>> eventHandlers) {
 
 
         injector = Guice.createInjector(modules);
@@ -64,8 +62,8 @@ public class ApplicationContainer {
 		 Vegetate
 		 */
 
-        BroadcastServiceManifest broadcastManifest = injector.getInstance(BroadcastServiceManifest.class);
-        processSwitches.getIntentInterpret().registerService(broadcastManifest, injector.getInstance(PublishEvents.class), injector.getInstance(BroadcastInterpret.class));
+
+        processSwitches.getIntentInterpret().registerService(injector.getInstance(BroadcastEventHandlerImpl.class));
 
 		/*
 		 BPM
@@ -84,13 +82,10 @@ public class ApplicationContainer {
 
         processSwitches.getIntentInterpret().registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
 
-        for (ImplicitEventResolver.Registration registration : eventHandlers) {
-            processSwitches.getIntentInterpret().registerService(registration);
+        for (Class<V> registration : eventHandlers) {
+            processSwitches.getIntentInterpret().registerService(injector.getInstance(registration));
         }
 
-
-        ExplicitIntentInterpret greeter = injector.getInstance(ExplicitIntentInterpret.class);
-        processSwitches.registerInterpret(":", greeter);
     }
 
 
@@ -101,5 +96,9 @@ public class ApplicationContainer {
 
     public <T extends Runner> void registerRunner(Class<T> runner) {
         solver.register(injector.getInstance(runner));
+    }
+
+    public void fireEvent(Event event) throws Exception {
+        processSwitches.fireEvent(event, session, null);
     }
 }

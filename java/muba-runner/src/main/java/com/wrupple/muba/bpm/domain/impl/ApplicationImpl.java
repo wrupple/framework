@@ -15,10 +15,10 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
     private List<Long> dependencies;
 
 
-    @ForeignKey(foreignCatalog = Workflow.WORKFLOW_CATALOG)
+    @ForeignKey(foreignCatalog = Application.CATALOG)
     private Long explicitSuccessor;
     @CatalogField(ignore = true)
-    @CatalogValue(foreignCatalog = Workflow.WORKFLOW_CATALOG)
+    @CatalogValue(foreignCatalog = Application.CATALOG)
     private Workflow explicitSuccessorValue;
 
     @Override

@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface Workflow extends ServiceManifest,HasOutput{
 
-    String WORKFLOW_CATALOG = "Workflow";
+    //String WORKFLOW_CATALOG = "Workflow";
 
     //TODO input is deermined by service contract and first task's type, output by last task's type, maybe have an ephemeral field with these catalog id's
 

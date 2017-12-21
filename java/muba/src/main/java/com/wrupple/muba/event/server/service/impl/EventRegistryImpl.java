@@ -45,6 +45,11 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
     @Override
+    public void registerService(Registration registration) {
+        registerService(registration.getManifest(), registration.getService(), registration.getContractInterpret(), registration.getParent());
+    }
+
+    @Override
     public List<ServiceManifest> resolveHandlers(String eventCatalogName) {
 
         List<ServiceManifest> list = serviceDictionary.get(eventCatalogName);
@@ -53,8 +58,8 @@ public class EventRegistryImpl implements EventRegistry {
 
     }
 
-    @Override
-    public void registerService(ServiceManifest manifest,
+
+    private void registerService(ServiceManifest manifest,
                                 Command service,
                                 RequestInterpret contractInterpret,
                                 ParentServiceManifest parent) {
@@ -71,6 +76,9 @@ public class EventRegistryImpl implements EventRegistry {
         }
         serviceDictionaryput((String)manifest.getCatalog(),manifest);
         dictionary.addCommand(manifest.getServiceId(), service);
+        if (parent == null) {
+            parent = getRootService();
+        }
         parent.register(manifest);
         registerContractInterpret(manifest,contractInterpret);
     }

@@ -1,13 +1,14 @@
 package com.wrupple.muba.desktop.client.activity.impl;
 
+import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.AbstractSequentialActivity;
 import com.wrupple.muba.bpm.client.activity.ActivityProcess;
+import com.wrupple.muba.bpm.client.activity.SequentialActivity;
 import com.wrupple.muba.bpm.client.activity.process.impl.ActivityProcessImpl;
 import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.bpm.client.activity.process.state.HumanTask;
@@ -38,7 +39,7 @@ import javax.inject.Provider;
 import java.util.Arrays;
 import java.util.List;
 
-public class CSVImportActiviy extends AbstractSequentialActivity implements CatalogEntryImportActivity {
+public class CSVImportActiviy extends AbstractActivity implements CatalogEntryImportActivity, SequentialActivity {
 
 	public final static class FieldColumnRelation extends JavaScriptObject {
 		protected FieldColumnRelation() {

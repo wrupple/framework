@@ -8,27 +8,35 @@ import org.apache.commons.chain.Command;
 
 public abstract class ImplicitEventResolverRegistration implements ImplicitEventResolver.Registration {
 
-    protected ImplicitEventResolverRegistration(ServiceManifest manifest) {
+    private final ServiceManifest manifest;
+    private final Command service;
+    private final RequestInterpret contractInterpret;
+    private final ParentServiceManifest parent;
 
+    protected ImplicitEventResolverRegistration(ServiceManifest manifest, Command engine, RequestInterpret interpret, ParentServiceManifest parent) {
+        this.manifest = manifest;
+        this.service = engine;
+        this.contractInterpret = interpret;
+        this.parent = parent;
     }
 
     @Override
     public ServiceManifest getManifest() {
-        return null;
+        return manifest;
     }
 
     @Override
     public Command getService() {
-        return null;
+        return service;
     }
 
     @Override
     public RequestInterpret getContractInterpret() {
-        return null;
+        return contractInterpret;
     }
 
     @Override
     public ParentServiceManifest getParent() {
-        return null;
+        return parent;
     }
 }

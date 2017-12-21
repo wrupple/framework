@@ -68,10 +68,10 @@ public class SolverModule extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(Workflow.WORKFLOW_CATALOG)
+    @Named(Application.CATALOG)
     public CatalogDescriptor activity(
             CatalogDescriptorBuilder builder, @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest) {
-        CatalogDescriptor r = builder.fromClass(WorkflowImpl.class, Workflow.WORKFLOW_CATALOG, "Workflow",
+        CatalogDescriptor r = builder.fromClass(ApplicationImpl.class, Application.CATALOG, "Application",
                 -900190, serviceManifest);
 
         return r;

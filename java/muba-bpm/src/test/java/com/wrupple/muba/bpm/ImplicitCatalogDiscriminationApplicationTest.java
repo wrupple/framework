@@ -99,7 +99,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         runtimeContext.setServiceContract(action);
         runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, Workflow.WORKFLOW_CATALOG, CatalogActionRequest.CREATE_ACTION);
+                CatalogActionRequest.LOCALE_FIELD, Application.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
 

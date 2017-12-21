@@ -1,9 +1,10 @@
 package com.wrupple.muba.desktop.client.activity.impl;
 
+import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.impl.TransactionalActivity;
+import com.wrupple.muba.bpm.client.activity.SequentialActivity;
 import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.cms.client.services.impl.SimpleContentManager;
@@ -14,8 +15,8 @@ import com.wrupple.muba.desktop.client.services.logic.impl.ActivityVegetateEvent
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 
-public class ProcessBuildingActivityImpl extends TransactionalActivity
-		implements ProcessBuildingActivity {
+public class ProcessBuildingActivityImpl extends AbstractActivity
+        implements ProcessBuildingActivity, SequentialActivity {
 
 	@Inject
 	public ProcessBuildingActivityImpl(ProcessManager pm, DesktopManager dm,

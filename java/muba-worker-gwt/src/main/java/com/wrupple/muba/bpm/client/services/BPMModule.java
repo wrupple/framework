@@ -1,7 +1,6 @@
 package com.wrupple.muba.bpm.client.services;
 
 import com.google.gwt.inject.client.GinModule;
-import com.wrupple.muba.bpm.client.activity.impl.TransactionalActivity;
 import com.wrupple.muba.cms.client.services.ContentModule;
 import com.wrupple.muba.desktop.client.activity.*;
 import com.wrupple.muba.desktop.client.activity.impl.BPMInboxActivity;

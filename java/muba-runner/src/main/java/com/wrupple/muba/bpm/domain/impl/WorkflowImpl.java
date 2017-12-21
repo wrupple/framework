@@ -65,6 +65,6 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
 
     @Override
     public String getCatalogType() {
-        return Workflow.WORKFLOW_CATALOG;
+        return Workflow.class.getSimpleName();
     }
 }
