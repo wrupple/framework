@@ -22,7 +22,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
 import com.wrupple.muba.desktop.client.chain.command.LaunchApplicationState;
-import com.wrupple.muba.desktop.client.chain.command.LaunchContainer;
+import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
 import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
 import com.wrupple.muba.desktop.client.chain.command.StartWorkerHeartBeat;
 import com.wrupple.muba.desktop.client.chain.command.impl.*;
@@ -99,7 +99,7 @@ public class Example {
         protected void configure() {
 
             bind(LaunchWorkerEngine.class).to(LaunchWorkerEngineImpl.class);
-            bind(LaunchContainer.class).to(LaunchContainerImpl.class);
+            bind(WorkerContainerLauncher.class).to(WorkerContainerLauncherImpl.class);
             bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
 
             bind(LaunchWorker.class).to(LaunchWorkerImpl.class);

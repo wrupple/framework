@@ -13,7 +13,7 @@ import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.domain.imp.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.desktop.server.chain.command.SearchEngineOptimizedDesktopWriterCommand;
 import com.wrupple.muba.desktop.server.domain.DesktopBuilderContext;
-import com.wrupple.muba.desktop.server.service.impl.AbstractDataDrivenServerModule;
+import com.wrupple.muba.desktop.client.service.impl.AbstractDataDrivenServerModule;
 import com.wrupple.muba.desktop.shared.services.UrlParser;
 import com.wrupple.muba.desktop.shared.services.UserTaskWriterDictionary;
 import com.wrupple.vegetate.domain.CatalogEntry;

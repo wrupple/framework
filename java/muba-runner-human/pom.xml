@@ -12,6 +12,14 @@
 		<guice.version>4.1.0</guice.version>
 	</properties>
 	<dependencies>
+
+
+		<dependency>
+			<groupId>com.wrupple.muba</groupId>
+			<artifactId>muba-worker</artifactId>
+			<version>${muba.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.wrupple.muba</groupId>
 			<artifactId>muba-runner</artifactId>

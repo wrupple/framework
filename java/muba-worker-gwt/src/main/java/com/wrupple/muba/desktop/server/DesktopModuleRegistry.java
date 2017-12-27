@@ -8,7 +8,7 @@ import com.wrupple.muba.cms.server.ContentServerModule;
 import com.wrupple.muba.cms.server.services.DataDrivenServerModule;
 import com.wrupple.muba.desktop.server.service.CredentialsServerModule;
 import com.wrupple.muba.desktop.server.service.SocialModule;
-import com.wrupple.muba.desktop.server.service.impl.DesktopServerModule;
+import com.wrupple.muba.desktop.client.service.impl.DesktopServerModule;
 
 import javax.inject.Inject;
 

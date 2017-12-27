@@ -23,7 +23,6 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
     @Inject
     public ActivityRequestInterpretImpl(
             Provider<ApplicationContext> activityContextProvider, ProcessManager bpm){
-
         this.activityContextProvider=activityContextProvider;
         this.bpm = bpm;
     }
@@ -31,7 +30,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
         ApplicationContext r = activityContextProvider.get();
-r.setStateValue((ApplicationState) requestContext.getServiceContract());
+        r.setStateValue((ApplicationState) requestContext.getServiceContract());
         return r.setRuntimeContext(requestContext);
     }
 

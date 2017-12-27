@@ -4,5 +4,5 @@ import com.wrupple.muba.bpm.domain.ApplicationContext;
 import org.chocosolver.solver.Model;
 
 public interface ChocoModelResolver {
-    public Model resolveSolverModel(ApplicationContext context);
+    Model resolveSolverModel(ApplicationContext context);
 }

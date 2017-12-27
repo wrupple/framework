@@ -10,5 +10,5 @@ import java.lang.reflect.InvocationTargetException;
  * Created by japi on 22/04/17.
  */
 public interface RequestInterpret extends Command {
-    Context materializeBlankContext(RuntimeContext requestContext) throws InvocationTargetException, IllegalAccessException;
+    Context materializeBlankContext(RuntimeContext requestContext) throws Exception;
 }

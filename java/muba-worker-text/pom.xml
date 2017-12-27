@@ -18,12 +18,6 @@
 
         <dependency>
             <groupId>com.wrupple.muba</groupId>
-            <artifactId>muba-worker</artifactId>
-            <version>${muba.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wrupple.muba</groupId>
             <artifactId>muba-runner-human</artifactId>
             <version>${muba.version}</version>
         </dependency>

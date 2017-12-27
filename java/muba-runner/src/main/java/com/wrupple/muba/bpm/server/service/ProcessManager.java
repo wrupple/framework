@@ -1,6 +1,7 @@
 package com.wrupple.muba.bpm.server.service;
 
 import com.wrupple.muba.bpm.domain.ApplicationState;
+import com.wrupple.muba.bpm.domain.ContainerContext;
 import com.wrupple.muba.bpm.domain.Workflow;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.SessionContext;
