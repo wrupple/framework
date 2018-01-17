@@ -6,8 +6,8 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.templates.C
 
 public interface WruppleButtonTemplate extends SafeHtmlTemplates,
 		ClickableElementTemplate {
-	//TODO replace with a hand written implementation that can use CatalogReadingChannel services
-	@Template("<input type='button' value='{0}' />")
+    //TODO replace setRuntimeContext a hand written implementation that can use CatalogReadingChannel services
+    @Template("<input type='button' value='{0}' />")
 	SafeHtml button(String message);
 	
 	@Template("<div><img  src=\"/vegetate/catalog/user/PersistentImageMetadata/read/{0}/"+ImageTemplate.SMALL+"\" title=\"{2}\" /></div><span>{1}</span>")

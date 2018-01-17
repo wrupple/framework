@@ -14,7 +14,7 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.colorPicker;
  * source and free software.
  *
  * You are always permitted to make arrangements wholly outside of this license
- * directly with the Copyright Holder of a given Package. If the terms of this
+ * directly setRuntimeContext the Copyright Holder of a given Package. If the terms of this
  * license do not permit the full use that you propose to make of the Package,
  * you should contact the Copyright Holder and seek a different licensing
  * arrangement.
@@ -25,7 +25,7 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.colorPicker;
  * copyright notice for the entire Package.
  *
  * "Contributor" means any party that has contributed code or other material to
- * the Package, in accordance with the Copyright Holder's procedures.
+ * the Package, in accordance setRuntimeContext the Copyright Holder's procedures.
  *
  * "You" and "your" means any person who would like to copy, distribute, or
  * modify the Package.
@@ -48,7 +48,7 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.colorPicker;
  * "Modified Version" means the Package, if it has been changed, and such
  * changes were not explicitly requested by the Copyright Holder.
  *
- * "Original License" means this Artistic License as Distributed with the
+ * "Original License" means this Artistic License as Distributed setRuntimeContext the
  * Standard Version of the Package, in its current version or as it may be
  * modified by The Perl Foundation in the future.
  *
@@ -81,7 +81,7 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.colorPicker;
  * Distribution of Modified Versions of the Package as Source
  *
  * (4) You may Distribute your Modified Version as Source (either gratis or for
- * a Distributor Fee, and with or without a Compiled form of the Modified
+ * a Distributor Fee, and setRuntimeContext or without a Compiled form of the Modified
  * Version) provided that you clearly document how it differs from the Standard
  * Version, including, but not limited to, documenting any non-standard
  * features, executables, or modules, and provided that you do at least ONE of
@@ -122,20 +122,20 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.colorPicker;
  * under this license.
  *
  * (6) You may Distribute a Modified Version in Compiled form without the
- * Source, provided that you comply with Section 4 with respect to the Source of
+ * Source, provided that you comply setRuntimeContext Section 4 setRuntimeContext respect to the Source of
  * the Modified Version.
  *
  * Aggregating or Linking the Package
  *
  * (7) You may aggregate the Package (either the Standard Version or Modified
- * Version) with other packages and Distribute the resulting aggregation
+ * Version) setRuntimeContext other packages and Distribute the resulting aggregation
  * provided that you do not charge a licensing fee for the Package. Distributor
  * Fees are permitted, and licensing fees for other components in the
  * aggregation are permitted. The terms of this license apply to the use and
  * Distribution of the Standard or Modified Versions as included in the
  * aggregation.
  *
- * (8) You are permitted to link Modified and Standard Versions with other
+ * (8) You are permitted to link Modified and Standard Versions setRuntimeContext other
  * works, to embed the Package in a larger work of your own, or to build
  * stand-alone binary or bytecode versions of applications that include the
  * Package, and Distribute the result without restriction, provided the result
@@ -157,14 +157,14 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.colorPicker;
  *
  * (11) If your Modified Version has been derived from a Modified Version made
  * by someone other than you, you are nevertheless required to ensure that your
- * Modified Version complies with the requirements of this license.
+ * Modified Version complies setRuntimeContext the requirements of this license.
  *
  * (12) This license does not grant you the right to use any trademark, service
  * mark, tradename, or logo of the Copyright Holder.
  *
  * (13) This license includes the non-exclusive, worldwide, free-of-charge
  * patent license to make, have made, use, offer to sell, sell, import and
- * otherwise transfer the Package with respect to any patent claims licensable
+ * otherwise transfer the Package setRuntimeContext respect to any patent claims licensable
  * by the Copyright Holder that are necessarily infringed by the Package. If you
  * institute patent litigation (including a cross-claim or counterclaim) against
  * any party alleging that the Package constitutes direct or contributory patent

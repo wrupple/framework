@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<servicer  xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
-	 type="com.wrupple.muba.bpm.client.activity.widget.Toolbar" serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
-	propertyName="type" defaultPropertyValue="action">
+<servicer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.wrupple.com/servicer.xsd"
+          xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
+          type="com.wrupple.muba.worker.shared.widgets.Toolbar"
+          serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+          propertyName="type" defaultPropertyValue="action">
 	<parent>
 		<property name="type"  />
 		<hint name="collapsible" value="true" />
-		<hint name="direction" valueEnum="com.wrupple.muba.desktop.client.activity.widgets.ContentPanel.ToolbarDirection" />
+        <hint name="direction" valueEnum="com.wrupple.muba.worker.shared.widgets.HumanTaskWindow.ToolbarDirection"/>
 		<hint name="size" value="0"/>
 	</parent>
 	<service id="ruler" creator="rulerToolbar">

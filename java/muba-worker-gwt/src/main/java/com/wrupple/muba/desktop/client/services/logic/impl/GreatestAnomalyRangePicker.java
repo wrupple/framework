@@ -3,14 +3,14 @@ package com.wrupple.muba.desktop.client.services.logic.impl;
 import com.google.gwt.view.client.Range;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.State;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.OutcomeNarrower;
 import com.wrupple.muba.desktop.client.services.logic.RangePicker;
 import com.wrupple.muba.desktop.shared.services.BucketSplittingStrategy;
 import com.wrupple.muba.desktop.shared.services.HistogramDataProcessor;
 import com.wrupple.muba.desktop.shared.services.StatisticsCalculator;
+import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.domain.HistogramModel;
 
 import java.util.Arrays;
@@ -45,8 +45,8 @@ public class GreatestAnomalyRangePicker implements RangePicker {
 			double[][] normality = getNormalBucketFrequencies(result, data);
 			// get all narrower's bucket's differences from normality
 			double[] anomalySum = addAllAnomalies(result,normality);
-			// get the index of the bucket with the biggest anomaly
-			Range greatestAnomalyRange = getGratestAnomalyBucket(anomalySum, intervalWidth);
+            // get the index of the bucket setRuntimeContext the biggest anomaly
+            Range greatestAnomalyRange = getGratestAnomalyBucket(anomalySum, intervalWidth);
 			
 			callback.setResultAndFinish(greatestAnomalyRange );
 		}

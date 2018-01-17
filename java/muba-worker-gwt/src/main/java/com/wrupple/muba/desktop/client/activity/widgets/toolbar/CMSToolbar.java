@@ -7,10 +7,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
@@ -18,9 +15,12 @@ import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.desktop.client.activity.widgets.WruppleActivityToolbarBase;
 import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.*;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 public class CMSToolbar extends WruppleActivityToolbarBase implements Toolbar {
 
@@ -58,8 +58,8 @@ public class CMSToolbar extends WruppleActivityToolbarBase implements Toolbar {
 				ContentManager<JsCatalogEntry> cm = cms.getContentManager(catalog);
 				String transaction = result.getTransactionType();
 				JavaScriptObject initialValue;
-				// TODO still some repeated logic with UserInteractionState
-                //TODO register transaction view with event processSwitches
+                // TODO still some repeated logic setRuntimeContext UserInteractionState
+                //TODO register transaction view setRuntimeContext event processSwitches
                 if (CatalogActionRequest.READ_ACTION.equals(transaction)) {
 					transactionView = cm.getReadTransaction(contextParameters, properties, bus, contextServices);
 					panel.setWidget((IsWidget) transactionView);

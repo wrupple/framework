@@ -5,26 +5,28 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayMixed;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.bpm.domain.BPMPeer;
-import com.wrupple.muba.bpm.domain.Transaction;
 import com.wrupple.muba.catalogs.client.services.ClientCatalogCacheManager;
 import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.client.services.impl.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.domain.ContentNode;
-import com.wrupple.muba.desktop.client.event.*;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.CatalogCache;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.impl.SimpleFilterableDataProvider;
 import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.domain.BPMPeer;
+import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
+import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
+import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
 import com.wrupple.vegetate.client.services.CatalogEntryAssembler;
 import com.wrupple.vegetate.client.services.CatalogServiceSerializer;
 import com.wrupple.vegetate.client.services.CatalogVegetateChannel;
@@ -152,67 +154,120 @@ public class VegetateStorageUnitImpl implements RemoteStorageUnit<JsCatalogActio
 
 	}
 
-	class CacheUpdateHandler implements EntryUpdatedEventHandler {
-		final EventBus bus;
+    private void openNewChannel(final StateTransition<CatalogVegetateChannelImpl> callback) {
 
-		public CacheUpdateHandler(EventBus bus) {
-			super();
-			this.bus = bus;
-		}
+        if (getAvailableChannel() == null) {
+            // TODO preload all available service manifests the same way we
+            // preload some catalog descriptors?
+            if (manifest == null) {
+                // Catalog service manifest is not loaded
 
-		@Override
-		public void onEntryUpdated(EntryUpdatedEvent e) {
-			JsCatalogEntry entry = e.entry.cast();
-			String catalog = entry.getCatalog();
-			String id = entry.getId();
-			CatalogCache affectedCacheUnit = ccm.getIdentityCache(catalog);
-			if (affectedCacheUnit != null) {
-				JavaScriptObject cachedEntry = affectedCacheUnit.read(id);
-				if (cachedEntry != null) {
-					affectedCacheUnit.put(id, entry);
-					StateTransition<JsCatalogEntry> callback = new EntryRetrivingServiceHook(catalog, bus);
-					callback.setResultAndFinish(entry);
-				}
-			}
-		}
+                if (temp == null) {
+                    // create a temporary channel setRuntimeContext an empty manifest to load
+                    // the real manifest
+                    JsVegetateServiceManifest emptyManifest = JavaScriptObject.createObject().cast();
+                    emptyManifest.setServiceName(CatalogServiceManifest.SERVICE_NAME);
+                    temp = new CatalogVegetateChannelImpl(host, ssl, emptyManifest, bus, serializer);
+                }
 
-	}
+                if (tempcallback == null) {
+                    tempcallback = callback;
+                    temp.getServiceManifest(new DataCallback<JsVegetateServiceManifest>() {
+                        @Override
+                        public void execute() {
+                            manifest = result;
+                            temp = null;
+                            tempcallback = null;
 
-	class CacheInvalidationHandler implements EntryCreatedEventHandler, EntriesDeletedEventHandler {
+                            callback.setResultAndFinish(new CatalogVegetateChannelImpl(host, ssl, manifest, bus, serializer));
+                        }
+                    });
+                } else {
+                    tempcallback.hook(callback);
+                }
 
-		@Override
-		public void onEntryCreated(EntryCreatedEvent e) {
-			JsCatalogKey createdEntry = e.entry;
-			String catalog = createdEntry.getCatalog();
-			doInvalidation(catalog, createdEntry);
-			if (!ccm.isInvalidationAvailable()) {
-				try {
-					ccm.getIdentityCache(catalog).forceAppend(createdEntry);
-				} catch (Exception ex) {
-					GWT.log("unable to append created wnetry while cache invalidation is unavailable", ex);
-				}
+            } else {
+                callback.setResultAndFinish(new CatalogVegetateChannelImpl(host, ssl, manifest, bus, serializer));
+            }
+        } else {
+            callback.setResultAndFinish(getAvailableChannel());
+        }
+    }
 
-			}
-		}
+    private void readFilteredFromLocalCache(String domainNamespace, CatalogDescriptor descriptor, JsFilterData filter, StateTransition<List<JsCatalogEntry>> callback,
+                                            EventBus bus, CatalogVegetateChannel channel) {
+        // TODO wrapp callback to evaluate ephemeral fields setRuntimeContext a lower cache
+        // policy (default is to evaluate on every read)
+        String catalogid = descriptor.getCatalogId();
 
-		private void doInvalidation(String catalog, JsCatalogKey createdEntry) {
-			ccm.invalidateCache(catalog);
-		}
+        CatalogCache cache = ccm.getCache((JsCatalogDescriptor) descriptor, filter);
 
-		@Override
-		public void onEntriesDeleted(EntriesDeletedEvent e) {
-			// TODO is it necesary to invalidate the entire cache or just use
-			// cache.delete?
-			String catalog = e.catalog;
-			if (ccm.isInvalidationAvailable()) {
-				doInvalidation(catalog, null);
-			} else {
-				ccm.forceInvalidation(catalog);
-			}
+        if (cache == null) {
+            // no choice but to call the server without further ado
+            remoteRead(domainNamespace, catalogid, filter, callback, bus, channel);
+        } else {
+            JsArray<JsFilterCriteria> criteriaArray = filter.getFilterArray();
+            boolean incrementalCriteria = GWTUtils.getAttributeAsBoolean(filter, SimpleFilterableDataProvider.LOCAL_FILTERING)
+                    || descriptor.getCachePolicy() == null || CatalogActionRequest.FULL_CACHE.equals(descriptor.getCachePolicy());
 
-		}
+            if (incrementalCriteria || criteriaArray == null || criteriaArray.length() == 0) {
+                if (criteriaArray.length() == 1) {
+                    // if the only available criteria is id field
+                    JsFilterCriteria onlyAvailableCriteria = criteriaArray.get(0);
+                    String onlyAvailableCriteriaField = onlyAvailableCriteria.getPath(0);
+                    if (descriptor.getKeyField().equals(onlyAvailableCriteriaField)) {
+                        // check if we can satisfy all id's setRuntimeContext cache
+                        JsArray<JsCatalogEntry> satisfiedEntries = delegate.getCachedEntriesByKeyCriteria(cache, onlyAvailableCriteria, bus);
+                        if (satisfiedEntries == null) {
+                            // Unable to satisfy criteria setRuntimeContext cached
+                            // entries
+                            // SKIP CACHE
+                            callback.hook(new PutInCache(cache, filter, -1));
+                            filter.setConstrained(false);
+                            remoteRead(domainNamespace, catalogid, filter, callback, bus, channel);
+                        } else {
+                            // Criteria was satisfied setRuntimeContext available entries
+                            // Use cached results
+                            List<JsCatalogEntry> result = JsArrayList.arrayAsList(satisfiedEntries);
+                            callback.setResultAndFinish(result);
+                        }
+                    } else {
+                        fetchIncremental(domainNamespace, descriptor, cache, copyData(filter, descriptor), -1, callback, bus, channel);
+                    }
+                } else {
+                    fetchIncremental(domainNamespace, descriptor, cache, copyData(filter, descriptor), -1, callback, bus, channel);
+                }
 
-	}
+            } else {
+                if (criteriaArray.length() == 1) {
+                    // if the only available criteria is id field
+                    JsFilterCriteria onlyAvailableCriteria = criteriaArray.get(0);
+                    String onlyAvailableCriteriaField = onlyAvailableCriteria.getPath(0);
+                    if (descriptor.getKeyField().equals(onlyAvailableCriteriaField)) {
+                        // check if we can satisfy all id's setRuntimeContext cache
+                        JsArray<JsCatalogEntry> satisfiedEntries = delegate.getCachedEntriesByKeyCriteria(cache, onlyAvailableCriteria, bus);
+                        if (satisfiedEntries == null) {
+                            // Unable to satisfy criteria setRuntimeContext cached
+                            // entries
+                            // SKIP CACHE
+                            callback.hook(new PutInCache(cache, filter, -1));
+                            filter.setConstrained(false);
+                            remoteRead(domainNamespace, catalogid, filter, callback, bus, channel);
+                        } else {
+                            // Criteria was satisfied setRuntimeContext available entries
+                            // Use cached results
+                            List<JsCatalogEntry> result = JsArrayList.arrayAsList(satisfiedEntries);
+                            callback.setResultAndFinish(result);
+                        }
+                    } else {
+                        fetchByQuerying(domainNamespace, cache, filter, descriptor, callback, bus, channel, -1);
+                    }
+                } else {
+                    fetchByQuerying(domainNamespace, cache, filter, descriptor, callback, bus, channel, -1);
+                }
+            }
+        }
+    }
 
 	class SingleEntryFieldEvaluatingCallback extends DataCallback<JsCatalogEntry> {
 
@@ -342,44 +397,30 @@ public class VegetateStorageUnitImpl implements RemoteStorageUnit<JsCatalogActio
 		return channel;
 	}
 
-	private void openNewChannel(final StateTransition<CatalogVegetateChannelImpl> callback) {
+    class CacheUpdateHandler implements EventHandler {
+        final EventBus bus;
 
-		if (getAvailableChannel() == null) {
-			// TODO preload all available service manifests the same way we
-			// preload some catalog descriptors?
-			if (manifest == null) {
-				// Catalog service manifest is not loaded
+        public CacheUpdateHandler(EventBus bus) {
+            super();
+            this.bus = bus;
+        }
 
-				if (temp == null) {
-					// create a temporary channel with an empty manifest to load
-					// the real manifest
-					JsVegetateServiceManifest emptyManifest = JavaScriptObject.createObject().cast();
-					emptyManifest.setServiceName(CatalogServiceManifest.SERVICE_NAME);
-					temp = new CatalogVegetateChannelImpl(host, ssl, emptyManifest, bus, serializer);
-				}
-
-				if (tempcallback == null) {
-					tempcallback = callback;
-					temp.getServiceManifest(new DataCallback<JsVegetateServiceManifest>() {
-						@Override
-						public void execute() {
-							manifest = result;
-							temp = null;
-							tempcallback = null;
-
-							callback.setResultAndFinish(new CatalogVegetateChannelImpl(host, ssl, manifest, bus, serializer));
-						}
-					});
-				} else {
-					tempcallback.hook(callback);
-				}
-
-			} else {
-				callback.setResultAndFinish(new CatalogVegetateChannelImpl(host, ssl, manifest, bus, serializer));
+        @Override
+        public void onEntryUpdated(EntryUpdatedEvent e) {
+            JsCatalogEntry entry = e.entry.cast();
+            String catalog = entry.getCatalog();
+            String id = entry.getId();
+            CatalogCache affectedCacheUnit = ccm.getIdentityCache(catalog);
+            if (affectedCacheUnit != null) {
+                JavaScriptObject cachedEntry = affectedCacheUnit.read(id);
+                if (cachedEntry != null) {
+                    affectedCacheUnit.put(id, entry);
+                    StateTransition<JsCatalogEntry> callback = new EntryRetrivingServiceHook(catalog, bus);
+                    callback.setResultAndFinish(entry);
+                }
 			}
-		} else {
-			callback.setResultAndFinish(getAvailableChannel());
 		}
+
 	}
 
 	@Override
@@ -658,80 +699,41 @@ public class VegetateStorageUnitImpl implements RemoteStorageUnit<JsCatalogActio
 		}
 	}
 
-	private void readFilteredFromLocalCache(String domainNamespace, CatalogDescriptor descriptor, JsFilterData filter, StateTransition<List<JsCatalogEntry>> callback,
-			EventBus bus, CatalogVegetateChannel channel) {
-		// TODO wrapp callback to evaluate ephemeral fields with a lower cache
-		// policy (default is to evaluate on every read)
-		String catalogid = descriptor.getCatalogId();
+    class CacheInvalidationHandler implements EventHandler {
 
-		CatalogCache cache = ccm.getCache((JsCatalogDescriptor) descriptor, filter);
+        @Override
+        public void onEntryCreated(EntryCreatedEvent e) {
+            JsCatalogKey createdEntry = e.entry;
+            String catalog = createdEntry.getCatalog();
+            doInvalidation(catalog, createdEntry);
+            if (!ccm.isInvalidationAvailable()) {
+                try {
+                    ccm.getIdentityCache(catalog).forceAppend(createdEntry);
+                } catch (Exception ex) {
+                    GWT.log("unable to append created wnetry while cache invalidation is unavailable", ex);
+                }
 
-		if (cache == null) {
-			// no choice but to call the server without further ado
-			remoteRead(domainNamespace, catalogid, filter, callback, bus, channel);
-		} else {
-			JsArray<JsFilterCriteria> criteriaArray = filter.getFilterArray();
-			boolean incrementalCriteria = GWTUtils.getAttributeAsBoolean(filter, SimpleFilterableDataProvider.LOCAL_FILTERING)
-					|| descriptor.getCachePolicy() == null || CatalogActionRequest.FULL_CACHE.equals(descriptor.getCachePolicy());
+            }
+        }
 
-			if (incrementalCriteria || criteriaArray == null || criteriaArray.length() == 0) {
-				if (criteriaArray.length() == 1) {
-					// if the only available criteria is id field
-					JsFilterCriteria onlyAvailableCriteria = criteriaArray.get(0);
-					String onlyAvailableCriteriaField = onlyAvailableCriteria.getPath(0);
-					if (descriptor.getKeyField().equals(onlyAvailableCriteriaField)) {
-						// check if we can satisfy all id's with cache
-						JsArray<JsCatalogEntry> satisfiedEntries = delegate.getCachedEntriesByKeyCriteria(cache, onlyAvailableCriteria, bus);
-						if (satisfiedEntries == null) {
-							// Unable to satisfy criteria with cached
-							// entries
-							// SKIP CACHE
-							callback.hook(new PutInCache(cache, filter, -1));
-							filter.setConstrained(false);
-							remoteRead(domainNamespace, catalogid, filter, callback, bus, channel);
-						} else {
-							// Criteria was satisfied with available entries
-							// Use cached results
-							List<JsCatalogEntry> result = JsArrayList.arrayAsList(satisfiedEntries);
-							callback.setResultAndFinish(result);
-						}
-					} else {
-						fetchIncremental(domainNamespace, descriptor, cache, copyData(filter, descriptor), -1, callback, bus, channel);
-					}
-				} else {
-					fetchIncremental(domainNamespace, descriptor, cache, copyData(filter, descriptor), -1, callback, bus, channel);
-				}
+        private void doInvalidation(String catalog, JsCatalogKey createdEntry) {
+            ccm.invalidateCache(catalog);
+        }
 
-			} else {
-				if (criteriaArray.length() == 1) {
-					// if the only available criteria is id field
-					JsFilterCriteria onlyAvailableCriteria = criteriaArray.get(0);
-					String onlyAvailableCriteriaField = onlyAvailableCriteria.getPath(0);
-					if (descriptor.getKeyField().equals(onlyAvailableCriteriaField)) {
-						// check if we can satisfy all id's with cache
-						JsArray<JsCatalogEntry> satisfiedEntries = delegate.getCachedEntriesByKeyCriteria(cache, onlyAvailableCriteria, bus);
-						if (satisfiedEntries == null) {
-							// Unable to satisfy criteria with cached
-							// entries
-							// SKIP CACHE
-							callback.hook(new PutInCache(cache, filter, -1));
-							filter.setConstrained(false);
-							remoteRead(domainNamespace, catalogid, filter, callback, bus, channel);
-						} else {
-							// Criteria was satisfied with available entries
-							// Use cached results
-							List<JsCatalogEntry> result = JsArrayList.arrayAsList(satisfiedEntries);
-							callback.setResultAndFinish(result);
-						}
-					} else {
-						fetchByQuerying(domainNamespace, cache, filter, descriptor, callback, bus, channel, -1);
-					}
-				} else {
-					fetchByQuerying(domainNamespace, cache, filter, descriptor, callback, bus, channel, -1);
-				}
-			}
+        @Override
+        public void onEntriesDeleted(EntriesDeletedEvent e) {
+            // TODO is it necesary to invalidate the entire cache or just use
+            // cache.delete?
+            String catalog = e.catalog;
+            if (ccm.isInvalidationAvailable()) {
+                doInvalidation(catalog, null);
+            } else {
+                ccm.forceInvalidation(catalog);
+            }
+
 		}
-	}
+
+    }
 
 	private void fetchByQuerying(String domainNamespace, CatalogCache cache, JsFilterData filter, CatalogDescriptor catalog,
 			StateTransition<List<JsCatalogEntry>> callback, EventBus bus, CatalogVegetateChannel channel, int previousCacheSize) {

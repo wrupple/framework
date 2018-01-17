@@ -1,8 +1,8 @@
 package com.wrupple.muba.desktop.domain.impl;
 
-import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.domain.ContainerContext;
+import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.worker.domain.ApplicationState;
 import org.apache.commons.chain.impl.ContextBase;
 
 import javax.inject.Inject;
@@ -21,6 +21,7 @@ public class ContainerContextImpl extends ContextBase implements ContainerContex
     public RuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
+
 
     @Override
     public ApplicationState getState() {

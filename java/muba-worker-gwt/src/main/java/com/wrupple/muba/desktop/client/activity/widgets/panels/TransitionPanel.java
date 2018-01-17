@@ -7,15 +7,15 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.ui.*;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
-import com.wrupple.muba.desktop.client.activity.widgets.TaskPresenter;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.impl.*;
 import com.wrupple.muba.desktop.client.services.presentation.impl.PanelTransition.Orientation;
+import com.wrupple.muba.desktop.client.widgets.TaskContainer;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow;
 
-public class TransitionPanel extends ResizeComposite implements TaskPresenter {
+public class TransitionPanel extends ResizeComposite implements TaskContainer {
 
 	class RemoveCurrentAndSetNew implements AnimationCallback {
 		private IsWidget next;
@@ -85,9 +85,8 @@ public class TransitionPanel extends ResizeComposite implements TaskPresenter {
 
 	private HasText header;
 
-	
-	
-	private ContentPanel userContent;
+
+    private HumanTaskWindow userContent;
 
 	private StateTransition<JsTransactionApplicationContext> userInteractionTaskCallback;
 
@@ -241,8 +240,8 @@ public class TransitionPanel extends ResizeComposite implements TaskPresenter {
 	}
 
 	@Override
-	public TaskPresenter spawnChild(StateTransition<Void> callback) {
-		if(current== null){
+    public TaskContainer spawnChild(StateTransition<Void> callback) {
+        if(current== null){
 			throw new IllegalArgumentException("cannot create a modal overlay on an empty transition panel");
 		}
 		
@@ -286,13 +285,13 @@ public class TransitionPanel extends ResizeComposite implements TaskPresenter {
 
 
 	@Override
-	public ContentPanel getTaskContent() {
-		return userContent;
+    public HumanTaskWindow getTaskContent() {
+        return userContent;
 	}
 
 	@Override
-	public void setTaskContent(ContentPanel panel) {
-		this.userContent=panel;
+    public void setTaskContent(HumanTaskWindow panel) {
+        this.userContent=panel;
 	}
 
 	@Override

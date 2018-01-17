@@ -19,17 +19,16 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.MultipartFormActionUrlService;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.domain.PersistentImageMetadata;
 
 public class CatalogFileUpload extends Composite implements HasValue<String> {
@@ -59,8 +58,8 @@ public class CatalogFileUpload extends Composite implements HasValue<String> {
 		@Override
 		public void onSubmitComplete(SubmitCompleteEvent event) {
 			// Response an be either a JSON download descriptor, or a plain
-			// string with the id of the file
-			String newFile = event.getResults();
+            // string setRuntimeContext the id of the file
+            String newFile = event.getResults();
 			JsArrayString array = calculateNewValue(newFile);
 			String newValue = null;
 			if (array.length() == 0) {

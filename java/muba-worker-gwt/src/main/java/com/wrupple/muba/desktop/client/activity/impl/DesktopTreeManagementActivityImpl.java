@@ -4,10 +4,6 @@ import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.ActivityProcess;
-import com.wrupple.muba.bpm.client.activity.SequentialActivity;
-import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.cms.client.services.impl.SimpleContentManager;
@@ -19,6 +15,10 @@ import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
+import com.wrupple.muba.worker.client.activity.ActivityProcess;
+import com.wrupple.muba.worker.client.activity.SequentialActivity;
+import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 public class DesktopTreeManagementActivityImpl extends AbstractActivity
         implements DesktopTreeManagementActivity, SequentialActivity {

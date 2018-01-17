@@ -26,10 +26,10 @@ public class MapCellProvider implements CatalogFormFieldProvider {
 			ProcessContextServices contextServices,
 			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
-		assert d.getDefaultValueOptions() != null : "Atemmpting to initialize a List Picker as a field with no default options";
-		
-		
-		if (CatalogAction.READ == mode) {
+        assert d.getDefaultValueOptions() != null : "Atemmpting to initialize a List Picker as a field setRuntimeContext no default options";
+
+
+        if (CatalogAction.READ == mode) {
 			
 			List<String> rawOptions = d.getDefaultValueOptions();
 			Map<String,String> valueMap = new HashMap<String,String>();

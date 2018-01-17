@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
@@ -22,6 +21,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
+import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import java.util.ArrayList;

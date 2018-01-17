@@ -2,7 +2,6 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.cells;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.vegetate.domain.FieldDescriptor;

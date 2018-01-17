@@ -1,12 +1,12 @@
 package com.wrupple.muba.desktop.client.services.logic.impl;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.ParallelProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.State;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.event.server.chain.command.impl.ParallelProcess;
+import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 

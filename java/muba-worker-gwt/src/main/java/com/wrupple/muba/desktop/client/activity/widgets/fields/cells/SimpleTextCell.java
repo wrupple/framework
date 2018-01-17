@@ -8,7 +8,6 @@ import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.templates.CatalogKeyTemplates;

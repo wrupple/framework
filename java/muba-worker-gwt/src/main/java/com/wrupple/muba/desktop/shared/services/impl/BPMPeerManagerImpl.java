@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.shared.services.impl;
 
-import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.bpm.domain.SessionContextDTO;
+import com.wrupple.muba.worker.domain.BPMPeer;
 import com.wrupple.vegetate.shared.services.BPMPeerManager;
 
 /**
@@ -53,12 +53,12 @@ public class BPMPeerManagerImpl implements BPMPeerManager {
 			// that
 			// contains a reference to an unknown host, do all requests necesary
 			// to get PeerData on that Host
-			// TODO Build a catalog peer to comunicate with the given peer both
-			// client or server side
+            // TODO Build a catalog peer to comunicate setRuntimeContext the given peer both
+            // client or server side
 			// TODO if the host is not the local host, then some mechanism must
-			// be fired previously to athenticate with that host
-			throw new IllegalArgumentException("Desktop client does not currently support communication with foreign hosts");
-		}
+            // be fired previously to athenticate setRuntimeContext that host
+            throw new IllegalArgumentException("Desktop client does not currently support communication setRuntimeContext foreign hosts");
+        }
 
 	}
 

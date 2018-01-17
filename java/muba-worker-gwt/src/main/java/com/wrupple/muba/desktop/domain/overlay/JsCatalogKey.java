@@ -123,9 +123,9 @@ public class JsCatalogKey extends JavaScriptObject implements CatalogKey {
 	}-*/;
 
 	/**
-	 * 
-	 * inserts new properties with a higher priority than those currently
-	 * contained
+	 *
+     * inserts new properties setRuntimeContext a higher priority than those currently
+     * contained
 	 * 
 	 * @param newProperties
 	 */

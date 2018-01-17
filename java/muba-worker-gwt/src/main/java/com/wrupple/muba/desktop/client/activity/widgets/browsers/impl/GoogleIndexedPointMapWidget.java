@@ -21,6 +21,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.PointMapWidget;
 import com.wrupple.muba.desktop.client.activity.widgets.PointMapWidget.MarkerFactory;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.WruppleIndexedPointMapWidget;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEntryBrowserMap;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.CatalogEntryKeyProvider;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
@@ -29,7 +30,6 @@ import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.vegetate.client.services.RemoteStorageUnit;
-import com.wrupple.vegetate.client.services.StorageManager;
 
 import javax.inject.Provider;
 import java.util.HashMap;

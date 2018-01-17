@@ -4,17 +4,17 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.State;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.FieldColumnRelation;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImageFieldImportData;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.MultipleCatalogFileUpload.Value;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
+import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 import java.util.List;
 

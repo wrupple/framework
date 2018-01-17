@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.vegetate.client.services.RemoteStorageUnit;
-import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.CatalogEntry;
 
 public class ImageKeyThumbnail extends Image implements HasValue<String> {

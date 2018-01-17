@@ -12,14 +12,20 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.client.event.*;
+import com.wrupple.muba.desktop.client.event.NewVegetateRequestEvent;
+import com.wrupple.muba.desktop.client.event.VegetateRequestFailureEvent;
+import com.wrupple.muba.desktop.client.event.VegetateRequestSuccessEvent;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.impl.ActivityVegetateEventHandler;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
+import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
+import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
+import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
 
 import javax.inject.Named;
 

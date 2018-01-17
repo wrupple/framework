@@ -3,7 +3,6 @@ package com.wrupple.batch.service.impl
 import java.util
 
 import com.wrupple.batch.service.BatchJobInterpret
-import com.wrupple.muba.bpm.domain.ApplicationContext
 import org.apache.commons.chain.Context
 import org.apache.logging.log4j.scala.Logging
 

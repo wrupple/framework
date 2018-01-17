@@ -5,7 +5,7 @@ package com.wrupple.muba.desktop.client.services.command;
  * 
  * Used to determine the next Desktop Place following user interaction after an activity has finished.
  * Assumes user output to be a Catalog Entry, or an Array of Catalog Entries. then reads the first token of the command line
- * and excecutes the command callback passing a DesktopPlace pointing to the activity specified by the first command line token, with
+ * and excecutes the command callback passing a DesktopPlace pointing to the activity specified by the first command line token, setRuntimeContext
  * catalog entry and catalog arguments WITHOUT commiting the current activity.
  * 
  * @author japi

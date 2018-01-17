@@ -1,7 +1,7 @@
 package com.wrupple.vegetate.client.services.impl;
 
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 import java.util.List;
 

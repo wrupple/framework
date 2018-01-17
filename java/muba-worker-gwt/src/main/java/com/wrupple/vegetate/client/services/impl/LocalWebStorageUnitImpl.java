@@ -1,6 +1,5 @@
 package com.wrupple.vegetate.client.services.impl;
 
-import com.wrupple.muba.bpm.domain.Transaction;
 import com.wrupple.vegetate.client.services.LocalWebStorageUnit;
 
 /**

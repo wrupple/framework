@@ -8,7 +8,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;

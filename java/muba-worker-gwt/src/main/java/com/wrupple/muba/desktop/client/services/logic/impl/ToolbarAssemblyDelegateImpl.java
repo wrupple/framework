@@ -6,17 +6,17 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.user.client.TakesValue;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.cms.domain.TaskToolbarDescriptor;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
 import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.presentation.ToolbarAssemblyDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.*;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
 	}
 
 	@Override
-	public void assebleToolbars(final ContentPanel transactionPanel, final TakesValue<?> mainTrasaction, final JsProcessTaskDescriptor parameter,
+    public void assebleToolbars(final HumanTaskWindow transactionPanel, final TakesValue<?> mainTrasaction, final JsProcessTaskDescriptor parameter,
                                 final JavaScriptObject taskDescriptorProps, final JsTransactionApplicationContext activityContext, final EventBus bus, final ProcessContextServices context,
                                 final JsApplicationItem currentPlace) {
 
@@ -66,7 +66,7 @@ public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
 
 	}
 
-	private void buildTOolbars(JavaScriptObject taskDescriptorProps, JsArray<JsTaskToolbarDescriptor> toolbars, ContentPanel transactionView,
+    private void buildTOolbars(JavaScriptObject taskDescriptorProps, JsArray<JsTaskToolbarDescriptor> toolbars, HumanTaskWindow transactionView,
                                TakesValue<?> mainTrasaction, JsProcessTaskDescriptor parameter, EventBus bus, ProcessContextServices context,
                                JsTransactionApplicationContext contextParamenters, JsApplicationItem currentPlace) {
 
@@ -80,7 +80,7 @@ public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
 		}
 	}
 
-	private void processToolbar(JsTaskToolbarDescriptor toolbarDescriptor, JavaScriptObject taskDescriptorProps, ContentPanel transactionView,
+    private void processToolbar(JsTaskToolbarDescriptor toolbarDescriptor, JavaScriptObject taskDescriptorProps, HumanTaskWindow transactionView,
                                 JsProcessTaskDescriptor parameter, JsTransactionApplicationContext contextParamenters, EventBus bus, ProcessContextServices context,
                                 TakesValue<?> mainTrasaction, JsApplicationItem currentPlace, boolean redraw) {
 		String type = toolbarDescriptor.getType();
@@ -99,8 +99,8 @@ public class ToolbarAssemblyDelegateImpl implements ToolbarAssemblyDelegate {
 
 		// parseFloat("10.00")
 		setSize(properties, taskDescriptorProps, TOOLBAR_SIZE_POSTFIX, name, type, toolbarId);
-		GWTUtils.setAttribute(properties, ContentPanel.REDRAW_FLAG, redraw);
-		transactionView.addToolbar(toolbar, properties);
+        GWTUtils.setAttribute(properties, HumanTaskWindow.REDRAW_FLAG, redraw);
+        transactionView.addToolbar(toolbar, properties);
 	}
 
 	private native void setSize(JavaScriptObject dest, JavaScriptObject sourc, String postfix, String name, String type, String id) /*-{

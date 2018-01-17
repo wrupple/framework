@@ -2,12 +2,12 @@ package com.wrupple.muba.desktop.client.activity.process.state.impl;
 
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.CatalogProcessDescriptor;
 import com.wrupple.muba.desktop.client.activity.process.state.ContentLoadingState;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 public class ContentLoadingStateImpl implements ContentLoadingState {
 

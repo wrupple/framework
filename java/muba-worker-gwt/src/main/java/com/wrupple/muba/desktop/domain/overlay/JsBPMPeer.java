@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.domain.overlay;
 
-import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
+import com.wrupple.muba.worker.domain.BPMPeer;
 
 import java.util.Date;
 

@@ -18,8 +18,8 @@ public abstract class AbstractEditableField<T> extends AbstractEditableCell<T, F
 	/**
 	 * The view data object used by this cell. We need to store both the text
 	 * and the state because this cell is rendered differently in edit mode. If
-	 * we did not store the edit state, refreshing the cell with view data would
-	 * always put us in to edit state, rendering a text box instead of the new
+     * we did not store the edit state, refreshing the cell setRuntimeContext view data would
+     * always put us in to edit state, rendering a text box instead of the new
 	 * text string.
 	 */
 	public static class FieldData<T> {

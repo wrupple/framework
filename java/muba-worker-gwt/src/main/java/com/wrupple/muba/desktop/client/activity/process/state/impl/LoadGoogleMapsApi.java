@@ -5,8 +5,8 @@ import com.google.gwt.maps.client.LoadApi;
 import com.google.gwt.maps.client.LoadApi.Language;
 import com.google.gwt.maps.client.LoadApi.LoadLibrary;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.activity.process.state.LoadMapsApi;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 
 import java.util.ArrayList;

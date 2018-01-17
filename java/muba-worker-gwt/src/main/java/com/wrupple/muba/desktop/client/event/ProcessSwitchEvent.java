@@ -1,6 +1,5 @@
 package com.wrupple.muba.desktop.client.event;
 
-import com.wrupple.muba.bpm.client.services.Process;
 public class ProcessSwitchEvent extends DesktopProcessEvent {
 
 	private final Process<?, ?> oldProcess;

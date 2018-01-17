@@ -8,10 +8,9 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 public abstract class AbstractDelegatingEditableField<T> extends AbstractEditableField<T> {
 

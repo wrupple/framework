@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.activity.widgets.Prompt;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 
 public class SimplePromt<I> extends ResizeComposite implements Prompt<I>{
 

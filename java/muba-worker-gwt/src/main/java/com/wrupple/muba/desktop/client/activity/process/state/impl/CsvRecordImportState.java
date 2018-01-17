@@ -6,19 +6,19 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.shared.GWT;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.ParallelProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.State;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.FieldColumnRelation;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.impl.SimpleFilterableDataProvider;
 import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.event.server.chain.command.impl.ParallelProcess;
+import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 import com.wrupple.vegetate.domain.FilterData;
 
@@ -208,10 +208,10 @@ public class CsvRecordImportState implements State.ContextAware<JsArrayString, J
 															 * (no pre-existing
 															 * check)
 															 */) {
-						// check for an entry with the same user assigned key,
-						// or
-						// with all fields equal
-						GWTUtils.setAttribute(filter, SimpleFilterableDataProvider.LOCAL_FILTERING, true);
+                        // check for an entry setRuntimeContext the same user assigned key,
+                        // or
+                        // setRuntimeContext all fields equal
+                        GWTUtils.setAttribute(filter, SimpleFilterableDataProvider.LOCAL_FILTERING, true);
 						context.getStorageManager().read(context.getDesktopManager().getCurrentActivityHost(), context.getDesktopManager().getCurrentActivityDomain(), catalog, filter, new DataCallback<List<JsCatalogEntry>>() {
 
 							@Override

@@ -15,11 +15,15 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.activity.widgets.toolbar.HomeToolbar;
 import com.wrupple.muba.desktop.client.event.*;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
+import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
+import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
+import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
 
 @Singleton
 public class HomeToolbarImpl extends ResizeComposite implements HomeToolbar {

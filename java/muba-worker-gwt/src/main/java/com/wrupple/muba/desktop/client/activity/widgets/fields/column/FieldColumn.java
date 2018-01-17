@@ -2,8 +2,8 @@ package com.wrupple.muba.desktop.client.activity.widgets.fields.column;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.user.cellview.client.Column;
-import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
+import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.FilterCriteria;
 
 import java.util.List;

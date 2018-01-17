@@ -1,9 +1,9 @@
 package com.wrupple.vegetate.client.services;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.overlay.JsVegetateServiceManifest;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 public interface VegetateChannel<T extends JavaScriptObject,R> {
 

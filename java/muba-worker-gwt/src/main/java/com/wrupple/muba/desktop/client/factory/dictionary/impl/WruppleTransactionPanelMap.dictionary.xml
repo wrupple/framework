@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <servicer xmlns="http://www.wrupple.com/servicer.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd" type="com.wrupple.muba.desktop.client.activity.widgets.ContentPanel" serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
-	propertyName="transactionPanelType" defaultPropertyValue="dock">
-	<!-- layoutTransaction (powerpoint or prezi like) with zoom and all -->
+          xsi:schemaLocation="http://www.wrupple.com/servicer.xsd http://www.wrupple.com/servicer.xsd"
+          type="com.wrupple.muba.worker.shared.widgets.HumanTaskWindow"
+          serviceBus="com.wrupple.muba.desktop.client.bootstrap.WruppleDesktopLoader.getBaseModule"
+          propertyName="transactionPanelType" defaultPropertyValue="dock">
+    <!-- layoutTransaction (powerpoint or prezi like) setRuntimeContext zoom and all -->
 	<service id="HTML" creator="HTML">
 		<property name="TaskHTML" />
 	</service>

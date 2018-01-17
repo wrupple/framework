@@ -7,15 +7,15 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.CatalogProcessDescriptor;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.process.state.ImportDataInputTask;
 import com.wrupple.muba.desktop.client.activity.widgets.ImportView;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.CSVParser;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 
 import java.util.List;

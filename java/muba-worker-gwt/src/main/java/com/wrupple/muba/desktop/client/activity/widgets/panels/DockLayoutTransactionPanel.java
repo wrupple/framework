@@ -4,17 +4,17 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.widget.HumanTaskProcessor;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.layout.LayoutPositioner.ToolbarJoining;
 import com.wrupple.muba.desktop.domain.ToolbarConfiguration;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskProcessor;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 import java.util.List;
 
-public class DockLayoutTransactionPanel extends AbstractContentPanel implements ContentPanel {
+public class DockLayoutTransactionPanel extends AbstractHumanTaskWindow implements HumanTaskWindow {
 
 	public final static class DockToolbarProperties extends JavaScriptObject {
 
@@ -83,15 +83,15 @@ public class DockLayoutTransactionPanel extends AbstractContentPanel implements 
 
 	}
 
-	NestedActivityPresenter main;
+    NestedActivityWindow main;
 
 	private HumanTaskProcessor<? extends JavaScriptObject,?> ui;
 
 	@Inject
 	public DockLayoutTransactionPanel(DesktopManager dm) {
 		super();
-		main = new NestedActivityPresenter(dm);
-		initWidget(main);
+        main = new NestedActivityWindow(dm);
+        initWidget(main);
 	}
 
 	@Override

@@ -6,8 +6,6 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.shared.GWT;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.editors.SequentialListEditor;
@@ -20,6 +18,7 @@ import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfac
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import javax.inject.Provider;
@@ -57,8 +56,8 @@ public class MultiTextProvider implements CatalogFormFieldProvider {
 				try {
 					assisotor = provider.getConfigured(casado, contextServices, bus, contextParameters);
 				} catch (Exception e) {
-					GWT.log("multitext with undeclared aid provider", e);
-				}
+                    GWT.log("multitext setRuntimeContext undeclared aid provider", e);
+                }
 				SequentialListEditor wrapped = new SequentialListEditor(messages, assisotor);
 				String name = messages.editingMultipleSingleLineTextProcess();
 				Process<JsArrayString, JsArrayString> process = SequentialProcess.wrap(wrapped, wrapped, name);

@@ -2,16 +2,15 @@ package com.wrupple.muba.desktop.domain;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.ApplicationItem;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
-import com.wrupple.muba.desktop.client.activity.widgets.ProcessPresenter;
-import com.wrupple.muba.desktop.client.activity.widgets.TaskPresenter;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
 import com.wrupple.muba.desktop.client.services.logic.ServiceBus;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
+import com.wrupple.muba.desktop.client.widgets.TaskContainer;
 import com.wrupple.vegetate.shared.services.PeerManager;
 public class HumanActivityContextServices implements ProcessContextServices {
 	
@@ -41,11 +40,11 @@ public class HumanActivityContextServices implements ProcessContextServices {
 	/**
 	 * Same for all nested processes
 	 */
-	private final ProcessPresenter outputFeature;
-	/**
+    private final ProcessWindow outputFeature;
+    /**
 	 * Unique per nested process
 	 */
-	private final TaskPresenter taskPresenter ;
+    private final TaskContainer jobInterface;
 
 	private final ApplicationItem item;
 
@@ -54,12 +53,12 @@ public class HumanActivityContextServices implements ProcessContextServices {
 
 	private String processLocalizedName;
 
-	public HumanActivityContextServices(Process<?, ?> process,ApplicationItem item,PlaceController placeController,TaskPresenter taskPresenter , ProcessPresenter outputFeature, ProcessManager processManager,
-			ServiceBus serviceBus, DesktopManager desktopManager,ContentManagementSystem contentManager, StorageManager storageManager,PeerManager pm, EventBus bus) {
-		super();
+    public HumanActivityContextServices(Process<?, ?> process, ApplicationItem item, PlaceController placeController, TaskContainer jobInterface, ProcessWindow outputFeature, ProcessManager processManager,
+                                        ServiceBus serviceBus, DesktopManager desktopManager, ContentManagementSystem contentManager, StorageManager storageManager, PeerManager pm, EventBus bus) {
+        super();
 		this.process=process;
-		this.taskPresenter=taskPresenter;
-		this.item=item;
+        this.jobInterface = jobInterface;
+        this.item=item;
 		this.outputFeature = outputFeature;
 		this.processManager = processManager;
 		this.serviceBus = serviceBus;
@@ -73,8 +72,8 @@ public class HumanActivityContextServices implements ProcessContextServices {
 	}
 
 	@Override
-	public ProcessPresenter getActivityOutputFeature() {
-		return outputFeature;
+    public ProcessWindow getActivityOutputFeature() {
+        return outputFeature;
 	}
 
 	@Override
@@ -146,8 +145,8 @@ public class HumanActivityContextServices implements ProcessContextServices {
 	}
 
 	@Override
-	public TaskPresenter getNestedTaskPresenter() {
-		return taskPresenter;
-	}
+    public TaskContainer getNestedTaskPresenter() {
+        return jobInterface;
+    }
 
 }

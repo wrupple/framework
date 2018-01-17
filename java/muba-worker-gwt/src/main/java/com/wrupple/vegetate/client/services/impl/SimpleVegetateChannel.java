@@ -10,17 +10,17 @@ import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.client.event.NewVegetateRequestEvent;
 import com.wrupple.muba.desktop.client.event.VegetateRequestFailureEvent;
 import com.wrupple.muba.desktop.client.event.VegetateRequestSuccessEvent;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.SerializationService;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsJavaExceptionOverlay;
 import com.wrupple.muba.desktop.domain.overlay.JsSignatureGenerator;
 import com.wrupple.muba.desktop.domain.overlay.JsVegetateServiceManifest;
 import com.wrupple.muba.desktop.domain.overlay.JsonVegetateResponse;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.client.services.VegetateChannel;
 import com.wrupple.vegetate.domain.VegetateServiceManifest;
 import com.wrupple.vegetate.shared.services.PeerManager;
@@ -371,9 +371,9 @@ public class SimpleVegetateChannel<T extends JavaScriptObject, R extends JavaScr
 			if(privateKey!=null&& publicKey!=null){
 				urlbuilder.setParameter(PeerManager.PUBLIC_KEY, publicKey);
 				urlbuilder.setParameter(PeerManager.ACCESS_TOKEN, signature);
-				//sign all jsonp requests (assume comunication with direct host is authenticated in another way
-				
-			}
+                //sign all jsonp requests (assume comunication setRuntimeContext direct host is authenticated in another way
+
+            }
 			url = urlbuilder.buildString();
 			jsonp.setCallbackParam(PeerManager.CALLBACK_FUNCTION);
 			jsonp.requestObject(url, requestCallback);

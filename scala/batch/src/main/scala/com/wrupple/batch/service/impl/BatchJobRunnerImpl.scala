@@ -3,8 +3,6 @@ package com.wrupple.batch.service.impl
 import javax.inject.Inject
 
 import com.wrupple.batch.service.{BatchJobRunner, BatchMessageDelegate, BatchModelResolver}
-import com.wrupple.muba.bpm.domain.{ApplicationContext, VariableDescriptor}
-import com.wrupple.muba.bpm.server.service.VariableEligibility
 import com.wrupple.muba.event.domain.FieldDescriptor
 import org.apache.logging.log4j.scala.Logging
 

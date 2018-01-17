@@ -7,14 +7,14 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel.ToolbarDirection;
 import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow.ToolbarDirection;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetImpl<JavaScriptObject,JavaScriptObject>
 		implements Toolbar {

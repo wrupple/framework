@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 
@@ -108,7 +107,7 @@ public class DispatchImpl implements Dispatch {
         return CONTINUE_PROCESSING;
     }
 
-    private Context materializeContext(RuntimeContext requestContext, RequestInterpret explicitInterpret) throws InvocationTargetException, IllegalAccessException {
+    private Context materializeContext(RuntimeContext requestContext, RequestInterpret explicitInterpret) throws Exception {
         Context context = requestContext.getServiceContext();
 
         if (context == null) {

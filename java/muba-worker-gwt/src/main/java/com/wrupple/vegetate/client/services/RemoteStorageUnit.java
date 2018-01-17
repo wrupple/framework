@@ -2,15 +2,15 @@ package com.wrupple.vegetate.client.services;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.safehtml.shared.SafeUri;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
-import com.wrupple.vegetate.client.services.StorageManager.Unit;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager.Unit;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.domain.BPMPeer;
 import com.wrupple.vegetate.domain.CatalogEntry;
 
 /**
- * Catalog communication service with a remote server using vegetate as a REST
+ * Catalog communication service setRuntimeContext a remote server using vegetate as a REST
  * communication standard
  * 
  * provides additional catalog services such as image builders

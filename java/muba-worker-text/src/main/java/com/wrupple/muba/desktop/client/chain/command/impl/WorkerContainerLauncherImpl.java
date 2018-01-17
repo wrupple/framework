@@ -1,14 +1,14 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
-import com.wrupple.muba.bpm.domain.Application;
-import com.wrupple.muba.bpm.domain.ApplicationState;
-import com.wrupple.muba.bpm.server.service.ProcessManager;
 import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
-import com.wrupple.muba.bpm.domain.ContainerContext;
-import com.wrupple.muba.desktop.client.service.LoadHumanInterface;
-import com.wrupple.muba.desktop.domain.LaunchWorker;
+import com.wrupple.muba.desktop.client.service.SliceReader;
+import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.desktop.domain.impl.ContainerContextImpl;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.worker.domain.Application;
+import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.worker.domain.WorkerLoadOrder;
+import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -20,16 +20,15 @@ import javax.inject.Singleton;
  * singleton ensures one container per factory/injector
  */
 @Singleton
-public class WorkerContainerLauncherImpl
-        implements WorkerContainerLauncher {
+public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
 
-    private final Provider<LaunchWorker> contractProvider;
+    private final Provider<WorkerLoadOrder> contractProvider;
     private final ProcessManager pm;
-    private final LoadHumanInterface delegate;
+    private final SliceReader delegate;
     private ContainerContextImpl container;
 
     @Inject
-    public WorkerContainerLauncherImpl(Provider<LaunchWorker> contractProvider, ProcessManager pm, LoadHumanInterface delegate) {
+    public WorkerContainerLauncherImpl(Provider<WorkerLoadOrder> contractProvider, ProcessManager pm, SliceReader delegate) {
         this.contractProvider = contractProvider;
         this.pm = pm;
         this.delegate = delegate;
@@ -37,7 +36,7 @@ public class WorkerContainerLauncherImpl
 
     @Override
     public Context materializeBlankContext(RuntimeContext parent) throws Exception {
-        LaunchWorker request = (LaunchWorker) parent.getServiceContract();
+        WorkerLoadOrder request = (WorkerLoadOrder) parent.getServiceContract();
         if (request == null) {
             request = contractProvider.get();
             parent.setServiceContract(request);
@@ -62,14 +61,13 @@ public class WorkerContainerLauncherImpl
     public boolean execute(Context ctx) throws Exception {
 
         RuntimeContext requestContext = (RuntimeContext) ctx;
-        LaunchWorker request = (LaunchWorker) requestContext.getServiceContract();
+        WorkerLoadOrder request = (WorkerLoadOrder) requestContext.getServiceContract();
         ContainerContext context = requestContext.getServiceContext();
 
         /*
-         * Setup Container
+         *Setup Container
          */
 
-        //TODO createApplication();
         return CONTINUE_PROCESSING;
     }
 

@@ -1,6 +1,6 @@
 package com.wrupple.muba.desktop.client.activity.widgets.toolbar;
 
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 import com.wrupple.vegetate.domain.FilterCriteria;
 
@@ -9,7 +9,7 @@ import com.wrupple.vegetate.domain.FilterCriteria;
  * input on the User's deepest and darkest searching urges.
  * 
  * There is usually one {@link FieldFilterViewProvider} contained in the
- * {@link FilterToolbar} assosiated with each filterable field of a catalog with
+ * {@link FilterToolbar} assosiated setRuntimeContext each filterable field of a catalog setRuntimeContext
  * the FilterView providing a model on how to constrain the possible outcomes of
  * one or more fields of the query results.
  * 

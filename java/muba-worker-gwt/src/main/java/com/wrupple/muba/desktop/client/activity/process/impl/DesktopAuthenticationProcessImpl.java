@@ -10,10 +10,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.HumanTask;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.activity.process.DesktopAuthenticationProcess;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
+import com.wrupple.muba.worker.client.activity.process.state.HumanTask;
 import com.wrupple.vegetate.domain.VegetateAuthenticationToken;
 
 public class DesktopAuthenticationProcessImpl extends SequentialProcess<Void, Boolean> implements DesktopAuthenticationProcess {

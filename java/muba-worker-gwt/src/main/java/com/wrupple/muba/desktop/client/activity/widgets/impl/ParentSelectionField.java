@@ -11,15 +11,14 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.cms.client.services.ContentManager;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 

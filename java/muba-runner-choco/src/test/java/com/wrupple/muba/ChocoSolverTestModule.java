@@ -3,9 +3,9 @@ package com.wrupple.muba;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bpm.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 

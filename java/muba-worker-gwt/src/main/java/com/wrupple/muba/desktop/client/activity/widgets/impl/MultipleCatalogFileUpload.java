@@ -18,11 +18,11 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.MultipartFormActionUrlService;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 public class MultipleCatalogFileUpload extends Composite implements HasValue<JsArray<MultipleCatalogFileUpload.Value>> {
 	private static MultipleCatalogFileUploadUiBinder uiBinder = GWT.create(MultipleCatalogFileUploadUiBinder.class);

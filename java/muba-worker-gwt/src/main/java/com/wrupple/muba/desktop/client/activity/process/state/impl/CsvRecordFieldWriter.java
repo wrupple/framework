@@ -4,22 +4,22 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.ParallelProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.State;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.FieldColumnRelation;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.process.state.impl.CsvRecordImportState.FieldImportData;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.impl.GWTFieldConversionStrategyImpl;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.impl.SimpleFilterableDataProvider;
 import com.wrupple.muba.desktop.domain.overlay.*;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.event.server.chain.command.impl.ParallelProcess;
+import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -301,8 +301,8 @@ public class CsvRecordFieldWriter implements State<FieldImportData, FieldImportD
 									if (mapping.isDiscriminative()) {
 										addCriteria(declaredKeys, mappedField, value);
 									}
-									// look for an entry with this field value
-									addCriteria(declaredFields, mappedField, value);
+                                    // look for an entry setRuntimeContext this field value
+                                    addCriteria(declaredFields, mappedField, value);
 								}
 
 							}

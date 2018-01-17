@@ -2,18 +2,18 @@ package com.wrupple.muba.desktop.client.services.presentation.impl;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.activity.widget.HumanTaskProcessor;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.ModifyUserInteractionStatePanelCommand;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskProcessor;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 public class ModifyUserInteractionStatePanelCommandImpl implements ModifyUserInteractionStatePanelCommand{
-	ContentPanel panel;
-	HumanTaskProcessor<?,?> transaction;
+    HumanTaskWindow panel;
+    HumanTaskProcessor<?,?> transaction;
 	PanelTransformationConfig config;
 	private ProcessContextServices contextServices;
 	private EventBus eventBus;

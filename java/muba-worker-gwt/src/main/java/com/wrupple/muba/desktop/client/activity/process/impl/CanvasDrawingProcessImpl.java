@@ -11,12 +11,12 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.HumanTask;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.activity.process.CanvasDrawingProcess;
 import com.wrupple.muba.desktop.client.activity.widgets.BigFatMessage;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
+import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
+import com.wrupple.muba.worker.client.activity.process.state.HumanTask;
 
 /**
  * 

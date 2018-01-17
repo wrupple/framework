@@ -10,13 +10,13 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.cms.domain.WruppleDomainHTMLPage;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 import java.util.ArrayList;
 import java.util.List;

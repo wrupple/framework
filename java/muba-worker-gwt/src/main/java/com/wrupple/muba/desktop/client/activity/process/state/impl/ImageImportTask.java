@@ -7,18 +7,18 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.HumanTask;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.MultipleCatalogFileUpload;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.MultipleCatalogFileUpload.Value;
+import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.MultipartFormActionUrlService;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.client.activity.process.state.HumanTask;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
@@ -27,8 +27,8 @@ import java.util.Collection;
 /**
  * this implementation renders a multiple image upload form, and a list of all
  * other fields of the catalog, for each of the catalog's fields.
- * 
- * the point is to upload several images with a filename that matches the value
+ *
+ * the point is to upload several images setRuntimeContext a filename that matches the value
  * of a field
  * 
  * @author japi

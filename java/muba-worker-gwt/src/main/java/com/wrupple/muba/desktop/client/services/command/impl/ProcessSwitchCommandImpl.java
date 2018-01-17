@@ -1,20 +1,17 @@
 package com.wrupple.muba.desktop.client.services.command.impl;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.ProcessSwitchCommand;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
@@ -22,6 +19,9 @@ import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
+import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 public class ProcessSwitchCommandImpl implements ProcessSwitchCommand {
 
 	class ProcessAssembledCallback

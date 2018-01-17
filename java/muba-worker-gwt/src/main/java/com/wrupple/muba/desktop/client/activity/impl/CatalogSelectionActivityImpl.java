@@ -3,15 +3,15 @@ package com.wrupple.muba.desktop.client.activity.impl;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.ActivityProcess;
-import com.wrupple.muba.bpm.client.activity.SequentialActivity;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.client.activity.CatalogSelectionActivity;
 import com.wrupple.muba.desktop.client.activity.process.CatalogTypeSelectionActivityProcess;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
+import com.wrupple.muba.worker.client.activity.ActivityProcess;
+import com.wrupple.muba.worker.client.activity.SequentialActivity;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 import javax.inject.Provider;
 

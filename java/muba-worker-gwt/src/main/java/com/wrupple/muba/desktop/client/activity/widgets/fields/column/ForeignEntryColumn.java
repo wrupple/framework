@@ -9,9 +9,9 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
+import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 import com.wrupple.vegetate.domain.FilterCriteria;
 

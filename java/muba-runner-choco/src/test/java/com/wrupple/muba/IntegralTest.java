@@ -2,13 +2,6 @@ package com.wrupple.muba;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
-import com.wrupple.muba.bpm.ConstraintSolverModule;
-import com.wrupple.muba.bpm.SolverModule;
-import com.wrupple.muba.bpm.domain.SolverServiceManifest;
-import com.wrupple.muba.bpm.server.chain.SolverEngine;
-import com.wrupple.muba.bpm.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.bpm.server.service.VariableConsensus;
-import com.wrupple.muba.bpm.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.catalogs.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
 import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
@@ -25,6 +18,13 @@ import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
+import com.wrupple.muba.worker.ConstraintSolverModule;
+import com.wrupple.muba.worker.SolverModule;
+import com.wrupple.muba.worker.domain.SolverServiceManifest;
+import com.wrupple.muba.worker.server.chain.SolverEngine;
+import com.wrupple.muba.worker.server.chain.command.ActivityRequestInterpret;
+import com.wrupple.muba.worker.server.service.VariableConsensus;
+import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
 import org.junit.Before;
 
 import java.io.InputStream;

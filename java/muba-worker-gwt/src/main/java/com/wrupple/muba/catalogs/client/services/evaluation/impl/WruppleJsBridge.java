@@ -5,18 +5,18 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.json.client.JSONObject;
-import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
 import com.wrupple.muba.desktop.client.services.command.ContextServicesNativeApiBuilder;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsContentNode;
+import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
 
 class WruppleJsBridge extends ContextServicesNativeApiBuilder {
 
 	// FIXME get rid of super class effectevibley killing all current
-	// connections with native js in favor of evaluation service 
-	public WruppleJsBridge(CatalogPlaceInterpret placeInterpret, TransactionalActivityAssembly assembly) {
+    // connections setRuntimeContext native js in favor of evaluation service
+    public WruppleJsBridge(CatalogPlaceInterpret placeInterpret, TransactionalActivityAssembly assembly) {
 		super(placeInterpret, assembly);
 	}
 

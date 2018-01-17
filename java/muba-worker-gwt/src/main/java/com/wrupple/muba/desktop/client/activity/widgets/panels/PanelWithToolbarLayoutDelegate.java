@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.wrupple.muba.desktop.client.activity.widgets.CollapsibleSimplePanel;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel.ToolbarDirection;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.layout.LayoutPositioner;
 import com.wrupple.muba.desktop.domain.ToolbarConfiguration;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow.ToolbarDirection;
 
 import java.util.ArrayList;
 import java.util.List;

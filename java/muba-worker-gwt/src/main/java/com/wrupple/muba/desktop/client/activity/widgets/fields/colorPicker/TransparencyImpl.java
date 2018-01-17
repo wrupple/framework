@@ -40,7 +40,7 @@ public class TransparencyImpl
         }
     }
 
-    /* Given a DOM element, set the transparency value, with 100 being fully opaque and
+    /* Given a DOM element, set the transparency value, setRuntimeContext 100 being fully opaque and
      * 0 being fully transparent
      * @param elem A com.google.gwt.user.client.Element object
      * @param alpha An alpha value
@@ -53,7 +53,7 @@ public class TransparencyImpl
         {
             elem = DOM.getChild(elem, 0);
 
-            // Cache existing filters on the image, then re-apply everything with our Alpha filter
+            // Cache existing filters on the image, then re-apply everything setRuntimeContext our Alpha filter
             // stacked on the end.
             if (map.containsKey(elem))
             {

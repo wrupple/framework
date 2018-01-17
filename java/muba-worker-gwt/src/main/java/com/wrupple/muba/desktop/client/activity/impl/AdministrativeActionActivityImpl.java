@@ -5,20 +5,20 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.ActivityProcess;
-import com.wrupple.muba.bpm.client.activity.SequentialActivity;
-import com.wrupple.muba.bpm.client.activity.process.impl.ActivityProcessImpl;
-import com.wrupple.muba.bpm.client.activity.process.state.State;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.client.activity.AdministrativeActionActivity;
 import com.wrupple.muba.desktop.client.activity.process.state.AdministrativeAction;
 import com.wrupple.muba.desktop.client.activity.process.state.impl.ArbitraryActivityExit;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
 import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
+import com.wrupple.muba.worker.client.activity.ActivityProcess;
+import com.wrupple.muba.worker.client.activity.SequentialActivity;
+import com.wrupple.muba.worker.client.activity.process.impl.ActivityProcessImpl;
+import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 public class AdministrativeActionActivityImpl extends
         AbstractActivity implements AdministrativeActionActivity, SequentialActivity {

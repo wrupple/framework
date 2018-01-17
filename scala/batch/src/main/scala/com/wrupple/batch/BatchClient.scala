@@ -4,12 +4,6 @@ import com.google.inject.name.Names
 import com.google.inject.{Guice, Injector, Key, Module}
 import com.wrupple.batch.service.{BatchJobInterpret, BatchJobRunner}
 import com.wrupple.muba.ValidationModule
-import com.wrupple.muba.bpm.domain._
-import com.wrupple.muba.bpm.server.chain.command.{ActivityRequestInterpret, BusinessRequestInterpret, IntentResolverRequestInterpret}
-import com.wrupple.muba.bpm.server.chain.{BusinessEngine, IntentResolverEngine, SolverEngine}
-import com.wrupple.muba.bpm.server.service.impl.ChocoInterpret
-import com.wrupple.muba.bpm.server.service.{ChocoRunner, ProcessManager, Solver}
-import com.wrupple.muba.bpm.{BusinessModule, ConstraintSolverModule, SolverModule}
 import com.wrupple.muba.catalogs._
 import com.wrupple.muba.catalogs.domain.{CatalogActionFilterManifest, CatalogIntentListenerManifest, CatalogServiceManifest}
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine

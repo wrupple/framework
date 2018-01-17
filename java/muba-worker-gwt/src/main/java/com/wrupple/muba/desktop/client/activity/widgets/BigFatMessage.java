@@ -11,16 +11,16 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.client.event.EntriesDeletedEvent;
-import com.wrupple.muba.desktop.client.event.EntriesRetrivedEvent;
-import com.wrupple.muba.desktop.client.event.EntryCreatedEvent;
-import com.wrupple.muba.desktop.client.event.EntryUpdatedEvent;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
+import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
+import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
+import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 public class BigFatMessage extends Composite implements Toolbar {
 

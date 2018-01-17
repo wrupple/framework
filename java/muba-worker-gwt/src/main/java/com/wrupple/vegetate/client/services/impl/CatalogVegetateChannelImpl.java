@@ -4,12 +4,12 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.desktop.client.services.logic.SerializationService;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionResult;
 import com.wrupple.muba.desktop.domain.overlay.JsVegetateServiceManifest;
 import com.wrupple.muba.desktop.domain.overlay.JsonVegetateResponse;
+import com.wrupple.muba.worker.domain.BPMPeer;
 
 public class CatalogVegetateChannelImpl extends
 		SimpleVegetateChannel<JsCatalogActionRequest, JsCatalogActionResult> implements com.wrupple.vegetate.client.services.CatalogVegetateChannel {

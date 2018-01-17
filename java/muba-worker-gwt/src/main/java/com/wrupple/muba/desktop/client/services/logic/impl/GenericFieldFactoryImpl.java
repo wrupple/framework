@@ -24,6 +24,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.impl.ParentSelectionFiel
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogFieldMap;
 import com.wrupple.muba.desktop.client.factory.dictionary.RelationshipFieldBrowserMap;
 import com.wrupple.muba.desktop.client.factory.dictionary.SelectionModelDictionary;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
@@ -33,7 +34,6 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.impl.MultipleSelectionModel;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import javax.inject.Provider;
@@ -104,8 +104,8 @@ public class GenericFieldFactoryImpl implements GenericFieldFactory {
 			// TODO CONFIGURATINO FRAMEWORK
 			cell = widgetter.get(widget).createCell(bus, contextServices, contextParameters, fieldProperties, field, mode);
 		} catch (NullPointerException e) {
-			GWT.log("Unable to find cell suitable for field " + field.getName() + " with widget id:" + widget, e);
-			return null;
+            GWT.log("Unable to find cell suitable for field " + field.getName() + " setRuntimeContext widget id:" + widget, e);
+            return null;
 		}
 
 		if (ImplicitJoinUtils.isJoinableValueField(field)) {

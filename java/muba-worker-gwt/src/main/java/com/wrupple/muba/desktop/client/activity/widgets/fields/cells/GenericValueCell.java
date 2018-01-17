@@ -6,7 +6,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
@@ -38,7 +37,7 @@ public class GenericValueCell extends  AbstractDelegatingEditableField<JsCatalog
 	@Override
 	protected Process<JsCatalogEntry, JsCatalogEntry> getDelegateProcess() {
 		/*TODO default behavious used to be when clicking on a foreign value cell, open a detail view of the foreign entry
-		 * but this interfrs with elimination of Relations on GenericFieldFactory /  ForeignValueRelationEditor
+         * but this interfrs setRuntimeContext elimination of Relations on GenericFieldFactory /  ForeignValueRelationEditor
 		 * 
 		 * String catalog = super.fieldDescriptor.getForeignCatalogName();
 		FormatManager<JsCatalogEntry> manager = cms.getContentManager(catalog);

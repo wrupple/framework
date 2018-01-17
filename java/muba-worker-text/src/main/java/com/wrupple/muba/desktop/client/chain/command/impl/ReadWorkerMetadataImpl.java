@@ -17,7 +17,7 @@ public class ReadWorkerMetadataImpl implements ReadWorkerMetadata {
             meta = metaTags.getItem(i).cast();
             metaTagName = meta.getName();
             metaContent = meta.getContent();
-            // TODO synchronize this variables with the server
+            // TODO synchronize this variables setRuntimeContext the server
             // TODO ¿a server oriented ¿Async?ServiceDictionary?
             if ("home".equals(metaTagName)) {
                 String[] homeActivity ;

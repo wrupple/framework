@@ -14,15 +14,7 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.*;
-import com.wrupple.muba.bpm.client.activity.process.state.impl.InitializeActivityContextImpl;
-import com.wrupple.muba.bpm.client.activity.process.state.impl.MachineTaskImpl;
-import com.wrupple.muba.bpm.client.activity.process.state.impl.ReadNextPlaceImpl;
-import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
-import com.wrupple.muba.bpm.client.services.impl.TransactionalActivityAssemblyImpl;
-import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.catalogs.client.services.ClientCatalogCacheManager;
-import com.wrupple.muba.catalogs.client.services.StorageManagerImpl;
 import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.client.services.evaluation.impl.WruppleCatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.client.services.impl.ClientCatalogCacheManagerImpl;
@@ -73,6 +65,8 @@ import com.wrupple.muba.desktop.client.factory.help.impl.ActionAidProviderImpl;
 import com.wrupple.muba.desktop.client.factory.help.impl.TaskConfigurationAidImpl;
 import com.wrupple.muba.desktop.client.factory.help.impl.TaskToolbarAidImpl;
 import com.wrupple.muba.desktop.client.factory.help.impl.TriggerAidProviderImpl;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.desktop.client.service.data.impl.StorageManagerImpl;
 import com.wrupple.muba.desktop.client.services.command.*;
 import com.wrupple.muba.desktop.client.services.command.impl.*;
 import com.wrupple.muba.desktop.client.services.logic.*;
@@ -94,7 +88,17 @@ import com.wrupple.muba.desktop.shared.services.impl.AverageDifferenceBetweenEle
 import com.wrupple.muba.desktop.shared.services.impl.FieldDescriptionServiceImpl;
 import com.wrupple.muba.desktop.shared.services.impl.HistogramDataProcessorImpl;
 import com.wrupple.muba.desktop.shared.services.impl.MubaStatisticsCalculator;
-import com.wrupple.vegetate.client.services.*;
+import com.wrupple.muba.worker.client.activity.process.state.*;
+import com.wrupple.muba.worker.client.activity.process.state.impl.InitializeActivityContextImpl;
+import com.wrupple.muba.worker.client.activity.process.state.impl.MachineTaskImpl;
+import com.wrupple.muba.worker.client.activity.process.state.impl.ReadNextPlaceImpl;
+import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
+import com.wrupple.muba.worker.client.services.impl.TransactionalActivityAssemblyImpl;
+import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
+import com.wrupple.vegetate.client.services.CatalogEntryAssembler;
+import com.wrupple.vegetate.client.services.CatalogServiceSerializer;
+import com.wrupple.vegetate.client.services.LocalWebStorageUnit;
+import com.wrupple.vegetate.client.services.RemoteStorageUnit;
 import com.wrupple.vegetate.client.services.impl.CatalogEntryAssemblerImpl;
 import com.wrupple.vegetate.client.services.impl.CatalogServiceSerializerImpl;
 import com.wrupple.vegetate.client.services.impl.LocalWebStorageUnitImpl;
@@ -532,10 +536,10 @@ public class BasicDesktopServiceBinder extends AbstractGinModule {
 		bind(CanvasDrawingProcess.class).to(CanvasDrawingProcessImpl.class);
 	}
 	 interface WruppleImageTemplate extends ImageTemplate, SafeHtmlTemplates {
-			
-			//TODO replace this with a hand-writtend implementation so CatalogReadingChannel can ve injected and url building functionality used
-			
-			@Template("<img onclick=\"\" src=\"/vegetate/catalog/user/PersistentImageMetadata/read/{0}/"+TINY+"\" />")
+
+         //TODO replace this setRuntimeContext a hand-writtend implementation so CatalogReadingChannel can ve injected and url building functionality used
+
+         @Template("<img onclick=\"\" src=\"/vegetate/catalog/user/PersistentImageMetadata/read/{0}/"+TINY+"\" />")
 			SafeHtml tinyImageOutput(String fileId);
 			
 			@Template("<img onclick=\"\" src=\"/vegetate/catalog/user/PersistentImageMetadata/read/{0}/"+SMALL+"\" />")

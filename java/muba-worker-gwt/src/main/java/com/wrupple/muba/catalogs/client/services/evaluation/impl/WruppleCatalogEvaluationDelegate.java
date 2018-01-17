@@ -9,11 +9,11 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.catalogs.client.services.ClientCatalogCacheManager;
 import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDelegate;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.CatalogCache;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.*;
-import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.*;
 
 import javax.inject.Provider;
@@ -107,7 +107,7 @@ public class WruppleCatalogEvaluationDelegate implements CatalogEvaluationDelega
     private final Evaluator delegate;
     /*
      * TODO this effectively renders the entire evaluation system incompatible
-     * with internet explorer prior to ie-8 (see math js docs for solution that
+     * setRuntimeContext internet explorer prior to ie-8 (see math js docs for solution that
      * should be delivered by server-side adding of scripts (many) ONLY to i-e
      * users) loaded MathJs expression evaluator
      * http://mathjs.org/examples/expressions.js.html

@@ -1,7 +1,6 @@
 package com.wrupple.muba.desktop.client.bootstrap;
 
 import com.google.gwt.inject.client.GinModule;
-import com.wrupple.muba.bpm.client.services.BPMModule;
 import com.wrupple.muba.desktop.client.activity.process.state.LoadMapsApi;
 import com.wrupple.muba.desktop.client.activity.process.state.PaymentSourceTokenApi;
 import com.wrupple.muba.desktop.client.activity.process.state.impl.LoadGraphaelSVGAPI;
@@ -14,6 +13,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.CAPTCHA
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.LatitudeCellProvider;
 import com.wrupple.muba.desktop.client.factory.dictionary.AggregateCanvasRendererMap;
 import com.wrupple.muba.desktop.client.services.presentation.impl.PieChartGroupRenderService;
+import com.wrupple.muba.worker.client.services.BPMModule;
 
 public interface WruppleDesktopModule extends BPMModule,GinModule {
 	/*

@@ -1,6 +1,6 @@
 package com.wrupple.muba.desktop.client.services.logic;
 
-import com.wrupple.muba.bpm.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.activity.process.state.State;
 import com.wrupple.vegetate.domain.HistogramModel;
 
 

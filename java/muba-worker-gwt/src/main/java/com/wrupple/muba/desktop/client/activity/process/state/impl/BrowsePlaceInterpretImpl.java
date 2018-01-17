@@ -2,24 +2,25 @@ package com.wrupple.muba.desktop.client.activity.process.state.impl;
 
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.catalogs.domain.CatalogProcessDescriptor;
 import com.wrupple.muba.desktop.client.activity.process.state.CatalogSelectionLoader;
 import com.wrupple.muba.desktop.client.activity.process.state.CatalogTypeSelectionTask;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
+import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
+import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.vegetate.domain.FilterData;
 
 import javax.inject.Provider;
 import java.util.List;
 
-public class BrowsePlaceInterpretImpl implements com.wrupple.muba.bpm.client.activity.process.state.State.ContextAware<DesktopPlace,CatalogProcessDescriptor> {
-	
-	class CatalogSelectionCallback extends DataCallback<List<DesktopPlace>>{
+public class BrowsePlaceInterpretImpl implements State.ContextAware<DesktopPlace, CatalogProcessDescriptor> {
+
+    class CatalogSelectionCallback extends DataCallback<List<DesktopPlace>>{
 		 DesktopPlace originalItem;
 		 StateTransition<CatalogProcessDescriptor> originalCallback;
 		 EventBus bus;

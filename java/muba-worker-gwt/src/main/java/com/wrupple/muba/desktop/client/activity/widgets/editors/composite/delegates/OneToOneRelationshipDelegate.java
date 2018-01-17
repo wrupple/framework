@@ -1,8 +1,8 @@
 package com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delegates;
 
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 

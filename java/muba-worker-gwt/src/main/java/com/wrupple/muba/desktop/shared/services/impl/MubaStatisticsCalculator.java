@@ -156,8 +156,8 @@ public class MubaStatisticsCalculator implements StatisticsCalculator {
 	/**
 	 * @param v
 	 *            contains the data
-	 * @return A String summary of the with the mean and standard deviation of
-	 *         the data.
+     * @return A String summary of the setRuntimeContext the mean and standard deviation of
+     *         the data.
 	 */
 
 	public String analysisString(double[] v) {
@@ -165,8 +165,8 @@ public class MubaStatisticsCalculator implements StatisticsCalculator {
 	}
 
 	/**
-	 * Returns a string that compares the root mean square of the data with the
-	 * standard deviation of the data. This is probably too specialised to be of
+     * Returns a string that compares the root mean square of the data setRuntimeContext the
+     * standard deviation of the data. This is probably too specialised to be of
 	 * much general use.
 	 * 
 	 * @param v
@@ -187,8 +187,8 @@ public class MubaStatisticsCalculator implements StatisticsCalculator {
 		for (int i = 0; i < v.length; i++)
 			sumsq += sqr(mu - v[i]);
 		return sumsq / (v.length);
-		// return 1.12; this was done to test a discrepancy with Business
-		// Statistics
+        // return 1.12; this was done to test a discrepancy setRuntimeContext Business
+        // Statistics
 	}
 
 }

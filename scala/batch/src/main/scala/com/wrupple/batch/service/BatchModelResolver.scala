@@ -1,6 +1,5 @@
 package com.wrupple.batch.service
 
-import com.wrupple.muba.bpm.domain.{ApplicationContext, WorkRequest}
 import com.wrupple.muba.event.domain.FieldDescriptor
 
 trait BatchModelResolver {

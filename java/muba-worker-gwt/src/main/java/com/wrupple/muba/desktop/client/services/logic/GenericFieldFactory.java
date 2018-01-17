@@ -7,10 +7,10 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delegates.AbstractValueRelationEditor.RelationshipDelegate;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.vegetate.client.services.StorageManager;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public interface GenericFieldFactory {

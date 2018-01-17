@@ -17,9 +17,9 @@ import com.wrupple.muba.desktop.client.factory.DictionaryTemplate;
 import com.wrupple.muba.desktop.client.factory.help.DictionaryConfigurableFactory;
 import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.PropertyValueAvisor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.CatalogKey;
 import org.w3c.dom.Document;
@@ -56,303 +56,35 @@ public class ServiceDictionaryBinder {
 		this.mlogger = new MortalLogger(logger);
 	}
 
-	public String createServicer() throws ClassNotFoundException, NoSuchMethodException, SecurityException {
-		try {
-			JClassType classType = typeOracle.getType(typeName);
-			String templateFile = null;
+    private static String deduceTemplateFile(MortalLogger logger, JClassType interfaceType) throws UnableToCompleteException {
+        String templateName = null;
+        DictionaryTemplate annotation = interfaceType.getAnnotation(DictionaryTemplate.class);
+        if (annotation == null) {
+            // if the interface is defined as a nested class, use the name of
+            // the
+            // enclosing type
+            if (interfaceType.getEnclosingType() != null) {
+                interfaceType = interfaceType.getEnclosingType();
+            }
+            return slashify(interfaceType.getQualifiedSourceName()) + TEMPLATE_SUFFIX;
+        } else {
+            templateName = annotation.value();
+            if (!templateName.endsWith(TEMPLATE_SUFFIX)) {
+                logger.die("Widget Template file name must end setRuntimeContext " + TEMPLATE_SUFFIX);
+            }
 
-			try {
-				templateFile = deduceTemplateFile(mlogger, classType);
-			} catch (UnableToCompleteException e) {
-				logger.log(null, "error while trying to deduce the xml Template file", e);
-			}
-
-			Document doc = null;
-
-			try {
-				doc = parseXmlResource(templateFile);
-			} catch (SAXParseException e) {
-				e.printStackTrace();
-			} catch (UnableToCompleteException e) {
-				e.printStackTrace();
-			}
-			Node servicerNode = doc.getElementsByTagName("servicer").item(0);
-			String configurationPropertyName= servicerNode.getAttributes().getNamedItem("propertyName").getFirstChild().getNodeValue();
-
-			String defaultPropertyValue;
-			try {
-				defaultPropertyValue = servicerNode.getAttributes().getNamedItem("defaultPropertyValue").getFirstChild().getNodeValue();
-			} catch (Exception e) {
-				defaultPropertyValue = null;
-			}
-
-			String genericType = getGenericType(servicerNode);
-			String serviceBusGetter = servicerNode.getAttributes().getNamedItem("serviceBus").getFirstChild().getNodeValue();
-
-			String providerType = DictionaryConfigurableFactory.class.getCanonicalName();
-
-			SourceWriter source = getSourceWriter(classType, genericType);
-			if (source == null) {
-				return classType.getParameterizedQualifiedSourceName() + "Impl";
-			} else {
-				NodeList services = doc.getElementsByTagName("service");
-				NodeList parentNode = doc.getElementsByTagName("parent");
-				NodeList parentProperties = null;
-				if (parentNode != null && parentNode.getLength() > 0) {
-					parentProperties = parentNode.item(0).getChildNodes();
-				}
-				/*
-				 * FIELDS
-				 */
-				source.indent();
-				source.println("HashMap<String, " + providerType + "<" + genericType + ">> map;");
-
-				/*
-				 * initialize method (called after the first
-				 */
-				source.println("public String getPropertyName(){");
-				source.indent();
-				source.print("return \"");
-				source.print(configurationPropertyName);
-				source.println("\";");
-				source.outdent();
-				source.println("}");
-				source.println("public void init(){");
-				source.indent();
-
-				source.println("map = new HashMap<String, " + providerType + "<" + genericType + ">>(" + services.getLength() + ");");
-
-				Node widgetNode;
-				NamedNodeMap att;
-				String specificType;
-				String creator;
-				String constantProvider;
-				Node typedConstant;
-				for (int i = 0; i < services.getLength(); i++) {
-					widgetNode = services.item(i);
-					att = widgetNode.getAttributes();
-					source.print("map.put(");
-					constantProvider = getConstantProviderOrNull(att);
-					creator = att.getNamedItem("creator").getFirstChild().getNodeValue();
-					try{
-						specificType = getSpecificType(serviceBusGetter, creator);
-					}catch(IllegalArgumentException e){
-						specificType = genericType;
-					}
-					
-					if (constantProvider == null) {
-						typedConstant = att.getNamedItem("typedConstant");
-						if (typedConstant == null) {
-							source.print("\"");
-							source.print(att.getNamedItem(CatalogKey.ID_FIELD).getFirstChild().getNodeValue());
-							source.print("\"");
-						} else {
-							source.print(specificType);
-							source.print(".");
-							source.print(att.getNamedItem(CatalogKey.ID_FIELD).getFirstChild().getNodeValue());
-						}
-					} else {
-						source.print(constantProvider);
-						source.print(".");
-						source.print(att.getNamedItem(CatalogKey.ID_FIELD).getFirstChild().getNodeValue());
-					}
-					source.print(",");
-
-					source.println("new " + providerType + "<" + genericType + ">() { ");
-					source.indent();
-					source.println("public void adviceOnCurrentConfigurationState(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso){");
-					source.println("PropertyValueAvisor newadvice;");
-					if (widgetNode.hasChildNodes()) {
-						buildAdvice(widgetNode.getChildNodes(), source, serviceBusGetter);
-					}
-					if (parentProperties != null) {
-						buildAdvice(parentProperties, source, serviceBusGetter);
-					}
-					source.println("}");
-
-					source.println("@Override");
-					source.println("public void configure(" + genericType
-                            + " object,JavaScriptObject configuration,ProcessContextServices services, EventRegistry processSwitches,JsTransactionApplicationContext ctx) {");
-                    source.print(specificType);
-					source.print(" regreso = (");
-					source.print(specificType);
-					source.println(") object;");
-
-					source.println("String varValue;");
-					if (widgetNode.hasChildNodes()) {
-						configureRegreso(widgetNode.getChildNodes(), source, specificType, serviceBusGetter);
-					}
-					if (parentProperties != null) {
-						configureRegreso(parentProperties, source, specificType, serviceBusGetter);
-					}
-
-					source.println("}");
-
-					source.println("@Override");
-					source.println("public void validateValue(String fieldId, Object value,JsArrayString violations) {");
-					// TODO validate field id is one of property names?
-					source.println("}");
-					source.println("@Override");
-					source.println("public void setRuntimeParameters(String type, ProcessContextServices ctx) {}");
-					// <---
-					source.println("public " + specificType + " get() { ");
-
-					source.print(specificType);
-					source.print(" regreso= ");
-					source.print(serviceBusGetter);
-					source.print("().");
-					source.print(creator);
-					source.print("();");
-					source.println();
-					source.println("return regreso;");
-					source.println("}");
-
-					source.println("public " + genericType
-                            + " get(final JavaScriptObject configuration, ProcessContextServices services, EventRegistry processSwitches, JsTransactionApplicationContext ctx) { ");
-                    source.indent();
-					source.print(specificType);
-					source.println(" regreso= get();");
-
-                    source.println("configure(regreso, configuration, services, processSwitches, ctx);");
-
-					source.println("return regreso;");
-					source.outdent();
-					source.println("}");
-					source.outdent();
-					source.println("}");
-
-					source.print(");");
-				}
-				source.outdent();
-				source.println();
-				source.println("}");
-
-				/*
-				 * METHODS
-				 */
-				logger.log(TreeLogger.TRACE, "created servicer with signature " + genericType);
-
-				source.println("public Set<String> keySet(){");
-				source.indent();
-				checkInitialization(source);
-				source.println("return map.keySet();");
-				source.outdent();
-				source.println("}");
-
-				source.println("public " + genericType + " get(String id) {");
-				source.indent();
-				checkInitialization(source);
-				source.println(providerType + "<" + genericType + "> provider = map.get(id);");
-				source.println("assert provider!=null:\"Null Service Provider \"+id;");
-				source.println("return provider.get();");
-				source.outdent();
-				source.println("}");
-
-				source.println("public String getDefault(){");
-				if (defaultPropertyValue == null) {
-					source.println("return null;");
-				} else {
-					source.println("return \"" + defaultPropertyValue + "\";");
-				}
-				source.println("}");
-
-				/*
-				 * CONFIGURATION METHOD
-				 */
-
-				// TODO pass a String prefix Argument to read property value?
-				source.println("public " + genericType
-                        + " getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventRegistry processSwitches, JsTransactionApplicationContext ctx) {");
-                source.indent();
-				// read property
-				source.print("String propValue =  JSOHelper.getAttribute(configuration,\"");
-				source.print(configurationPropertyName);
-				source.print("\"); ");
-				source.println();
-				// set default value
-				if (defaultPropertyValue != null) {
-					source.println("if(propValue==null){");
-					source.indent();
-					source.println("propValue=getDefault();");
-					source.outdent();
-					source.println("}");
-				}
-				checkInitialization(source);
-
-				source.println(providerType + "<" + genericType + "> provider = map.get(propValue);");
-				source.println("if(provider==null){");
-				source.indent();
-                source.println("return map.get(getDefault()).get(configuration,services,processSwitches,ctx);");
-                source.outdent();
-				source.println("}else{");
-				source.indent();
-                source.println(genericType + " regreso=provider.get(configuration,services,processSwitches,ctx);");
-                source.println("return  regreso;");
-				source.outdent();
-				source.println("}");
-				source.outdent();
-				source.println("}");
-
-				source.println("public void adviceOnCurrentConfigurationState(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso) {");
-				source.indent();
-				source.println("String mathingValue = JSOHelper.getAttribute(currentState, \"" + configurationPropertyName + "\");");
-				checkInitialization(source);
-				source.println("if (mathingValue == null) {");
-				source.println("Set<String> set = keySet();");
-				source.println("PropertyValueAvisor advice;");
-				source.println("for(String value:set){");
-				source.println("advice=PropertyValueAvisor.createObject().cast();");
-				source.println("advice.setName(\"" + configurationPropertyName + "\");");
-				source.println("advice.setValue(value);");
-				source.println("regreso.push(advice);");
-
-				source.println("}");
-				source.println("} else {");
-				source.println("UserAssistanceProvider advisor = map.get(mathingValue);");
-				source.println("if(advisor!=null){");
-				source.println("advisor.adviceOnCurrentConfigurationState(currentState, regreso);");
-				source.println("}");
-				source.println("}");
-				source.outdent();
-				source.println("}");
-
-				source.println("@Override");
-				source.print("public void reconfigure(PanelTransformationConfig configuration,");
-				source.print(genericType);
-				source.println(" regreso,ProcessContextServices contextServices, EventRegistry eventBus,JsTransactionApplicationContext contextParameters) {");
-				source.indent();
-				source.println("String mathingValue = JSOHelper.getAttribute(configuration, \"" + configurationPropertyName + "\");");
-				checkInitialization(source);
-				source.print(providerType);
-				source.println("<" + genericType + "> provider = map.get(mathingValue);");
-				source.println("	if (provider != null) {");
-				source.println("		provider.configure(regreso, configuration, contextServices, eventBus, contextParameters);");
-				source.println("	}");
-				source.println("}");
-
-				source.println("@Override");
-				source.println("public void validateValue(String fieldId, Object v,JsArrayString regreso){");
-				source.println("String value=(String)v;");
-				checkInitialization(source);
-				// WE ONLY SUPPORT ONE FIELD (THE ONE DECLARED) ... dont we?
-				if (configurationPropertyName != null) {
-					// check fieldid is equal?
-				}
-				// FIXME user DesktopCOnstants Messages
-				source.println("if(value==null){regreso.push(\"{dictionary.null}\");}");
-				source.println("if(value!=null && !map.containsKey(value)){regreso.push(\"dictionary.unrecognized\");}");
-				source.println("}");
-
-				source.println("public void setRuntimeParameters(String type,ProcessContextServices ctx){}");
-				source.println();
-				source.outdent();
-				source.commit(logger);
-				return classType.getParameterizedQualifiedSourceName() + "Impl";
-			}
-		} catch (NotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+			/*
+             * If the template file name (minus suffix) has no dots, make it
+			 * relative to the binder's package, otherwise slashify the dots
+			 */
+            String unsuffixed = templateName.substring(0, templateName.lastIndexOf(TEMPLATE_SUFFIX));
+            if (!unsuffixed.contains(".")) {
+                templateName = slashify(interfaceType.getPackage().getName()) + "/" + templateName;
+            } else {
+                templateName = slashify(unsuffixed) + TEMPLATE_SUFFIX;
+            }
+        }
+        return templateName;
 	}
 
 	private String getConstantProviderOrNull(NamedNodeMap att) {
@@ -692,35 +424,303 @@ public class ServiceDictionaryBinder {
 		}
 	}
 
-	private static String deduceTemplateFile(MortalLogger logger, JClassType interfaceType) throws UnableToCompleteException {
-		String templateName = null;
-		DictionaryTemplate annotation = interfaceType.getAnnotation(DictionaryTemplate.class);
-		if (annotation == null) {
-			// if the interface is defined as a nested class, use the name of
-			// the
-			// enclosing type
-			if (interfaceType.getEnclosingType() != null) {
-				interfaceType = interfaceType.getEnclosingType();
-			}
-			return slashify(interfaceType.getQualifiedSourceName()) + TEMPLATE_SUFFIX;
-		} else {
-			templateName = annotation.value();
-			if (!templateName.endsWith(TEMPLATE_SUFFIX)) {
-				logger.die("Widget Template file name must end with " + TEMPLATE_SUFFIX);
-			}
+    public String createServicer() throws ClassNotFoundException, NoSuchMethodException, SecurityException {
+        try {
+            JClassType classType = typeOracle.getType(typeName);
+            String templateFile = null;
 
-			/*
-			 * If the template file name (minus suffix) has no dots, make it
-			 * relative to the binder's package, otherwise slashify the dots
-			 */
-			String unsuffixed = templateName.substring(0, templateName.lastIndexOf(TEMPLATE_SUFFIX));
-			if (!unsuffixed.contains(".")) {
-				templateName = slashify(interfaceType.getPackage().getName()) + "/" + templateName;
-			} else {
-				templateName = slashify(unsuffixed) + TEMPLATE_SUFFIX;
-			}
-		}
-		return templateName;
+            try {
+                templateFile = deduceTemplateFile(mlogger, classType);
+            } catch (UnableToCompleteException e) {
+                logger.log(null, "error while trying to deduce the xml Template file", e);
+            }
+
+            Document doc = null;
+
+            try {
+                doc = parseXmlResource(templateFile);
+            } catch (SAXParseException e) {
+                e.printStackTrace();
+            } catch (UnableToCompleteException e) {
+                e.printStackTrace();
+            }
+            Node servicerNode = doc.getElementsByTagName("servicer").item(0);
+            String configurationPropertyName = servicerNode.getAttributes().getNamedItem("propertyName").getFirstChild().getNodeValue();
+
+            String defaultPropertyValue;
+            try {
+                defaultPropertyValue = servicerNode.getAttributes().getNamedItem("defaultPropertyValue").getFirstChild().getNodeValue();
+            } catch (Exception e) {
+                defaultPropertyValue = null;
+            }
+
+            String genericType = getGenericType(servicerNode);
+            String serviceBusGetter = servicerNode.getAttributes().getNamedItem("serviceBus").getFirstChild().getNodeValue();
+
+            String providerType = DictionaryConfigurableFactory.class.getCanonicalName();
+
+            SourceWriter source = getSourceWriter(classType, genericType);
+            if (source == null) {
+                return classType.getParameterizedQualifiedSourceName() + "Impl";
+            } else {
+                NodeList services = doc.getElementsByTagName("service");
+                NodeList parentNode = doc.getElementsByTagName("parent");
+                NodeList parentProperties = null;
+                if (parentNode != null && parentNode.getLength() > 0) {
+                    parentProperties = parentNode.item(0).getChildNodes();
+                }
+                /*
+				 * FIELDS
+				 */
+                source.indent();
+                source.println("HashMap<String, " + providerType + "<" + genericType + ">> map;");
+
+				/*
+				 * initialize method (called after the first
+				 */
+                source.println("public String getPropertyName(){");
+                source.indent();
+                source.print("return \"");
+                source.print(configurationPropertyName);
+                source.println("\";");
+                source.outdent();
+                source.println("}");
+                source.println("public void init(){");
+                source.indent();
+
+                source.println("map = new HashMap<String, " + providerType + "<" + genericType + ">>(" + services.getLength() + ");");
+
+                Node widgetNode;
+                NamedNodeMap att;
+                String specificType;
+                String creator;
+                String constantProvider;
+                Node typedConstant;
+                for (int i = 0; i < services.getLength(); i++) {
+                    widgetNode = services.item(i);
+                    att = widgetNode.getAttributes();
+                    source.print("map.put(");
+                    constantProvider = getConstantProviderOrNull(att);
+                    creator = att.getNamedItem("creator").getFirstChild().getNodeValue();
+                    try {
+                        specificType = getSpecificType(serviceBusGetter, creator);
+                    } catch (IllegalArgumentException e) {
+                        specificType = genericType;
+                    }
+
+                    if (constantProvider == null) {
+                        typedConstant = att.getNamedItem("typedConstant");
+                        if (typedConstant == null) {
+                            source.print("\"");
+                            source.print(att.getNamedItem(CatalogKey.ID_FIELD).getFirstChild().getNodeValue());
+                            source.print("\"");
+                        } else {
+                            source.print(specificType);
+                            source.print(".");
+                            source.print(att.getNamedItem(CatalogKey.ID_FIELD).getFirstChild().getNodeValue());
+                        }
+                    } else {
+                        source.print(constantProvider);
+                        source.print(".");
+                        source.print(att.getNamedItem(CatalogKey.ID_FIELD).getFirstChild().getNodeValue());
+                    }
+                    source.print(",");
+
+                    source.println("new " + providerType + "<" + genericType + ">() { ");
+                    source.indent();
+                    source.println("public void adviceOnCurrentConfigurationState(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso){");
+                    source.println("PropertyValueAvisor newadvice;");
+                    if (widgetNode.hasChildNodes()) {
+                        buildAdvice(widgetNode.getChildNodes(), source, serviceBusGetter);
+                    }
+                    if (parentProperties != null) {
+                        buildAdvice(parentProperties, source, serviceBusGetter);
+                    }
+                    source.println("}");
+
+                    source.println("@Override");
+                    source.println("public void configure(" + genericType
+                            + " object,JavaScriptObject configuration,ProcessContextServices services, EventRegistry processSwitches,JsTransactionApplicationContext ctx) {");
+                    source.print(specificType);
+                    source.print(" regreso = (");
+                    source.print(specificType);
+                    source.println(") object;");
+
+                    source.println("String varValue;");
+                    if (widgetNode.hasChildNodes()) {
+                        configureRegreso(widgetNode.getChildNodes(), source, specificType, serviceBusGetter);
+                    }
+                    if (parentProperties != null) {
+                        configureRegreso(parentProperties, source, specificType, serviceBusGetter);
+                    }
+
+                    source.println("}");
+
+                    source.println("@Override");
+                    source.println("public void validateValue(String fieldId, Object value,JsArrayString violations) {");
+                    // TODO validate field id is one of property names?
+                    source.println("}");
+                    source.println("@Override");
+                    source.println("public void setRuntimeParameters(String type, ProcessContextServices ctx) {}");
+                    // <---
+                    source.println("public " + specificType + " get() { ");
+
+                    source.print(specificType);
+                    source.print(" regreso= ");
+                    source.print(serviceBusGetter);
+                    source.print("().");
+                    source.print(creator);
+                    source.print("();");
+                    source.println();
+                    source.println("return regreso;");
+                    source.println("}");
+
+                    source.println("public " + genericType
+                            + " get(final JavaScriptObject configuration, ProcessContextServices services, EventRegistry processSwitches, JsTransactionApplicationContext ctx) { ");
+                    source.indent();
+                    source.print(specificType);
+                    source.println(" regreso= get();");
+
+                    source.println("configure(regreso, configuration, services, processSwitches, ctx);");
+
+                    source.println("return regreso;");
+                    source.outdent();
+                    source.println("}");
+                    source.outdent();
+                    source.println("}");
+
+                    source.print(");");
+                }
+                source.outdent();
+                source.println();
+                source.println("}");
+
+				/*
+				 * METHODS
+				 */
+                logger.log(TreeLogger.TRACE, "created servicer setRuntimeContext signature " + genericType);
+
+                source.println("public Set<String> keySet(){");
+                source.indent();
+                checkInitialization(source);
+                source.println("return map.keySet();");
+                source.outdent();
+                source.println("}");
+
+                source.println("public " + genericType + " get(String id) {");
+                source.indent();
+                checkInitialization(source);
+                source.println(providerType + "<" + genericType + "> provider = map.get(id);");
+                source.println("assert provider!=null:\"Null Service Provider \"+id;");
+                source.println("return provider.get();");
+                source.outdent();
+                source.println("}");
+
+                source.println("public String getDefault(){");
+                if (defaultPropertyValue == null) {
+                    source.println("return null;");
+                } else {
+                    source.println("return \"" + defaultPropertyValue + "\";");
+                }
+                source.println("}");
+
+				/*
+				 * CONFIGURATION METHOD
+				 */
+
+                // TODO pass a String prefix Argument to read property value?
+                source.println("public " + genericType
+                        + " getConfigured(JavaScriptObject configuration, ProcessContextServices services, EventRegistry processSwitches, JsTransactionApplicationContext ctx) {");
+                source.indent();
+                // read property
+                source.print("String propValue =  JSOHelper.getAttribute(configuration,\"");
+                source.print(configurationPropertyName);
+                source.print("\"); ");
+                source.println();
+                // set default value
+                if (defaultPropertyValue != null) {
+                    source.println("if(propValue==null){");
+                    source.indent();
+                    source.println("propValue=getDefault();");
+                    source.outdent();
+                    source.println("}");
+                }
+                checkInitialization(source);
+
+                source.println(providerType + "<" + genericType + "> provider = map.get(propValue);");
+                source.println("if(provider==null){");
+                source.indent();
+                source.println("return map.get(getDefault()).get(configuration,services,processSwitches,ctx);");
+                source.outdent();
+                source.println("}else{");
+                source.indent();
+                source.println(genericType + " regreso=provider.get(configuration,services,processSwitches,ctx);");
+                source.println("return  regreso;");
+                source.outdent();
+                source.println("}");
+                source.outdent();
+                source.println("}");
+
+                source.println("public void adviceOnCurrentConfigurationState(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso) {");
+                source.indent();
+                source.println("String mathingValue = JSOHelper.getAttribute(currentState, \"" + configurationPropertyName + "\");");
+                checkInitialization(source);
+                source.println("if (mathingValue == null) {");
+                source.println("Set<String> set = keySet();");
+                source.println("PropertyValueAvisor advice;");
+                source.println("for(String value:set){");
+                source.println("advice=PropertyValueAvisor.createObject().cast();");
+                source.println("advice.setName(\"" + configurationPropertyName + "\");");
+                source.println("advice.setValue(value);");
+                source.println("regreso.push(advice);");
+
+                source.println("}");
+                source.println("} else {");
+                source.println("UserAssistanceProvider advisor = map.get(mathingValue);");
+                source.println("if(advisor!=null){");
+                source.println("advisor.adviceOnCurrentConfigurationState(currentState, regreso);");
+                source.println("}");
+                source.println("}");
+                source.outdent();
+                source.println("}");
+
+                source.println("@Override");
+                source.print("public void reconfigure(PanelTransformationConfig configuration,");
+                source.print(genericType);
+                source.println(" regreso,ProcessContextServices contextServices, EventRegistry eventBus,JsTransactionApplicationContext contextParameters) {");
+                source.indent();
+                source.println("String mathingValue = JSOHelper.getAttribute(configuration, \"" + configurationPropertyName + "\");");
+                checkInitialization(source);
+                source.print(providerType);
+                source.println("<" + genericType + "> provider = map.get(mathingValue);");
+                source.println("	if (provider != null) {");
+                source.println("		provider.configure(regreso, configuration, contextServices, eventBus, contextParameters);");
+                source.println("	}");
+                source.println("}");
+
+                source.println("@Override");
+                source.println("public void validateValue(String fieldId, Object v,JsArrayString regreso){");
+                source.println("String value=(String)v;");
+                checkInitialization(source);
+                // WE ONLY SUPPORT ONE FIELD (THE ONE DECLARED) ... dont we?
+                if (configurationPropertyName != null) {
+                    // check fieldid is equal?
+                }
+                // FIXME user DesktopCOnstants Messages
+                source.println("if(value==null){regreso.push(\"{dictionary.null}\");}");
+                source.println("if(value!=null && !map.containsKey(value)){regreso.push(\"dictionary.unrecognized\");}");
+                source.println("}");
+
+                source.println("public void setRuntimeParameters(String type,ProcessContextServices ctx){}");
+                source.println();
+                source.outdent();
+                source.commit(logger);
+                return classType.getParameterizedQualifiedSourceName() + "Impl";
+            }
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
 	}
 
 	private Document parseXmlResource(final String resourcePath) throws SAXParseException, UnableToCompleteException {

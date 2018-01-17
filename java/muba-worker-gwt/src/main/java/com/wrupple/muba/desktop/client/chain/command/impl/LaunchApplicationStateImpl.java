@@ -1,139 +1,163 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
-import com.google.gwt.activity.shared.ActivityManager;
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.MetaElement;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.place.shared.PlaceChangeEvent;
-import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.place.shared.PlaceHistoryHandler;
-import com.google.gwt.place.shared.PlaceHistoryMapper;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.DesktopActivityMapper;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel.ToolbarDirection;
-import com.wrupple.muba.desktop.client.activity.widgets.panels.NestedActivityPresenter;
-import com.wrupple.muba.desktop.client.activity.widgets.toolbar.HomeToolbar;
 import com.wrupple.muba.desktop.client.chain.command.LaunchApplicationState;
-import com.wrupple.muba.desktop.client.event.DesktopInitializationDoneEvent;
-import com.wrupple.muba.desktop.client.event.DesktopProcessEvent;
-import com.wrupple.muba.desktop.client.event.VegetateEvent;
-import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
-import com.wrupple.muba.desktop.domain.DesktopPlace;
-import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
+import com.wrupple.muba.desktop.domain.ContainerContext;
+import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 @Singleton
-public class LaunchApplicationStateImpl implements LaunchApplicationState /*com.google.gwt.core.client.RunAsyncCallback*/ {
+public class LaunchApplicationStateImpl implements LaunchApplicationState {
 
-    final PlaceController placeController;
-    final PlaceHistoryMapper historyMapper;
-    final DesktopManager dm;
-    final DesktopActivityMapper activityMapper;
-    final HomeToolbar toolbar;
-    final com.google.web.bindery.event.shared.EventBus eventBus;
-    //spash screen
-    Widget first;
+    protected final PlaceController pc;
+    protected final DesktopManager dm;
 
+    private final TransactionalActivityAssembly assembly;
+    private final ActivityVegetateEventHandler vegetateHandler;
+    /*
+        * SERVICES
+        */
+    private final com.wrupple.muba.event.EventBus eventBus;
+    private final ProcessManager pm;
+    protected JsArray<JsProcessTaskDescriptor> overridenProcessSteps;
+
+
+    // cachuky tuku
+    @com.google.inject.Inject
+    public LaunchApplicationStateImpl(ProcessManager pm, com.wrupple.muba.event.EventBus eventBus, DesktopManager dm, PlaceController pc, TransactionalActivityAssembly assembly,
+                                      ActivityVegetateEventHandler vegetateHandler) {
+        this.pm = pm;
+        this.eventBus = eventBus;
+        this.vegetateHandler = vegetateHandler;
+        this.assembly = assembly;
+
+    }
 
     @Inject
-    public LaunchApplicationStateImpl(PlaceController placeController, PlaceHistoryMapper historyMapper, DesktopManager dm, Widget first, DesktopActivityMapper activityMapper, HomeToolbar toolbar, EventBus eventBus) {
-        this.placeController = placeController;
-        this.historyMapper = historyMapper;
-        this.dm = dm;
-        this.first = first;
-        this.activityMapper = activityMapper;
-        this.toolbar = toolbar;
-        this.eventBus = eventBus;
+    public LaunchApplicationStateImpl(ProcessManager bpm) {
+        this.bpm = bpm;
+    }
+
+
+    protected boolean recoverFromMissconfiguredDesktop(DesktopPlace place) {
+        DesktopPlace newPlace = new DesktopPlace(DesktopManager.RECOVERY_ACTIVITY);
+        newPlace.setFoward(place);
+        pc.goTo(newPlace);
+        return true;
     }
 
     @Override
-    public boolean execute(Context context) throws Exception {
+    public void getActivityProcess(final DesktopPlace input, JsApplicationItem actd, DataCallback<ActivityProcess> callback) {
+        callback.hook(vegetateHandler);
+        eventBus.addHandler(VegetateEvent.TYPE, vegetateHandler);
+        /*
+         * Load transaction data
+		 */
+        final JsApplicationItem applicationItem;
+        if (actd == null) {
+            applicationItem = null;
+        } else {
+            applicationItem = actd.cast();
 
+            JsArrayString scripts = applicationItem.getRequiredScriptsArray();
+            JsArrayString sheets = applicationItem.getRequiredStyleSheetsArray();
 
-        if (first != null) {
-            //remove splash screen
-            RootLayoutPanel.get().remove(first);
-            first = null;
+            if ((scripts != null && scripts.length() > 0) || (sheets != null && sheets.length() > 0)) {
+                callback = new ResourceLoadingCallback(dm, callback, scripts, sheets, assembly.getSm(), eventBus);
+            }
+
+            final String welcomeProcessId = applicationItem.getWelcomeProcess();
+            if (welcomeProcessId != null) {
+
+                callback.hook(new DataCallback<ActivityProcess>() {
+                    @Override
+                    public void execute() {
+                        final StateTransition<Process<JavaScriptObject, JavaScriptObject>> transactionInfoCallback = new DataCallback<Process<JavaScriptObject, JavaScriptObject>>() {
+
+                            @Override
+                            public void execute() {
+                                JsTransactionApplicationContext i = JsTransactionApplicationContext.createObject().cast();
+                                StateTransition<JavaScriptObject> o = DataCallback.nullCallback();
+                                pm.processSwitch(result, applicationItem.getName(), i, o, result.getContext());
+
+                            }
+                        };
+                        assembly.loadAndAssembleProcess(welcomeProcessId, transactionInfoCallback);
+                    }
+                });
+            }
+        }
+        assembly.setApplicationItem(applicationItem);
+
+        if (overridenProcessSteps == null) {
+            StateTransition transactionInfoCallback = new ProcessDescriptorCallback(callback);
+            String processId = applicationItem.getProcessAsId();
+            assembly.loadProcess(processId, transactionInfoCallback);
+        } else {
+            assembly.assembleActivityProcess(overridenProcessSteps, callback);
         }
 
-        final ActivityManager activityManager = new ActivityManager(
-                activityMapper, eventBus);
+    }
 
-        NestedActivityPresenter main = new NestedActivityPresenter(dm);
-        main.setStyleName("desktop");
+    @Override
+    public boolean execute(Context ctx) throws Exception {
 
-        activityManager.setDisplay(main.getRootTaskPresenter());
-        eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeListener(main, toolbar, dm));
-        eventBus.addHandler(VegetateEvent.TYPE, toolbar);
-        eventBus.addHandler(DesktopProcessEvent.TYPE, toolbar);
-        RootLayoutPanel.get().add(main);
-        // Fire Event
-        eventBus.fireEvent(new DesktopInitializationDoneEvent());
-        // Goes to the place represented on URL else default place
-        final PlaceHistoryHandler paceHistoryHandler = new PlaceHistoryHandler(historyMapper);
-        paceHistoryHandler.register(placeController, eventBus, dm.getDefaultPlace());
-        GWT.log("Desktop Loading finished, handling current url history state");
-        paceHistoryHandler.handleCurrentHistory();
+        ContainerContext context = (ContainerContext) ctx;
+
+
+        ApplicationState applicationState = context.getState();
+
+
+        eventBus.fireEvent(applicationState, context.getRuntimeContext(), null);
 
 
         return CONTINUE_PROCESSING;
     }
 
-    static class PlaceChangeListener implements com.google.gwt.place.shared.PlaceChangeEvent.Handler {
-        final NestedActivityPresenter main;
+    public static class SetApplicationStateAndContext extends DataCallback<ActivityProcess> {
+        ProcessManager pm;
+        AcceptsOneWidget panel;
+        EventBus eventBus;
+        JsApplicationItem applicationItem;
 
-        final HomeToolbar toolbar;
-
-        final DesktopManager dm;
-
-
-        public PlaceChangeListener(NestedActivityPresenter main, HomeToolbar toolbar, DesktopManager dm) {
+        public SetApplicationStateAndContext(ProcessManager pm, AcceptsOneWidget panel, EventBus eventBus, JsApplicationItem applicationItem) {
             super();
-            this.dm = dm;
-            this.main = main;
-            this.toolbar = toolbar;
-
-            NodeList<Element> metaTags = Document.get().getElementsByTagName("meta");
-            MetaElement meta;
-            String metaTagName;
-            String metaContent = null;
-            for (int i = 0; i < metaTags.getLength(); i++) {
-                meta = metaTags.getItem(i).cast();
-                metaTagName = meta.getName();
-                if (ContentPanel.ActivityPresenterToolbarHeight.equals(metaTagName)) {
-                    metaContent = meta.getContent();
-                }
-            }
-            int height;
-            if (metaContent == null) {
-                height = 30;
-            } else {
-                height = Integer.parseInt(metaContent);
-            }
-            toolbar.setSize(height);
-            main.addToolbarAndRedraw(toolbar, false, false, ToolbarDirection.NORTH, "home", height);
+            this.pm = pm;
+            this.panel = panel;
+            this.eventBus = eventBus;
+            this.applicationItem = applicationItem;
         }
 
+        @Override
+        public void execute() {
+            pm.setCurrentProcess(applicationItem.getProcessAsId());
+            pm.contextSwitch(result, applicationItem, panel, eventBus);
+        }
+
+    }
+
+
+    class ProcessDescriptorCallback extends DataCallback<List<JsProcessDescriptor>> {
+
+        private DataCallback<ActivityProcess> callback;
+
+        public ProcessDescriptorCallback(DataCallback<ActivityProcess> callback) {
+            this.callback = callback;
+        }
 
         @Override
-        public void onPlaceChange(PlaceChangeEvent event) {
-            DesktopPlace place = (DesktopPlace) event.getNewPlace();
-            String[] newActivity = place.getTokens();
-            JsApplicationItem item = (JsApplicationItem) dm.getApplicationItem(place);
-            toolbar.onPlaceChange(place, item);
-            if (DesktopLoadingStateHolder.homeActivity.equals(newActivity)) {
-                main.hideToolbar(toolbar);
+        public void execute() {
+            if (result == null || result.isEmpty()) {
+                // FIXME process 404
+                throw new IllegalArgumentException("Activity Descriptor not found for current activity");
             } else {
-                main.showToolbar(toolbar);
+                JsProcessDescriptor process = result.get(0);
+                assembly.start(process, callback, eventBus);
+
             }
         }
 

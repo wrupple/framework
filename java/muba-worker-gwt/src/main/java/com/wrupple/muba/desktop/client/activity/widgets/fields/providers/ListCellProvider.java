@@ -27,8 +27,8 @@ public class ListCellProvider implements CatalogFormFieldProvider {
 			ProcessContextServices contextServices,
 			JsTransactionApplicationContext contextParameters,
 			JavaScriptObject formDescriptor, FieldDescriptor d, CatalogAction mode) {
-		assert d.getDefaultValueOptions() != null : "Atemmpting to initialize a List Picker as a field with no default options";
-		if(CatalogAction.READ==mode){
+        assert d.getDefaultValueOptions() != null : "Atemmpting to initialize a List Picker as a field setRuntimeContext no default options";
+        if(CatalogAction.READ==mode){
 			//FIXME all normalized selection fields have a number data type
 			if(JsCatalogEntry.INTEGER_DATA_TYPE==d.getDataType()){
 				return new NormalizedTextCell(d);

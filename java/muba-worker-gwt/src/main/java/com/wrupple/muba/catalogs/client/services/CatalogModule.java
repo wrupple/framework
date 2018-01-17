@@ -3,10 +3,10 @@ package com.wrupple.muba.catalogs.client.services;
 import com.google.gwt.inject.client.Ginjector;
 import com.wrupple.muba.desktop.client.factory.dictionary.UserAssistanceProviderMap;
 import com.wrupple.muba.desktop.client.factory.help.TriggerAidProvider;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.command.CatalogCommandService;
 import com.wrupple.muba.desktop.client.services.logic.DesktopModule;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
-import com.wrupple.vegetate.client.services.StorageManager;
 
 public interface CatalogModule extends DesktopModule, Ginjector {
 	/*

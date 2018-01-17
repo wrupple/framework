@@ -5,17 +5,17 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.TakesValue;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.TransactionalActivityAssembly;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.desktop.client.activity.widgets.TaskPresenter;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.command.ContextServicesNativeApiBuilder;
 import com.wrupple.muba.desktop.client.services.logic.ModifyUserInteractionStateModelCommand;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogPlaceInterpret;
+import com.wrupple.muba.desktop.client.widgets.TaskContainer;
 import com.wrupple.muba.desktop.domain.ModelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 public class ModifyUserInteractionStateModelCommandImpl extends ContextServicesNativeApiBuilder implements ModifyUserInteractionStateModelCommand {
 
@@ -42,7 +42,7 @@ public class ModifyUserInteractionStateModelCommandImpl extends ContextServicesN
 		super(placeInterpret, assembly);
 	}
 
-	TaskPresenter panel;
+    TaskContainer panel;
 
 	ModelTransformationConfig config;
 	private StateTransition<JsTransactionApplicationContext> callback;
@@ -62,8 +62,8 @@ public class ModifyUserInteractionStateModelCommandImpl extends ContextServicesN
 	@Override
 	public void execute() {
 		JavaScriptObject sourceData = config.getSourceData();
-		// FIXME have model alteration targets point at any TOOLBAR with a given
-		// type/catalog
+        // FIXME have model alteration targets point at any TOOLBAR setRuntimeContext a given
+        // type/catalog
 		String targetName = config.getTarget();
 		String sourceName = config.getSource();
 		String postProcess = config.getPostProcess();

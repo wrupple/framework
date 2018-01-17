@@ -5,11 +5,11 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.templates.TextInput;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.colorPicker.ColorPicker;
+import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 public class ColorPickerCell extends

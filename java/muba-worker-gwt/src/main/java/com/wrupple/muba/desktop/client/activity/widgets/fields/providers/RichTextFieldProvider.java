@@ -4,8 +4,6 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.impl.SequentialProcess;
-import com.wrupple.muba.bpm.client.services.Process;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.editors.RichTextEditor;
@@ -13,6 +11,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.RichTextCel
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import javax.inject.Provider;

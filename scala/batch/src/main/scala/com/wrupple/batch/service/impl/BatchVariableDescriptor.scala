@@ -1,7 +1,6 @@
 package com.wrupple.batch.service.impl
 
 import com.wrupple.batch.service.BatchModelResolver
-import com.wrupple.muba.bpm.domain.{ApplicationContext, VariableDescriptor}
 import com.wrupple.muba.event.domain.FieldDescriptor
 
 

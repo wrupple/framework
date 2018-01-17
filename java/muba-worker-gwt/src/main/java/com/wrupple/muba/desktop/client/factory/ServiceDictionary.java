@@ -4,8 +4,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
 
 import java.util.Set;
 

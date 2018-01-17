@@ -1,8 +1,8 @@
 package com.wrupple.muba.catalogs.client.services.impl;
 
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
 import com.wrupple.muba.desktop.client.services.logic.CatalogCache;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
 
 public class EntryRetrivingCachingHook extends DataCallback<JsCatalogEntry>{
 

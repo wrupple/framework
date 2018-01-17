@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.client.event;
 
-import com.wrupple.muba.bpm.client.activity.ActivityProcess;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
+import com.wrupple.muba.worker.client.activity.ActivityProcess;
 
 public class ContextSwitchEvent extends DesktopProcessEvent {
 	 private final ProcessContextServices context;

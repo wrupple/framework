@@ -24,10 +24,6 @@ import com.wrupple.muba.catalogs.client.services.evaluation.impl.JsComparator;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser;
 import com.wrupple.muba.desktop.client.activity.widgets.panels.BackAndForthPager;
 import com.wrupple.muba.desktop.client.activity.widgets.panels.InfiniteScrollPager;
-import com.wrupple.muba.desktop.client.event.EntriesDeletedEvent;
-import com.wrupple.muba.desktop.client.event.EntriesRetrivedEvent;
-import com.wrupple.muba.desktop.client.event.EntryCreatedEvent;
-import com.wrupple.muba.desktop.client.event.EntryUpdatedEvent;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEntryBrowserMap;
 import com.wrupple.muba.desktop.client.services.logic.CatalogEntryKeyProvider;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
@@ -36,11 +32,15 @@ import com.wrupple.muba.desktop.client.services.presentation.BrowserSelectionMod
 import com.wrupple.muba.desktop.client.services.presentation.ContentStyleDelegate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.ModelTransformationConfig;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
+import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
+import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
+import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
 import com.wrupple.vegetate.domain.FilterData;
 
 import javax.inject.Provider;

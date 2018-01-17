@@ -1,7 +1,6 @@
 package com.wrupple.batch.service.impl
 
 import com.wrupple.batch.service.BatchMessageDelegate
-import com.wrupple.muba.bpm.domain.WorkRequest
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.launcher.SparkAppHandle.Listener
 import org.apache.spark.launcher.{SparkAppHandle, SparkLauncher}

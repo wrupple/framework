@@ -7,8 +7,7 @@
     <packaging>jar</packaging>
     <version>1.0</version>
     <name>Muba Worker</name>
-    <!-- http://www.activiti.org/ Bonita BPM -->
-    <description>Daemon that launches and tracks processes spawned on worker hosts.</description>
+    <description>Event handler Daemon that launches and tracks processes spawned .</description>
     <properties>
         <muba.version>1.0</muba.version>
         <guice.version>4.1.0</guice.version>

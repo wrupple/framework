@@ -5,13 +5,13 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.*;
-import com.wrupple.muba.bpm.shared.services.FieldConversionStrategy;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogFieldMap;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
+import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import java.util.Set;

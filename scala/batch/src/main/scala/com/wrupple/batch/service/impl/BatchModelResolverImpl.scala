@@ -1,11 +1,9 @@
 package com.wrupple.batch.service.impl
 
 import com.wrupple.batch.service.BatchModelResolver
-import com.wrupple.muba.bpm.domain.{ApplicationContext, WorkRequest}
 import com.wrupple.muba.event.domain.FieldDescriptor
 import org.apache.logging.log4j.scala.Logging
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 class BatchModelResolverImpl extends BatchModelResolver with Logging {

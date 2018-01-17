@@ -6,8 +6,8 @@ import com.google.gwt.dom.client.MetaElement;
 import com.google.gwt.dom.client.NodeList;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
 import com.wrupple.vegetate.domain.HasStakeHolder;
@@ -35,8 +35,8 @@ public class ReadWorkerMetadataImpl implements ReadWorkerMetadata {
 			meta = metaTags.getItem(i).cast();
 			metaTagName = meta.getName();
 			metaContent = meta.getContent();
-			// TODO synchronize this variables with the server
-			// TODO ¿a server oriented ¿Async?ServiceDictionary?
+            // TODO synchronize this variables setRuntimeContext the server
+            // TODO ¿a server oriented ¿Async?ServiceDictionary?
 			if ("home".equals(metaTagName)) {
 				String[] homeActivity ;
 				if (metaContent == null || metaContent.trim().isEmpty()) {

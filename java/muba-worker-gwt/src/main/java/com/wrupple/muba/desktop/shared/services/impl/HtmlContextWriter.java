@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.shared.services.impl;
 
-import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.catalogs.server.service.SharedContextWriter;
+import com.wrupple.muba.worker.domain.BPMPeer;
 import com.wrupple.vegetate.server.services.ObjectMapper;
 
 import java.io.IOException;

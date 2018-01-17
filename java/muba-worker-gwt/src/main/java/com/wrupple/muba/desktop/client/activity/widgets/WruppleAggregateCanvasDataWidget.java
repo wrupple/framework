@@ -12,9 +12,9 @@ import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEntryBrowserMap
 import com.wrupple.muba.desktop.client.services.logic.CatalogEntryKeyProvider;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
 
 import javax.inject.Provider;
 import java.util.List;

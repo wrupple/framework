@@ -1,8 +1,7 @@
 package com.wrupple.vegetate.client.services.impl;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
-import com.wrupple.muba.bpm.domain.Transaction;
+import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.vegetate.client.services.CreditCardStorageUnit;
 import com.wrupple.vegetate.domain.CatalogDescriptor;

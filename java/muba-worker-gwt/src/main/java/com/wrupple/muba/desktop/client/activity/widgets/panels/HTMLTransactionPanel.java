@@ -6,18 +6,18 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.wrupple.muba.bpm.client.activity.widget.HumanTaskProcessor;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.AsynchonousHtmlWidget;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.vegetate.client.services.StorageManager;
+import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskProcessor;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HTMLTransactionPanel extends AbstractContentPanel implements ContentPanel {
+public class HTMLTransactionPanel extends AbstractHumanTaskWindow implements HumanTaskWindow {
 
 	class PostRenderToolbarCallback extends DataCallback<String> {
 

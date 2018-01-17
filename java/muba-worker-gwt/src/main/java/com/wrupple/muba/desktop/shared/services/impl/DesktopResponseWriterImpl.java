@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.shared.services.impl;
 
+import com.wrupple.muba.desktop.client.chain.command.DesktopWriterCommand;
 import com.wrupple.muba.desktop.server.chain.command.DesktopResponseWriter;
-import com.wrupple.muba.desktop.server.chain.command.DesktopWriterCommand;
 import com.wrupple.muba.desktop.server.domain.DesktopBuilderContext;
 import com.wrupple.vegetate.domain.VegetateServiceManifest;
 import com.wrupple.vegetate.server.domain.VegetateException;

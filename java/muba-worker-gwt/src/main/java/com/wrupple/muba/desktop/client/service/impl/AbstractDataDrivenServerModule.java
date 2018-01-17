@@ -1,15 +1,16 @@
 package com.wrupple.muba.desktop.client.service.impl;
 
-import com.wrupple.muba.bpm.domain.BPMPeer;
 import com.wrupple.muba.bpm.server.service.BPMPeerErrorAccuser;
 import com.wrupple.muba.catalogs.domain.ActivityDescriptor;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.domain.CatalogExcecutionContext;
-import com.wrupple.muba.catalogs.server.service.*;
+import com.wrupple.muba.catalogs.server.service.CatalogEntryAssembler;
+import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogDaoFactoryImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.server.service.impl.SimpleVegetateCatalogDataAceessObject;
 import com.wrupple.muba.cms.server.services.DataDrivenServerModule;
+import com.wrupple.muba.worker.domain.BPMPeer;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.FilterData;

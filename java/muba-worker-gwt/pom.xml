@@ -18,7 +18,7 @@
 
         <dependency>
             <groupId>com.wrupple.muba</groupId>
-            <artifactId>muba-worker</artifactId>
+            <artifactId>muba-worker-browser</artifactId>
             <version>${muba.version}</version>
         </dependency>
 
@@ -64,7 +64,7 @@
         </dependency>
 
 
-        <!-- replace with  snap? gwt-graphics? or maybe http://www.vectomatic.org/libs/lib-gwt-svg?
+        <!-- replace setRuntimeContext  snap? gwt-graphics? or maybe http://www.vectomatic.org/libs/lib-gwt-svg?
         <dependency>
             <groupId>org.sgx</groupId>
             <artifactId>raphael4gwt</artifactId>

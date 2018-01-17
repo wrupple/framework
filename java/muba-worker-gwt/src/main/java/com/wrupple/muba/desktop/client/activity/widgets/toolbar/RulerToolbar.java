@@ -8,16 +8,16 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.widget.Toolbar;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.client.activity.widgets.ContentPanel.ToolbarDirection;
 import com.wrupple.muba.desktop.client.activity.widgets.WruppleActivityToolbarBase;
 import com.wrupple.muba.desktop.client.activity.widgets.panels.DockLayoutTransactionPanel.DockToolbarProperties;
 import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
-import com.wrupple.muba.desktop.domain.PanelTransformationConfig;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow.ToolbarDirection;
+import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 public class RulerToolbar extends WruppleActivityToolbarBase implements Toolbar {
 
