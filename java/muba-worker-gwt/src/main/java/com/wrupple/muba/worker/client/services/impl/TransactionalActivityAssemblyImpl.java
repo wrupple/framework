@@ -115,35 +115,41 @@ public class TransactionalActivityAssemblyImpl implements TransactionalActivityA
 
     @Override
     public void assembleNativeProcess(Process<?, ?> regreso, JsArray<JsProcessTaskDescriptor> processSteps) {
-        MachineTask machineInteraction;
-        ContextualTransactionProcessState stateInstance;
+
         JsProcessTaskDescriptor step;
-        String machineCommand;
-        JavaScriptObject properties;
-        TransactionAssembler transactionHandler;
+
         int numberOfSteps = processSteps.length();
         // GWT.log("\t"+new JSONObject(processSteps).toString());
         for (int i = 0; i < numberOfSteps; i++) {
             step = processSteps.get(i);
             // GWT.log("\t"+new JSONObject(step).toString());
-            machineCommand = step.getMachineTaskCommandName();
-            stateInstance = (ContextualTransactionProcessState) step.getStateInstance();
-            if (stateInstance == null) {
-                if (machineCommand == null) {
-                    properties = step.getPropertiesObject();
-                    GWTUtils.setAttribute(properties, JsProcessTaskDescriptor.TRANSACTION_FIELD, step.getTransactionType());
-                    transactionHandler = this.transactionHandlerMap.getConfigured(properties, null, null, null);
-                    transactionHandler.assembleTaskProcessSection(regreso, step);
+            presentJob(regreso, step);
 
-                } else {
-                    machineInteraction = machineTaskProvider.get();
-                    machineInteraction.setTaskDescriptor(step);
-                    regreso.addState(machineInteraction);
-                }
+        }
+    }
+
+    private void presentJob(Process regreso, JsProcessTaskDescriptor step) {
+        String machineCommand;
+        ContextualTransactionProcessState stateInstance;
+        JavaScriptObject properties;
+        TransactionAssembler transactionHandler;
+        MachineTask machineInteraction;
+        machineCommand = step.getMachineTaskCommandName();
+        stateInstance = (ContextualTransactionProcessState) step.getStateInstance();
+        if (stateInstance == null) {
+            if (machineCommand == null) {
+                properties = step.getPropertiesObject();
+                GWTUtils.setAttribute(properties, JsProcessTaskDescriptor.TRANSACTION_FIELD, step.getTransactionType());
+                transactionHandler = this.transactionHandlerMap.getConfigured(properties, null, null, null);
+                transactionHandler.assembleTaskProcessSection(regreso, step);
+
             } else {
-                regreso.addState(stateInstance);
+                machineInteraction = machineTaskProvider.get();
+                machineInteraction.setTaskDescriptor(step);
+                regreso.addState(machineInteraction);
             }
-
+        } else {
+            regreso.addState(stateInstance);
         }
     }
 

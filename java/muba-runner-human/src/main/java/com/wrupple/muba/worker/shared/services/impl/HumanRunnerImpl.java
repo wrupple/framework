@@ -31,8 +31,17 @@ public class HumanRunnerImpl implements HumanRunner {
         return variableProvider.get().of(field, context);
     }
 
+
     @Override
     public boolean solve(ApplicationContext context) {
+
+
+        //////////////////////////////////////////////////////////////////
+        //FIXME  ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡AQUI!!!!!!!!!!!!!!!!!!!!!!!!!
+        /////////////////////////////////////////////////////////////////
+
+
+
 
 
         return Command.CONTINUE_PROCESSING;

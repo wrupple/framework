@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-public class CreateWorkerStructureImpl implements CreateWorkerStructure {
+public class DeskCreateWorkerStructureImpl implements CreateWorkerStructure {
     /*
      NestedActivityPresenter main = new NestedActivityPresenter(dm);
             main.setStyleName("desktop");

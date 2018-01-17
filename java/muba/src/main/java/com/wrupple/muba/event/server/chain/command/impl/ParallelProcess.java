@@ -1,22 +1,8 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.RepeatingCommand;
-import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.bpm.client.activity.process.state.HumanTask;
-import com.wrupple.muba.bpm.client.activity.process.state.State;
-import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.bpm.client.services.impl.DataCallback;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 
-import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-public class ParallelProcess<I, O> implements Process<List<I>, List<O>> {
-
+public class ParallelProcess<I, O>/* implements Process<List<I>, List<O>>*/ {
+/*
     private final Provider<? extends State<I, O>> statep;
     private final boolean allownull, sequential;
     private List<StateCallback> pending;
@@ -171,5 +157,5 @@ public class ParallelProcess<I, O> implements Process<List<I>, List<O>> {
         }
 
     }
-
+*/
 }

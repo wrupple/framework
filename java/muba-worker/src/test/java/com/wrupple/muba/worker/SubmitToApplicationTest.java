@@ -154,7 +154,7 @@ public class SubmitToApplicationTest extends WorkerTest {
     /**
      * Done -Triggers are serializable listeners, move trigger logit to an event (fire a workflow with one catalog task)
      * Done - fire a catalog change event (PublishEventsImpl) ( install remote listeners on Event CHain (vegetate web hooks))
-     * ???? - listen event  and have the desktop fire the first task of a workflow and install a listener for the task submission(desktop)
+     * Done - listen event  and have the desktop fire the first task of a workflow and install a listener for the task submission(desktop)
      **/
     //CREATE ApplicationState
     //INSTALL LISTENER HERE
