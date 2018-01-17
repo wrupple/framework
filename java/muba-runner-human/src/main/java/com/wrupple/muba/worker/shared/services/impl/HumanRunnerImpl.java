@@ -2,6 +2,7 @@ package com.wrupple.muba.worker.shared.services.impl;
 
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
+import com.wrupple.muba.worker.domain.Task;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
 import com.wrupple.muba.worker.shared.services.HumanRunner;
 import com.wrupple.muba.worker.shared.services.HumanVariableEligibility;
@@ -45,5 +46,30 @@ public class HumanRunnerImpl implements HumanRunner {
 
 
         return Command.CONTINUE_PROCESSING;
+    }
+
+
+    private void presentJob(ApplicationContext regreso, Task step) {
+        String machineCommand;
+        Command stateInstance;
+        ProblemPresenterChain transactionHandler;
+        MachineTask machineInteraction;
+        machineCommand = step.getMachineTaskCommandName();
+        stateInstance = (ContextualTransactionProcessState) step.getStateInstance();
+        if (stateInstance == null) {
+            if (machineCommand == null) {
+                properties = step.getPropertiesObject();
+                GWTUtils.setAttribute(properties, JsProcessTaskDescriptor.TRANSACTION_FIELD, step.getTransactionType());
+                transactionHandler = this.transactionHandlerMap.getConfigured(properties, null, null, null);
+                transactionHandler.assembleTaskProcessSection(regreso, step);
+
+            } else {
+                machineInteraction = machineTaskProvider.get();
+                machineInteraction.setTaskDescriptor(step);
+                regreso.addState(machineInteraction);
+            }
+        } else {
+            regreso.addState(stateInstance);
+        }
     }
 }

@@ -16,7 +16,6 @@ import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.command.GoToCommand;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.*;
 import com.wrupple.muba.worker.client.activity.ActivityProcess;
 import com.wrupple.muba.worker.client.activity.process.impl.ActivityProcessImpl;
@@ -24,7 +23,6 @@ import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.worker.client.activity.process.state.InitializeActivityContext;
 import com.wrupple.muba.worker.client.activity.process.state.MachineTask;
 import com.wrupple.muba.worker.client.activity.process.state.ReadNextPlace;
-import com.wrupple.muba.worker.client.services.TransactionAssembler;
 import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
 
 import javax.inject.Provider;
@@ -128,30 +126,6 @@ public class TransactionalActivityAssemblyImpl implements TransactionalActivityA
         }
     }
 
-    private void presentJob(Process regreso, JsProcessTaskDescriptor step) {
-        String machineCommand;
-        ContextualTransactionProcessState stateInstance;
-        JavaScriptObject properties;
-        TransactionAssembler transactionHandler;
-        MachineTask machineInteraction;
-        machineCommand = step.getMachineTaskCommandName();
-        stateInstance = (ContextualTransactionProcessState) step.getStateInstance();
-        if (stateInstance == null) {
-            if (machineCommand == null) {
-                properties = step.getPropertiesObject();
-                GWTUtils.setAttribute(properties, JsProcessTaskDescriptor.TRANSACTION_FIELD, step.getTransactionType());
-                transactionHandler = this.transactionHandlerMap.getConfigured(properties, null, null, null);
-                transactionHandler.assembleTaskProcessSection(regreso, step);
-
-            } else {
-                machineInteraction = machineTaskProvider.get();
-                machineInteraction.setTaskDescriptor(step);
-                regreso.addState(machineInteraction);
-            }
-        } else {
-            regreso.addState(stateInstance);
-        }
-    }
 
     /**
      * "navigate" isn't a real transaction type, so it must be catched and

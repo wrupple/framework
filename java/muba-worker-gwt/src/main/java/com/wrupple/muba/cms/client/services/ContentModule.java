@@ -83,13 +83,13 @@ public interface ContentModule extends CatalogModule, Ginjector {
 	/*
 	 * Transaction Handlers
 	 */
-	CreateTransactionAssembler newTransaction();
+    CreateProblemPresenterChain newTransaction();
 
-	ReadTransactionAssembler readTransaction();
+    ReadProblemPresenterChain readTransaction();
 
-	EditTransactionAssembler writeTransaction();
+    EditProblemPresenterChain writeTransaction();
 
-	SelectTransactionAssembler selectTransaction();
+    SelectProblemPresenterChain selectTransaction();
 
 	/*
 	 * TransactionPanels

@@ -3,11 +3,12 @@ package com.wrupple.muba.desktop.client.services.presentation.impl;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.worker.client.activity.process.state.CommitUserTransaction;
 import com.wrupple.muba.worker.client.activity.process.state.StartUserTransaction;
-import com.wrupple.muba.worker.client.services.TransactionAssembler;
+import com.wrupple.muba.worker.client.services.ProblemPresenterChain;
 import com.wrupple.muba.worker.server.chain.command.UserInteractionState;
 
 import javax.inject.Provider;
-public  class AbstractTransactionAssembler implements TransactionAssembler {
+
+public class AbstractProblemPresenterChain implements ProblemPresenterChain {
 
 	private final Provider<? extends StartUserTransaction> startProvider;
 	private final Provider<? extends CommitUserTransaction> commitProvider;
@@ -15,8 +16,8 @@ public  class AbstractTransactionAssembler implements TransactionAssembler {
 	private String layoutUnit;
 	private String transactionViewClass;
 	private String saveTo;
-	
-	public AbstractTransactionAssembler(
+
+	public AbstractProblemPresenterChain(
 			Provider<? extends StartUserTransaction> startProvider,
 			Provider<? extends CommitUserTransaction> commitProvider,
 			Provider<? extends UserInteractionState> interactionProvider) {
