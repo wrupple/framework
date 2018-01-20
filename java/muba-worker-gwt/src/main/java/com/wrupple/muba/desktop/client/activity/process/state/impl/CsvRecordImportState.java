@@ -11,13 +11,13 @@ import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDel
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.FieldColumnRelation;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.client.services.presentation.impl.SimpleFilterableDataProvider;
 import com.wrupple.muba.desktop.domain.overlay.*;
 import com.wrupple.muba.event.server.chain.command.impl.ParallelProcess;
 import com.wrupple.muba.worker.client.activity.process.state.State;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 import com.wrupple.vegetate.domain.FilterData;

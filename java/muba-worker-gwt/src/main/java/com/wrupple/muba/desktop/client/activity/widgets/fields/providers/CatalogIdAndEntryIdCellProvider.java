@@ -10,7 +10,6 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.SimpleTextCell;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
@@ -19,6 +18,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import javax.inject.Provider;

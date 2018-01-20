@@ -3,7 +3,6 @@ package com.wrupple.muba.desktop.client.services.logic.impl;
 import com.google.gwt.view.client.Range;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.OutcomeNarrower;
 import com.wrupple.muba.desktop.client.services.logic.RangePicker;
 import com.wrupple.muba.desktop.shared.services.BucketSplittingStrategy;
@@ -11,6 +10,7 @@ import com.wrupple.muba.desktop.shared.services.HistogramDataProcessor;
 import com.wrupple.muba.desktop.shared.services.StatisticsCalculator;
 import com.wrupple.muba.worker.client.activity.process.state.State;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.HistogramModel;
 
 import java.util.Arrays;

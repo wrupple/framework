@@ -15,12 +15,12 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.impl.GoogleIndexedPointMapWidget;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.SimpleTextCell;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.worker.client.activity.process.state.HumanTask;
 import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import javax.inject.Provider;

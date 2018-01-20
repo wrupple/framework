@@ -8,7 +8,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.desktop.client.activity.AdministrativeActionActivity;
 import com.wrupple.muba.desktop.client.activity.process.state.AdministrativeAction;
 import com.wrupple.muba.desktop.client.activity.process.state.impl.ArbitraryActivityExit;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
 import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
@@ -19,6 +18,7 @@ import com.wrupple.muba.worker.client.activity.SequentialActivity;
 import com.wrupple.muba.worker.client.activity.process.impl.ActivityProcessImpl;
 import com.wrupple.muba.worker.client.activity.process.state.State;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 public class AdministrativeActionActivityImpl extends
         AbstractActivity implements AdministrativeActionActivity, SequentialActivity {

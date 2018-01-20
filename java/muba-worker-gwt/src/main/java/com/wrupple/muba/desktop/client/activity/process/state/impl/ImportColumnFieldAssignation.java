@@ -12,8 +12,7 @@ import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.FieldColumnRelation;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.widgets.editors.SequentialListEditor;
-import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
-import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.desktop.client.factory.help.SolverConcensor;
 import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
@@ -21,6 +20,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PropertyValueAvisor;
 import com.wrupple.muba.desktop.domain.overlay.JsFieldDescriptor;
 import com.wrupple.muba.worker.client.activity.process.state.HumanTask;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
@@ -48,8 +48,8 @@ public class ImportColumnFieldAssignation extends SequentialListEditor implement
 
 	}
 
-	static class ColumnFieldRelationAssistant implements UserAssistanceProvider {
-		private JsArrayString csvColumns;
+    static class ColumnFieldRelationAssistant implements SolverConcensor {
+        private JsArrayString csvColumns;
 		private String rootCatalog;
 		private StorageManager delegate;
 		private DesktopManager dm;

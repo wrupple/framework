@@ -2,10 +2,7 @@ package com.wrupple.muba.worker.server.service.impl;
 
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.server.service.Runner;
-import com.wrupple.muba.worker.server.service.Solver;
-import com.wrupple.muba.worker.server.service.VariableConsensus;
-import com.wrupple.muba.worker.server.service.VariableEligibility;
+import com.wrupple.muba.worker.server.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +30,7 @@ public class SolverImpl implements Solver {
         this.reducer = reducer;
     }
 
-    @Override
-    public boolean solve(ApplicationContext context) {
 
-        return runners.stream().
-                map(plugin -> plugin.solve(context)).
-                reduce(false, (a, b) -> a || b);
-    }
 
     @Override
     public void register(Runner plugin) {
@@ -62,6 +53,18 @@ public class SolverImpl implements Solver {
             log.debug("[{} not solvable]", field.getFieldId());
             return null;
         }
+    }
+
+    @Override
+    public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callcback) {
+
+        //TODO configure: all runners must return, first one, wait for main runner (default)
+        ForkCallback<T> fork = new ForkCallback<T>(callcback);
+
+        return runners.stream().
+                map(plugin -> plugin.solve(context,/* FIXME wrap in a callback that fires an event when a runner finds a complete solution*/fork.fork())).
+                reduce(false, (a, b) -> a || b);
+
     }
 
 

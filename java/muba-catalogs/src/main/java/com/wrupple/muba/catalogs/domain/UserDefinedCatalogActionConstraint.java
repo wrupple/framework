@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
+import com.wrupple.muba.event.domain.CatalogActionConstraint;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
 public interface UserDefinedCatalogActionConstraint extends HasStakeHolder, CatalogActionConstraint {

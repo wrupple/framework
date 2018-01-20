@@ -10,7 +10,7 @@ import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
 import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
 import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
@@ -99,8 +99,8 @@ public abstract class UserInteractionWidgetImpl<T extends JavaScriptObject,R> ex
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParameters) {
-		this.properties=properties;//rewrite options, rather
+    public void applyAlterations(ReconfigurationBroadcastEvent properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParameters) {
+        this.properties=properties;//rewrite options, rather
 		onBeforeRecofigure(properties, contextServices, eventBus, contextParameters);
 		
 		configurationService.reconfigure(properties,this, contextServices, eventBus, contextParameters);
@@ -109,14 +109,12 @@ public abstract class UserInteractionWidgetImpl<T extends JavaScriptObject,R> ex
 	}
 
 
-
-	protected abstract void onAfterReconfigure(PanelTransformationConfig properties2,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters);
-
+    protected abstract void onAfterReconfigure(ReconfigurationBroadcastEvent properties2,
+                                               ProcessContextServices contextServices, EventBus eventBus,
+                                               JsTransactionApplicationContext contextParameters);
 
 
-	protected abstract void onBeforeRecofigure(PanelTransformationConfig properties2,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters) ;
+    protected abstract void onBeforeRecofigure(ReconfigurationBroadcastEvent properties2,
+                                               ProcessContextServices contextServices, EventBus eventBus,
+                                               JsTransactionApplicationContext contextParameters) ;
 }

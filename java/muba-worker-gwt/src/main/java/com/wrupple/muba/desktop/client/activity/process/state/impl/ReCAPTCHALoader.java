@@ -3,9 +3,9 @@ package com.wrupple.muba.desktop.client.activity.process.state.impl;
 import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.core.client.ScriptInjector.FromUrl;
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.ExternalAPILoader;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 public class ReCAPTCHALoader implements ExternalAPILoader {
 

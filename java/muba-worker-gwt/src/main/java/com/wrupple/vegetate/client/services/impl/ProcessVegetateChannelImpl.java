@@ -6,12 +6,12 @@ import com.google.gwt.http.client.UrlBuilder;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.server.service.ProcessServiceManifest;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.SerializationService;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskProcessRequest;
 import com.wrupple.muba.desktop.domain.overlay.JsVegetateServiceManifest;
 import com.wrupple.muba.desktop.domain.overlay.JsonVegetateResponse;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.client.services.ProcessVegetateChannel;
 import com.wrupple.vegetate.domain.VegetateServiceManifest;
 

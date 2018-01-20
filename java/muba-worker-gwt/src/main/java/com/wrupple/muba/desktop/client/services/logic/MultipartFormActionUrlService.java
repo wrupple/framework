@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.client.services.logic;
 
 import com.google.gwt.user.client.ui.FormPanel;
-import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 public interface MultipartFormActionUrlService {
 

@@ -19,7 +19,6 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delega
 import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delegates.OneToOneRelationshipDelegate;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.StringJSOadapter;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
@@ -33,7 +32,8 @@ import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.server.service.StateTransition;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -77,17 +77,17 @@ public abstract class CompositeCatalogEditor<V extends JavaScriptObject> extends
 	}
 	
 	@Override
-	protected void onAfterReconfigure(PanelTransformationConfig properties,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters) {
+    protected void onAfterReconfigure(ReconfigurationBroadcastEvent properties,
+                                      ProcessContextServices contextServices, EventBus eventBus,
+                                      JsTransactionApplicationContext contextParameters) {
 		
 	}
 
 
 	@Override
-	protected void onBeforeRecofigure(PanelTransformationConfig properties,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters) {
+    protected void onBeforeRecofigure(ReconfigurationBroadcastEvent properties,
+                                      ProcessContextServices contextServices, EventBus eventBus,
+                                      JsTransactionApplicationContext contextParameters) {
 		this.catalogService = contextServices.getStorageManager();
 		this.dm=contextServices.getDesktopManager();
 	}

@@ -5,6 +5,7 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.service.ChocoModelResolver;
 import com.wrupple.muba.worker.server.service.ChocoRunner;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
 import org.chocosolver.solver.Model;
 
@@ -40,8 +41,15 @@ public class ChocoRunnerImpl implements ChocoRunner {
     }
 
     @Override
-    public boolean solve(ApplicationContext context) {
+    public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) throws Exception {
         Model model = delegate.resolveSolverModel(context);
-        return model.getSolver().solve();
+         /*else if(model.getSolver().hasReachedLimit()){
+            //System.out.println("The could not find a solution nor prove that none exists in the given limits");
+        }*/
+        boolean retorno = model.getSolver().solve();
+        callback.execute(context);
+        return retorno;
     }
+
+
 }

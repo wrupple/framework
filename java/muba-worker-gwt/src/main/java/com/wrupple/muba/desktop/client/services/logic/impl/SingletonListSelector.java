@@ -1,8 +1,8 @@
 package com.wrupple.muba.desktop.client.services.logic.impl;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 import java.util.List;
 

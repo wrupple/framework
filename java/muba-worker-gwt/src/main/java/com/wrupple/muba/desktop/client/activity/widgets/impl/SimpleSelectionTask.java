@@ -11,7 +11,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.desktop.client.activity.widgets.SelectionTask;
-import com.wrupple.muba.desktop.client.service.StateTransition;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 import java.util.ArrayList;
 import java.util.List;

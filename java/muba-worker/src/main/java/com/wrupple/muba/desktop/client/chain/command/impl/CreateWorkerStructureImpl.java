@@ -3,7 +3,7 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 import com.wrupple.muba.desktop.client.chain.command.CreateWorkerStructure;
 import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
 import com.wrupple.muba.desktop.domain.ContainerContext;
-import com.wrupple.muba.worker.domain.Application;
+import com.wrupple.muba.event.domain.Application;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

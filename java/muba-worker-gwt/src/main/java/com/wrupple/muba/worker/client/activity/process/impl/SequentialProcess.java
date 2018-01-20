@@ -7,11 +7,11 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.activity.process.state.impl.TakesValueState;
 import com.wrupple.muba.desktop.client.event.ProcessExitEvent;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.shared.OrdinalIndexedSequence;
 import com.wrupple.muba.worker.client.activity.process.state.HumanTask;
 import com.wrupple.muba.worker.client.activity.process.state.State;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 import java.util.Iterator;
 

@@ -1,8 +1,8 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.Task;
 import com.wrupple.muba.worker.server.chain.command.DefineSolutionCriteria;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;

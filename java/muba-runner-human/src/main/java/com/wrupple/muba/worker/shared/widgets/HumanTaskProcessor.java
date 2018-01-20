@@ -3,7 +3,7 @@ package com.wrupple.muba.worker.shared.widgets;
 import com.wrupple.muba.desktop.client.widgets.Interactive;
 import com.wrupple.muba.desktop.client.widgets.TaskProcessor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.event.HandlesCatalogEvents;
 
 public interface HumanTaskProcessor<T> extends TaskProcessor<T>, HandlesCatalogEvents/*,HasValueChangeHandlers<R> */, Interactive {
@@ -17,5 +17,5 @@ public interface HumanTaskProcessor<T> extends TaskProcessor<T>, HandlesCatalogE
      * @param properties
      * @param contextParamenters
      */
-    void applyAlterations(PanelTransformationConfig properties, ApplicationContext contextParamenters);
+    void applyAlterations(ReconfigurationBroadcastEvent properties, ApplicationContext contextParamenters);
 }

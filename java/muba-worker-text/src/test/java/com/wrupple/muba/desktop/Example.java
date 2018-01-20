@@ -22,12 +22,13 @@ import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
 import com.wrupple.muba.desktop.domain.ContextSwitchHandler;
 import com.wrupple.muba.desktop.domain.DesktopServiceManifest;
 import com.wrupple.muba.desktop.domain.LaunchWorkerManifest;
+import com.wrupple.muba.desktop.domain.impl.ContainerStateImpl;
 import com.wrupple.muba.desktop.domain.impl.LaunchWorkerManifestImpl;
-import com.wrupple.muba.desktop.domain.impl.WorkerLoadOrderImpl;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.Constraint;
+import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.server.ExplicitIntentInterpret;
 import com.wrupple.muba.event.server.chain.command.BindService;
 import com.wrupple.muba.event.server.chain.command.Dispatch;
@@ -37,7 +38,6 @@ import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import com.wrupple.muba.worker.BusinessModule;
 import com.wrupple.muba.worker.ConstraintSolverModule;
 import com.wrupple.muba.worker.SolverModule;
-import com.wrupple.muba.worker.domain.WorkerLoadOrder;
 import com.wrupple.muba.worker.server.service.ChocoRunner;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.worker.server.service.VariableConsensus;
@@ -113,7 +113,7 @@ public class Example {
             bind(WorkerContainerLauncher.class).to(WorkerContainerLauncherImpl.class);
             bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
 
-            bind(WorkerLoadOrder.class).to(WorkerLoadOrderImpl.class);
+            bind(ContainerState.class).to(ContainerStateImpl.class);
             bind(LaunchApplicationState.class).to(LaunchApplicationStateImpl.class);
             bind(ReadWorkerMetadata.class).to(ReadWorkerMetadataImpl.class);
             bind(StartWorkerHeartBeat.class).to(StartWorkerHeartBeatImpl.class);
@@ -142,9 +142,9 @@ public class Example {
         @Provides
         @com.google.inject.Singleton
         @com.google.inject.Inject
-        @com.google.inject.name.Named(WorkerLoadOrder.CATALOG)
+        @com.google.inject.name.Named(ContainerState.CATALOG)
         public CatalogDescriptor session(CatalogDescriptorBuilder builder) {
-            CatalogDescriptor r = builder.fromClass(WorkerLoadOrderImpl.class, WorkerLoadOrder.CATALOG, "WorkerLoadOrder", -2917198,
+            CatalogDescriptor r = builder.fromClass(ContainerStateImpl.class, ContainerState.CATALOG, "ContainerState", -2917198,
                     null);
             return r;
         }

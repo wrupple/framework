@@ -4,8 +4,8 @@ import com.wrupple.muba.desktop.client.chain.command.ImportResources;
 import com.wrupple.muba.desktop.client.chain.command.ImportResourcesCallback;
 import com.wrupple.muba.desktop.client.chain.command.SplashScreen;
 import com.wrupple.muba.desktop.domain.ContextSwitchRuntimeContext;
+import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.worker.domain.Application;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;

@@ -1,9 +1,9 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Task;
 import com.wrupple.muba.worker.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;

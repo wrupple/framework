@@ -9,12 +9,12 @@ import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.FieldColum
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImageFieldImportData;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.MultipleCatalogFileUpload.Value;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.worker.client.activity.process.state.State;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 import java.util.List;
 

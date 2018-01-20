@@ -1,7 +1,7 @@
 package com.wrupple.muba.worker.shared.services;
 
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.worker.domain.Workflow;
+import com.wrupple.muba.event.domain.Workflow;
 
 public interface ContentManagerRegistry {
 

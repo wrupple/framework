@@ -2,8 +2,8 @@ package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionConstraintImpl;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.worker.domain.Task;
-import com.wrupple.muba.worker.domain.TaskToolbarDescriptor;
+import com.wrupple.muba.event.domain.Task;
+import com.wrupple.muba.event.domain.TaskToolbarDescriptor;
 
 import java.util.List;
 

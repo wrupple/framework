@@ -10,7 +10,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
-import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
+import com.wrupple.muba.desktop.client.factory.help.SolverConcensor;
 import com.wrupple.muba.desktop.client.services.logic.ServiceBus;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
@@ -41,6 +41,31 @@ public class SequentialListEditor extends Composite implements
 		}
 
 	}
+
+    protected final SolverConcensor rootAdvisor;
+
+    @Inject
+    public SequentialListEditor(CatalogUserInterfaceMessages c,
+                                SolverConcensor rootAdvisor) {
+        super();
+        this.rootAdvisor = rootAdvisor;
+        VerticalPanel main = new VerticalPanel();
+        FlowPanel bottom = new FlowPanel();
+        Button button = new Button(c.addNew(), new Clicker());
+        Button end = new Button(c.ok(), new Finish());
+        list = new ArrayList<TextBox>();
+        table = new FlexTable();
+        main.add(table);
+        main.add(bottom);
+        bottom.add(end);
+        bottom.add(button);
+        ScrollPanel scroll = new ScrollPanel();
+        scroll.setWidget(main);
+        initWidget(scroll);
+    }
+
+    private final FlexTable table;
+    private final List<TextBox> list;
 
 	private class ChangeHandler implements FocusHandler, KeyUpHandler {
 
@@ -120,8 +145,8 @@ public class SequentialListEditor extends Composite implements
 			JsArray<PropertyValueAvisor> advice = JavaScriptObject
 					.createArray().cast();
 			try{
-				rootAdvisor.adviceOnCurrentConfigurationState(currentState, advice);
-			}catch(Exception e){
+                rootAdvisor.conferWithRunners(currentState, advice);
+            }catch(Exception e){
 				GWT.log("Failed to complete advice on ListEditor",e);
 			}
 			String currentPropertyName = indexHasPropertyName();
@@ -160,35 +185,20 @@ public class SequentialListEditor extends Composite implements
 		@Override
 		public void onClick(ClickEvent event) {
 			TextBox box = list.get(row);
-			String value = advisor.getAppliedValue(showValue);
-			box.setValue(value);
+            String value = getAppliedValue(showValue);
+            box.setValue(value);
 			box.setFocus(true);
 		}
 
-	}
 
-	private final FlexTable table;
-	private final List<TextBox> list;
-	protected final UserAssistanceProvider rootAdvisor;
+        public String getAppliedValue(boolean showValue, jso) {
+            String value = jso.getName() + "=";
+            if (showValue) {
+                value = value + jso.getValue();
+            }
+            return value;
+        }
 
-	@Inject
-	public SequentialListEditor(CatalogUserInterfaceMessages c,
-			UserAssistanceProvider rootAdvisor) {
-		super();
-		this.rootAdvisor = rootAdvisor;
-		VerticalPanel main = new VerticalPanel();
-		FlowPanel bottom = new FlowPanel();
-		Button button = new Button(c.addNew(), new Clicker());
-		Button end = new Button(c.ok(), new Finish());
-		list = new ArrayList<TextBox>();
-		table = new FlexTable();
-		main.add(table);
-		main.add(bottom);
-		bottom.add(end);
-		bottom.add(button);
-		ScrollPanel scroll = new ScrollPanel();
-		scroll.setWidget(main);
-		initWidget(scroll);
 	}
 
 	private boolean suggestionStillApplicable(int row,

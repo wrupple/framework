@@ -15,5 +15,4 @@ public class LaunchWorkerHandlerImpl extends ImplicitEventResolverRegistration i
         super(manifest, engine, interpret, null);
     }
 
-
 }

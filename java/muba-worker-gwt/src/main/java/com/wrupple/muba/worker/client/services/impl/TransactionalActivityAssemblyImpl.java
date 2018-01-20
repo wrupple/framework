@@ -12,7 +12,6 @@ import com.wrupple.muba.cms.domain.TaskToolbarDescriptor;
 import com.wrupple.muba.cms.domain.WruppleActivityAction;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser;
 import com.wrupple.muba.desktop.client.factory.dictionary.TransactionAssemblerMap;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.command.GoToCommand;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
@@ -24,6 +23,7 @@ import com.wrupple.muba.worker.client.activity.process.state.InitializeActivityC
 import com.wrupple.muba.worker.client.activity.process.state.MachineTask;
 import com.wrupple.muba.worker.client.activity.process.state.ReadNextPlace;
 import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 import javax.inject.Provider;
 import java.util.List;
@@ -33,7 +33,6 @@ public class TransactionalActivityAssemblyImpl implements TransactionalActivityA
     /**
      * Transaction type service
      */
-    private final TransactionAssemblerMap transactionHandlerMap;
     private final StorageManager sm;
     /**
      * outputHandlerService

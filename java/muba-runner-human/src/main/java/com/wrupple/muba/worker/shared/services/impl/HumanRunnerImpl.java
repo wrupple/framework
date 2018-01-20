@@ -1,8 +1,12 @@
 package com.wrupple.muba.worker.shared.services.impl;
 
+import com.wrupple.muba.desktop.client.chain.ProblemPresenter;
+import com.wrupple.muba.desktop.client.factory.dictionary.TransactionAssemblerMap;
+import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.Task;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
 import com.wrupple.muba.worker.shared.services.HumanRunner;
 import com.wrupple.muba.worker.shared.services.HumanVariableEligibility;
@@ -17,9 +21,12 @@ public class HumanRunnerImpl implements HumanRunner {
 
     private final Provider<HumanVariableEligibility> variableProvider;
 
+    private final TransactionAssemblerMap transactionHandlerMap;
+
     @Inject
-    public HumanRunnerImpl(Provider<HumanVariableEligibility> variableProvider) {
+    public HumanRunnerImpl(Provider<HumanVariableEligibility> variableProvider, TransactionAssemblerMap transactionHandlerMap) {
         this.variableProvider = variableProvider;
+        this.transactionHandlerMap = transactionHandlerMap;
     }
 
     @Override
@@ -32,44 +39,96 @@ public class HumanRunnerImpl implements HumanRunner {
         return variableProvider.get().of(field, context);
     }
 
-
     @Override
-    public boolean solve(ApplicationContext context) {
+    public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) {
+
+        String machineCommand;
+        Command stateInstance;
+        ProblemPresenter transactionHandler;
+
+        if (overridesTransactionHandler(context)) {
+
+            transactionHandler = getOverridenTransactionHandler(context);
+        } else {
+            //any runner invocation, batch, a.i, human
+            transactionHandler = this.transactionHandlerMap.getConfigured(context);
+
+        }
 
 
         //////////////////////////////////////////////////////////////////
-        //FIXME  ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡AQUI!!!!!!!!!!!!!!!!!!!!!!!!!
-        /////////////////////////////////////////////////////////////////
+        // make this call asynchronous, SynthesizeSolutionEntry becomes SolverEngineCallback//
+        //////////////////////////////////////////////////////////////////
 
 
+        //FIXME missing methods might be in ProblemPresenterImpl
 
+        contextServices.getDesktopManager().updatePlace(currentPlace);
+
+
+        String catalog = taskDescriptor.getCatalogId();
+
+        JsArrayString filterSelection = null;
+
+        if (saveTo != null) {
+            JavaScriptObject savedData = GWTUtils.getAttributeAsJavaScriptObject(context, saveTo);
+
+            if (savedData == null) {
+                DesktopPlace place = (DesktopPlace) context.getPlaceController().getWhere();
+                String savedRawKeys = place.getProperty(saveTo);
+                if (savedRawKeys != null) {
+                    filterSelection = split(savedRawKeys);
+                    if (filterSelection.length() <= 0) {
+                        filterSelection = null;
+                    }
+                }
+
+            } else {
+                context.setUserOutput(savedData);
+                callback.setResultAndFinish(context);
+                return;
+            }
+        }
+
+        if (filterSelection == null) {
+
+			/*
+             * USER INTERACTION REQUIRED
+			 */
+
+            transactionHandler.delegate(context, callback);
+
+
+        } else {
+            /*
+			 * PRECIOUS RESULT WILL BE RECOVERED FROM SAVED STATE
+			 */
+
+            StorageManager sm = context.getStorageManager();
+            DesktopManager dm = context.getDesktopManager();
+            ProblemPresenterImpl.AutoSelectionCallback autoCallback = new ProblemPresenterImpl.AutoSelectionCallback(context, callback);
+            if (userOutputIsArray) {
+                JsFilterData autoSelectionFilter = JsFilterData.createSingleFieldFilter(CatalogEntry.ID_FIELD, filterSelection);
+
+                sm.read(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(), catalog, autoSelectionFilter, autoCallback);
+
+            } else {
+                sm.read(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(), catalog, filterSelection.get(0), autoCallback);
+            }
+            // support auto create, update, read, etc...
+
+            wrapper.setWidget(new BigFatMessage("..."));
+        }
 
 
         return Command.CONTINUE_PROCESSING;
     }
 
-
-    private void presentJob(ApplicationContext regreso, Task step) {
-        String machineCommand;
-        Command stateInstance;
-        ProblemPresenterChain transactionHandler;
-        MachineTask machineInteraction;
-        machineCommand = step.getMachineTaskCommandName();
-        stateInstance = (ContextualTransactionProcessState) step.getStateInstance();
-        if (stateInstance == null) {
-            if (machineCommand == null) {
-                properties = step.getPropertiesObject();
-                GWTUtils.setAttribute(properties, JsProcessTaskDescriptor.TRANSACTION_FIELD, step.getTransactionType());
-                transactionHandler = this.transactionHandlerMap.getConfigured(properties, null, null, null);
-                transactionHandler.assembleTaskProcessSection(regreso, step);
-
-            } else {
-                machineInteraction = machineTaskProvider.get();
-                machineInteraction.setTaskDescriptor(step);
-                regreso.addState(machineInteraction);
-            }
-        } else {
-            regreso.addState(stateInstance);
-        }
+    private ProblemPresenter getOverridenTransactionHandler(ApplicationContext context) {
     }
+
+    private boolean overridesTransactionHandler(ApplicationContext context) {
+    }
+
+
 }

@@ -1,12 +1,12 @@
 package com.wrupple.muba.desktop.client.service.data.impl;
 
 import com.google.inject.Inject;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.BPMPeer;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.shared.event.*;
 
 import javax.inject.Provider;

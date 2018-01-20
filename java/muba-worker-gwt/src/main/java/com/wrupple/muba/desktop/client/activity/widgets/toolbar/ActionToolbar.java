@@ -19,8 +19,6 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.cms.domain.WruppleActivityAction;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEntryBrowserMap;
-import com.wrupple.muba.desktop.client.factory.dictionary.impl.ThemedImagesDictionary;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.command.InterruptActivity;
 import com.wrupple.muba.desktop.client.services.logic.ConfigurationConstants;
@@ -28,8 +26,10 @@ import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.*;
+import com.wrupple.muba.worker.client.factory.dictionary.impl.ThemedImagesDictionary;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.server.service.StateTransition;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
 import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
 import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
@@ -216,7 +216,7 @@ public class ActionToolbar extends ResizeComposite implements Toolbar {
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
+    public void applyAlterations(ReconfigurationBroadcastEvent properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
 
 	}
 

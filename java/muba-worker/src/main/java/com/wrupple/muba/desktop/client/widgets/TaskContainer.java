@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.client.widgets;
 
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.worker.domain.ApplicationContext;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.shared.widgets.AcceptsOneWidget;
 
 public interface TaskContainer extends AcceptsOneWidget {

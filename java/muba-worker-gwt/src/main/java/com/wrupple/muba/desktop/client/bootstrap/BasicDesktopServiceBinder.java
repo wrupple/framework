@@ -56,7 +56,6 @@ import com.wrupple.muba.desktop.client.activity.widgets.toolbar.FilterToolbarImp
 import com.wrupple.muba.desktop.client.activity.widgets.toolbar.HomeToolbar;
 import com.wrupple.muba.desktop.client.chain.command.impl.ReadWorkerMetadataImpl;
 import com.wrupple.muba.desktop.client.factory.dictionary.*;
-import com.wrupple.muba.desktop.client.factory.dictionary.impl.*;
 import com.wrupple.muba.desktop.client.factory.help.ActionAidProvider;
 import com.wrupple.muba.desktop.client.factory.help.TaskConfigurationAid;
 import com.wrupple.muba.desktop.client.factory.help.TaskToolbarAid;
@@ -92,6 +91,7 @@ import com.wrupple.muba.worker.client.activity.process.state.*;
 import com.wrupple.muba.worker.client.activity.process.state.impl.InitializeActivityContextImpl;
 import com.wrupple.muba.worker.client.activity.process.state.impl.MachineTaskImpl;
 import com.wrupple.muba.worker.client.activity.process.state.impl.ReadNextPlaceImpl;
+import com.wrupple.muba.worker.client.factory.dictionary.impl.*;
 import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
 import com.wrupple.muba.worker.client.services.impl.TransactionalActivityAssemblyImpl;
 import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
@@ -348,22 +348,12 @@ public class BasicDesktopServiceBinder extends AbstractGinModule {
 
 	}
 
-	public static class UserAssistanceProviderMapProvider implements Provider<UserAssistanceProviderMap> {
-
-		@Override
-		public UserAssistanceProviderMap get() {
-			WruppleUserAssistanceProviderMap regreso = GWT.create(WruppleUserAssistanceProviderMap.class);
-			return regreso;
-		}
-
-	}
-	
 	@Override
 	protected void configure() {
-		
+
 		/*
-		 * Basic Shared Desktop Services
-		 * 
+         * Basic Shared Desktop Services
+		 *
 		 */
         bind(ReadDesktopMetadata.class).to(ReadWorkerMetadataImpl.class);
         bind(ProcessManager.class).to(
@@ -373,12 +363,12 @@ public class BasicDesktopServiceBinder extends AbstractGinModule {
 		 */
 		bind(DesktopActivityMapper.class).to(DesktopActivityMapperImpl.class).in(Singleton.class);
 		bind(PlaceHistoryMapper.class).to(DesktopPlaceHistoryMapperImpl.class).in(Singleton.class);
-		
+
 		/*
 		 * SERVICE MAPS
 		 */
-		bind(UserAssistanceProviderMap.class).toProvider(UserAssistanceProviderMapProvider.class).in(Singleton.class);
-		bind(ExternalAPILoaderMap.class).toProvider(ExternalAPILoaderMapProvider.class).in(Singleton.class);
+        bind(SolverConcensorMap.class).toProvider(UserAssistanceProviderMapProvider.class).in(Singleton.class);
+        bind(ExternalAPILoaderMap.class).toProvider(ExternalAPILoaderMapProvider.class).in(Singleton.class);
 		bind(ActivityPresenterMap.class).toProvider(ActivityPResenterMapProvider.class).in(Singleton.class);
 		bind(TransactionAssemblerMap.class).toProvider(TransactionAssemblerMapProvider.class).in(Singleton.class);
 		bind(SelectionModelDictionary.class).toProvider(SelectionModelMapProvider.class).in(Singleton.class);
@@ -394,8 +384,8 @@ public class BasicDesktopServiceBinder extends AbstractGinModule {
 		bind(CatalogEntryBrowserMap.class).toProvider(CatalogEntryBrowserMapProvider.class).in(Singleton.class);
 		bind(ToolbarMap.class).toProvider(ToolbarMapProvider.class).in(Singleton.class);
 		bind(DictionaryRegistry.class).toProvider(ServiceRegistryProvider.class).in(Singleton.class);
-		
-		
+
+
 		/*
 		 * Services
 		 */
@@ -422,7 +412,7 @@ public class BasicDesktopServiceBinder extends AbstractGinModule {
 		bind(ClickableElementTemplate.class).to(WruppleButtonTemplate.class);
 		bind(CatalogUserInterfaceMessages.class).to(WruppleCatalogUserInterfaceMessages.class);
 		bind(DesktopTheme.class).to(WruppleDesktopTheme.class);
-		
+
 		/*
 		 * Activities
 		 */
@@ -535,7 +525,18 @@ public class BasicDesktopServiceBinder extends AbstractGinModule {
 		bind(DesktopAuthenticationProcess.class).to(DesktopAuthenticationProcessImpl.class);
 		bind(CanvasDrawingProcess.class).to(CanvasDrawingProcessImpl.class);
 	}
-	 interface WruppleImageTemplate extends ImageTemplate, SafeHtmlTemplates {
+
+    public static class UserAssistanceProviderMapProvider implements Provider<SolverConcensorMap> {
+
+        @Override
+        public SolverConcensorMap get() {
+            WruppleSolverConcensorMap regreso = GWT.create(WruppleSolverConcensorMap.class);
+            return regreso;
+        }
+
+    }
+
+    interface WruppleImageTemplate extends ImageTemplate, SafeHtmlTemplates {
 
          //TODO replace this setRuntimeContext a hand-writtend implementation so CatalogReadingChannel can ve injected and url building functionality used
 

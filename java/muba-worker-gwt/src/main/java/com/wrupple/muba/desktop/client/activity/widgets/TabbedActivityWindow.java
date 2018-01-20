@@ -5,11 +5,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
 import com.wrupple.muba.desktop.client.widgets.TaskContainer;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow;
 
 public class TabbedActivityWindow extends ResizeComposite implements ProcessWindow {

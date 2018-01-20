@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.server.service;
 
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 
@@ -15,7 +16,7 @@ public interface Solver {
      * @param context
      * @return true if a solution has been found
      */
-    boolean solve(ApplicationContext context);
+    <T extends CatalogEntry> boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callcback);
 
     void register(Runner plugin);
 }

@@ -12,7 +12,7 @@ import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow.ToolbarDirection;
 import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
@@ -63,9 +63,9 @@ public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetI
 
 
 	@Override
-	protected void onAfterReconfigure(PanelTransformationConfig properties,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters) {
+    protected void onAfterReconfigure(ReconfigurationBroadcastEvent properties,
+                                      ProcessContextServices contextServices, EventBus eventBus,
+                                      JsTransactionApplicationContext contextParameters) {
 		if(properties.getFireReset()){
 			ResizeEvent.fire(this, 0, 0);
 		}
@@ -73,9 +73,9 @@ public  abstract class WruppleActivityToolbarBase extends UserInteractionWidgetI
 	}
 
 	@Override
-	protected void onBeforeRecofigure(PanelTransformationConfig properties,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters) {
+    protected void onBeforeRecofigure(ReconfigurationBroadcastEvent properties,
+                                      ProcessContextServices contextServices, EventBus eventBus,
+                                      JsTransactionApplicationContext contextParameters) {
 		properties.setType(type);
 	}
 	

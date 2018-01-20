@@ -15,11 +15,11 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.factory.DictionaryTemplate;
 import com.wrupple.muba.desktop.client.factory.help.DictionaryConfigurableFactory;
-import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
+import com.wrupple.muba.desktop.client.factory.help.SolverConcensor;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.PropertyValueAvisor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.CatalogKey;
 import org.w3c.dom.Document;
@@ -130,8 +130,8 @@ public class ServiceDictionaryBinder {
 							// delegated property value
 							source.print(serviceBusGetter);
 							source.print("().getServiceBus().getServiceDictionary(\"" + dictionary
-									+ "\").adviceOnCurrentConfigurationState(currentState,regreso);");
-							source.println();
+                                    + "\").conferWithRunners(currentState,regreso);");
+                            source.println();
 						}
 					}
 				}
@@ -402,14 +402,14 @@ public class ServiceDictionaryBinder {
 		ClassSourceFileComposerFactory composer = new ClassSourceFileComposerFactory(packageName, simpleName);
 		composer.addImport("java.util.HashMap");
 		composer.addImport("java.util.Set");
-		composer.addImport(UserAssistanceProvider.class.getCanonicalName());
-		composer.addImport(GWTUtils.class.getCanonicalName());
+        composer.addImport(SolverConcensor.class.getCanonicalName());
+        composer.addImport(GWTUtils.class.getCanonicalName());
 		composer.addImport(PropertyValueAvisor.class.getCanonicalName());
 		composer.addImport(JsArray.class.getCanonicalName());
 		composer.addImport(JavaScriptObject.class.getCanonicalName());
 		composer.addImport(EventBus.class.getCanonicalName());
-		composer.addImport(PanelTransformationConfig.class.getCanonicalName());
-		composer.addImport(JsTransactionApplicationContext.class.getCanonicalName());
+        composer.addImport(ReconfigurationBroadcastEvent.class.getCanonicalName());
+        composer.addImport(JsTransactionApplicationContext.class.getCanonicalName());
 		composer.addImport(ProcessContextServices.class.getCanonicalName());
 		composer.addImport(JsArrayString.class.getCanonicalName());
 		composer.addImplementedInterface(classType.getSimpleSourceName());
@@ -528,7 +528,7 @@ public class ServiceDictionaryBinder {
 
                     source.println("new " + providerType + "<" + genericType + ">() { ");
                     source.indent();
-                    source.println("public void adviceOnCurrentConfigurationState(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso){");
+                    source.println("public void conferWithRunners(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso){");
                     source.println("PropertyValueAvisor newadvice;");
                     if (widgetNode.hasChildNodes()) {
                         buildAdvice(widgetNode.getChildNodes(), source, serviceBusGetter);
@@ -557,7 +557,7 @@ public class ServiceDictionaryBinder {
                     source.println("}");
 
                     source.println("@Override");
-                    source.println("public void validateValue(String fieldId, Object value,JsArrayString violations) {");
+                    source.println("public void intersectConstraintsWithSolution(String fieldId, Object value,JsArrayString violations) {");
                     // TODO validate field id is one of property names?
                     source.println("}");
                     source.println("@Override");
@@ -661,7 +661,7 @@ public class ServiceDictionaryBinder {
                 source.outdent();
                 source.println("}");
 
-                source.println("public void adviceOnCurrentConfigurationState(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso) {");
+                source.println("public void conferWithRunners(JavaScriptObject currentState, JsArray<PropertyValueAvisor> regreso) {");
                 source.indent();
                 source.println("String mathingValue = JSOHelper.getAttribute(currentState, \"" + configurationPropertyName + "\");");
                 checkInitialization(source);
@@ -676,16 +676,16 @@ public class ServiceDictionaryBinder {
 
                 source.println("}");
                 source.println("} else {");
-                source.println("UserAssistanceProvider advisor = map.get(mathingValue);");
+                source.println("SolverConcensor advisor = map.get(mathingValue);");
                 source.println("if(advisor!=null){");
-                source.println("advisor.adviceOnCurrentConfigurationState(currentState, regreso);");
+                source.println("advisor.conferWithRunners(currentState, regreso);");
                 source.println("}");
                 source.println("}");
                 source.outdent();
                 source.println("}");
 
                 source.println("@Override");
-                source.print("public void reconfigure(PanelTransformationConfig configuration,");
+                source.print("public void reconfigure(ReconfigurationBroadcastEvent configuration,");
                 source.print(genericType);
                 source.println(" regreso,ProcessContextServices contextServices, EventRegistry eventBus,JsTransactionApplicationContext contextParameters) {");
                 source.indent();
@@ -699,7 +699,7 @@ public class ServiceDictionaryBinder {
                 source.println("}");
 
                 source.println("@Override");
-                source.println("public void validateValue(String fieldId, Object v,JsArrayString regreso){");
+                source.println("public void intersectConstraintsWithSolution(String fieldId, Object v,JsArrayString regreso){");
                 source.println("String value=(String)v;");
                 checkInitialization(source);
                 // WE ONLY SUPPORT ONE FIELD (THE ONE DECLARED) ... dont we?

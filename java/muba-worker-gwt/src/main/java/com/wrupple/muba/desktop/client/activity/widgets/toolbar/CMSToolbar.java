@@ -15,11 +15,11 @@ import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.desktop.client.activity.widgets.WruppleActivityToolbarBase;
 import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.*;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 public class CMSToolbar extends WruppleActivityToolbarBase implements Toolbar {

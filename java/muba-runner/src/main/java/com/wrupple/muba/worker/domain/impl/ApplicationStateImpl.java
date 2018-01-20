@@ -1,16 +1,12 @@
 package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.bpm.domain.Application;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterData;
-import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Task;
 import com.wrupple.muba.worker.domain.VariableDescriptor;
 
 import java.util.List;

@@ -10,7 +10,6 @@ import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.desktop.client.activity.process.CatalogTypeSelectionProcess;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.SimpleTextCell;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
@@ -18,6 +17,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.worker.client.activity.process.state.State;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 

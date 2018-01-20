@@ -2,8 +2,8 @@ package com.wrupple.muba.desktop.client.event;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 public class BeforeEntryCreatedEvent extends GwtEvent<BeforeEntryCreatedEventHandler> {
 	static com.google.gwt.event.shared.GwtEvent.Type<BeforeEntryCreatedEventHandler> type;

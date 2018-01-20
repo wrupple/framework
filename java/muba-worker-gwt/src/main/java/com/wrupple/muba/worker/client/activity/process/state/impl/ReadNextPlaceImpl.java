@@ -6,12 +6,12 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.factory.dictionary.OutputHandlerMap;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.ServiceBus;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.client.activity.process.state.ReadNextPlace;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 public class ReadNextPlaceImpl implements ReadNextPlace {
 

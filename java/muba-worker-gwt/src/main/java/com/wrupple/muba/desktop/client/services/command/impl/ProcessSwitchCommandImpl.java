@@ -11,7 +11,6 @@ import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.ProcessSwitchCommand;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
@@ -22,6 +21,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.worker.client.services.TransactionalActivityAssembly;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
+import com.wrupple.muba.worker.server.service.StateTransition;
 public class ProcessSwitchCommandImpl implements ProcessSwitchCommand {
 
 	class ProcessAssembledCallback

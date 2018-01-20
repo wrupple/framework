@@ -1,8 +1,8 @@
 package com.wrupple.muba.desktop.client.event;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.overlay.JsJavaExceptionOverlay;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 public class VegetateRequestFailureEvent extends VegetateEvent {
 	

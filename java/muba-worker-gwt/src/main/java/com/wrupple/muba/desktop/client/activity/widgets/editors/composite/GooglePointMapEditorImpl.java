@@ -27,7 +27,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -287,16 +287,16 @@ public class GooglePointMapEditorImpl extends
 	}
 
 	@Override
-	protected void onAfterReconfigure(PanelTransformationConfig properties2,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters) {
+    protected void onAfterReconfigure(ReconfigurationBroadcastEvent properties2,
+                                      ProcessContextServices contextServices, EventBus eventBus,
+                                      JsTransactionApplicationContext contextParameters) {
 		
 	}
 
 	@Override
-	protected void onBeforeRecofigure(PanelTransformationConfig properties2,
-			ProcessContextServices contextServices, EventBus eventBus,
-			JsTransactionApplicationContext contextParameters) {
+    protected void onBeforeRecofigure(ReconfigurationBroadcastEvent properties2,
+                                      ProcessContextServices contextServices, EventBus eventBus,
+                                      JsTransactionApplicationContext contextParameters) {
 		
 	}
 }

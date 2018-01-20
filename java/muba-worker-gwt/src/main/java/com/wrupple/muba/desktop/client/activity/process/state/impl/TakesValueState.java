@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.desktop.client.activity.widgets.DataInputView;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.HasUserActions;
 import com.wrupple.muba.desktop.domain.overlay.JsWruppleActivityAction;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 public class TakesValueState<O> implements DataInputView<O>, ValueChangeHandler<O> {
 

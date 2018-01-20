@@ -3,10 +3,8 @@ package com.wrupple.muba.worker.server.service.impl;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import com.wrupple.muba.catalogs.server.service.impl.StaticCatalogDescriptorProvider;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Task;
-import com.wrupple.muba.worker.domain.TaskToolbarDescriptor;
 import com.wrupple.muba.worker.domain.WruppleActivityAction;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Command;
@@ -20,14 +18,18 @@ import javax.inject.Named;
 public class SolverCatalogPluginImpl extends StaticCatalogDescriptorProvider implements SolverCatalogPlugin {
 
     @Inject
-    public SolverCatalogPluginImpl(@Named(Application.CATALOG) CatalogDescriptor appItem, @Named(ApplicationState.CATALOG) CatalogDescriptor state, @Named(Task.CATALOG) CatalogDescriptor taskDescP,
+    public SolverCatalogPluginImpl(@Named(Application.CATALOG) CatalogDescriptor appItem,
+                                   @Named(ApplicationState.CATALOG) CatalogDescriptor state,
+                                   @Named(ContainerState.CATALOG) CatalogDescriptor container,
+                                   @Named(Task.CATALOG) CatalogDescriptor taskDescP,
                                    @Named(TaskToolbarDescriptor.CATALOG) CatalogDescriptor toolbarDescP,
                                    @Named(WruppleActivityAction.CATALOG) CatalogDescriptor actionDescP) {
         super.put(taskDescP);
         super.put(actionDescP);
         super.put(toolbarDescP);
-        super.put(state);
         super.put(appItem);
+        super.put(state);
+        super.put(container);
     }
 
 

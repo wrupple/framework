@@ -1,15 +1,15 @@
 package com.wrupple.muba.worker.domain.impl;
 
+import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.Workflow;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
-import com.wrupple.muba.worker.domain.Application;
 import com.wrupple.muba.worker.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.BusinessIntent;
-import com.wrupple.muba.worker.domain.Workflow;
 
 import java.util.List;
 

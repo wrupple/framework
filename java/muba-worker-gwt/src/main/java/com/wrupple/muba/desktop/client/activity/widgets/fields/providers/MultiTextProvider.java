@@ -11,8 +11,8 @@ import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.desktop.client.activity.widgets.editors.SequentialListEditor;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.MultiTextCelll;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.templates.ClickableElementTemplate;
-import com.wrupple.muba.desktop.client.factory.dictionary.UserAssistanceProviderMap;
-import com.wrupple.muba.desktop.client.factory.help.UserAssistanceProvider;
+import com.wrupple.muba.desktop.client.factory.dictionary.SolverConcensorMap;
+import com.wrupple.muba.desktop.client.factory.help.SolverConcensor;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogFormFieldProvider;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
@@ -27,11 +27,11 @@ public class MultiTextProvider implements CatalogFormFieldProvider {
 
 	private ClickableElementTemplate template;
 	private CatalogUserInterfaceMessages messages;
-	private final UserAssistanceProviderMap provider;
+    private final SolverConcensorMap provider;
 
 	@Inject
-	public MultiTextProvider(ClickableElementTemplate template, CatalogUserInterfaceMessages messages, UserAssistanceProviderMap provider) {
-		super();
+    public MultiTextProvider(ClickableElementTemplate template, CatalogUserInterfaceMessages messages, SolverConcensorMap provider) {
+        super();
 		this.template = template;
 		this.messages = messages;
 		this.provider = provider;
@@ -52,8 +52,8 @@ public class MultiTextProvider implements CatalogFormFieldProvider {
 				GWTUtils.copyAllProperties(casado, formDescriptor);
 
 				GWTUtils.copyAllProperties(casado, fieldProperties);
-				UserAssistanceProvider assisotor = null;
-				try {
+                SolverConcensor assisotor = null;
+                try {
 					assisotor = provider.getConfigured(casado, contextServices, bus, contextParameters);
 				} catch (Exception e) {
                     GWT.log("multitext setRuntimeContext undeclared aid provider", e);

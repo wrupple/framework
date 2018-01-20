@@ -15,11 +15,11 @@ import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.desktop.client.activity.process.state.ContentLoadingState;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.templates.CatalogKeyTemplates;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;
 import com.wrupple.muba.worker.client.activity.process.state.State;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 
 import javax.inject.Provider;

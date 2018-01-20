@@ -4,10 +4,10 @@ import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
 import com.wrupple.muba.desktop.client.service.SliceReader;
 import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.desktop.domain.impl.ContainerContextImpl;
+import com.wrupple.muba.event.domain.Application;
+import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.worker.domain.Application;
 import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.WorkerLoadOrder;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;
 
@@ -22,13 +22,13 @@ import javax.inject.Singleton;
 @Singleton
 public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
 
-    private final Provider<WorkerLoadOrder> contractProvider;
+    private final Provider<ContainerState> contractProvider;
     private final ProcessManager pm;
     private final SliceReader delegate;
     private ContainerContextImpl container;
 
     @Inject
-    public WorkerContainerLauncherImpl(Provider<WorkerLoadOrder> contractProvider, ProcessManager pm, SliceReader delegate) {
+    public WorkerContainerLauncherImpl(Provider<ContainerState> contractProvider, ProcessManager pm, SliceReader delegate) {
         this.contractProvider = contractProvider;
         this.pm = pm;
         this.delegate = delegate;
@@ -36,7 +36,7 @@ public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
 
     @Override
     public Context materializeBlankContext(RuntimeContext parent) throws Exception {
-        WorkerLoadOrder request = (WorkerLoadOrder) parent.getServiceContract();
+        ContainerState request = (ContainerState) parent.getServiceContract();
         if (request == null) {
             request = contractProvider.get();
             parent.setServiceContract(request);
@@ -61,7 +61,7 @@ public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
     public boolean execute(Context ctx) throws Exception {
 
         RuntimeContext requestContext = (RuntimeContext) ctx;
-        WorkerLoadOrder request = (WorkerLoadOrder) requestContext.getServiceContract();
+        ContainerState request = (ContainerState) requestContext.getServiceContract();
         ContainerContext context = requestContext.getServiceContext();
 
         /*

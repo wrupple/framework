@@ -11,10 +11,9 @@ import com.wrupple.muba.desktop.client.services.logic.TaskValueChangeListener;
 import com.wrupple.muba.desktop.client.services.presentation.ToolbarAssemblyDelegate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.client.activity.process.state.AbstractUserInteractionState;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskProcessor;
 
-public class EditingState extends AbstractUserInteractionState {
+public class EditingState implements UserInteractionState {
 
     private final ContentManagementSystem cms;
 

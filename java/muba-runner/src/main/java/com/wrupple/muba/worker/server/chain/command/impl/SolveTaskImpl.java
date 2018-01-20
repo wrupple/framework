@@ -18,24 +18,22 @@ public class SolveTaskImpl implements SolveTask {
     protected Logger log = LoggerFactory.getLogger(SolveTaskImpl.class);
 
     private final ProcessManager plugin;
+    private final Callback callback;
 
     @Inject
-    public SolveTaskImpl(ProcessManager plugin) {
+    public SolveTaskImpl(ProcessManager plugin, Callback callback) {
         this.plugin = plugin;
+        this.callback = callback;
     }
     @Override
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
         log.info("Thinking synchronously...");
 
-        if(plugin.getSolver().solve(context)){
-
-        }
-        /*else if(model.getSolver().hasReachedLimit()){
-            //System.out.println("The could not find a solution nor prove that none exists in the given limits");
-        }*/else{
+        if (plugin.getSolver().solve(context, callback) == CONTINUE_PROCESSING) {
+            return CONTINUE_PROCESSING;
+        } else {
             throw new IllegalStateException("No viable solution found for problem");
         }
-        return CONTINUE_PROCESSING;
     }
 }

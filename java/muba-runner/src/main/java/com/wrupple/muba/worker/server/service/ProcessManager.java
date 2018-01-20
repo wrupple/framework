@@ -2,8 +2,8 @@ package com.wrupple.muba.worker.server.service;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.Workflow;
 import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Workflow;
 
 public interface ProcessManager {
     /**

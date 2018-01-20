@@ -29,7 +29,6 @@ import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.client.activity.process.state.AbstractUserInteractionState;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskProcessor;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -37,7 +36,7 @@ import com.wrupple.vegetate.domain.CatalogEntry;
 import java.util.List;
 import java.util.Set;
 
-public class SelectionTask extends AbstractUserInteractionState {
+public class SelectionTask implements UserInteractionState {
 
     private final CatalogPlaceInterpret interpret;
     private final PlaceHistoryMapper placeTokenizer;

@@ -34,7 +34,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
 import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
 import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
@@ -267,8 +267,8 @@ public class WruppleBreadcrumbToolbar extends Composite implements BreadcrumbToo
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
-		// TODO Auto-generated method stub
+    public void applyAlterations(ReconfigurationBroadcastEvent properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
+        // TODO Auto-generated method stub
 
 	}
 

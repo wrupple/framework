@@ -36,7 +36,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
 import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
 import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
@@ -426,8 +426,8 @@ public abstract class AbstractContentBrowser extends ResizeComposite implements 
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
-		properties.setWidget(widget);
+    public void applyAlterations(ReconfigurationBroadcastEvent properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
+        properties.setWidget(widget);
 		browserMap.reconfigure(properties, this, contextServices, eventBus, contextParameters);
 		if (properties.getFireReset()) {
 			setRowData(0, (List<? extends JsCatalogEntry>) getVisibleItems());

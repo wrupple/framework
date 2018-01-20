@@ -1,10 +1,10 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.worker.domain.Application;
+import com.wrupple.muba.event.domain.Workflow;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Workflow;
 import com.wrupple.muba.worker.server.chain.command.ExplicitOutputPlace;
 import org.apache.commons.chain.Context;
 

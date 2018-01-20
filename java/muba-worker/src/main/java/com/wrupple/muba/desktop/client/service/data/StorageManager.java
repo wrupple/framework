@@ -1,11 +1,11 @@
 package com.wrupple.muba.desktop.client.service.data;
 
 
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.worker.server.service.StateTransition;
 
 import java.util.List;
 

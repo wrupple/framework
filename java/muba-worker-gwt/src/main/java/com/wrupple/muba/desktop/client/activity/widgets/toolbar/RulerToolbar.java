@@ -15,7 +15,7 @@ import com.wrupple.muba.desktop.client.factory.dictionary.ToolbarMap;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
-import com.wrupple.muba.worker.shared.domain.PanelTransformationConfig;
+import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow.ToolbarDirection;
 import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
@@ -57,8 +57,8 @@ public class RulerToolbar extends WruppleActivityToolbarBase implements Toolbar 
 	}
 
 	@Override
-	public void applyAlterations(PanelTransformationConfig properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
-		super.applyAlterations(properties, contextServices, eventBus, contextParamenters);
+    public void applyAlterations(ReconfigurationBroadcastEvent properties, ProcessContextServices contextServices, EventBus eventBus, JsTransactionApplicationContext contextParamenters) {
+        super.applyAlterations(properties, contextServices, eventBus, contextParamenters);
 		draw();
 	}
 

@@ -4,10 +4,10 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Task;
 import com.wrupple.muba.worker.server.chain.command.CommitSubmission;
 import org.apache.commons.chain.Context;
 

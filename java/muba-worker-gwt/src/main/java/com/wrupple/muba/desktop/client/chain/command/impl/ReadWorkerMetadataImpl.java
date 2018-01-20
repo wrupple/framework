@@ -7,9 +7,9 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.DesktopLoadingStateHolder;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.HasStakeHolder;
 import com.wrupple.vegetate.shared.services.PeerManager;
 

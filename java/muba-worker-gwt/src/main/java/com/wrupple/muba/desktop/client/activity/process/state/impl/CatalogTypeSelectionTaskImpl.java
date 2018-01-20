@@ -16,7 +16,6 @@ import com.wrupple.muba.desktop.client.activity.CatalogSelectionActivity;
 import com.wrupple.muba.desktop.client.activity.process.state.CatalogTypeSelectionTask;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser;
 import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEntryBrowserMap;
-import com.wrupple.muba.desktop.client.service.StateTransition;
 import com.wrupple.muba.desktop.client.services.logic.ConfigurationConstants;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
@@ -24,6 +23,7 @@ import com.wrupple.muba.desktop.domain.overlay.JsArrayList;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
+import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 
 import java.util.Collections;
