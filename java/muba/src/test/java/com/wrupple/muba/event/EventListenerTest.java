@@ -33,7 +33,7 @@ public class EventListenerTest extends BootstrapTest {
 	private EventBus system;
 
 	protected ContractDescriptor operationContract = new ContractDescriptorImpl(
-			Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), CatalogEntryImpl.class);
+            Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), null);
 
 
     public EventListenerTest() {

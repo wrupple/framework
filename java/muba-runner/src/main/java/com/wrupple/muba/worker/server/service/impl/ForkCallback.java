@@ -1,12 +1,11 @@
 package com.wrupple.muba.worker.server.service.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
 
-public class ForkCallback<T extends CatalogEntry> extends Callback<T> {
+public class ForkCallback<T extends Context> extends Callback<T> {
 
 
     private int finished;

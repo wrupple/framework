@@ -3,10 +3,7 @@ package com.wrupple.muba.worker.server.service.impl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.SessionContext;
-import com.wrupple.muba.event.domain.Workflow;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.ApplicationState;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import com.wrupple.muba.worker.server.service.Solver;
@@ -57,11 +54,12 @@ import com.wrupple.vegetate.shared.services.PeerManager;
 */
 @Singleton
 public class ProcessManagerImpl implements ProcessManager {
-
-    private static final String PROCESS_USER_AREA_CLASS = "application-content-area";
     private final EventBus eventBus;
     private final Solver solver;
     private final Provider<ApplicationState> applicationStateProvider;
+
+/*
+    private static final String PROCESS_USER_AREA_CLASS = "application-content-area";
     //Services
     private final ServiceBus serviceBus;
     private final DesktopManager desktopManager;
@@ -76,6 +74,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private OutputHandlerMap outputHandlerRegistry;
     private DictionaryRegistry serviceLocator;
     private ProcessVegetateChannel bpm;
+*/
 
     @Inject
     public ProcessManagerImpl(EventBus eventBus, Solver solver, Provider<ApplicationState> applicationStateProvider) {
@@ -84,36 +83,7 @@ public class ProcessManagerImpl implements ProcessManager {
         this.applicationStateProvider = applicationStateProvider;
     }
 
-    @Inject
-    public SequentialProcessManagerImpl(OutputHandlerMap outputHandlerRegistry,
-                                        ServiceMap services, DictionaryRegistry serviceLocator, ActivityPresenterMap presenterMap, PlaceController placeController, StorageManager storageManager,
-                                        ContentManagementSystem contentManager, DesktopManager desktopManager, PeerManager peerManager, ServiceBus serviceBus) {
-        super();
-        this.presenterMap = presenterMap;
-        this.contentManager = contentManager;
-        this.placeController = placeController;
-        this.storageManager = storageManager;
-        this.desktopManager = desktopManager;
-        this.serviceBus = serviceBus;
-        this.peerManager = peerManager;
-
-        this.outputHandlerRegistry = outputHandlerRegistry;
-        this.commandRegistry = services;
-        this.serviceLocator = serviceLocator;
-
-    }
-
-    @Override
-    public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
-        ApplicationState newState = applicationStateProvider.get();
-        newState.setHandleValue(initialState);
-
-        CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
-
-        List results = eventBus.fireEvent(createRequest, thread, null);
-
-        return (ApplicationState) results.get(0);
-    }
+    private final String CONTAINER_STATE = "com.wrupple.worker.container.state";
 
     @Override
     public Solver getSolver() {
@@ -135,7 +105,68 @@ public class ProcessManagerImpl implements ProcessManager {
         return (ApplicationState) results.get(0);
     }
 
+    /*
+
+
+        @Inject
+        public SequentialProcessManagerImpl(OutputHandlerMap outputHandlerRegistry,
+                                            ServiceMap services, DictionaryRegistry serviceLocator, ActivityPresenterMap presenterMap, PlaceController placeController, StorageManager storageManager,
+                                            ContentManagementSystem contentManager, DesktopManager desktopManager, PeerManager peerManager, ServiceBus serviceBus) {
+            super();
+            this.presenterMap = presenterMap;
+            this.contentManager = contentManager;
+            this.placeController = placeController;
+            this.storageManager = storageManager;
+            this.desktopManager = desktopManager;
+            this.serviceBus = serviceBus;
+            this.peerManager = peerManager;
+
+            this.outputHandlerRegistry = outputHandlerRegistry;
+            this.commandRegistry = services;
+            this.serviceLocator = serviceLocator;
+
+        }
+    */
     @Override
+    public ApplicationState acquireContext(Workflow initialState, RuntimeContext thread) throws Exception {
+        ApplicationState newState = applicationStateProvider.get();
+        newState.setHandleValue(initialState);
+
+        CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
+
+        List results = eventBus.fireEvent(createRequest, thread, null);
+
+        return (ApplicationState) results.get(0);
+    }
+
+    @Override
+    public ContainerState getContainer(RuntimeContext parent) {
+
+        RuntimeContext root = parent.getRootAncestor();
+        ContainerState container = (ContainerState) root.get(CONTAINER_STATE);
+        if (container == null) {
+            container = (ContainerState) parent.getSession().get(CONTAINER_STATE);
+        }
+        return container;
+    }
+
+    @Override
+    public void setContainer(ContainerState request, RuntimeContext parent) {
+        RuntimeContext root = parent.getRootAncestor();
+        root.put(CONTAINER_STATE, request);
+    }
+
+    @Override
+    public void setContainer(ContainerState request, SessionContext parent) {
+        parent.put(CONTAINER_STATE, request);
+    }
+
+
+
+
+/*
+
+@Override
     public void contextSwitch(ActivityProcess activityProcess, JsApplicationItem applicationItem, AcceptsOneWidget containerr, EventBus bus) {
         // Read output feature for this application
         JavaScriptObject configuration = applicationItem.getPropertiesObject();
@@ -156,8 +187,7 @@ public class ProcessManagerImpl implements ProcessManager {
         bus.fireEvent(new ContextSwitchEvent(context, activityProcess));
         activityProcess.start((DesktopPlace) placeController.getWhere(), new SimpleActivityTransition(placeController), bus);
     }
-
-
+    */
 /*
     @Override
 	public <I, O> void processSwitch(Process<I, O> newProcess, String localizedName, I input, final StateTransition<O> callback,

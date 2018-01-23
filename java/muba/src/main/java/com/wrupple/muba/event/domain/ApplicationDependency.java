@@ -4,4 +4,5 @@ import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 
 public interface ApplicationDependency extends CatalogEntry, HasDistinguishedName {
 
+    String CATALOG = "ApplicationDependency";
 }

@@ -17,6 +17,7 @@ public class TaskImpl extends CatalogActionConstraintImpl implements Task {
     private String distinguishedName;
     private String outputField;
     private Object stakeHolder;
+    private Long exit, cancel, error;
 
     @Override
     public Object getStakeHolder() {
@@ -90,8 +91,8 @@ public class TaskImpl extends CatalogActionConstraintImpl implements Task {
     }
 
 
-    private String description, exit, cancel, error;
-    private List<Long> dependencies;
+    private String description;
+
 
 
     @Override
@@ -103,42 +104,6 @@ public class TaskImpl extends CatalogActionConstraintImpl implements Task {
         this.description = description;
     }
 
-    @Override
-    public String getExit() {
-        return exit;
-    }
-
-    public void setExit(String exit) {
-        this.exit = exit;
-    }
-
-    @Override
-    public String getCancel() {
-        return cancel;
-    }
-
-    public void setCancel(String cancel) {
-        this.cancel = cancel;
-    }
-
-    @Override
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    @Override
-    public List<Long> getDependencies() {
-        return dependencies;
-    }
-
-    public void setDependencies(List<Long> dependencies) {
-        this.dependencies = dependencies;
-    }
-
 
     @Override
     public CatalogEntry getExplicitSuccessorValue() {
@@ -146,4 +111,30 @@ public class TaskImpl extends CatalogActionConstraintImpl implements Task {
     }
 
 
+    @Override
+    public Long getError() {
+        return error;
+    }
+
+    public void setError(Long error) {
+        this.error = error;
+    }
+
+    @Override
+    public Long getCancel() {
+        return cancel;
+    }
+
+    public void setCancel(Long cancel) {
+        this.cancel = cancel;
+    }
+
+    @Override
+    public Long getExit() {
+        return exit;
+    }
+
+    public void setExit(Long exit) {
+        this.exit = exit;
+    }
 }

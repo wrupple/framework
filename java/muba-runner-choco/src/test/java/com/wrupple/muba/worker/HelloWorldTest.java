@@ -8,13 +8,14 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
-import com.wrupple.muba.worker.domain.*;
+import com.wrupple.muba.worker.domain.ApplicationContext;
+import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.worker.domain.EquationSystemSolution;
+import com.wrupple.muba.worker.domain.VariableDescriptor;
 import com.wrupple.muba.worker.domain.impl.ApplicationStateImpl;
+import com.wrupple.muba.worker.domain.impl.ContainerStateImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
-import com.wrupple.muba.worker.server.service.ChocoRunner;
-import com.wrupple.muba.worker.server.service.Runner;
-import com.wrupple.muba.worker.server.service.Solver;
-import com.wrupple.muba.worker.server.service.VariableEligibility;
+import com.wrupple.muba.worker.server.service.*;
 import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
 import org.apache.commons.chain.Context;
 import org.junit.Test;
@@ -37,6 +38,8 @@ public class HelloWorldTest extends IntegralTest {
      * AdjustErrorByDriverDistance
      */
     private static final String CONSTRAINT = "constraint";
+
+    private static final Long GREETER_RUNNER = 1L;
 
     /**
      * <ol>
@@ -86,7 +89,8 @@ public class HelloWorldTest extends IntegralTest {
 
         runtimeContext.process();*/
 
-
+        ContainerState container = new ContainerStateImpl();
+        injector.getInstance(ProcessManager.class).setContainer(container, session);
         List results = wrupple.fireEvent(state, session, null);
         EquationSystemSolution solution = (EquationSystemSolution) results.get(0);
         assertTrue(solution.getX() == 2);
@@ -155,9 +159,15 @@ public class HelloWorldTest extends IntegralTest {
         }
 
         @Override
-        public boolean solve(ApplicationContext context) {
+        public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) {
+            try {
+                callback.execute(context);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return true;
         }
+
 
     }
 
@@ -204,8 +214,23 @@ public class HelloWorldTest extends IntegralTest {
         }
 
         @Override
-        public Object getValue() {
+        public <T> T getConvertedResult() {
+            return (T) getResult();
+        }
+
+        @Override
+        public Object getResult() {
             return "hello " + name + "!";
+        }
+
+        @Override
+        public void setResult(Object o) {
+
+        }
+
+        @Override
+        public Long getRunner() {
+            return GREETER_RUNNER;
         }
     }
 }

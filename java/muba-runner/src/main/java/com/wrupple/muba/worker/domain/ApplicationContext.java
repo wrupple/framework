@@ -13,7 +13,7 @@ import org.apache.commons.chain.Command;
 public interface ApplicationContext extends ServiceContext {
     String CATALOG = "ApplicationContext";
 
-    ApplicationContext setRuntimeContext(RuntimeContext requestContext);
+    ApplicationContext setRuntimeContext(RuntimeContext requestContext, ContainerState container);
 
     ApplicationState getStateValue();
 

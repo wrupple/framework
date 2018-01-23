@@ -9,5 +9,5 @@ public interface Runner {
 
     VariableEligibility handleAsVariable(FieldDescriptor field, ApplicationContext context);
 
-    boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) throws Exception;
+    boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback);
 }

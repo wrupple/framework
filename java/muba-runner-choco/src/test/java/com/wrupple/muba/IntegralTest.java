@@ -67,6 +67,7 @@ public class IntegralTest extends AbstractTest{
         protected void configure() {
             bind(VariableConsensus.class).to(ArbitraryDesicion.class);
             bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
+            bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.choco")).toInstance(2l);
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 

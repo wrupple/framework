@@ -25,7 +25,6 @@ public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
     private final Provider<ContainerState> contractProvider;
     private final ProcessManager pm;
     private final SliceReader delegate;
-    private ContainerContextImpl container;
 
     @Inject
     public WorkerContainerLauncherImpl(Provider<ContainerState> contractProvider, ProcessManager pm, SliceReader delegate) {
@@ -38,23 +37,19 @@ public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
     public Context materializeBlankContext(RuntimeContext parent) throws Exception {
         ContainerState request = (ContainerState) parent.getServiceContract();
         if (request == null) {
-            request = contractProvider.get();
-            parent.setServiceContract(request);
+            throw new IllegalStateException("No container definition!");
         }
-        if(container==null){
-            Application activity=delegate.getInitialActivity(request,parent);
-            ApplicationState applicationState = null;
-            try {
-                applicationState = pm.acquireContext(activity, parent.getSession());
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to acquire application state.",e);
-            }
-            setContainer(new ContainerContextImpl(parent,applicationState));
-            //pm.setContainer(getContainer());
-            return getContainer();
-        }else{
-            throw new IllegalStateException("Worker already launched!");
+        pm.setContainer(request, parent);
+        parent.setServiceContract(request);
+
+        Application activity = delegate.getInitialActivity(request, parent);
+        ApplicationState applicationState = null;
+        try {
+            applicationState = pm.acquireContext(activity, parent);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to acquire application state.", e);
         }
+        return new ContainerContextImpl(parent, applicationState, request);
     }
 
     @Override
@@ -71,14 +66,5 @@ public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
         return CONTINUE_PROCESSING;
     }
 
-    public ContainerContextImpl getContainer() {
-        if(container==null){
-            throw new IllegalStateException("no worker has been launched!");
-        }
-        return container;
-    }
 
-    public void setContainer(ContainerContextImpl container) {
-        this.container = container;
-    }
 }

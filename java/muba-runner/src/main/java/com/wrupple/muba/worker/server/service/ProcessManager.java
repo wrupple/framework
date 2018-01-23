@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.server.service;
 
+import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.domain.Workflow;
@@ -13,12 +14,18 @@ public interface ProcessManager {
      * @param thread
      * @return
      */
-    ApplicationState acquireContext(Workflow startingState, SessionContext thread) throws Exception;
+    ApplicationState acquireContext(Workflow startingState, RuntimeContext thread) throws Exception;
 
 
     Solver getSolver();
 
-    ApplicationState requirereContext(Object existingApplicationStateId, RuntimeContext session) throws Exception;
+    ApplicationState requirereContext(Object existingApplicationStateId, RuntimeContext thread) throws Exception;
 
+
+    ContainerState getContainer(RuntimeContext parent);
+
+    void setContainer(ContainerState request, RuntimeContext parent);
+
+    void setContainer(ContainerState request, SessionContext parent);
 
 }

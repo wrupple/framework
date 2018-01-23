@@ -112,7 +112,7 @@ public class SubmitToApplicationTest extends BPMTest {
         );
          */
 
-        WorkflowImpl count = new ApplicationImpl();
+        ApplicationImpl count = new ApplicationImpl();
         count.setName("Count");
         count.setProcessValues(Arrays.asList(task));
 

@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.event.domain.Workflow;
@@ -38,7 +39,8 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
 
-        return proveedor.get().setRuntimeContext(requestContext);
+        ContainerState container = bpm.getContainer(requestContext);
+        return proveedor.get().setRuntimeContext(requestContext, container);
     }
 
     @Override

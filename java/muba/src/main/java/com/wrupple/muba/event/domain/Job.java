@@ -6,11 +6,11 @@ public interface Job extends CatalogEntry {
      *
      * @return
      */
-    String getExit/*Handler*/();
+    Object getExit/*Handler*/();
 
-    String getCancel();
+    Object getCancel();
 
-    String getError();
+    Object getError();
 
 
     String getDescription();

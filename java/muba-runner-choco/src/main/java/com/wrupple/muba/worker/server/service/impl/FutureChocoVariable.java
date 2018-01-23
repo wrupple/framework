@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
@@ -22,12 +23,15 @@ import java.util.Optional;
 public class FutureChocoVariable implements VariableEligibility {
     protected Logger log = LoggerFactory.getLogger(FutureChocoVariable.class);
     private final ChocoModelResolver delegate;
+    private final Long chocoRunnerId;
+
     private FieldDescriptor field;
     private ApplicationContext context;
 
     @Inject
-    public FutureChocoVariable(ChocoModelResolver delegate) {
+    public FutureChocoVariable(ChocoModelResolver delegate, @Named("com.wrupple.runner.choco") Long runnerId) {
         this.delegate = delegate;
+        this.chocoRunnerId = runnerId;
     }
 
 
@@ -39,7 +43,7 @@ public class FutureChocoVariable implements VariableEligibility {
 
     @Override
     public VariableDescriptor createVariable() {
-        return     new ChocoVariableDescriptorImpl(makeIntegerVariable(field,delegate.resolveSolverModel( context)),field);
+        return new ChocoVariableDescriptorImpl(makeIntegerVariable(field, delegate.resolveSolverModel(context)), field, chocoRunnerId);
     }
 
 

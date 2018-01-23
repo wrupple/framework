@@ -50,7 +50,7 @@ public class InferNextTaskImpl implements InferNextTask {
             //state.getProcessManager().getCurrentTaskOutput(ProcessContextServices context, JsTransactionApplicationContext state, StateTransition<JavaScriptObject> callback) ;
             // output handler a clear example of when NOT to use events (sync same cotext=
 
-            String command = item.getExit();
+            String command = (String) item.getExit();
             if(command==null){
                 if(item.getExplicitSuccessorValue()==null){
                     command= WorkflowEngine.NEXT_APPLICATION_ITEM;

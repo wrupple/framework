@@ -47,7 +47,7 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
         Object fieldValue;
         for(VariableDescriptor solutionVariable : variableDescriptors){
             fieldId = solutionVariable.getField();
-            fieldValue = solutionVariable.getValue();
+            fieldValue = solutionVariable.getResult();
             log.debug("    {}={}",fieldId.getFieldId(),fieldValue);
             plugin.setPropertyValue(fieldId,solution,fieldValue, solutionWritingInstrospection);
         }

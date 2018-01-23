@@ -1,7 +1,9 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.worker.server.chain.SolverEngine;
-import com.wrupple.muba.worker.server.chain.command.*;
+import com.wrupple.muba.worker.server.chain.command.DefineSolutionCriteria;
+import com.wrupple.muba.worker.server.chain.command.DetermineSolutionFieldsDomain;
+import com.wrupple.muba.worker.server.chain.command.SolveTask;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ChainBase;
 
@@ -23,17 +25,11 @@ public class SolverEngineImpl extends ChainBase implements SolverEngine {
             // 3. Post constraints
             DefineSolutionCriteria defineProblem,
             //4. the actual solving of the problem to the chain
-            SolveTask findSolutions,
-            //5. Minimize Error
-            SelectSolution pickBestValue,
-            //6. synthesize Solution entry
-            SynthesizeSolutionEntry synthesize) {
+            SolveTask findSolutions) {
         super(new Command[]{
                 defineVariablesPossibilitySpace,
                 defineProblem,
-                findSolutions,
-                pickBestValue,
-                synthesize}
+                findSolutions}
         );
     }
 }

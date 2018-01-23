@@ -13,10 +13,12 @@ import org.chocosolver.solver.variables.impl.RealVarImpl;
 public class ChocoVariableDescriptorImpl implements VariableDescriptor{
     private final Variable variable;
     private final FieldDescriptor field;
+    private final Long runner;
 
-    public ChocoVariableDescriptorImpl(Variable variable, FieldDescriptor field) {
+    public ChocoVariableDescriptorImpl(Variable variable, FieldDescriptor field, Long runner) {
         this.variable = variable;
         this.field = field;
+        this.runner = runner;
     }
 
     public Variable getVariable() {
@@ -28,7 +30,12 @@ public class ChocoVariableDescriptorImpl implements VariableDescriptor{
     }
 
     @Override
-    public Object getValue() {
+    public <T> T getConvertedResult() {
+        return (T) getResult();
+    }
+
+    @Override
+    public Object getResult() {
         int type = field.getDataType();
         switch (type){
             case CatalogEntry.INTEGER_DATA_TYPE: return ((IntVar)variable).getValue();
@@ -37,5 +44,15 @@ public class ChocoVariableDescriptorImpl implements VariableDescriptor{
             case CatalogEntry.NUMERIC_DATA_TYPE: return  ((RealVarImpl)variable).getLB();
         }
         throw new IllegalStateException("Solution variables may only be of integer type");
+    }
+
+    @Override
+    public void setResult(Object o) {
+
+    }
+
+    @Override
+    public Long getRunner() {
+        return runner;
     }
 }

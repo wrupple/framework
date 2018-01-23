@@ -69,7 +69,6 @@ public abstract class BPMTest extends AbstractTest {
 
 	public BPMTest() {
 		init(new IntegralTestModule(),
-                new BPMTestModule(),
                 new BusinessModule(),
                 new ConstraintSolverModule(),
                 new SolverModule(),

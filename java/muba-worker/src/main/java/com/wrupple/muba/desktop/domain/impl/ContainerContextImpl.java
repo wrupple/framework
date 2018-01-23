@@ -1,6 +1,7 @@
 package com.wrupple.muba.desktop.domain.impl;
 
 import com.wrupple.muba.desktop.domain.ContainerContext;
+import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.worker.domain.ApplicationState;
 import org.apache.commons.chain.impl.ContextBase;
@@ -12,7 +13,7 @@ public class ContainerContextImpl extends ContextBase implements ContainerContex
     private final ApplicationState state;
 
     @Inject
-    public ContainerContextImpl(RuntimeContext runtimeContext, ApplicationState applicationState) {
+    public ContainerContextImpl(RuntimeContext runtimeContext, ApplicationState applicationState, ContainerState state) {
         this.runtimeContext = runtimeContext;
         this.state=applicationState;
     }

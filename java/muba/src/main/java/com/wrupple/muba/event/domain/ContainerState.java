@@ -18,5 +18,5 @@ public interface ContainerState extends Event, HasRunner {
 
     void setApplicationTree(Application domainRoot);
 
-    void setSetupFlag(boolean configuracionRequired);
+    void setRunner(Long greeterRunner);
 }

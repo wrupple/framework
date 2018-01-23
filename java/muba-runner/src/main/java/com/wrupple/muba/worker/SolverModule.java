@@ -52,6 +52,7 @@ public class SolverModule extends AbstractModule {
         bind(DetermineSolutionFieldsDomain.class).to(DetermineSolutionFieldsDomainImpl.class).in(Singleton.class);
         bind(SynthesizeSolutionEntry.class).to(SynthesizeSolutionEntryImpl.class);
         bind(SelectSolution.class).to(SelectSolutionImpl.class);
+        bind(SolveTask.Callback.class).to(SolveTaskCallbackImpl.class);
         //bpm bindings
         bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
 
@@ -63,6 +64,19 @@ public class SolverModule extends AbstractModule {
         bind(String.class).annotatedWith(Names.named(WruppleActivityAction.CATALOG)).toInstance("/static/img/action.png");
         bind(String.class).annotatedWith(Names.named(TaskToolbarDescriptor.CATALOG)).toInstance("/static/img/task-piece.png");
 
+    }
+
+
+    @Provides
+    @Singleton
+    @Inject
+    @Named(ContainerState.CATALOG)
+    public CatalogDescriptor container(
+            CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(ContainerStateImpl.class, ContainerState.CATALOG, "Container",
+                -900193, null);
+
+        return r;
     }
 
 

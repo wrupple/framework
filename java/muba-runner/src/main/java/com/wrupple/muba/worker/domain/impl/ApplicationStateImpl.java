@@ -1,6 +1,5 @@
 package com.wrupple.muba.worker.domain.impl;
 
-import com.wrupple.muba.bpm.domain.Application;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;

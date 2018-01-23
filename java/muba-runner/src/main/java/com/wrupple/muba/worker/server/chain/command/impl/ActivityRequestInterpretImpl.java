@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.worker.domain.ApplicationContext;
@@ -30,8 +31,12 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
         ApplicationContext r = activityContextProvider.get();
+        ContainerState container = bpm.getContainer(requestContext);
+        if (container == null) {
+            throw new IllegalStateException("No application container");
+        }
         r.setStateValue((ApplicationState) requestContext.getServiceContract());
-        return r.setRuntimeContext(requestContext);
+        return r.setRuntimeContext(requestContext, container);
     }
 
     @Override
@@ -43,7 +48,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
             if(requestContext.getServiceContract() instanceof ApplicationState){
                 state = (ApplicationState) requestContext.getServiceContract();
             }else{
-                state = bpm.acquireContext(null,requestContext.getSession());
+                state = bpm.acquireContext(null, requestContext);
             }
             context.setStateValue(state);
         }

@@ -8,6 +8,8 @@ import com.wrupple.muba.worker.server.service.ChocoRunner;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
 import org.chocosolver.solver.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -15,6 +17,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class ChocoRunnerImpl implements ChocoRunner {
+    protected Logger log = LoggerFactory.getLogger(ChocoRunnerImpl.class);
 
     private final Provider<FutureChocoVariable> future;
     private final ChocoModelResolver delegate;
@@ -41,13 +44,18 @@ public class ChocoRunnerImpl implements ChocoRunner {
     }
 
     @Override
-    public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) throws Exception {
+    public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) {
         Model model = delegate.resolveSolverModel(context);
          /*else if(model.getSolver().hasReachedLimit()){
             //System.out.println("The could not find a solution nor prove that none exists in the given limits");
         }*/
+        log.info("Solving...");
         boolean retorno = model.getSolver().solve();
-        callback.execute(context);
+        try {
+            callback.execute(context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return retorno;
     }
 
