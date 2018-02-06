@@ -4,12 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.wrupple.muba</groupId>
-	<artifactId>core</artifactId>
+	<artifactId>java</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0</version>
 	<name>Human Interaction API</name>
 	<modules>
-		<module>apache-chain</module>
 		<module>muba</module>
         <module>muba-lambda</module>
 		<module>validation-bval</module>

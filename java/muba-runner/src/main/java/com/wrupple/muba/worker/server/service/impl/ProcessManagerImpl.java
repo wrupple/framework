@@ -128,7 +128,7 @@ public class ProcessManagerImpl implements ProcessManager {
         }
     */
     @Override
-    public ApplicationState acquireContext(Workflow initialState, RuntimeContext thread) throws Exception {
+    public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
         ApplicationState newState = applicationStateProvider.get();
         newState.setHandleValue(initialState);
 

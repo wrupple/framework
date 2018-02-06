@@ -161,7 +161,7 @@ public class SubmitToApplicationTest extends WorkerTest {
     //Update ApplicationState
     //Expect (but don't install an instance of) ApplicationStateUpdatePlace to be fired
     /*
-	 * DesktopEngineImpl DesktopBuilderContext DesktopRequestReader
+	 * ContainerRequestEngineImpl DesktopBuilderContext DesktopRequestReader
 	 * SearchEngineOptimizedDesktopWriterCommandImpl FormWriterImpl
 	 * BrowserWriterImpl BusnessEvent ProcessControlNode
 	 */

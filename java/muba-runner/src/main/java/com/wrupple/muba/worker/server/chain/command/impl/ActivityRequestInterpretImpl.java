@@ -48,7 +48,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
             if(requestContext.getServiceContract() instanceof ApplicationState){
                 state = (ApplicationState) requestContext.getServiceContract();
             }else{
-                state = bpm.acquireContext(null, requestContext);
+                state = bpm.acquireContext(null, requestContext.getSession());
             }
             context.setStateValue(state);
         }

@@ -11,7 +11,7 @@ import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.ContentServerModule;
-import com.wrupple.muba.desktop.client.chain.command.WorkerRequestInterpret;
+import com.wrupple.muba.desktop.client.chain.command.ContainterRequestInterpret;
 import com.wrupple.muba.desktop.server.chain.command.BrowserWriter;
 import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
 import com.wrupple.muba.desktop.shared.services.UrlParser;
@@ -85,7 +85,7 @@ public class BrowserWriterImpl implements BrowserWriter {
                 writer.print(context.getSubmitUrl());
                 writer.print("\"  >");
                 writer.print("<input type=\"hidden\" name=\"");
-                writer.print(WorkerRequestInterpret.SUBMITTING_TASK);
+                writer.print(ContainterRequestInterpret.SUBMITTING_TASK);
                 writer.print(" value=\"");
                 writer.print(task.getIdAsString());
                 writer.print("\"  >");

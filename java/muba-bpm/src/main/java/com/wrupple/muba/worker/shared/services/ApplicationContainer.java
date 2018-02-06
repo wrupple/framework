@@ -10,6 +10,7 @@ import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.Event;
 import com.wrupple.muba.event.domain.SessionContext;
@@ -100,5 +101,9 @@ public class ApplicationContainer {
 
     public void fireEvent(Event event) throws Exception {
         processSwitches.fireEvent(event, session, null);
+    }
+
+    public <T> T getInstance(Class<T> catalogDescriptorBuilderClass) {
+        return injector.getInstance(catalogDescriptorBuilderClass);
     }
 }

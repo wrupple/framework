@@ -28,12 +28,13 @@ public class SubmitToApplicationTest extends BPMTest {
     private WorkflowImpl createStatisticsWorkflow;
 
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void explicitOutputPlace() throws Exception {
         createApplication();
         ProcessManager bpm = injector.getInstance(ProcessManager.class);
 
         //createStatisticsWorkflow
+
         ApplicationState applicationState = bpm.acquireContext(createStatisticsWorkflow, session);
 
         postSolutionToApplication(applicationState);

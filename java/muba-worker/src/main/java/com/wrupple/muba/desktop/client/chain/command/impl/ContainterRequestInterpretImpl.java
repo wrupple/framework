@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.wrupple.muba.desktop.client.chain.command.BuildApplicationTree;
 import com.wrupple.muba.desktop.client.chain.command.DeclareDependencies;
 import com.wrupple.muba.desktop.client.chain.command.PopulateLoadOrder;
-import com.wrupple.muba.desktop.client.chain.command.WorkerRequestInterpret;
+import com.wrupple.muba.desktop.client.chain.command.ContainterRequestInterpret;
 import com.wrupple.muba.desktop.domain.DesktopRequestContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.chain.Command;
@@ -13,14 +13,14 @@ import org.apache.commons.chain.impl.ChainBase;
 
 import javax.inject.Provider;
 
-public class WorkerRequestInterpretImpl extends ChainBase implements WorkerRequestInterpret {
+public class ContainterRequestInterpretImpl extends ChainBase implements ContainterRequestInterpret {
 
 
     private final Provider<DesktopRequestContext> contextProvider;
 
 
     @Inject
-    public WorkerRequestInterpretImpl(PopulateLoadOrder pouplate, BuildApplicationTree sliceWriter, DeclareDependencies imports, Provider<DesktopRequestContext> contextProvider) {
+    public ContainterRequestInterpretImpl(PopulateLoadOrder pouplate, BuildApplicationTree sliceWriter, DeclareDependencies imports, Provider<DesktopRequestContext> contextProvider) {
         super(new Command[]{pouplate, sliceWriter, imports});
         this.contextProvider = contextProvider;
     }

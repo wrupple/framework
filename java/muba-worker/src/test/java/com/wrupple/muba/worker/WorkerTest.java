@@ -1,53 +1,76 @@
 package com.wrupple.muba.worker;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Key;
+import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.catalogs.*;
-import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
-import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
+import com.wrupple.muba.desktop.client.chain.command.LaunchApplicationState;
+import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
+import com.wrupple.muba.desktop.client.chain.command.StartWorkerHeartBeat;
+import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
+import com.wrupple.muba.desktop.client.chain.command.impl.LaunchApplicationStateImpl;
+import com.wrupple.muba.desktop.client.chain.command.impl.LaunchWorkerEngineImpl;
+import com.wrupple.muba.desktop.client.service.ContainerRequestHandler;
+import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
+import com.wrupple.muba.desktop.domain.ContextSwitchHandler;
+import com.wrupple.muba.desktop.domain.ContainerRequestManifest;
+import com.wrupple.muba.desktop.domain.LaunchWorkerManifest;
+import com.wrupple.muba.desktop.domain.impl.LaunchWorkerManifestImpl;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.BroadcastServiceManifest;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
-import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
+import com.wrupple.muba.event.server.ExplicitIntentInterpret;
+import com.wrupple.muba.event.server.chain.command.BindService;
+import com.wrupple.muba.event.server.chain.command.Dispatch;
+import com.wrupple.muba.event.server.chain.command.impl.BindServiceImpl;
+import com.wrupple.muba.event.server.chain.command.impl.DispatchImpl;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
-import com.wrupple.muba.worker.domain.BusinessServiceManifest;
 import com.wrupple.muba.worker.domain.Driver;
-import com.wrupple.muba.worker.domain.IntentResolverServiceManifest;
-import com.wrupple.muba.worker.domain.SolverServiceManifest;
-import com.wrupple.muba.worker.server.chain.BusinessEngine;
-import com.wrupple.muba.worker.server.chain.IntentResolverEngine;
-import com.wrupple.muba.worker.server.chain.SolverEngine;
-import com.wrupple.muba.worker.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.worker.server.chain.command.BusinessRequestInterpret;
-import com.wrupple.muba.worker.server.chain.command.IntentResolverRequestInterpret;
+import com.wrupple.muba.worker.domain.impl.ContainerStateImpl;
+import com.wrupple.muba.worker.server.service.ChocoRunner;
+import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.worker.server.service.VariableConsensus;
 import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
-import org.junit.Before;
+import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
+import com.wrupple.muba.worker.shared.services.ApplicationContainer;
+import org.apache.commons.dbutils.QueryRunner;
+import org.easymock.EasyMockRule;
+import org.easymock.EasyMockSupport;
+import org.hsqldb.jdbc.JDBCDataSource;
+import org.junit.Rule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import javax.sql.DataSource;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
-public abstract class WorkerTest extends AbstractTest {
+public abstract class WorkerTest extends EasyMockSupport {
 
-    protected EventBus wrupple;
-    protected SessionContext session;
+    ApplicationContainer container;
 
     public WorkerTest() {
-        init(new IntegralTestModule(),
-                new BPMTestModule(),
+
+
+
+        List<AbstractModule> modules = Arrays.asList(
+                new IntegralTestModule(),
                 new BusinessModule(),
                 new ConstraintSolverModule(),
                 new SolverModule(),
@@ -59,9 +82,38 @@ public abstract class WorkerTest extends AbstractTest {
                 new CatalogModule(),
                 new LambdaModule(),
                 new DispatcherModule(),
-                new ApplicationModule());
+                new ApplicationModule()
+        );
+
+        /*TODO imitate explicitOutputPlace test method in SubmitToApplicationTest to create event handlers to launch a worker*/
+        List handlers = Arrays.asList(
+                ContextSwitchHandler.class,
+                ContainerRequestHandler.class,
+                LaunchWorkerHandlerImpl.class
+        );
+
+        container= new ApplicationContainer(modules, handlers);
+
+        container.registerInterpret(Constraint.EVALUATING_VARIABLE, ChocoInterpret.class);
+        container.registerInterpret(ContainerRequestManifest.NAME, ExplicitIntentInterpret.class);
+
+        container.registerRunner(ChocoRunner.class);
+        //container.registerRunner(HumanRunner.class);
+
 
     }
+
+
+
+    static {
+        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+    }
+
+    @Rule
+    public EasyMockRule rule = new EasyMockRule(this);
+    protected Logger log = LoggerFactory.getLogger(WorkerTest.class);
+
+
 
     protected void createMockDrivers() throws Exception {
         CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) injector.getInstance(CatalogDescriptorBuilder.class).fromClass(Driver.class, Driver.CATALOG,
@@ -84,89 +136,85 @@ public abstract class WorkerTest extends AbstractTest {
         }
     }
 
-    @Override
-    protected void registerServices(EventBus switchs) {
-        /*
-		 Catalog
-		 */
 
-        CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-        switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class), injector.getInstance(CatalogRequestInterpret.class));
-
-        CatalogActionFilterManifest preService = injector.getInstance(CatalogActionFilterManifest.class);
-        switchs.getIntentInterpret().registerService(preService, injector.getInstance(CatalogActionFilterEngine.class), injector.getInstance(CatalogActionFilterInterpret.class));
-
-        CatalogIntentListenerManifest listenerManifest = injector.getInstance(CatalogIntentListenerManifest.class);
-        switchs.getIntentInterpret().registerService(listenerManifest, injector.getInstance(CatalogEventHandler.class), injector.getInstance(CatalogEventInterpret.class));
-
-		/*
-		 Vegetate
-		 */
-
-        BroadcastServiceManifest broadcastManifest = injector.getInstance(BroadcastServiceManifest.class);
-        switchs.getIntentInterpret().registerService(broadcastManifest, injector.getInstance(PublishEvents.class), injector.getInstance(BroadcastInterpret.class));
-
-		/*
-		 BPM
-		 */
-
-        BusinessServiceManifest bpm = injector.getInstance(BusinessServiceManifest.class);
-
-        switchs.getIntentInterpret().registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
-
-        switchs.getIntentInterpret().registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
+    static class IntegralTestModule extends AbstractModule {
 
 
-        /*
-          Solver
-         */
+            protected void configure() {
 
-        switchs.getIntentInterpret().registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
-/*
- BusinessServiceManifest bpm = injector.getInstance(BusinessServiceManifest.class);
+                bind(LaunchWorkerEngine.class).to(LaunchWorkerEngineImpl.class);
+                bind(WorkerContainerLauncher.class).to(WorkerContainerLauncherImpl.class);
+                bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
 
-        switchs.registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
-
-        WorkflowServiceManifest taskManger = injector.getInstance(WorkflowServiceManifest.class);
-
-        switchs.registerService(taskManger, injector.getInstance(WorkflowEngine.class), injector.getInstance(WorkflowEventInterpret.class),bpm);
-
-        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
-
- */
-
-    }
-
-    @Before
-    public void setUp() throws Exception {
-
-        session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
-        wrupple = injector.getInstance(EventBus.class);
-        log.trace("NEW TEST EXCECUTION ENVIROMENT READY");
-    }
-
-    class IntegralTestModule extends AbstractModule {
-
-        @Override
-        protected void configure() {
-            bind(VariableConsensus.class).to(ArbitraryDesicion.class);
-            bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
-            bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
-            bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-
-            // this makes JDBC the default storage unit
-            bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
-            bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
-            bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
-            bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
-            bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
+                bind(ContainerState.class).to(ContainerStateImpl.class);
+                bind(LaunchApplicationState.class).to(LaunchApplicationStateImpl.class);
+                bind(ReadWorkerMetadata.class).to(ReadWorkerMetadataImpl.class);
+                bind(StartWorkerHeartBeat.class).to(StartWorkerHeartBeatImpl.class);
 
 
-        }
+                this.bind(BindService.class).to(BindServiceImpl.class);
+                this.bind(Dispatch.class).to(DispatchImpl.class);
+
+                bind(VariableConsensus.class).to(ArbitraryDesicion.class);
+                bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
+                bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
+                bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
+                bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
+
+                // this makes JDBC the default storage unit
+                bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
+                bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
+                bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
+                bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
+                bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
+            }
+
+            /*
+             * CONFIGURATION
+             */
+            @Provides
+            @com.google.inject.Singleton
+            @com.google.inject.Inject
+            @com.google.inject.name.Named(ContainerState.CATALOG)
+            public CatalogDescriptor session(CatalogDescriptorBuilder builder) {
+                CatalogDescriptor r = builder.fromClass(ContainerStateImpl.class, ContainerState.CATALOG, "ContainerState", -2917198,
+                        null);
+                return r;
+            }
+
+
+            @Provides
+            @Inject
+            public QueryRunner queryRunner(DataSource ds) {
+                return new QueryRunner(ds);
+            }
+
+            @Provides
+            @Singleton
+            @Inject
+            public DataSource dataSource() throws SQLException {
+                /*
+                 * Alternative
+                 * http://www.exampit.com/blog/javahunter/9-8-2016-Connection-
+                 * Pooling-using-Apache-common-DBCP-And-DBUtils
+                 */
+                JDBCDataSource ds = new JDBCDataSource();
+                ds.setLogWriter(new PrintWriter(System.err));
+                ds.setPassword("");
+                ds.setUser("SA");
+                ds.setUrl("jdbc:hsqldb:mem:aname");
+                return ds;
+            }
+
+            @Provides
+            @Inject
+            @Singleton
+            @Named("catalog.plugins")
+            public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, SystemCatalogPlugin system) {
+                CatalogPlugin[] plugins = new CatalogPlugin[]{system, runner};
+                return plugins;
+            }
+
 
 
     }

@@ -6,7 +6,7 @@ import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.services.VanityIdReader;
-import com.wrupple.muba.desktop.client.chain.command.WorkerRequestInterpret;
+import com.wrupple.muba.desktop.client.chain.command.ContainterRequestInterpret;
 import com.wrupple.muba.desktop.server.chain.command.FormWriter;
 import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
@@ -110,7 +110,7 @@ public class FormWriterImpl extends AbstractSingleCatalogEntryWriter implements 
     protected void writeFooter(DesktopRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
         writer.println("<input type=\"submit\" value=\"Ok\">");
         writer.print("<input type=\"hidden\" name=\"");
-        writer.print(WorkerRequestInterpret.SUBMITTING_TASK);
+        writer.print(ContainterRequestInterpret.SUBMITTING_TASK);
         writer.print(" value=\"");
         writer.print(task.getIdAsString());
         writer.print("\"  >");

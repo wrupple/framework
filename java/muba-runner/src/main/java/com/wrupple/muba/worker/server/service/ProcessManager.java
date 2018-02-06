@@ -14,7 +14,7 @@ public interface ProcessManager {
      * @param thread
      * @return
      */
-    ApplicationState acquireContext(Workflow startingState, RuntimeContext thread) throws Exception;
+    ApplicationState acquireContext(Workflow startingState, SessionContext thread) throws Exception;
 
 
     Solver getSolver();

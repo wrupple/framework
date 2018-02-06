@@ -1,30 +1,35 @@
 package com.wrupple.muba.worker;
 
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.desktop.domain.impl.ContainerRequestImpl;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.Booking;
+import com.wrupple.muba.worker.domain.BusinessServiceManifest;
+import com.wrupple.muba.worker.domain.Driver;
+import com.wrupple.muba.worker.domain.impl.BusinessIntentImpl;
+import com.wrupple.muba.worker.domain.impl.TaskImpl;
+import com.wrupple.muba.worker.domain.impl.WorkflowImpl;
+import org.apache.commons.chain.Command;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.anyObject;
 
 public class ContextSwitchTest extends WorkerTest {
 
 
-    Booking booking;
 
-    /**
-     * //comprar el taxi mas cercano, libre con mejor rating //input:
-     * Booking-quote-Invoice-HasListing{ paymentMethod, location } //output:
-     * tracking
-     * <p>
-     * Test the tracking state changes in accordance to the task excecuted
-     * (task.getProducedField())
-     *
-     * @throws Exception
-     */
+    @Test
+    public void submitBookingData() throws Exception {
 
-    @Before
-    public void setUp() throws Exception {
-/*
-
-        CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
+        CatalogDescriptorBuilder builder = container.getInstance(CatalogDescriptorBuilder.class);
         log.trace("[-register catalogs-]");
 
         // expectations
@@ -37,21 +42,15 @@ public class ContextSwitchTest extends WorkerTest {
         CatalogActionRequestImpl action = new CatalogActionRequestImpl();
         action.setEntryValue(bookingDescriptor);
         action.setFollowReferences(true);
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-        runtimeContext.process();
-        runtimeContext.reset();
+
+        container.fireEvent(action);
+        action = new CatalogActionRequestImpl();
 
         action.setEntryValue(builder.fromClass(Driver.class, Driver.class.getSimpleName(),
                 "Driver", 1, null));
         action.setFollowReferences(true);
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-        runtimeContext.process();
 
-        runtimeContext.reset();
+        container.fireEvent(action);
 
         log.trace("[-create tasks (problem definition)-]");
 
@@ -69,7 +68,7 @@ public class ContextSwitchTest extends WorkerTest {
                 )
         );*/
 
-/*
+
         Task updateBooking = new TaskImpl();
         updateBooking.setDistinguishedName("UpdateBooking");
         updateBooking.setName("Update Booking");
@@ -91,20 +90,9 @@ public class ContextSwitchTest extends WorkerTest {
         action.setFollowReferences(true);
         action.setEntryValue(item);
 
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, Workflow.CATALOG, CatalogActionRequest.CREATE_ACTION);
+        container.fireEvent(action);
 
-        runtimeContext.process();
-
-        CatalogActionContext catalogContext = runtimeContext.getServiceContext();
-
-        item = catalogContext.getEntryResult();
-
-        runtimeContext.reset();
-
-
-
+        item = (WorkflowImpl) action.getEntryValue();
 
         log.trace("[-create a pool of drivers to resolve the booking-]");
 
@@ -112,127 +100,24 @@ public class ContextSwitchTest extends WorkerTest {
 
         log.trace("[-Create a Booking-]");
 
-        booking = new Booking();
+        Booking booking = new Booking();
         booking.setLocation(7);
         booking.setName("test");
 
-        action = new CatalogActionRequestImpl();
+        action = new CatalogCreateRequestImpl(booking,Booking.class.getSimpleName());
         action.setFollowReferences(true);
-        action.setEntryValue(booking);
+        booking = (Booking) action.getEntryValue();
 
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
+        container.fireEvent(action);
 
-        runtimeContext.process();
-        catalogContext = runtimeContext.getServiceContext();
-        booking = catalogContext.getEntryResult();
-
-        runtimeContext.reset();
-
-        expect(mockWriter.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(mockLogger.execute(anyObject(CatalogActionContext.class))).andStubReturn(Command.CONTINUE_PROCESSING);
-        expect(peerValue.getSubscriptionStatus()).andStubReturn(Host.STATUS_ONLINE);
-
-
-        runtimeContext = injector.getInstance(RuntimeContext.class);
-        log.trace("NEW TEST EXCECUTION CONTEXT READY");
-        */
-    }
-
-    @Test
-    public void submitBookingData() throws Exception {
-/*
-        log.trace("[-Ask BPM what application item to use to handle this booking-]");
-
-        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,Booking.class.getSimpleName(),Booking.class.getSimpleName());
-
-        runtimeContext.process();
-
-        //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
-        WorkflowImpl item = runtimeContext.getConvertedResult();
-
-        runtimeContext.reset();
-
-        log.trace("[-Create Booking Handling Application Context-]");
-
-        //item+booking;
-        BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
-        bookingRequest.setHandle(item.getId());
-        bookingRequest.setEntry(booking.getId());
-        bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*//*);
-
-
-        //BOOKING IS SAVED AS entry value (result) on the initial application state
-        runtimeContext.setServiceContract(bookingRequest);
-        //runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
-
-        //FIXME maybe this is the point we start using event handlers
-        //runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
-
-        runtimeContext.process();
-        //a new activity state
-        ApplicationState activityState = runtimeContext.getConvertedResult();
-
-        String applicationId = activityState.getDistinguishedName();
-
-        runtimeContext.reset();
-
-        Long firstTask = activityState.getTaskDescriptor();
-
-        assertTrue("First task has been assigned",firstTask!=null);
-
-
-        log.info("find solution of first task to the runner engine");
-        //the best available driver
-
-        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,applicationId);
-
-        runtimeContext.process();
-
-        Driver driver = runtimeContext.getConvertedResult();
-
-        runtimeContext.reset();
-
-        log.info("post solution of first task to the business engine");
-
-        bookingRequest = new BusinessIntentImpl();
-        bookingRequest.setEntryValue(driver);
-        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setStateValue((Long) activityState.getId());
-
-        //BOOKING IS SAVED AS entry value (result) on the initial application state
-        runtimeContext.setServiceContract(bookingRequest);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,applicationId);
-
-        runtimeContext.process();
-
-        activityState = runtimeContext.getConvertedResult();
-
-        assertTrue("Follow task has been assigned",activityState.getTaskDescriptor()!=null&&!firstTask.equals(activityState.getTaskDescriptor()));
-
-        runtimeContext.reset();
-
-        log.info("manually solving the second task");
-        //set solution of second task in activity state
-        booking.setDriverValue(driver);
-        activityState.setEntryValue(booking);
-
-        log.info("post solution of second task to the business engine");
-
-        runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,activityState.getDistinguishedName());
-
-        runtimeContext.process();
-
-        activityState = runtimeContext.getConvertedResult();
-        runtimeContext.reset();
-
-        booking = (Booking) activityState.getEntryValue();
+        log.trace("[-use booking id to launch container with prviously created booking -]");
+        assertTrue(booking.getId()!=null);
         assertTrue(booking.getStakeHolder()!=null);
+        container.fireEvent(new ContainerRequestImpl(Arrays.asList(item.getDistinguishedName(),booking.getId().toString())));
+        //check conditions
         assertTrue(booking.getDriverValue()!=null);
-        assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);
-        */
+        //assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())<1);
+
     }
 
 }

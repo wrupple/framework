@@ -17,10 +17,10 @@ import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
 import com.wrupple.muba.desktop.client.chain.command.StartWorkerHeartBeat;
 import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
 import com.wrupple.muba.desktop.client.chain.command.impl.*;
-import com.wrupple.muba.desktop.client.service.DesktopRequestHandler;
+import com.wrupple.muba.desktop.client.service.ContainerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
 import com.wrupple.muba.desktop.domain.ContextSwitchHandler;
-import com.wrupple.muba.desktop.domain.DesktopServiceManifest;
+import com.wrupple.muba.desktop.domain.ContainerRequestManifest;
 import com.wrupple.muba.desktop.domain.LaunchWorkerManifest;
 import com.wrupple.muba.desktop.domain.impl.LaunchWorkerManifestImpl;
 import com.wrupple.muba.event.ApplicationModule;
@@ -85,14 +85,14 @@ public class Example {
 /*TODO imitate explicitOutputPlace test method in SubmitToApplicationTest to create event handlers to launch a worker*/
         List handlers = Arrays.asList(
                 ContextSwitchHandler.class,
-                DesktopRequestHandler.class,
+                ContainerRequestHandler.class,
                 LaunchWorkerHandlerImpl.class
         );
 
         ApplicationContainer container = new ApplicationContainer(modules, handlers);
 
         container.registerInterpret(Constraint.EVALUATING_VARIABLE, ChocoInterpret.class);
-        container.registerInterpret(DesktopServiceManifest.NAME, ExplicitIntentInterpret.class);
+        container.registerInterpret(ContainerRequestManifest.NAME, ExplicitIntentInterpret.class);
 
         container.registerRunner(ChocoRunner.class);
         container.registerRunner(HumanRunner.class);
