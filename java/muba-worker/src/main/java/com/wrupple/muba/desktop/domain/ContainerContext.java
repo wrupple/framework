@@ -88,7 +88,7 @@ public interface ContainerContext extends ServiceContext {
 
             RootLayoutPanel.get().add(main);
      */
-    void handleCurrentApplictionState();
+    ContextSwitch handleCurrentApplictionState();
 
     /*
     //hide home toolbar when in home activity

@@ -1,6 +1,6 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
-import com.wrupple.muba.desktop.client.chain.command.LaunchApplicationState;
+import com.wrupple.muba.desktop.client.chain.command.SwitchWorkerContext;
 import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.worker.domain.ApplicationState;
 import com.wrupple.muba.worker.server.service.ProcessManager;
@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import java.util.List;
 
 @Singleton
-public class LaunchApplicationStateImpl implements LaunchApplicationState {
+public class SwitchWorkerContextImpl implements SwitchWorkerContext {
 
     protected final PlaceController pc;
     protected final DesktopManager dm;
@@ -28,8 +28,8 @@ public class LaunchApplicationStateImpl implements LaunchApplicationState {
 
     // cachuky tuku
     @com.google.inject.Inject
-    public LaunchApplicationStateImpl(ProcessManager pm, com.wrupple.muba.event.EventBus eventBus, DesktopManager dm, PlaceController pc, TransactionalActivityAssembly assembly,
-                                      ActivityVegetateEventHandler vegetateHandler) {
+    public SwitchWorkerContextImpl(ProcessManager pm, com.wrupple.muba.event.EventBus eventBus, DesktopManager dm, PlaceController pc, TransactionalActivityAssembly assembly,
+                                   ActivityVegetateEventHandler vegetateHandler) {
         this.pm = pm;
         this.eventBus = eventBus;
         this.vegetateHandler = vegetateHandler;
@@ -38,7 +38,7 @@ public class LaunchApplicationStateImpl implements LaunchApplicationState {
     }
 
     @Inject
-    public LaunchApplicationStateImpl(ProcessManager bpm) {
+    public SwitchWorkerContextImpl(ProcessManager bpm) {
         this.bpm = bpm;
     }
 

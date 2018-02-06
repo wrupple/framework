@@ -12,11 +12,11 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
-import com.wrupple.muba.desktop.client.chain.command.LaunchApplicationState;
+import com.wrupple.muba.desktop.client.chain.command.SwitchWorkerContext;
 import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
 import com.wrupple.muba.desktop.client.chain.command.StartWorkerHeartBeat;
 import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
-import com.wrupple.muba.desktop.client.chain.command.impl.LaunchApplicationStateImpl;
+import com.wrupple.muba.desktop.client.chain.command.impl.SwitchWorkerContextImpl;
 import com.wrupple.muba.desktop.client.chain.command.impl.LaunchWorkerEngineImpl;
 import com.wrupple.muba.desktop.client.service.ContainerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
@@ -147,7 +147,7 @@ public abstract class WorkerTest extends EasyMockSupport {
                 bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
 
                 bind(ContainerState.class).to(ContainerStateImpl.class);
-                bind(LaunchApplicationState.class).to(LaunchApplicationStateImpl.class);
+                bind(SwitchWorkerContext.class).to(SwitchWorkerContextImpl.class);
                 bind(ReadWorkerMetadata.class).to(ReadWorkerMetadataImpl.class);
                 bind(StartWorkerHeartBeat.class).to(StartWorkerHeartBeatImpl.class);
 

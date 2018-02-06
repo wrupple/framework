@@ -16,7 +16,7 @@ public class ImportResourcesCallbackImpl extends ParallelProcess implements Impo
     final String welcomeProcessId = applicationItem.getWelcomeProcess();
 
 
-    //TODO load logic resources, including finishing welcome process, BEFORE launching application stategetActivityProcess(place, applicationItem, new LaunchApplicationStateImpl.SetApplicationStateAndContext(pm, panel, eventBus, applicationItem));
+    //TODO load logic resources, including finishing welcome process, BEFORE launching application stategetActivityProcess(place, applicationItem, new SwitchWorkerContextImpl.SetApplicationStateAndContext(pm, panel, eventBus, applicationItem));
     final DesktopPlace input, JsApplicationItem
     actd,
     private final TransactionalActivityAssembly assembly;
