@@ -1,26 +1,19 @@
 package com.wrupple.muba.worker;
 
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.domain.impl.ContainerRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.Booking;
-import com.wrupple.muba.worker.domain.BusinessServiceManifest;
 import com.wrupple.muba.worker.domain.Driver;
-import com.wrupple.muba.worker.domain.impl.BusinessIntentImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
 import com.wrupple.muba.worker.domain.impl.WorkflowImpl;
-import org.apache.commons.chain.Command;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.anyObject;
 
 public class ContextSwitchTest extends WorkerTest {
 
