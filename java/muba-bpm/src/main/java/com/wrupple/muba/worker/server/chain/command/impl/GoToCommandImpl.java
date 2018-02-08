@@ -32,7 +32,7 @@ public class GoToCommandImpl implements GoToCommand {
             firstValue  = (Workflow) state.getUserSelectionValues().get(0);
         }
 
-        state.setHandleValue(firstValue);
+        state.setApplicationValue(firstValue);
 		return CONTINUE_PROCESSING;
 	}
 

@@ -62,7 +62,7 @@ public class SubmitToApplicationTest extends BPMTest {
 
      ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
         ApplicationState newState = injector.getInstance(ApplicationState.class);
-        newState.setHandleValue(initialState);
+        newState.setApplicationValue(initialState);
 
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
 

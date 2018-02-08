@@ -34,7 +34,7 @@ public class SelectSolutionImpl implements SelectSolution {
         log.info("Selecting best solution");
         ApplicationContext context = (ApplicationContext) ctx;
 
-        Long runnerId = context.getContainerStateValue().getRunner();
+        Long runnerId = context.getWorkerStateValue().getRunner();
 
         if (runnerId == null) {
             log.debug("no main runner selected for container");

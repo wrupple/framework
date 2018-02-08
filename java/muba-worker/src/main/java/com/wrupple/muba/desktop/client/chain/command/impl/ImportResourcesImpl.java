@@ -6,23 +6,16 @@ import com.wrupple.muba.desktop.domain.ContextSwitchRuntimeContext;
 import com.wrupple.muba.desktop.domain.DependencyImportContext;
 import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.ApplicationDependency;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.server.chain.command.impl.ParallelProcess;
-import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.server.service.Runner;
 import com.wrupple.muba.worker.server.service.StateTransition;
-import com.wrupple.muba.worker.server.service.impl.Callback;
 import com.wrupple.muba.worker.server.service.impl.ForkCallback;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
 import org.apache.commons.chain.generic.LookupCommand;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Singleton
@@ -62,7 +55,7 @@ public class ImportResourcesImpl  implements ImportResources {
 
         ForkCallback<DependencyImportContext> fork = new ForkCallback<DependencyImportContext>(forkCallback);
 
-        final Application applicationItem = (Application) context.getContextSwitch().getStateValue().getHandleValue();
+        final Application applicationItem = (Application) context.getContextSwitch().getWorkerStateValue().getStateValue().getApplicationValue();
 
         List<ApplicationDependency> actions = applicationItem.getDependenciesValues();
 

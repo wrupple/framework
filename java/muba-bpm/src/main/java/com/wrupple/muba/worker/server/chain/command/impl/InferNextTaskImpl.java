@@ -41,7 +41,7 @@ public class InferNextTaskImpl implements InferNextTask {
 
         */
 
-        Application item = (Application) state.getHandleValue();
+        Application item = (Application) state.getApplicationValue();
 
         Task nextTask = getNextWorkflowTask(item.getProcess(),item,state);
         if(nextTask==null){
@@ -65,7 +65,7 @@ public class InferNextTaskImpl implements InferNextTask {
             log.info("firing workflow finished event to survey output Handlers");
             outputHandler.execute(context);
             state = context.getStateValue();
-            Workflow newItem = (Workflow) state.getHandleValue();
+            Workflow newItem = (Workflow) state.getApplicationValue();
             if(newItem.isClearOutput()){
                 state.setEntryValue(null);
             }

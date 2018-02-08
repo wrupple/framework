@@ -5,7 +5,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogExcecutionContext;
 import com.wrupple.muba.catalogs.server.service.DataStoreManager;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogUserTransaction;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
-import com.wrupple.muba.desktop.domain.DesktopRequestContext;
+import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.worker.domain.BPMPeer;
 import com.wrupple.vegetate.server.services.SessionContext;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DesktopRequestContextImpl extends ServletWebContext implements DesktopRequestContext {
+public class WorkerRequestContextImpl extends ServletWebContext implements WorkerRequestContext {
     private static final long serialVersionUID = -931377061670181518L;
 
     private final CatalogExcecutionContext catalogContext;
@@ -57,8 +57,8 @@ public class DesktopRequestContextImpl extends ServletWebContext implements Desk
     private List<ApplicationItem> breadCrumbs;
 
 
-    private DesktopRequestContextImpl(Provider<DataStoreManager> dsmp, CatalogExcecutionContext catalog, ServletContext ctx, HttpServletRequest req,
-                                      HttpServletResponse resp, @Named("desktop.seo.userAgents") List searchAgents) {
+    private WorkerRequestContextImpl(Provider<DataStoreManager> dsmp, CatalogExcecutionContext catalog, ServletContext ctx, HttpServletRequest req,
+                                     HttpServletResponse resp, @Named("desktop.seo.userAgents") List searchAgents) {
         super(ctx, req, resp);
         this.dsmp = dsmp;
         this.catalogContext = catalog;
@@ -70,7 +70,7 @@ public class DesktopRequestContextImpl extends ServletWebContext implements Desk
         }
     }
 
-    public DesktopRequestContextImpl(RuntimeContext requestContext) {
+    public WorkerRequestContextImpl(RuntimeContext requestContext) {
     }
 
     public ApplicationItem getActivity() {

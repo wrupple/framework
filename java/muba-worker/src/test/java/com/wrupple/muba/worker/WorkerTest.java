@@ -12,18 +12,10 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.desktop.WorkerModule;
-import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
-import com.wrupple.muba.desktop.client.chain.command.LaunchWorkerInterpret;
-import com.wrupple.muba.desktop.client.chain.command.SwitchWorkerContext;
-import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
-import com.wrupple.muba.desktop.client.chain.command.StartWorkerHeartBeat;
-import com.wrupple.muba.desktop.client.chain.command.impl.*;
-import com.wrupple.muba.desktop.client.service.ContainerRequestHandler;
+import com.wrupple.muba.desktop.client.service.WorkerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
 import com.wrupple.muba.desktop.domain.ContextSwitchHandler;
-import com.wrupple.muba.desktop.domain.ContainerRequestManifest;
-import com.wrupple.muba.desktop.domain.LaunchWorkerManifest;
-import com.wrupple.muba.desktop.domain.impl.LaunchWorkerManifestImpl;
+import com.wrupple.muba.desktop.domain.WorkerRequestManifest;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
@@ -35,7 +27,6 @@ import com.wrupple.muba.event.server.chain.command.impl.BindServiceImpl;
 import com.wrupple.muba.event.server.chain.command.impl.DispatchImpl;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import com.wrupple.muba.worker.domain.Driver;
-import com.wrupple.muba.worker.domain.impl.ContainerStateImpl;
 import com.wrupple.muba.worker.server.service.ChocoRunner;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.worker.server.service.VariableConsensus;
@@ -89,14 +80,14 @@ public abstract class WorkerTest extends EasyMockSupport {
         /*TODO imitate explicitOutputPlace test method in SubmitToApplicationTest to create event handlers to launch a worker*/
         List handlers = Arrays.asList(
                 ContextSwitchHandler.class,
-                ContainerRequestHandler.class,
+                WorkerRequestHandler.class,
                 LaunchWorkerHandlerImpl.class
         );
 
         container= new ApplicationContainer(modules, handlers);
 
         container.registerInterpret(Constraint.EVALUATING_VARIABLE, ChocoInterpret.class);
-        container.registerInterpret(ContainerRequestManifest.NAME, ExplicitIntentInterpret.class);
+        container.registerInterpret(WorkerRequestManifest.NAME, ExplicitIntentInterpret.class);
 
         container.registerRunner(ChocoRunner.class);
         //container.registerRunner(HumanRunner.class);

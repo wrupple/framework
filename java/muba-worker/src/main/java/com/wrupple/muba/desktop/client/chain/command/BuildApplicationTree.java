@@ -1,8 +1,6 @@
 package com.wrupple.muba.desktop.client.chain.command;
 
-import com.wrupple.muba.desktop.client.chain.ContainerRequestEngine;
-import com.wrupple.muba.desktop.domain.DesktopRequestContext;
-import org.apache.commons.chain.Command;
+import com.wrupple.muba.desktop.client.chain.WorkerRequestEngine;
 
-public interface BuildApplicationTree extends ContainerRequestEngine.Handler {
+public interface BuildApplicationTree extends WorkerRequestEngine.Handler {
 }

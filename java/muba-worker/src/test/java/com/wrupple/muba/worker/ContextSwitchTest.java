@@ -3,7 +3,7 @@ package com.wrupple.muba.worker;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.desktop.domain.impl.ContainerRequestImpl;
+import com.wrupple.muba.desktop.domain.impl.WorkerRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.Booking;
 import com.wrupple.muba.worker.domain.Driver;
@@ -106,7 +106,7 @@ public class ContextSwitchTest extends WorkerTest {
         log.trace("[-use booking id to launch container with prviously created booking -]");
         assertTrue(booking.getId()!=null);
         assertTrue(booking.getStakeHolder()!=null);
-        container.fireEvent(new ContainerRequestImpl(Arrays.asList(item.getDistinguishedName(),booking.getId().toString())));
+        container.fireEvent(new WorkerRequestImpl(Arrays.asList(item.getDistinguishedName(),booking.getId().toString())));
         //check conditions
         assertTrue(booking.getDriverValue()!=null);
         //assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())<1);

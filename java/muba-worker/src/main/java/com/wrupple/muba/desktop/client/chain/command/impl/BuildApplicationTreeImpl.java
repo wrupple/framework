@@ -3,9 +3,8 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.desktop.client.chain.command.BuildApplicationTree;
-import com.wrupple.muba.desktop.domain.DesktopRequestContext;
+import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.*;
-import org.apache.commons.chain.Context;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,9 +13,9 @@ import java.util.List;
 public class BuildApplicationTreeImpl implements BuildApplicationTree {
 
     @Override
-    public boolean execute(DesktopRequestContext context) throws Exception {
+    public boolean execute(WorkerRequestContext context) throws Exception {
 
-        String rootActivity = context.getWorkerOrderValue().getHomeActivity();
+        String rootActivity = context.getWorkerState().getHomeActivity();
         Application domainRoot;
         try {
             domainRoot = triggerGet(rootActivity, context.getRuntimeContext(), true, null);
@@ -24,7 +23,7 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
             // Most likely because domain has not been set up
             domainRoot = null;
             throw new IllegalStateException("Application tree root is not found",e);
-            //FIXME context.getWorkerOrderValue().setSetupFlag(true);
+            //FIXME context.getWorkerStateValue().setSetupFlag(true);
         }
 
         /*if (domainRoot!=null && sliceWriters != null) {
@@ -32,7 +31,7 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
                 sliceWriter.writeItems(domainRoot);
             }
         }*/
-        context.getWorkerOrderValue().setApplicationTree(domainRoot);
+        context.getWorkerState().setApplicationTree(domainRoot);
         return CONTINUE_PROCESSING;
     }
 
@@ -50,7 +49,7 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
     }
 
 
-    protected Application buildCurrentDomainSlice(DesktopRequestContext context, String homeActivity) throws Exception {
+    protected Application buildCurrentDomainSlice(WorkerRequestContext context, String homeActivity) throws Exception {
 
         Application domainRoot;
         FilterData filter = FilterDataUtils.createSingleFieldFilter(Application.NAME_FIELD, homeActivity);
@@ -73,7 +72,7 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
         return domainRoot;
     }
 
-    private Application buildItemTree(Application item, DesktopRequestContext context, CatalogActionRequestImpl parent) {
+    private Application buildItemTree(Application item, WorkerRequestContext context, CatalogActionRequestImpl parent) {
         Collection<Long> childItems = item.getChildren();
         String requiredRole;
 

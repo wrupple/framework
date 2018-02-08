@@ -1,6 +1,6 @@
 package com.wrupple.muba.worker.server.service;
 
-import com.wrupple.muba.event.domain.ContainerState;
+import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.SessionContext;
 
@@ -14,10 +14,10 @@ public interface ProcessManager {
      */
     Solver getSolver();
 
-    ContainerState getContainer(RuntimeContext parent);
+    WorkerState getWorker(RuntimeContext parent);
 
-    void setContainer(ContainerState request, RuntimeContext parent);
+    void setWorker(WorkerState request, RuntimeContext parent);
 
-    void setContainer(ContainerState request, SessionContext parent);
+    void setWorker(WorkerState request, SessionContext parent);
 
 }

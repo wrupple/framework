@@ -1,7 +1,7 @@
 package com.wrupple.muba.desktop.domain.impl;
 
 import com.wrupple.muba.desktop.domain.ContextSwitch;
-import com.wrupple.muba.event.domain.ContainerState;
+import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
@@ -10,22 +10,22 @@ import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 public class ContextSwitchImpl extends CatalogEntryImpl implements ContextSwitch {
 
 
-    @ForeignKey(foreignCatalog =  ContainerState.CATALOG)
+    @ForeignKey(foreignCatalog =  WorkerState.CATALOG)
     private Long order;
     @CatalogField(ignore = true)
-    @CatalogValue(foreignCatalog = ContainerState.CATALOG)
-    private ContainerState orderValue;
+    @CatalogValue(foreignCatalog = WorkerState.CATALOG)
+    private WorkerState workerStateValue;
 
 
     @Override
-    public ContainerState getOrderValue() {
-        return orderValue;
+    public WorkerState getWorkerStateValue() {
+        return workerStateValue;
     }
 
 
 
-    public void setOrderValue(ContainerState orderValue) {
-        this.orderValue = orderValue;
+    public void setWorkerStateValue(WorkerState orderValue) {
+        this.workerStateValue = orderValue;
     }
 
 

@@ -1,7 +1,6 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
 import com.wrupple.muba.desktop.client.chain.command.HandleContainerState;
-import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.desktop.domain.ContextSwitchRuntimeContext;
 
 // cachuky tuku
@@ -14,7 +13,7 @@ public class HandleContainerStateImpl implements HandleContainerState {
                 getRuntimeContext().
                 getEventBus().
                 fireEvent(
-                        context.getContextSwitch().getStateValue(),
+                        context.getContextSwitch().getWorkerStateValue(),
                         context.getRuntimeContext(),
                         null
                 );

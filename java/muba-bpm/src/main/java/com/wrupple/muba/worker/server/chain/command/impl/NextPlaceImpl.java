@@ -35,9 +35,9 @@ public class NextPlaceImpl implements NextPlace {
 		ApplicationContext context = (ApplicationContext) ctx;
         ApplicationState state = context.getStateValue();
 
-        Workflow currentItem = (Workflow) state.getHandleValue();
+        Workflow currentItem = (Workflow) state.getApplicationValue();
         currentItem = findNextTreeNode(currentItem);
-		state.setHandleValue(currentItem);
+		state.setApplicationValue(currentItem);
 
 
 		return CONTINUE_PROCESSING;

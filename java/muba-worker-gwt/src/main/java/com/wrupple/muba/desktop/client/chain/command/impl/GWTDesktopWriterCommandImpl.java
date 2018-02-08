@@ -9,7 +9,7 @@ import com.wrupple.muba.catalogs.server.service.SharedContextWriter;
 import com.wrupple.muba.catalogs.server.service.WruppleServerModule;
 import com.wrupple.muba.catalogs.server.service.WruppleServerModuleRegistry;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
-import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
+import com.wrupple.muba.desktop.server.domain.impl.WorkerRequestContextImpl;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskWindow;
 import com.wrupple.vegetate.server.services.ObjectMapper;
 import org.apache.commons.chain.Context;
@@ -44,7 +44,7 @@ public class GWTDesktopWriterCommandImpl implements GWTDesktopWriterCommand {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        DesktopRequestContextImpl parameter = (DesktopRequestContextImpl) context;
+        WorkerRequestContextImpl parameter = (WorkerRequestContextImpl) context;
         DomainSystemProperties systemProps = (DomainSystemProperties) parameter.getCatalogContext().getDomainContext().getSystemSettings();
         HttpServletResponse resp = parameter.getResponse();
         HttpServletRequest req = parameter.getRequest();
@@ -72,7 +72,7 @@ public class GWTDesktopWriterCommandImpl implements GWTDesktopWriterCommand {
     }
 
 
-    private void writeHead(PrintWriter writer, DesktopRequestContextImpl parameter, DomainSystemProperties system,
+    private void writeHead(PrintWriter writer, WorkerRequestContextImpl parameter, DomainSystemProperties system,
                            HttpServletRequest req) throws Exception {
         // title
         writer.print("<title>");
@@ -210,7 +210,7 @@ public class GWTDesktopWriterCommandImpl implements GWTDesktopWriterCommand {
         return userAgent.contains("iPhone") || userAgent.contains("iPad");
     }
 
-    private void writeBody(PrintWriter writer, DesktopRequestContextImpl parameter) {
+    private void writeBody(PrintWriter writer, WorkerRequestContextImpl parameter) {
         if (parameter.isInternetExplorer()) {
             writer.print(
                     "<!-- Your internet browser sucks, i hope you read this, fell bad about it, and change your twisted, evil ways. This is not 1995.--> \n\r");

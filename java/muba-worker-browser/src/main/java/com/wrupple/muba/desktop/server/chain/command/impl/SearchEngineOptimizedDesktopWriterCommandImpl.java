@@ -13,7 +13,7 @@ import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.domain.imp.ProcessTaskDescriptorImpl;
 import com.wrupple.muba.desktop.client.service.impl.AbstractDataDrivenServerModule;
 import com.wrupple.muba.desktop.server.chain.command.SearchEngineOptimizedDesktopWriterCommand;
-import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
+import com.wrupple.muba.desktop.server.domain.impl.WorkerRequestContextImpl;
 import com.wrupple.muba.desktop.shared.services.UrlParser;
 import com.wrupple.muba.desktop.shared.services.UserTaskWriterDictionary;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -78,7 +78,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
 
     @Override
     public boolean execute(Context c) throws Exception {
-        DesktopRequestContextImpl context = (DesktopRequestContextImpl) c;
+        WorkerRequestContextImpl context = (WorkerRequestContextImpl) c;
         DomainSystemProperties systemProps = (DomainSystemProperties) context.getCatalogContext().getDomainContext().getSystemSettings();
         HttpServletResponse resp = context.getResponse();
         HttpServletRequest req = context.getRequest();
@@ -157,7 +157,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
 
     }
 
-    private ApplicationItem pickMainApplicationItem(DesktopRequestContextImpl context) {
+    private ApplicationItem pickMainApplicationItem(WorkerRequestContextImpl context) {
 
         ApplicationItem dpss = context.getDesktopPlaceHierarchy();
         String[] path = context.getPathTokens();
@@ -176,7 +176,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
 
     }
 
-    private ApplicationItem recursivelyPickMainItem(DesktopRequestContextImpl context, int index, String[] path, List<? extends ApplicationItem> children,
+    private ApplicationItem recursivelyPickMainItem(WorkerRequestContextImpl context, int index, String[] path, List<? extends ApplicationItem> children,
                                                     ApplicationItem parent) {
         if (children == null) {
             return parent;
@@ -204,7 +204,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
         return parent;
     }
 
-    private void writeHead(PrintWriter writer, DesktopRequestContextImpl context, DomainSystemProperties systemProps, HttpServletRequest req, ApplicationItem main,
+    private void writeHead(PrintWriter writer, WorkerRequestContextImpl context, DomainSystemProperties systemProps, HttpServletRequest req, ApplicationItem main,
                            String[] path, int taskTokenIndex, ProcessTaskDescriptor task) {
 
         // Content Encoding
@@ -255,7 +255,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
 
     }
 
-    private void writeBody(PrintWriter writer, DesktopRequestContextImpl context, ApplicationItem main, ProcessDescriptor process, ProcessTaskDescriptor task,
+    private void writeBody(PrintWriter writer, WorkerRequestContextImpl context, ApplicationItem main, ProcessDescriptor process, ProcessTaskDescriptor task,
                            boolean processClosingTask) throws Exception {
 
 		/*
@@ -271,7 +271,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
 
     }
 
-    private void setNextTaskUrl(DesktopRequestContextImpl context, ApplicationItem main, List<ProcessTaskDescriptor> process, int processLength,
+    private void setNextTaskUrl(WorkerRequestContextImpl context, ApplicationItem main, List<ProcessTaskDescriptor> process, int processLength,
                                 ProcessTaskDescriptor task, int taskIndex) throws Exception {
         int capacity = 50;
         boolean isLastTask = taskIndex == (processLength - 1);
@@ -348,7 +348,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
         context.setSubmitUrl(nextTaskUrl.toString());
     }
 
-    private ProcessTaskDescriptor determineNextTask(ApplicationItem nexyActivity, DesktopRequestContextImpl context, StringBuilder nextTaskUrl) throws Exception {
+    private ProcessTaskDescriptor determineNextTask(ApplicationItem nexyActivity, WorkerRequestContextImpl context, StringBuilder nextTaskUrl) throws Exception {
 
         Number nextProcessId = nexyActivity.getProcess();
         CatalogDataAccessObject<ProcessDescriptor> processDao = dsm.getOrAssembleDataSource(ProcessDescriptor.CATALOG, context.getCatalogContext(),
@@ -363,7 +363,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
         return nextTask;
     }
 
-    private void writeTaskHtml(PrintWriter writer, DesktopRequestContextImpl context, ApplicationItem main, ProcessDescriptor process, ProcessTaskDescriptor task,
+    private void writeTaskHtml(PrintWriter writer, WorkerRequestContextImpl context, ApplicationItem main, ProcessDescriptor process, ProcessTaskDescriptor task,
                                boolean processClosingTask) throws Exception {
         VegetateUrlServiceBuilder catalogUrlBuilder = new VegetateUrlServiceBuilder(null, null, UrlBuilder.PORT_UNSPECIFIED,
                 AbstractDataDrivenServerModule.CATALOG_CHANNEL_ID, manifest, mapper);
@@ -405,7 +405,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
 
     }
 
-    private void writeNavigation(PrintWriter writer, DesktopRequestContextImpl context, ApplicationItem main) {
+    private void writeNavigation(PrintWriter writer, WorkerRequestContextImpl context, ApplicationItem main) {
         writer.println("<hr/>");
 
         List<? extends ApplicationItem> children = main.getChildItemsValues();
@@ -456,7 +456,7 @@ public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngi
         writer.print("</a>");
     }
 
-    private void writeUserTask(PrintWriter writer, DesktopRequestContextImpl context, ApplicationItem main, ProcessTaskDescriptor task, String transaction,
+    private void writeUserTask(PrintWriter writer, WorkerRequestContextImpl context, ApplicationItem main, ProcessTaskDescriptor task, String transaction,
                                boolean processClosingTask) throws Exception {
         writer.println("<hr/>");
         writer.println("<h2>");

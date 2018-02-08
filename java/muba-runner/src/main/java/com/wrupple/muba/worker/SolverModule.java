@@ -70,10 +70,10 @@ public class SolverModule extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(ContainerState.CATALOG)
+    @Named(WorkerState.CATALOG)
     public CatalogDescriptor container(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(ContainerStateImpl.class, ContainerState.CATALOG, "Container",
+        CatalogDescriptor r = builder.fromClass(WorkerStateImpl.class, WorkerState.CATALOG, "Container",
                 -900193, null);
 
         return r;

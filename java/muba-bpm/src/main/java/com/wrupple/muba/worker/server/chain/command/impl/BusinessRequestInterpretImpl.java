@@ -37,7 +37,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
 
-        ContainerState container = bpm.getContainer(requestContext);
+        WorkerState container = bpm.getWorker(requestContext);
         return proveedor.get().setRuntimeContext(requestContext, container);
     }
 
@@ -85,7 +85,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     }
 
     private void setWorkingTask(ApplicationState state, ApplicationContext context) {
-        Workflow application = (Workflow) state.getHandleValue();
+        Workflow application = (Workflow) state.getApplicationValue();
         List<Task> workflow = application.getProcessValues();
         List<Long> workflowKeys = application.getProcess();
 

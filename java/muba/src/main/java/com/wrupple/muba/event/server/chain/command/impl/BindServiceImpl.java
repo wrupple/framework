@@ -3,6 +3,7 @@ package com.wrupple.muba.event.server.chain.command.impl;
 import com.wrupple.muba.event.domain.ParentServiceManifest;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.YieldContext;
 import com.wrupple.muba.event.server.chain.command.BindService;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class BindServiceImpl implements BindService {
         }
 
         String service = requestContext.next();
-        ServiceManifest manifest = getChildServiceManifest(service, requestContext);
+        ServiceManifest manifest = getChildServiceManifest(requestContext.getEventBus().getIntentInterpret().getRootService(),service, requestContext);
         requestContext.setServiceManifest(manifest);
 
         log.debug("</{}>", this.getClass().getSimpleName());
@@ -44,8 +45,7 @@ public class BindServiceImpl implements BindService {
     }
 
 
-    private ServiceManifest getChildServiceManifest(String service, RuntimeContext requestContext) {
-        ParentServiceManifest rootService = requestContext.getEventBus().getIntentInterpret().getRootService();
+    private ServiceManifest getChildServiceManifest(ParentServiceManifest rootService,String service, YieldContext requestContext) {
         if (rootService == null) {
             throw new IllegalStateException("No root service has been configured");
         }

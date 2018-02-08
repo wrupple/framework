@@ -9,7 +9,7 @@ import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.services.VanityIdReader;
 import com.wrupple.muba.cms.shared.services.ContentManagerRegistry;
 import com.wrupple.muba.desktop.server.chain.command.DetailWriter;
-import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
+import com.wrupple.muba.desktop.server.domain.impl.WorkerRequestContextImpl;
 import com.wrupple.muba.desktop.shared.services.UrlParser;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -37,7 +37,7 @@ public class DetailWriterImpl extends AbstractSingleCatalogEntryWriter implement
     }
 
     @Override
-    protected void writeFile(DesktopRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry entry,
+    protected void writeFile(WorkerRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry entry,
                              FieldDescriptor field, Object imageKey) {
         if (imageKey != null) {
             SearchEngineOptimizedDesktopWriterCommandImpl.writeFileLink(catalogUrlBuilder, writer, field.getForeignCatalogName(), String.valueOf(imageKey),
@@ -61,7 +61,7 @@ public class DetailWriterImpl extends AbstractSingleCatalogEntryWriter implement
     }
 
     @Override
-    protected void writeForeignValue(PrintWriter writer, DesktopRequestContextImpl context, CatalogDescriptor catalog, CatalogEntry parentEntry,
+    protected void writeForeignValue(PrintWriter writer, WorkerRequestContextImpl context, CatalogDescriptor catalog, CatalogEntry parentEntry,
                                      FieldDescriptor field, CatalogEntry foreignValue, Object fieldValue) {
         if (foreignValue != null) {
             writer.print("<a href=\"");
@@ -74,12 +74,12 @@ public class DetailWriterImpl extends AbstractSingleCatalogEntryWriter implement
     }
 
     @Override
-    protected void writeFooter(DesktopRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
+    protected void writeFooter(WorkerRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
 
     }
 
     @Override
-    protected void writeHeader(DesktopRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
+    protected void writeHeader(WorkerRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
         if (entry != null) {
             writer.println("<h1>");
             writer.print(catalog.getName());

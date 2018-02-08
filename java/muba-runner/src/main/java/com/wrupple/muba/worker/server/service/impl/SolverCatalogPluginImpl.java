@@ -20,7 +20,7 @@ public class SolverCatalogPluginImpl extends StaticCatalogDescriptorProvider imp
     @Inject
     public SolverCatalogPluginImpl(@Named(Application.CATALOG) CatalogDescriptor appItem,
                                    @Named(ApplicationState.CATALOG) CatalogDescriptor state,
-                                   @Named(ContainerState.CATALOG) CatalogDescriptor container,
+                                   @Named(WorkerState.CATALOG) CatalogDescriptor container,
                                    @Named(Task.CATALOG) CatalogDescriptor taskDescP,
                                    @Named(TaskToolbarDescriptor.CATALOG) CatalogDescriptor toolbarDescP,
                                    @Named(WruppleActivityAction.CATALOG) CatalogDescriptor actionDescP) {

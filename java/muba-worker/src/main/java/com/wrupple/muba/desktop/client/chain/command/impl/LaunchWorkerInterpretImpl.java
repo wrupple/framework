@@ -4,10 +4,8 @@ import com.wrupple.muba.desktop.client.chain.command.LaunchWorkerInterpret;
 import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.desktop.domain.ContextSwitch;
 import com.wrupple.muba.desktop.domain.impl.ContainerContextImpl;
-import com.wrupple.muba.event.domain.Application;
-import com.wrupple.muba.event.domain.ContainerState;
+import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;
 
@@ -33,15 +31,15 @@ public class LaunchWorkerInterpretImpl implements LaunchWorkerInterpret {
 
     @Override
     public Context materializeBlankContext(RuntimeContext parent) throws Exception {
-        ContainerState request = (ContainerState) parent.getServiceContract();
+        WorkerState request = (WorkerState) parent.getServiceContract();
         if (request == null) {
             throw new IllegalStateException("No container definition!");
         }
-        pm.setContainer(request, parent);
+        pm.setWorker(request, parent);
         parent.setServiceContract(request);
 
         ContextSwitch contextSwitch = contractProvider.get();
-        contextSwitch.setOrderValue(request);
+        contextSwitch.setWorkerStateValue(request);
         return new ContainerContextImpl(parent, contextSwitch, request, pm);
     }
 
@@ -49,7 +47,7 @@ public class LaunchWorkerInterpretImpl implements LaunchWorkerInterpret {
     public boolean execute(Context ctx) throws Exception {
 
         RuntimeContext requestContext = (RuntimeContext) ctx;
-        ContainerState request = (ContainerState) requestContext.getServiceContract();
+        WorkerState request = (WorkerState) requestContext.getServiceContract();
         ContainerContext context = requestContext.getServiceContext();
 
         /*

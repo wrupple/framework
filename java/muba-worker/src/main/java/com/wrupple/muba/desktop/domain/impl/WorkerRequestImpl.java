@@ -1,18 +1,18 @@
 package com.wrupple.muba.desktop.domain.impl;
 
-import com.wrupple.muba.desktop.domain.ContainerRequest;
+import com.wrupple.muba.desktop.domain.WorkerRequest;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 import java.util.List;
 
-public class ContainerRequestImpl extends CatalogEntryImpl implements ContainerRequest {
+public class WorkerRequestImpl extends CatalogEntryImpl implements WorkerRequest {
 
     private List<String> sentence;
 
-    public ContainerRequestImpl() {
+    public WorkerRequestImpl() {
     }
 
-    public ContainerRequestImpl(List<String> sentence) {
+    public WorkerRequestImpl(List<String> sentence) {
         this();
         this.sentence = sentence;
     }

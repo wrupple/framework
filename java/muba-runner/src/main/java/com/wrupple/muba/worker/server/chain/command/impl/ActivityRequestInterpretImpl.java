@@ -33,7 +33,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
         ApplicationContext r = activityContextProvider.get();
-        ContainerState container = bpm.getContainer(requestContext);
+        WorkerState container = bpm.getWorker(requestContext);
         if (container == null) {
             throw new IllegalStateException("No application container");
         }
@@ -75,7 +75,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
 
     public ApplicationState acquireContext(Workflow initialState, RuntimeContext thread) throws Exception {
         ApplicationState newState = applicationStateProvider.get();
-        newState.setHandleValue(initialState);
+        newState.setApplicationValue(initialState);
 
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
 

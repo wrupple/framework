@@ -10,7 +10,7 @@ import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.services.VanityIdReader;
-import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
+import com.wrupple.muba.desktop.server.domain.impl.WorkerRequestContextImpl;
 import com.wrupple.muba.desktop.shared.services.UrlParser;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
@@ -46,7 +46,7 @@ public abstract class AbstractSingleCatalogEntryWriter implements Command {
 
     @Override
     public boolean execute(Context c) throws Exception {
-        DesktopRequestContextImpl context = (DesktopRequestContextImpl) c;
+        WorkerRequestContextImpl context = (WorkerRequestContextImpl) c;
         ProcessTaskDescriptor task = context.getTask();
         PrintWriter writer = context.getResponse().getWriter();
 
@@ -190,18 +190,18 @@ public abstract class AbstractSingleCatalogEntryWriter implements Command {
         return CONTINUE_PROCESSING;
     }
 
-    protected abstract void writeFooter(DesktopRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer,
+    protected abstract void writeFooter(WorkerRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer,
                                         CatalogEntry entry);
 
-    protected abstract void writeHeader(DesktopRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer,
+    protected abstract void writeHeader(WorkerRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer,
                                         CatalogEntry entry);
 
-    protected abstract void writeForeignValue(PrintWriter writer, DesktopRequestContextImpl context, CatalogDescriptor catalog, CatalogEntry parentEntry,
+    protected abstract void writeForeignValue(PrintWriter writer, WorkerRequestContextImpl context, CatalogDescriptor catalog, CatalogEntry parentEntry,
                                               FieldDescriptor field, CatalogEntry foreignEntry, Object fieldValue);
 
     protected abstract void writeFieldValue(PrintWriter writer, FieldDescriptor field, Object fieldValue);
 
-    protected abstract void writeFile(DesktopRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry parentEntry,
+    protected abstract void writeFile(WorkerRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry parentEntry,
                                       FieldDescriptor field, Object fieldValue);
 
     private DataStoreManager getDSM() {

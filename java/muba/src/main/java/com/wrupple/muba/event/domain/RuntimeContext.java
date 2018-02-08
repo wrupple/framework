@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.ListIterator;
 
-public interface RuntimeContext extends Context, HasValidations, HasLocale, ListIterator<String>, CatalogKey,
+public interface RuntimeContext extends YieldContext, HasValidations, HasLocale, CatalogKey,
 		HasParentValue<Object,RuntimeContext>, HasResult<Object> ,HasResults<Object> {
 
     int Unauthorized = 401;
@@ -21,8 +21,6 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
     SessionContext getSession();
 
-	void reset();
-
 	void end();
 
 	void setScopedWriting(boolean b);
@@ -32,8 +30,6 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 	CharSequence getScopedOutput(Context serviceContext);
 
 	void setFormat(String defaultFormat);
-
-    List<String> getSentence();
 
     void setSentence(List<String> pathTokens);
 
@@ -51,12 +47,6 @@ public interface RuntimeContext extends Context, HasValidations, HasLocale, List
 
 	void setServiceContract(Object serviceInvocationContract);
 
-	/*
-	 * 
-	 * 
-	 */
-
-	void setNextWordIndex(int i);
 
 
 	List<String> resetWarnings();

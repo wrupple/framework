@@ -11,9 +11,9 @@ import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.ContentServerModule;
-import com.wrupple.muba.desktop.client.chain.command.ContainterRequestInterpret;
+import com.wrupple.muba.desktop.client.chain.command.WorkerRequestInterpret;
 import com.wrupple.muba.desktop.server.chain.command.BrowserWriter;
-import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
+import com.wrupple.muba.desktop.server.domain.impl.WorkerRequestContextImpl;
 import com.wrupple.muba.desktop.shared.services.UrlParser;
 import com.wrupple.muba.desktop.shared.services.UserInteractionStateModifier;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
@@ -51,7 +51,7 @@ public class BrowserWriterImpl implements BrowserWriter {
 
     @Override
     public boolean execute(Context c) throws Exception {
-        DesktopRequestContextImpl context = (DesktopRequestContextImpl) c;
+        WorkerRequestContextImpl context = (WorkerRequestContextImpl) c;
         ProcessTaskDescriptor task = context.getTask();
         PrintWriter writer = context.getResponse().getWriter();
 
@@ -85,7 +85,7 @@ public class BrowserWriterImpl implements BrowserWriter {
                 writer.print(context.getSubmitUrl());
                 writer.print("\"  >");
                 writer.print("<input type=\"hidden\" name=\"");
-                writer.print(ContainterRequestInterpret.SUBMITTING_TASK);
+                writer.print(WorkerRequestInterpret.SUBMITTING_TASK);
                 writer.print(" value=\"");
                 writer.print(task.getIdAsString());
                 writer.print("\"  >");
@@ -237,7 +237,7 @@ public class BrowserWriterImpl implements BrowserWriter {
 
     }
 
-    private void writeSingleEntrySubmission(DesktopRequestContextImpl context, PrintWriter writer, FieldDescriptor field, CatalogEntry submitted, String submitUrl,
+    private void writeSingleEntrySubmission(WorkerRequestContextImpl context, PrintWriter writer, FieldDescriptor field, CatalogEntry submitted, String submitUrl,
                                             List<String> taskTokens) {
 
         writer.println("<a href=\"");
@@ -257,7 +257,7 @@ public class BrowserWriterImpl implements BrowserWriter {
         writer.println("</a>");
     }
 
-    private void writeFile(DesktopRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry entry,
+    private void writeFile(WorkerRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry entry,
                            FieldDescriptor field, Object imageKey) {
         if (imageKey != null) {
             SearchEngineOptimizedDesktopWriterCommandImpl.writeFileLink(catalogUrlBuilder, writer, field.getForeignCatalogName(), String.valueOf(imageKey),

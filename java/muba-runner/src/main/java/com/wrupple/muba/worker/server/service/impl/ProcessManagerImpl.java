@@ -1,16 +1,12 @@
 package com.wrupple.muba.worker.server.service.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import com.wrupple.muba.worker.server.service.Solver;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.util.List;
 
 /*SequentialProcessManger imports
 import com.google.gwt.core.client.JavaScriptObject;
@@ -116,24 +112,24 @@ public class ProcessManagerImpl implements ProcessManager {
 
 
     @Override
-    public ContainerState getContainer(RuntimeContext parent) {
+    public WorkerState getWorker(RuntimeContext parent) {
 
         RuntimeContext root = parent.getRootAncestor();
-        ContainerState container = (ContainerState) root.get(CONTAINER_STATE);
+        WorkerState container = (WorkerState) root.get(CONTAINER_STATE);
         if (container == null) {
-            container = (ContainerState) parent.getSession().get(CONTAINER_STATE);
+            container = (WorkerState) parent.getSession().get(CONTAINER_STATE);
         }
         return container;
     }
 
     @Override
-    public void setContainer(ContainerState request, RuntimeContext parent) {
+    public void setWorker(WorkerState request, RuntimeContext parent) {
         RuntimeContext root = parent.getRootAncestor();
         root.put(CONTAINER_STATE, request);
     }
 
     @Override
-    public void setContainer(ContainerState request, SessionContext parent) {
+    public void setWorker(WorkerState request, SessionContext parent) {
         parent.put(CONTAINER_STATE, request);
     }
 

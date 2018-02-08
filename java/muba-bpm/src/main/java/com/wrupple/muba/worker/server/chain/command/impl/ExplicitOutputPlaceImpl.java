@@ -18,7 +18,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 		ApplicationState state=  context.getStateValue();
 
         Workflow nextItem = findNextTreeNode(state);
-		state.setHandleValue(nextItem);
+		state.setApplicationValue(nextItem);
         state.setTaskDescriptorValue(null);
         state.setTaskDescriptor(null);
 
@@ -26,7 +26,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 	}
 
 	private Application findNextTreeNode(ApplicationState currentState) {
-		Application currentItem = (Application) currentState.getHandleValue();
+		Application currentItem = (Application) currentState.getApplicationValue();
 
 
 

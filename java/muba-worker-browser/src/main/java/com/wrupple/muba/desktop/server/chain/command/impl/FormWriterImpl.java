@@ -6,9 +6,9 @@ import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
 import com.wrupple.muba.cms.domain.ProcessTaskDescriptor;
 import com.wrupple.muba.cms.server.services.VanityIdReader;
-import com.wrupple.muba.desktop.client.chain.command.ContainterRequestInterpret;
+import com.wrupple.muba.desktop.client.chain.command.WorkerRequestInterpret;
 import com.wrupple.muba.desktop.server.chain.command.FormWriter;
-import com.wrupple.muba.desktop.server.domain.impl.DesktopRequestContextImpl;
+import com.wrupple.muba.desktop.server.domain.impl.WorkerRequestContextImpl;
 import com.wrupple.vegetate.domain.CatalogDescriptor;
 import com.wrupple.vegetate.domain.CatalogEntry;
 import com.wrupple.vegetate.domain.FieldDescriptor;
@@ -31,7 +31,7 @@ public class FormWriterImpl extends AbstractSingleCatalogEntryWriter implements 
     }
 
     @Override
-    protected void writeForeignValue(PrintWriter writer, DesktopRequestContextImpl context, CatalogDescriptor catalog, CatalogEntry parentEntry,
+    protected void writeForeignValue(PrintWriter writer, WorkerRequestContextImpl context, CatalogDescriptor catalog, CatalogEntry parentEntry,
                                      FieldDescriptor field, CatalogEntry foreignEntry, Object fieldValue) {
         if (foreignEntry != null) {
             writer.print(foreignEntry.getName());
@@ -94,7 +94,7 @@ public class FormWriterImpl extends AbstractSingleCatalogEntryWriter implements 
     }
 
     @Override
-    protected void writeFile(DesktopRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry parentEntry,
+    protected void writeFile(WorkerRequestContextImpl context, VegetateUrlServiceBuilder catalogUrlBuilder, PrintWriter writer, CatalogEntry parentEntry,
                              FieldDescriptor field, Object fieldValue) {
         if (fieldValue == null) {
             writer.print("<input type=\"file\" name=\"");
@@ -107,10 +107,10 @@ public class FormWriterImpl extends AbstractSingleCatalogEntryWriter implements 
     }
 
     @Override
-    protected void writeFooter(DesktopRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
+    protected void writeFooter(WorkerRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
         writer.println("<input type=\"submit\" value=\"Ok\">");
         writer.print("<input type=\"hidden\" name=\"");
-        writer.print(ContainterRequestInterpret.SUBMITTING_TASK);
+        writer.print(WorkerRequestInterpret.SUBMITTING_TASK);
         writer.print(" value=\"");
         writer.print(task.getIdAsString());
         writer.print("\"  >");
@@ -125,7 +125,7 @@ public class FormWriterImpl extends AbstractSingleCatalogEntryWriter implements 
     }
 
     @Override
-    protected void writeHeader(DesktopRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
+    protected void writeHeader(WorkerRequestContextImpl context, ProcessTaskDescriptor task, CatalogDescriptor catalog, PrintWriter writer, CatalogEntry entry) {
         if (entry != null) {
             writer.println("<h1>");
             writer.print(catalog.getName());

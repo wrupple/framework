@@ -9,7 +9,7 @@ public interface HasSentence {
 
     /**
      *
-     * @return alias to getHandle()
+     * @return alias to getApplication()
      */
     List<String> getSentence();
 }

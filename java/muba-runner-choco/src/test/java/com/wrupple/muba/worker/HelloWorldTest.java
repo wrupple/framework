@@ -13,7 +13,7 @@ import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.EquationSystemSolution;
 import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.domain.impl.ApplicationStateImpl;
-import com.wrupple.muba.worker.domain.impl.ContainerStateImpl;
+import com.wrupple.muba.worker.domain.impl.WorkerStateImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
 import com.wrupple.muba.worker.server.service.*;
 import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
@@ -89,8 +89,8 @@ public class HelloWorldTest extends IntegralTest {
 
         runtimeContext.process();*/
 
-        ContainerState container = new ContainerStateImpl();
-        injector.getInstance(ProcessManager.class).setContainer(container, session);
+        WorkerState container = new WorkerStateImpl();
+        injector.getInstance(ProcessManager.class).setWorker(container, session);
         List results = wrupple.fireEvent(state, session, null);
         EquationSystemSolution solution = (EquationSystemSolution) results.get(0);
         assertTrue(solution.getX() == 2);

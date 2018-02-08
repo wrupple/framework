@@ -16,7 +16,7 @@ public class SwitchWorkerContextImpl implements SwitchWorkerContext {
     @Override
     public boolean execute(ContainerContext context ) throws Exception {
 
-        // this context is universally available through LaunchWorkerInterpret.getContainer()
+        // this context is universally available through LaunchWorkerInterpret.getWorker()
 
 
         // Goes to the place represented on URL else default place

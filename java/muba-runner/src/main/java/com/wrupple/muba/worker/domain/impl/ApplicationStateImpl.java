@@ -21,7 +21,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private FilterData filterData;
 
     @ForeignKey(foreignCatalog = Application.CATALOG)
-    private Long handle;
+    private Long application;
 
     @ForeignKey(foreignCatalog = Task.CATALOG)
     private Long taskDescriptor;
@@ -103,11 +103,11 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
 
 
     @Override
-    public ServiceManifest getHandleValue() {
+    public ServiceManifest getApplicationValue() {
         return handleValue;
     }
 
-    public void setHandleValue(ServiceManifest handleValue) {
+    public void setApplicationValue(ServiceManifest handleValue) {
         this.handleValue = handleValue;
     }
 
@@ -141,13 +141,18 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     }
 
     @Override
-    public Long getHandle() {
-        return handle;
+    public Long getApplication() {
+        return application;
     }
 
-    public void setHandle(Long handle) {
-        this.handle = handle;
+    public void setApplication(Long handle) {
+        this.application = handle;
     }
+
+    public void setApplication(Object handle) {
+        this.application = (Long) handle;
+    }
+
 
     @Override
     public Long getTaskDescriptor() {

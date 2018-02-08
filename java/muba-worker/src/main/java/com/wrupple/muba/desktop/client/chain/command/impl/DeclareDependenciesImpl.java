@@ -1,16 +1,14 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
-import com.google.inject.name.Named;
 import com.wrupple.muba.desktop.client.chain.command.DeclareDependencies;
-import com.wrupple.muba.desktop.domain.DesktopRequestContext;
-import org.apache.commons.chain.Context;
+import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 
 public class DeclareDependenciesImpl implements DeclareDependencies {
 
 
 
     @Override
-    public boolean execute(DesktopRequestContext context) throws Exception {
+    public boolean execute(WorkerRequestContext context) throws Exception {
 
         // TODO ADD WORKER WIDE DEPENDENCIES?
 

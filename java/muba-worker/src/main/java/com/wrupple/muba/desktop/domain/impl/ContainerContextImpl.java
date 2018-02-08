@@ -3,20 +3,20 @@ package com.wrupple.muba.desktop.domain.impl;
 import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
 import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.desktop.domain.ContextSwitch;
-import com.wrupple.muba.event.domain.ContainerState;
+import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.server.domain.impl.AbstractYieldContext;
 import com.wrupple.muba.worker.server.service.ProcessManager;
-import org.apache.commons.chain.impl.ContextBase;
 
 import javax.inject.Inject;
 
-public class ContainerContextImpl extends ContextBase implements ContainerContext {
+public class ContainerContextImpl extends AbstractYieldContext implements ContainerContext {
     private final RuntimeContext runtimeContext;
     private final ContextSwitch contextSwitch;
     private final ProcessManager processManager;
 
     @Inject
-    public ContainerContextImpl(RuntimeContext runtimeContext, ContextSwitch applicationState, ContainerState state, ProcessManager processManager) {
+    public ContainerContextImpl(RuntimeContext runtimeContext, ContextSwitch applicationState, WorkerState state, ProcessManager processManager) {
         this.runtimeContext = runtimeContext;
         this.contextSwitch=applicationState;
         this.processManager = processManager;

@@ -2,9 +2,10 @@ package com.wrupple.muba.desktop.domain;
 
 import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
 import com.wrupple.muba.event.domain.ServiceContext;
+import com.wrupple.muba.event.domain.YieldContext;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 
-public interface ContainerContext extends ServiceContext {
+public interface ContainerContext extends ServiceContext,YieldContext {
 
     ContextSwitch getContextSwitch();
 

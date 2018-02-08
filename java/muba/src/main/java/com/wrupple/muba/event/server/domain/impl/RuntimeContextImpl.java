@@ -21,20 +21,18 @@ import java.io.StringWriter;
 import java.util.*;
 
 @Sentence
-public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
+public class RuntimeContextImpl extends AbstractYieldContext implements RuntimeContext {
 	@Override
 	public String toString() {
-		return "RuntimeContextImpl [serviceContract=" + serviceContract + ", sentence=" + sentence + ", nextIndex="
-				+ nextIndex + "]";
+		return "RuntimeContextImpl [serviceContract=" + serviceContract + ", sentence=" + sentence + "]";
 	}
 
 	private static final long serialVersionUID = 6829551639243495084L;
 	public static final String SCOPED_WRITER = "muba.event.writer";
 	public static final String SCOPED_BUFFER = SCOPED_WRITER + ".buffer";
 
-    //@Sentence
-    private List<String> sentence;
-	private int nextIndex, error;
+
+	private int  error;
 
 	private ServiceManifest serviceManifest;
 	private Object serviceContract;
@@ -52,7 +50,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	private Object result;
 	private long totalResponseSize;
 	private Set<ConstraintViolation<?>> constraintViolations;
-	private ListIterator<String> wordIterator;
 
     public RuntimeContextImpl(EventBus appication, SessionContext session, RuntimeContext parent) {
         super();
@@ -65,7 +62,11 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	public boolean process() throws Exception {
 		return getEventBus().resume(this);
 	}
-
+	@Override
+	public void reset() {
+super.reset();
+serviceContext = null;
+	}
 
     public RuntimeContextImpl(EventBus appication, SessionContext session) {
         this( appication, session, null);
@@ -191,30 +192,12 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		this.scopedWriting = scopedWriting;
 	}
 
-	private ListIterator<String> assertSentenceIterator() {
-		if (wordIterator == null) {
-			wordIterator = sentence.listIterator();
-		}
-		return wordIterator;
 
-	}
-
-	@Override
-	public List<String> getSentence() {
-		return sentence;
-	}
 
 	@Override
 	public void setSentence(String... paramTokens) {
-		this.sentence = Arrays.asList(paramTokens);
+		sentence = Arrays.asList(paramTokens);
 	}
-
-
-	@Override
-	public void setNextWordIndex(int nextTokenIndex) {
-		wordIterator = sentence.listIterator(nextTokenIndex);
-	}
-
 	@Override
     public SessionContext getSession() {
         return session;
@@ -228,52 +211,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 	@Override
 	public Exception getCaughtException() {
 		return caughtException;
-	}
-
-	@Override
-	public boolean hasNext() {
-		return assertSentenceIterator().hasNext();
-	}
-
-	@Override
-	public String next() {
-		return assertSentenceIterator().next();
-	}
-
-	@Override
-	public boolean hasPrevious() {
-		return assertSentenceIterator().hasPrevious();
-	}
-
-	@Override
-	public String previous() {
-
-		return assertSentenceIterator().previous();
-	}
-
-	@Override
-	public int nextIndex() {
-		return assertSentenceIterator().nextIndex();
-	}
-
-	@Override
-	public int previousIndex() {
-		return assertSentenceIterator().previousIndex();
-	}
-
-	@Override
-	public void remove() {
-		assertSentenceIterator().remove();
-	}
-
-	@Override
-	public void set(String e) {
-		assertSentenceIterator().set(e);
-	}
-
-	@Override
-	public void add(String e) {
-		assertSentenceIterator().add(e);
 	}
 
 	@Override
@@ -320,11 +257,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		this.serviceContext = serviceContext;
 	}
 
-	@Override
-	public void reset() {
-		wordIterator=null;
-		serviceContext = null;
-	}
 
 	@Override
 	public RuntimeContext getParentValue() {
@@ -450,7 +382,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 		result = prime * result + ((format == null) ? 0 : format.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
-		result = prime * result + nextIndex;
 		result = prime * result + ((parentValue == null) ? 0 : parentValue.hashCode());
 		result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
 		result = prime * result + (scopedWriting ? 1231 : 1237);
@@ -510,8 +441,6 @@ public class RuntimeContextImpl extends ContextBase implements RuntimeContext {
 			if (other.locale != null)
 				return false;
 		} else if (!locale.equals(other.locale))
-			return false;
-		if (nextIndex != other.nextIndex)
 			return false;
 		if (parentValue == null) {
 			if (other.parentValue != null)

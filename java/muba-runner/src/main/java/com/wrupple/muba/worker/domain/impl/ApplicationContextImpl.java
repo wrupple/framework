@@ -1,6 +1,6 @@
 package com.wrupple.muba.worker.domain.impl;
 
-import com.wrupple.muba.event.domain.ContainerState;
+import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.worker.domain.ApplicationContext;
@@ -17,7 +17,7 @@ import javax.inject.Singleton;
 public class ApplicationContextImpl extends ContextBase implements ApplicationContext {
     private RuntimeContext runtimeContext;
     private String name;
-    private ContainerState containerStateValue;
+    private WorkerState workerStateValue;
 
     public void setStateValue(ApplicationState stateValue) {
         this.stateValue = stateValue;
@@ -37,9 +37,9 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     private ApplicationState stateValue;
 
     @Override
-    public ApplicationContext setRuntimeContext(RuntimeContext requestContext, ContainerState container) {
+    public ApplicationContext setRuntimeContext(RuntimeContext requestContext, WorkerState container) {
         this.runtimeContext=requestContext;
-        this.containerStateValue = container;
+        this.workerStateValue = container;
         return this;
     }
 
@@ -49,8 +49,8 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     }
 
     @Override
-    public ContainerState getContainerStateValue() {
-        return containerStateValue;
+    public WorkerState getWorkerStateValue() {
+        return workerStateValue;
     }
 
     @Override
