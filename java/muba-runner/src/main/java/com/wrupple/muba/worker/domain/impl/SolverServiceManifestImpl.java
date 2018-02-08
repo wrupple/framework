@@ -2,7 +2,7 @@ package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.SolverServiceManifest;
 
 import javax.inject.Inject;

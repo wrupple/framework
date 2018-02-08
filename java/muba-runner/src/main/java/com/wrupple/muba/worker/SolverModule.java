@@ -12,7 +12,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.SolverServiceManifest;
 import com.wrupple.muba.worker.domain.WruppleActivityAction;
 import com.wrupple.muba.worker.domain.impl.*;

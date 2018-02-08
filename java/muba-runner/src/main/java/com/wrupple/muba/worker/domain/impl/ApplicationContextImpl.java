@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
 

@@ -4,6 +4,7 @@ import com.wrupple.muba.desktop.client.chain.ContainerRequestEngine;
 import com.wrupple.muba.desktop.client.chain.command.BuildApplicationTree;
 import com.wrupple.muba.desktop.client.chain.command.DeclareDependencies;
 import com.wrupple.muba.desktop.client.chain.command.DesktopWriterCommand;
+import com.wrupple.muba.desktop.client.chain.command.SetActivity;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ChainBase;
 
@@ -14,7 +15,7 @@ import javax.inject.Singleton;
 public class ContainerRequestEngineImpl extends ChainBase implements ContainerRequestEngine {
 
     @Inject
-    public ContainerRequestEngineImpl(BuildApplicationTree sliceWriter, DeclareDependencies imports,DesktopWriterCommand write) {
-        super(new ContainerRequestEngine.Handler[]{sliceWriter, imports,write});
+    public ContainerRequestEngineImpl(BuildApplicationTree sliceWriter, DeclareDependencies imports, SetActivity setInitialActivity, DesktopWriterCommand write) {
+        super(new ContainerRequestEngine.Handler[]{sliceWriter, imports,setInitialActivity,write});
     }
 }

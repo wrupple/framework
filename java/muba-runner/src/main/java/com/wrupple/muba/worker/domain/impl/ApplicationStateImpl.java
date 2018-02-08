@@ -5,8 +5,8 @@ import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
-import com.wrupple.muba.worker.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.VariableDescriptor;
+import com.wrupple.muba.event.domain.ApplicationState;
+import com.wrupple.muba.event.domain.VariableDescriptor;
 
 import java.util.List;
 

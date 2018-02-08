@@ -5,7 +5,7 @@ import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.DataEvent;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.VariableDescriptor;
+import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.DetermineSolutionFieldsDomain;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import com.wrupple.muba.worker.server.service.Solver;

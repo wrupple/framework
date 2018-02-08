@@ -12,10 +12,10 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
+import com.wrupple.muba.desktop.client.chain.command.LaunchWorkerInterpret;
 import com.wrupple.muba.desktop.client.chain.command.SwitchWorkerContext;
 import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
 import com.wrupple.muba.desktop.client.chain.command.StartWorkerHeartBeat;
-import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
 import com.wrupple.muba.desktop.client.chain.command.impl.*;
 import com.wrupple.muba.desktop.client.service.ContainerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
@@ -110,7 +110,7 @@ public class Example {
         protected void configure() {
 
             bind(LaunchWorkerEngine.class).to(LaunchWorkerEngineImpl.class);
-            bind(WorkerContainerLauncher.class).to(WorkerContainerLauncherImpl.class);
+            bind(LaunchWorkerInterpret.class).to(LaunchWorkerInterpretImpl.class);
             bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
 
             bind(ContainerState.class).to(ContainerStateImpl.class);

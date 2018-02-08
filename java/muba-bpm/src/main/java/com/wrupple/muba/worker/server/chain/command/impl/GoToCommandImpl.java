@@ -5,7 +5,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.Workflow;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.chain.command.GoToCommand;
 import org.apache.commons.chain.Context;
 

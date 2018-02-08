@@ -11,13 +11,13 @@ import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.desktop.WorkerModule;
 import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
+import com.wrupple.muba.desktop.client.chain.command.LaunchWorkerInterpret;
 import com.wrupple.muba.desktop.client.chain.command.SwitchWorkerContext;
 import com.wrupple.muba.desktop.client.chain.command.ReadWorkerMetadata;
 import com.wrupple.muba.desktop.client.chain.command.StartWorkerHeartBeat;
-import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
-import com.wrupple.muba.desktop.client.chain.command.impl.SwitchWorkerContextImpl;
-import com.wrupple.muba.desktop.client.chain.command.impl.LaunchWorkerEngineImpl;
+import com.wrupple.muba.desktop.client.chain.command.impl.*;
 import com.wrupple.muba.desktop.client.service.ContainerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
 import com.wrupple.muba.desktop.domain.ContextSwitchHandler;
@@ -71,6 +71,7 @@ public abstract class WorkerTest extends EasyMockSupport {
 
         List<AbstractModule> modules = Arrays.asList(
                 new IntegralTestModule(),
+                new WorkerModule(),
                 new BusinessModule(),
                 new ConstraintSolverModule(),
                 new SolverModule(),
@@ -116,7 +117,7 @@ public abstract class WorkerTest extends EasyMockSupport {
 
 
     protected void createMockDrivers() throws Exception {
-        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) injector.getInstance(CatalogDescriptorBuilder.class).fromClass(Driver.class, Driver.CATALOG,
+        CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) container.getInstance(CatalogDescriptorBuilder.class).fromClass(Driver.class, Driver.CATALOG,
                 "Driver", 0, null);
         solutionContract.setId(null);
         solutionContract.setConsolidated(true);
@@ -142,20 +143,12 @@ public abstract class WorkerTest extends EasyMockSupport {
 
             protected void configure() {
 
-                bind(LaunchWorkerEngine.class).to(LaunchWorkerEngineImpl.class);
-                bind(WorkerContainerLauncher.class).to(WorkerContainerLauncherImpl.class);
-                bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
-
-                bind(ContainerState.class).to(ContainerStateImpl.class);
-                bind(SwitchWorkerContext.class).to(SwitchWorkerContextImpl.class);
-                bind(ReadWorkerMetadata.class).to(ReadWorkerMetadataImpl.class);
-                bind(StartWorkerHeartBeat.class).to(StartWorkerHeartBeatImpl.class);
-
 
                 this.bind(BindService.class).to(BindServiceImpl.class);
                 this.bind(Dispatch.class).to(DispatchImpl.class);
 
                 bind(VariableConsensus.class).to(ArbitraryDesicion.class);
+                bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.choco")).toInstance(1l);
                 bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
                 bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
                 bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
@@ -172,15 +165,6 @@ public abstract class WorkerTest extends EasyMockSupport {
             /*
              * CONFIGURATION
              */
-            @Provides
-            @com.google.inject.Singleton
-            @com.google.inject.Inject
-            @com.google.inject.name.Named(ContainerState.CATALOG)
-            public CatalogDescriptor session(CatalogDescriptorBuilder builder) {
-                CatalogDescriptor r = builder.fromClass(ContainerStateImpl.class, ContainerState.CATALOG, "ContainerState", -2917198,
-                        null);
-                return r;
-            }
 
 
             @Provides

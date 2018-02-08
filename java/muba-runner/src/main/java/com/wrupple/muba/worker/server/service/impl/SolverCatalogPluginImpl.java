@@ -4,7 +4,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import com.wrupple.muba.catalogs.server.service.impl.StaticCatalogDescriptorProvider;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.WruppleActivityAction;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Command;

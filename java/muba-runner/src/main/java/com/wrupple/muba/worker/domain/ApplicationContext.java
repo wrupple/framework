@@ -1,10 +1,7 @@
 package com.wrupple.muba.worker.domain;
 
 
-import com.wrupple.muba.event.domain.ContainerState;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.ServiceContext;
-import com.wrupple.muba.event.domain.Task;
+import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.Command;
 
 /**

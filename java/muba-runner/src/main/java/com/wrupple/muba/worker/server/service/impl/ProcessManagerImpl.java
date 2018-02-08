@@ -1,10 +1,9 @@
 package com.wrupple.muba.worker.server.service.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import com.wrupple.muba.worker.server.service.Solver;
 
@@ -56,7 +55,6 @@ import com.wrupple.vegetate.shared.services.PeerManager;
 public class ProcessManagerImpl implements ProcessManager {
     private final EventBus eventBus;
     private final Solver solver;
-    private final Provider<ApplicationState> applicationStateProvider;
 
 /*
     private static final String PROCESS_USER_AREA_CLASS = "application-content-area";
@@ -77,10 +75,9 @@ public class ProcessManagerImpl implements ProcessManager {
 */
 
     @Inject
-    public ProcessManagerImpl(EventBus eventBus, Solver solver, Provider<ApplicationState> applicationStateProvider) {
+    public ProcessManagerImpl(EventBus eventBus, Solver solver) {
         this.eventBus = eventBus;
         this.solver = solver;
-        this.applicationStateProvider = applicationStateProvider;
     }
 
     private final String CONTAINER_STATE = "com.wrupple.worker.container.state";
@@ -90,20 +87,7 @@ public class ProcessManagerImpl implements ProcessManager {
         return solver;
     }
 
-    @Override
-    public ApplicationState requirereContext(Object existingApplicationStateId, RuntimeContext session) throws Exception {
 
-        //recover application state
-        CatalogActionRequestImpl request = new CatalogActionRequestImpl();
-        //FIXME create/read application context of the right type
-        request.setCatalog(ApplicationState.CATALOG);
-        request.setEntry(existingApplicationStateId);
-        request.setName(CatalogActionRequest.READ_ACTION);
-        request.setFollowReferences(true);
-        List results = eventBus.fireEvent(request, session, null);
-
-        return (ApplicationState) results.get(0);
-    }
 
     /*
 
@@ -127,17 +111,9 @@ public class ProcessManagerImpl implements ProcessManager {
 
         }
     */
-    @Override
-    public ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
-        ApplicationState newState = applicationStateProvider.get();
-        newState.setHandleValue(initialState);
 
-        CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
 
-        List results = eventBus.fireEvent(createRequest, thread, null);
 
-        return (ApplicationState) results.get(0);
-    }
 
     @Override
     public ContainerState getContainer(RuntimeContext parent) {

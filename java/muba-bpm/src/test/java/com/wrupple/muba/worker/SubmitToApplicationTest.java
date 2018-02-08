@@ -8,7 +8,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.BusinessIntent;
 import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.domain.Statistics;
@@ -35,7 +35,7 @@ public class SubmitToApplicationTest extends BPMTest {
 
         //createStatisticsWorkflow
 
-        ApplicationState applicationState = bpm.acquireContext(createStatisticsWorkflow, session);
+        ApplicationState applicationState = acquireContext(createStatisticsWorkflow, session);
 
         postSolutionToApplication(applicationState);
 
@@ -58,6 +58,17 @@ public class SubmitToApplicationTest extends BPMTest {
         assertTrue("statistics not updated",statistics.getCount().longValue()>0);*/
 
 
+    }
+
+     ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
+        ApplicationState newState = injector.getInstance(ApplicationState.class);
+        newState.setHandleValue(initialState);
+
+        CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
+
+        List results = wrupple.fireEvent(createRequest, thread, null);
+
+        return (ApplicationState) results.get(0);
     }
 
     private void postSolutionToApplication(ApplicationState applicationState) throws Exception {

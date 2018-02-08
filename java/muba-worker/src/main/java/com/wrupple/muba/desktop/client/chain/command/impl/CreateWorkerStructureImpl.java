@@ -25,10 +25,10 @@ public class CreateWorkerStructureImpl implements CreateWorkerStructure {
     }
 
     @Override
-    public boolean execute(Context ctx) throws Exception {
+    public boolean execute(ContainerContext context) throws Exception {
 
 
-        ContainerContext context = (ContainerContext) ctx;
+
         //Application root = context.getHomeApplicationValue();
         //Application applicationItem = context.getApplicationItem();
 

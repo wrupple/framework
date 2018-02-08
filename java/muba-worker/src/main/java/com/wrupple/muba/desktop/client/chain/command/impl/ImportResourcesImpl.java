@@ -62,7 +62,7 @@ public class ImportResourcesImpl  implements ImportResources {
 
         ForkCallback<DependencyImportContext> fork = new ForkCallback<DependencyImportContext>(forkCallback);
 
-        final Application applicationItem = (Application) context.getContextSwitch().getState().getHandleValue();
+        final Application applicationItem = (Application) context.getContextSwitch().getStateValue().getHandleValue();
 
         List<ApplicationDependency> actions = applicationItem.getDependenciesValues();
 

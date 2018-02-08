@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.domain;
 
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.event.domain.DataEvent;
 import com.wrupple.muba.event.domain.ExplicitIntent;
 import com.wrupple.muba.event.domain.ManagedObject;

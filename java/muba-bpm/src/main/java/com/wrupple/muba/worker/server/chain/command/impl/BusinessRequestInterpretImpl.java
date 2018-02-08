@@ -1,11 +1,9 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.ContainerState;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.Task;
-import com.wrupple.muba.event.domain.Workflow;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.BusinessIntent;
 import com.wrupple.muba.worker.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.worker.server.service.ProcessManager;
@@ -58,7 +56,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
                 throw new NullPointerException("business intent bound to no application");
             }else{
 
-                state= bpm.requirereContext(existingApplicationStateId,thread);
+                state= requirereContext(existingApplicationStateId,thread);
             }
 
             contract.setStateValue(state);
@@ -69,6 +67,21 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
         context.setStateValue(state);
 
         return CONTINUE_PROCESSING;
+    }
+
+
+    private ApplicationState requirereContext(Object existingApplicationStateId, RuntimeContext session) throws Exception {
+
+        //recover application state
+        CatalogActionRequestImpl request = new CatalogActionRequestImpl();
+        //FIXME create/read application context of the right type
+        request.setCatalog(ApplicationState.CATALOG);
+        request.setEntry(existingApplicationStateId);
+        request.setName(CatalogActionRequest.READ_ACTION);
+        request.setFollowReferences(true);
+        List results = session.getEventBus().fireEvent(request, session, null);
+
+        return (ApplicationState) results.get(0);
     }
 
     private void setWorkingTask(ApplicationState state, ApplicationContext context) {

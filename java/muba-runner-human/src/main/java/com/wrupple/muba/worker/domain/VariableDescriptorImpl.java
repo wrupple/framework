@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker.domain;
 
 import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.VariableDescriptor;
 
 /**
  * Created by rarl on 30/05/17.

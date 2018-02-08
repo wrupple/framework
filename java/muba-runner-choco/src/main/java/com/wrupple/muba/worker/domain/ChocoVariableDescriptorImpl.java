@@ -2,6 +2,7 @@ package com.wrupple.muba.worker.domain;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.VariableDescriptor;
 import org.chocosolver.solver.variables.BoolVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
@@ -10,7 +11,7 @@ import org.chocosolver.solver.variables.impl.RealVarImpl;
 /**
  * Created by rarl on 17/05/17.
  */
-public class ChocoVariableDescriptorImpl implements VariableDescriptor{
+public class ChocoVariableDescriptorImpl implements VariableDescriptor {
     private final Variable variable;
     private final FieldDescriptor field;
     private final Long runner;

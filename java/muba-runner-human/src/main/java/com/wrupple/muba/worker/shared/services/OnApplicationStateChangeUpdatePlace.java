@@ -1,7 +1,7 @@
 package com.wrupple.muba.worker.shared.services;
 
 import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import org.apache.commons.chain.Context;
 
 /**

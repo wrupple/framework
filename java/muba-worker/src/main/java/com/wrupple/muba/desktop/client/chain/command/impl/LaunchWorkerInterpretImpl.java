@@ -1,13 +1,13 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
-import com.wrupple.muba.desktop.client.chain.command.WorkerContainerLauncher;
-import com.wrupple.muba.desktop.client.service.SliceReader;
+import com.wrupple.muba.desktop.client.chain.command.LaunchWorkerInterpret;
 import com.wrupple.muba.desktop.domain.ContainerContext;
+import com.wrupple.muba.desktop.domain.ContextSwitch;
 import com.wrupple.muba.desktop.domain.impl.ContainerContextImpl;
 import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.ContainerState;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;
 
@@ -20,17 +20,15 @@ import javax.inject.Singleton;
  * singleton ensures one container per factory/injector
  */
 @Singleton
-public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
+public class LaunchWorkerInterpretImpl implements LaunchWorkerInterpret {
 
-    private final Provider<ContainerState> contractProvider;
+    private final Provider<ContextSwitch> contractProvider;
     private final ProcessManager pm;
-    private final SliceReader delegate;
 
     @Inject
-    public WorkerContainerLauncherImpl(Provider<ContainerState> contractProvider, ProcessManager pm, SliceReader delegate) {
+    public LaunchWorkerInterpretImpl(Provider<ContextSwitch> contractProvider, ProcessManager pm) {
         this.contractProvider = contractProvider;
         this.pm = pm;
-        this.delegate = delegate;
     }
 
     @Override
@@ -42,14 +40,9 @@ public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
         pm.setContainer(request, parent);
         parent.setServiceContract(request);
 
-        Application activity = delegate.getInitialActivity(request, parent);
-        ApplicationState applicationState = null;
-        try {
-            applicationState = pm.acquireContext(activity, parent);
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to acquire application state.", e);
-        }
-        return new ContainerContextImpl(parent, applicationState, request, processManager);
+        ContextSwitch contextSwitch = contractProvider.get();
+        contextSwitch.setOrderValue(request);
+        return new ContainerContextImpl(parent, contextSwitch, request, pm);
     }
 
     @Override

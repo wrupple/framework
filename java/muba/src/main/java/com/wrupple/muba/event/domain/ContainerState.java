@@ -7,7 +7,7 @@ public interface ContainerState extends Event, HasRunner {
     String CATALOG = "ContainerState";
 
 
-
+    public ApplicationState getStateValue();
     //void setName(String desktopTitle);
 
     void setCharacterEncoding(String characterEncoding);
@@ -15,6 +15,8 @@ public interface ContainerState extends Event, HasRunner {
     String getHomeActivity();
 
     void setHomeActivity(String rootActivity);
+
+    public Application getHomeApplicationValue();
 
     void setApplicationTree(Application domainRoot);
 

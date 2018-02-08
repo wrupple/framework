@@ -1,4 +1,4 @@
-package com.wrupple.muba.worker.domain;
+package com.wrupple.muba.event.domain;
 
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.reserved.HasResult;

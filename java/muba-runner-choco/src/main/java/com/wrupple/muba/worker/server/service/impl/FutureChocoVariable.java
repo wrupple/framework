@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.domain.ChocoVariableDescriptorImpl;
-import com.wrupple.muba.worker.domain.VariableDescriptor;
+import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.service.ChocoModelResolver;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
 import org.chocosolver.solver.Model;

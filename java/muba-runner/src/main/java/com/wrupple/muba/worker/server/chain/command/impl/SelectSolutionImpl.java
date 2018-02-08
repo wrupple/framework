@@ -2,7 +2,7 @@ package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.VariableDescriptor;
+import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.SelectSolution;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;

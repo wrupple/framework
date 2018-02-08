@@ -14,7 +14,7 @@ public class HandleContainerStateImpl implements HandleContainerState {
                 getRuntimeContext().
                 getEventBus().
                 fireEvent(
-                        context.getContextSwitch().getState(),
+                        context.getContextSwitch().getStateValue(),
                         context.getRuntimeContext(),
                         null
                 );

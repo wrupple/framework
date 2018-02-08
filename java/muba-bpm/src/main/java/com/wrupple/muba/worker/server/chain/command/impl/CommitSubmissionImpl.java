@@ -7,7 +7,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.worker.domain.ApplicationState;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.chain.command.CommitSubmission;
 import org.apache.commons.chain.Context;
 
