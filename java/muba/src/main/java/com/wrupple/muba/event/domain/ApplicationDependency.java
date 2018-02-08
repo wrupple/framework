@@ -1,8 +1,9 @@
 package com.wrupple.muba.event.domain;
 
-import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
+import com.wrupple.muba.event.domain.reserved.HasDiscrimniator;
 
-public interface ApplicationDependency extends CatalogEntry, HasDistinguishedName {
+public interface ApplicationDependency extends CatalogEntry, HasDiscrimniator {
 
     String CATALOG = "ApplicationDependency";
+
 }
