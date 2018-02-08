@@ -14,6 +14,8 @@ import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.desktop.WorkerModule;
 import com.wrupple.muba.desktop.client.service.WorkerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
+import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
+import com.wrupple.muba.desktop.client.widgets.TaskContainer;
 import com.wrupple.muba.desktop.domain.ContextSwitchHandler;
 import com.wrupple.muba.desktop.domain.WorkerRequestManifest;
 import com.wrupple.muba.event.ApplicationModule;
@@ -57,8 +59,6 @@ public abstract class WorkerTest extends EasyMockSupport {
     ApplicationContainer container;
 
     public WorkerTest() {
-
-
 
         List<AbstractModule> modules = Arrays.asList(
                 new IntegralTestModule(),
@@ -139,6 +139,13 @@ public abstract class WorkerTest extends EasyMockSupport {
                 this.bind(Dispatch.class).to(DispatchImpl.class);
 
                 bind(VariableConsensus.class).to(ArbitraryDesicion.class);
+
+
+
+                bind(String.class).annotatedWith(Names.named("worker.defaultActivity")).toInstance("home");
+                bind(String.class).annotatedWith(Names.named("worker.charset")).toInstance("UTF-8");
+                bind(String.class).annotatedWith(Names.named("worker.intialTitle")).toInstance("..::Desktop::..");
+                bind(String.class).annotatedWith(Names.named("worker.importHandler.catalog")).toInstance("workerImportHandlers");
                 bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.choco")).toInstance(1l);
                 bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
                 bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
@@ -157,6 +164,16 @@ public abstract class WorkerTest extends EasyMockSupport {
              * CONFIGURATION
              */
 
+
+        @Provides
+        public ProcessWindow queryRunner() {
+            return new ProcessWindow() {
+                @Override
+                public TaskContainer getRootTaskPresenter() {
+                    return null;
+                }
+            };
+        }
 
             @Provides
             @Inject

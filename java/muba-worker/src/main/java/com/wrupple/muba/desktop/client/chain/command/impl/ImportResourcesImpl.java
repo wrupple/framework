@@ -6,6 +6,7 @@ import com.wrupple.muba.desktop.domain.ContextSwitchRuntimeContext;
 import com.wrupple.muba.desktop.domain.DependencyImportContext;
 import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.ApplicationDependency;
+import com.wrupple.muba.event.domain.reserved.HasDiscrimniator;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.server.service.impl.ForkCallback;
 import org.apache.commons.chain.CatalogFactory;
@@ -28,7 +29,7 @@ public class ImportResourcesImpl  implements ImportResources {
     private final LookupCommand importHandler;
 
     @Inject
-    public ImportResourcesImpl(final ImportResourcesCallback importResourcesCallback, CatalogFactory catalogFactory, @Named("worker.importHandler.catalog") String catalogName/*like JavaScriptImportCommand*/,@Named("worker.importHandler.discriminatingKey") String contextKey) {
+    public ImportResourcesImpl(final ImportResourcesCallback importResourcesCallback, CatalogFactory catalogFactory, @Named("worker.importHandler.catalog") String catalogName/*like JavaScriptImportCommand*/) {
 
 
         importHandler = new LookupCommand(catalogFactory);
@@ -42,7 +43,7 @@ public class ImportResourcesImpl  implements ImportResources {
         });
         importHandler.setCatalogName(catalogName);
         importHandler.setOptional(false);
-        importHandler.setNameKey(contextKey);
+        importHandler.setNameKey(HasDiscrimniator.FIELD);
     }
 
 

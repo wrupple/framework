@@ -1,25 +1,54 @@
 package com.wrupple.muba.desktop;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
+import com.wrupple.muba.desktop.client.chain.ContextSwitchEngine;
 import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
+import com.wrupple.muba.desktop.client.chain.WorkerRequestEngine;
 import com.wrupple.muba.desktop.client.chain.command.*;
 import com.wrupple.muba.desktop.client.chain.command.impl.*;
-import com.wrupple.muba.desktop.domain.ContextSwitch;
-import com.wrupple.muba.desktop.domain.LaunchWorkerManifest;
-import com.wrupple.muba.desktop.domain.impl.ContextSwitchImpl;
-import com.wrupple.muba.desktop.domain.impl.LaunchWorkerManifestImpl;
+import com.wrupple.muba.desktop.client.service.WorkerRequestHandler;
+import com.wrupple.muba.desktop.client.service.impl.ContextSwitchHandlerImpl;
+import com.wrupple.muba.desktop.client.service.impl.WorkerRequestHandlerImpl;
+import com.wrupple.muba.desktop.domain.*;
+import com.wrupple.muba.desktop.domain.impl.*;
+import com.wrupple.muba.event.domain.Application;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.WorkerState;
+import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
 import com.wrupple.muba.worker.domain.impl.WorkerStateImpl;
 
 public class WorkerModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(ContextSwitchHandler.class).to(ContextSwitchHandlerImpl.class);
+        bind(WorkerRequestHandler.class).to(WorkerRequestHandlerImpl.class);
 
-        bind(SwitchWorkerContext.class).to(SwitchWorkerContextImpl.class);
-
+        bind(ContextSwitchRuntimeContext.class).to(ContextSwitchRuntimeContextImpl.class);
         bind(ContextSwitch.class).to(ContextSwitchImpl.class);
+        bind(WorkerRequestContext.class).to(WorkerRequestContextImpl.class);
+        bind(ContextSwitchManifest.class).to(ContextSwitchManifestImpl.class);
+        bind(WorkerRequestManifest.class).to(WorkerRequestManifestImpl.class);
         bind(WorkerState.class).to(WorkerStateImpl.class);
 
+        bind(PopulateLoadOrder.class).to(PopulateLoadOrderImpl.class);
+        bind(BindApplication.class).to(BindApplicationImpl.class);
+        bind(DesktopWriterCommand.class).to(DesktopWriterCommandImpl.class);
+        bind(WorkerRequestInterpret.class).to(WorkerRequestInterpretImpl.class);
+        bind(BuildApplicationTree.class).to(BuildApplicationTreeImpl.class);
+        bind(DeclareDependencies.class).to(DeclareDependenciesImpl.class);
+        bind(WorkerRequestEngine.class).to(WorkerRequestEngineImpl.class);
+        bind(HandleContainerState.class).to(HandleContainerStateImpl.class);
+        bind(ImportResources.class).to(ImportResourcesImpl.class);
+        bind(ImportResourcesCallback.class).to(ImportResourcesCallbackImpl.class);
+        bind(SwitchWorkerContext.class).to(SwitchWorkerContextImpl.class);
+        bind(ContextSwitchInterpret.class).to(ContextSwitchInterpretImpl.class);
+        bind(ContextSwitchEngine.class).to(ContextSwitchEngineImpl.class);
         bind(LaunchWorkerEngine.class).to(LaunchWorkerEngineImpl.class);
         bind(LaunchWorkerInterpret.class).to(LaunchWorkerInterpretImpl.class);
         bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
@@ -31,5 +60,28 @@ public class WorkerModule extends AbstractModule {
     }
 
 
+    @Provides
+    @Singleton
+    @Inject
+    @Named(ContextSwitch.CATALOG)
+    public CatalogDescriptor contextSwitch(
+            CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(ContextSwitchImpl.class, ContextSwitch.CATALOG, "Context Switch",
+                -600160, null);
 
+        return r;
+    }
+
+
+    @Provides
+    @Singleton
+    @Inject
+    @Named(WorkerRequest.CATALOG)
+    public CatalogDescriptor request(
+            CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(WorkerRequestImpl.class, WorkerRequest.CATALOG, "Worker Request",
+                -600161, null);
+
+        return r;
+    }
 }

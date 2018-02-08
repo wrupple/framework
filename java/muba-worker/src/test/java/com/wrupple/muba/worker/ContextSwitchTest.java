@@ -109,7 +109,7 @@ public class ContextSwitchTest extends WorkerTest {
         container.fireEvent(new WorkerRequestImpl(Arrays.asList(item.getDistinguishedName(),booking.getId().toString())));
         //check conditions
         assertTrue(booking.getDriverValue()!=null);
-        //assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())<1);
+        //assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())<0);
 
     }
 

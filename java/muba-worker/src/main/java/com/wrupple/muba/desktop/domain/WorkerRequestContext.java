@@ -6,6 +6,8 @@ import com.wrupple.muba.event.domain.ServiceContext;
 import org.apache.commons.chain.Context;
 
 public interface WorkerRequestContext extends ServiceContext {
+    void setWorkerState(WorkerState workerState);
+
     WorkerState getWorkerState();
 
     WorkerRequest getRequest();
