@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.cms.client.services.GenericContentManager;
-import com.wrupple.muba.desktop.client.factory.dictionary.ContentManagerMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.ContentManagerMap;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 
 import javax.inject.Provider;

@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class BuildApplicationTreeImpl implements BuildApplicationTree {
+
     @Override
-    public boolean execute(Context c) throws Exception {
-        DesktopRequestContext context = (DesktopRequestContext) c;
+    public boolean execute(DesktopRequestContext context) throws Exception {
 
         String rootActivity = context.getWorkerOrderValue().getHomeActivity();
         Application domainRoot;
@@ -23,7 +23,8 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
         } catch (IndexOutOfBoundsException e) {
             // Most likely because domain has not been set up
             domainRoot = null;
-            context.getWorkerOrderValue().setSetupFlag(true);
+            throw new IllegalStateException("Application tree root is not found",e);
+            //FIXME context.getWorkerOrderValue().setSetupFlag(true);
         }
 
         /*if (domainRoot!=null && sliceWriters != null) {
@@ -34,7 +35,6 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
         context.getWorkerOrderValue().setApplicationTree(domainRoot);
         return CONTINUE_PROCESSING;
     }
-
 
     private Application triggerGet(Object key, RuntimeContext runtimeContext, boolean assemble, CatalogActionRequest parent) throws Exception {
         CatalogActionRequestImpl event = new CatalogActionRequestImpl();
@@ -119,4 +119,6 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
         }
         return item;
     }
+
+
 }

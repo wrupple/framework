@@ -10,11 +10,11 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.HTMLCa
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.CustomCellProvider;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.IconCellProvider;
 import com.wrupple.muba.desktop.client.activity.widgets.panels.NestedActivityWindow;
-import com.wrupple.muba.desktop.client.factory.dictionary.DesktopActivityMap;
-import com.wrupple.muba.desktop.client.factory.dictionary.ExternalAPILoaderMap;
-import com.wrupple.muba.desktop.client.factory.dictionary.OutputHandlerMap;
-import com.wrupple.muba.desktop.client.factory.dictionary.ServiceMap;
-import com.wrupple.muba.desktop.client.factory.help.ActionAidProvider;
+import com.wrupple.muba.worker.shared.factory.dictionary.DesktopActivityMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.ExternalAPILoaderMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.OutputHandlerMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.ServiceMap;
+import com.wrupple.muba.worker.shared.factory.help.ActionAidProvider;
 import com.wrupple.muba.desktop.client.services.command.CurrentPlaceCommand;
 import com.wrupple.muba.desktop.client.services.command.GoToCommand;
 import com.wrupple.muba.desktop.client.services.command.NextPlace;

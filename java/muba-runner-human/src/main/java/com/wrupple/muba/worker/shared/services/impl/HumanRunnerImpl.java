@@ -1,8 +1,8 @@
 package com.wrupple.muba.worker.shared.services.impl;
 
 import com.wrupple.muba.desktop.client.chain.ProblemPresenter;
-import com.wrupple.muba.desktop.client.factory.dictionary.TransactionAssemblerMap;
-import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.worker.shared.factory.dictionary.TransactionAssemblerMap;
+import com.wrupple.muba.worker.shared.services.StorageManager;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;

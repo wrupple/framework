@@ -11,7 +11,7 @@ import com.wrupple.muba.catalogs.domain.CatalogProcessDescriptor;
 import com.wrupple.muba.desktop.client.activity.impl.CSVImportActiviy.ImportData;
 import com.wrupple.muba.desktop.client.activity.process.state.ImportDataInputTask;
 import com.wrupple.muba.desktop.client.activity.widgets.ImportView;
-import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.worker.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.CSVParser;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;

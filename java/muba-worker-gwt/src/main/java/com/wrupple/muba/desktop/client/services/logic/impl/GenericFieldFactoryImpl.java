@@ -21,10 +21,10 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delega
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.ImageKeyThumbnail;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.CatalogFileUpload;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.ParentSelectionField;
-import com.wrupple.muba.desktop.client.factory.dictionary.CatalogFieldMap;
-import com.wrupple.muba.desktop.client.factory.dictionary.RelationshipFieldBrowserMap;
-import com.wrupple.muba.desktop.client.factory.dictionary.SelectionModelDictionary;
-import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.worker.shared.factory.dictionary.CatalogFieldMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.RelationshipFieldBrowserMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.SelectionModelDictionary;
+import com.wrupple.muba.worker.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;

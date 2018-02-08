@@ -3,8 +3,12 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.desktop.client.chain.command.PopulateLoadOrder;
+import com.wrupple.muba.desktop.domain.ContainerRequest;
 import com.wrupple.muba.desktop.domain.DesktopRequestContext;
+import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.chain.Context;
 
 @Singleton
@@ -25,9 +29,9 @@ public class PopulateLoadOrderImpl implements PopulateLoadOrder {
     }
 
     @Override
-    public boolean execute(Context c) throws Exception {
-
-        DesktopRequestContext context = (DesktopRequestContext) c;
+    public boolean execute(RuntimeContext requestContext) throws Exception {
+        ContainerRequest request = (ContainerRequest) requestContext.getServiceContract();
+        DesktopRequestContext context = requestContext.getServiceContext();
 
 
         //set default desktop title (can and should be changed later on)

@@ -20,8 +20,8 @@ public class ContainterRequestInterpretImpl extends ChainBase implements Contain
 
 
     @Inject
-    public ContainterRequestInterpretImpl(PopulateLoadOrder pouplate, BuildApplicationTree sliceWriter, DeclareDependencies imports, Provider<DesktopRequestContext> contextProvider) {
-        super(new Command[]{pouplate, sliceWriter, imports});
+    public ContainterRequestInterpretImpl(PopulateLoadOrder pouplate,  Provider<DesktopRequestContext> contextProvider) {
+        super(new Command[]{pouplate});
         this.contextProvider = contextProvider;
     }
 

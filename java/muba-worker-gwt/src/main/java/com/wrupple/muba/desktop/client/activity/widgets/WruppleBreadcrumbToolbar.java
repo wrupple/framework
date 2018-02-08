@@ -24,7 +24,7 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.event.ContextSwitchEvent;
 import com.wrupple.muba.desktop.client.event.ProcessExitEvent;
 import com.wrupple.muba.desktop.client.event.ProcessSwitchEvent;
-import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.worker.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.client.services.presentation.ImageTemplate;

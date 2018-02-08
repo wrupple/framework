@@ -6,7 +6,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
-import com.wrupple.muba.desktop.client.factory.dictionary.TransactionPanelMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.TransactionPanelMap;
 import com.wrupple.muba.desktop.client.services.logic.TaskValueChangeListener;
 import com.wrupple.muba.desktop.client.services.presentation.ToolbarAssemblyDelegate;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;

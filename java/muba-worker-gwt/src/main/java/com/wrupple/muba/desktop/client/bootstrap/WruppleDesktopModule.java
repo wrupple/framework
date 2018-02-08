@@ -11,7 +11,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.Google
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.LongitudeCellProvider;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.CAPTCHACellProvider;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.providers.LatitudeCellProvider;
-import com.wrupple.muba.desktop.client.factory.dictionary.AggregateCanvasRendererMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.AggregateCanvasRendererMap;
 import com.wrupple.muba.desktop.client.services.presentation.impl.PieChartGroupRenderService;
 import com.wrupple.muba.worker.client.services.BPMModule;
 

@@ -34,7 +34,7 @@ import com.wrupple.muba.desktop.client.activity.widgets.ProcessPresenter;
 import com.wrupple.muba.desktop.client.activity.widgets.TaskPresenter;
 import com.wrupple.muba.desktop.client.event.ContextSwitchEvent;
 import com.wrupple.muba.desktop.client.event.ProcessSwitchEvent;
-import com.wrupple.muba.desktop.client.factory.dictionary.ActivityPresenterMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.ActivityPresenterMap;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;
 import com.wrupple.muba.desktop.client.services.logic.SerializationService;

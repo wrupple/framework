@@ -5,7 +5,7 @@ import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.desktop.client.factory.ServiceDictionary;
+import com.wrupple.muba.worker.shared.factory.ServiceDictionary;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogKey;

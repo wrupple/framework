@@ -122,7 +122,7 @@ public abstract class WorkerTest extends EasyMockSupport {
         solutionContract.setConsolidated(true);
         CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(solutionContract, CatalogDescriptor.CATALOG_ID);
         catalogActionRequest.setFollowReferences(true);
-        wrupple.fireEvent(catalogActionRequest, session, null);
+        container.fireEvent(catalogActionRequest);
         Driver driver;
         for (long i = 0; i < 10; i++) {
             driver = new Driver();
@@ -131,7 +131,7 @@ public abstract class WorkerTest extends EasyMockSupport {
             driver.setAvailable(i % 2 == 0);
 
             catalogActionRequest = new CatalogCreateRequestImpl(driver, Driver.CATALOG);
-            wrupple.fireEvent(catalogActionRequest, session, null);
+            container.fireEvent(catalogActionRequest);
 
         }
     }

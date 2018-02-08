@@ -7,7 +7,7 @@ import com.wrupple.muba.desktop.client.event.NewVegetateRequestEvent;
 import com.wrupple.muba.desktop.client.event.VegetateEventHandler;
 import com.wrupple.muba.desktop.client.event.VegetateRequestFailureEvent;
 import com.wrupple.muba.desktop.client.event.VegetateRequestSuccessEvent;
-import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.worker.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogUserInterfaceMessages;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.worker.client.activity.ActivityProcess;

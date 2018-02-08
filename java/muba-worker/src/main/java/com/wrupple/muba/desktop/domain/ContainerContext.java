@@ -1,6 +1,5 @@
 package com.wrupple.muba.desktop.domain;
 
-import com.wrupple.muba.desktop.client.service.data.StorageManager;
 import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
 import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.worker.server.service.ProcessManager;
@@ -12,7 +11,7 @@ public interface ContainerContext extends ServiceContext {
 
     ProcessManager getProcessManager();
 
-    StorageManager getStorageManager();
+    //StorageManager getStorageManager();
     /*
 
 

@@ -15,7 +15,7 @@ import com.wrupple.muba.catalogs.client.services.evaluation.CatalogEvaluationDel
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.desktop.client.activity.widgets.GenericCatalogEditor;
-import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEditorMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;

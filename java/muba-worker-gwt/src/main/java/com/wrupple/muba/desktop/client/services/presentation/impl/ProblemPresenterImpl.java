@@ -2,7 +2,7 @@ package com.wrupple.muba.desktop.client.services.presentation.impl;
 
 import com.google.inject.Inject;
 import com.wrupple.muba.desktop.client.chain.ProblemPresenter;
-import com.wrupple.muba.desktop.client.factory.dictionary.TransactionPanelMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.TransactionPanelMap;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskProcessor;

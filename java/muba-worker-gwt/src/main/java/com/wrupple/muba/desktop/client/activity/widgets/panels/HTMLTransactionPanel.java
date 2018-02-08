@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.wrupple.muba.desktop.client.activity.widgets.impl.AsynchonousHtmlWidget;
-import com.wrupple.muba.desktop.client.service.data.StorageManager;
+import com.wrupple.muba.worker.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.muba.worker.shared.widgets.HumanTaskProcessor;

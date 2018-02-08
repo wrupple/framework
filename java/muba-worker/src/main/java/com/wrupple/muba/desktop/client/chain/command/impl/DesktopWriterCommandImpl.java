@@ -7,8 +7,7 @@ import org.apache.commons.chain.Context;
 public class DesktopWriterCommandImpl implements DesktopWriterCommand {
 
     @Override
-    public boolean execute(Context c) throws Exception {
-        DesktopRequestContext context = (DesktopRequestContext) c;
+    public boolean execute(DesktopRequestContext context) throws Exception {
 
         /*TODO vegetate channel fire load order, in this case the handler will live in the same container.
 

@@ -49,7 +49,7 @@ public class WorkerContainerLauncherImpl implements WorkerContainerLauncher {
         } catch (Exception e) {
             throw new IllegalStateException("Unable to acquire application state.", e);
         }
-        return new ContainerContextImpl(parent, applicationState, request);
+        return new ContainerContextImpl(parent, applicationState, request, processManager);
     }
 
     @Override

@@ -26,7 +26,7 @@
 	<generate-with
 		class="com.wrupple.muba.desktop.rebind.ServiceDictionaryGenerator">
 		<when-type-assignable
-			class="com.wrupple.muba.desktop.client.factory.ServiceDictionary" />
+			class="com.wrupple.muba.worker.shared.factory.ServiceDictionary" />
 	</generate-with>
 
 	<source path="domain"></source>

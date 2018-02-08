@@ -10,7 +10,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser;
-import com.wrupple.muba.desktop.client.factory.dictionary.CatalogEntryBrowserMap;
+import com.wrupple.muba.worker.shared.factory.dictionary.CatalogEntryBrowserMap;
 import com.wrupple.muba.desktop.client.services.logic.CatalogEntryKeyProvider;
 import com.wrupple.muba.desktop.client.services.logic.GenericDataProvider;
 import com.wrupple.muba.desktop.client.services.presentation.FilterableDataProvider;
