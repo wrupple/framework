@@ -26,7 +26,7 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
 
     @ForeignKey(foreignCatalog = Application.CATALOG)
     private Long exit, cancel, error;
-    private String description, requiredRole;
+    private String description, requiredRole,catalog;
 
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Application.CATALOG)
@@ -120,5 +120,20 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
 
     public void setRequiredRole(String requiredRole) {
         this.requiredRole = requiredRole;
+    }
+
+    @Override
+    public String getCatalogType() {
+        return Application.CATALOG;
+    }
+
+    @Override
+    public String getCatalog() {
+        return catalog;
+    }
+
+    @Override
+    public void setCatalog(String catalog) {
+        this.catalog = catalog;
     }
 }

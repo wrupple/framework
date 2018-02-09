@@ -7,5 +7,5 @@ public interface HasDiscrimniator  {
 
     String getDiscriminator();
 
-void setDiscrimniator(String discrimniator);
+void setDiscriminator(String discrimniator);
 }

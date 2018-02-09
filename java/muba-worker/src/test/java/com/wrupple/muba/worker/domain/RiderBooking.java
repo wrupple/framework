@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.domain;
 
+import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
@@ -7,25 +8,26 @@ import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 /**
  * Created by japi on 25/07/17.
  */
-public class Booking extends ManagedObjectImpl {
+public class RiderBooking extends ManagedObjectImpl {
 
-    private int location;
+    private Long location;
     @ForeignKey(foreignCatalog = Driver.CATALOG)
     private Long driver;
     @CatalogValue(foreignCatalog = Driver.CATALOG)
+    @CatalogField(ignore = true)
     private Driver driverValue;
 
 
     @Override
     public String getCatalogType() {
-        return "Booking";
+        return RiderBooking.class.getSimpleName();
     }
 
-    public int getLocation() {
+    public Long getLocation() {
         return location;
     }
 
-    public void setLocation(int location) {
+    public void setLocation(Long location) {
         this.location = location;
     }
 

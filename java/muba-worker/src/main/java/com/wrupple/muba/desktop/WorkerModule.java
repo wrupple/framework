@@ -67,7 +67,7 @@ public class WorkerModule extends AbstractModule {
     public CatalogDescriptor contextSwitch(
             CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(ContextSwitchImpl.class, ContextSwitch.CATALOG, "Context Switch",
-                -600160, null);
+                -700160, null);
 
         return r;
     }
@@ -80,7 +80,7 @@ public class WorkerModule extends AbstractModule {
     public CatalogDescriptor request(
             CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(WorkerRequestImpl.class, WorkerRequest.CATALOG, "Worker Request",
-                -600161, null);
+                -700161, null);
 
         return r;
     }

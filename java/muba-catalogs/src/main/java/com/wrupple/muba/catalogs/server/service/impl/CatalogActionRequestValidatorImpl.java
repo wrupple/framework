@@ -64,9 +64,6 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	public boolean isValid(CatalogActionRequest req, final ConstraintValidatorContext validationContext) {
 
         log.info("[ValidateContract] {}", req);
-        if(req.getParentValue()==null){
-            log.warn("root request");
-        }
 		// had to be done this way because security violations occur when
 		// using reflection on the apache chain context map
 		boolean report = true;

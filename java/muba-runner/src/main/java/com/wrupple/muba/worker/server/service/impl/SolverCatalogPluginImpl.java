@@ -18,13 +18,16 @@ import javax.inject.Named;
 public class SolverCatalogPluginImpl extends StaticCatalogDescriptorProvider implements SolverCatalogPlugin {
 
     @Inject
-    public SolverCatalogPluginImpl(@Named(Application.CATALOG) CatalogDescriptor appItem,
+    public SolverCatalogPluginImpl(
+            @Named(ApplicationDependency.CATALOG) CatalogDescriptor dependency,
+            @Named(Application.CATALOG) CatalogDescriptor appItem,
                                    @Named(ApplicationState.CATALOG) CatalogDescriptor state,
                                    @Named(WorkerState.CATALOG) CatalogDescriptor container,
                                    @Named(Task.CATALOG) CatalogDescriptor taskDescP,
                                    @Named(TaskToolbarDescriptor.CATALOG) CatalogDescriptor toolbarDescP,
                                    @Named(WruppleActivityAction.CATALOG) CatalogDescriptor actionDescP) {
         super.put(taskDescP);
+        super.put(dependency);
         super.put(actionDescP);
         super.put(toolbarDescP);
         super.put(appItem);

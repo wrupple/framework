@@ -42,7 +42,7 @@ public class DependencyImportContextImpl extends ContextBase implements Dependen
     }
 
     @Override
-    public void setDiscrimniator(String discrimniator) {
+    public void setDiscriminator(String discrimniator) {
 
     }
 }

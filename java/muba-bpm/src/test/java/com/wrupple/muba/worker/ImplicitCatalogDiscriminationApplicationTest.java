@@ -35,8 +35,8 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         replayAll();
 
-        CatalogDescriptor bookingDescriptor = builder.fromClass(Booking.class, Booking.class.getSimpleName(),
-                "Booking", 0, null);
+        CatalogDescriptor bookingDescriptor = builder.fromClass(DriverBooking.class, DriverBooking.class.getSimpleName(),
+                "DriverBooking", 0, null);
 
         CatalogActionRequestImpl action = new CatalogActionRequestImpl();
         action.setEntryValue(bookingDescriptor);
@@ -76,8 +76,8 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         Task updateBooking = new TaskImpl();
         updateBooking.setDistinguishedName("UpdateBooking");
-        updateBooking.setName("Update Booking");
-        updateBooking.setCatalog(Booking.class.getSimpleName());
+        updateBooking.setName("Update DriverBooking");
+        updateBooking.setCatalog(DriverBooking.class.getSimpleName());
         updateBooking.setName(CatalogActionRequest.WRITE_ACTION);
 
 
@@ -123,17 +123,17 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
             runtimeContext.setServiceContract(action);
             runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                    CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
+                    CatalogActionRequest.LOCALE_FIELD, DriverBooking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
 
             runtimeContext.process();
 
             runtimeContext.reset();
         }
 
-        log.trace("[-Create a Booking-]");
+        log.trace("[-Create a DriverBooking-]");
 
-        booking = new Booking();
-        booking.setLocation(7);
+        booking = new DriverBooking();
+        booking.setLocation(7l);
         booking.setName("test");
 
         action = new CatalogActionRequestImpl();
@@ -142,7 +142,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         runtimeContext.setServiceContract(action);
         runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, Booking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
+                CatalogActionRequest.LOCALE_FIELD, DriverBooking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
 
         runtimeContext.process();
         catalogContext = runtimeContext.getServiceContext();
@@ -157,14 +157,14 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 
-    Booking booking;
+    DriverBooking booking;
 
     @Test
     public void submitBookingData() throws Exception {
         //FIXME rewrite this with events
         log.trace("[-Ask BPM what application item to use to handle this booking-]");
 
-        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,Booking.class.getSimpleName(),Booking.class.getSimpleName());
+        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,DriverBooking.class.getSimpleName(),DriverBooking.class.getSimpleName());
 
         runtimeContext.process();
 
@@ -173,7 +173,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         runtimeContext.reset();
 
-        log.trace("[-Create Booking Handling Application Context-]");
+        log.trace("[-Create DriverBooking Handling Application Context-]");
 
         //item+booking;
         BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
@@ -247,7 +247,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         activityState = runtimeContext.getConvertedResult();
         runtimeContext.reset();
 
-        booking = (Booking) activityState.getEntryValue();
+        booking = (DriverBooking) activityState.getEntryValue();
         assertTrue(booking.getStakeHolder()!=null);
         assertTrue(booking.getDriverValue()!=null);
         assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);

@@ -178,6 +178,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
                 if(silentFail){
                     return null;
                 }else{
+                    log.error("failed reading field {}",fieldId);
                     throw new IllegalArgumentException(e);
                 }
 

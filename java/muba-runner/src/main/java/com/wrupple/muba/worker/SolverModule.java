@@ -9,6 +9,7 @@ import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.ApplicationDependencyImpl;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.worker.domain.ApplicationContext;
@@ -79,6 +80,17 @@ public class SolverModule extends AbstractModule {
         return r;
     }
 
+    @Provides
+    @Singleton
+    @Inject
+    @Named(ApplicationDependency.CATALOG)
+    public CatalogDescriptor activity(
+            CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(ApplicationDependencyImpl.class, ApplicationDependency.CATALOG, "Application dependency",
+                -900195, null);
+
+        return r;
+    }
 
     @Provides
     @Singleton
@@ -89,6 +101,8 @@ public class SolverModule extends AbstractModule {
         CatalogDescriptor r = builder.fromClass(ApplicationImpl.class, Application.CATALOG, "Application",
                 -900190, serviceManifest);
 
+        //FIXME not consolidated
+        r.setConsolidated(true);
         return r;
     }
 

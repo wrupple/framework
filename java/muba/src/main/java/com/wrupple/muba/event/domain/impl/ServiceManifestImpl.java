@@ -130,6 +130,9 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 
 	@Override
 	public String getCatalog() {
+    	if(getCatalogValue()==null){
+    		return null;
+		}
 		return getCatalogValue().getDistinguishedName();
 	}
 

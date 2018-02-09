@@ -99,8 +99,8 @@ public class ApplicationContainer {
         solver.register(injector.getInstance(runner));
     }
 
-    public void fireEvent(Event event) throws Exception {
-        processSwitches.fireEvent(event, session, null);
+    public <T> T  fireEvent(Event event) throws Exception {
+        return processSwitches.fireEvent(event, session, null);
     }
 
     public <T> T getInstance(Class<T> catalogDescriptorBuilderClass) {

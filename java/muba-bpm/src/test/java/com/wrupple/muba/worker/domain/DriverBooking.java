@@ -7,9 +7,9 @@ import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 /**
  * Created by japi on 25/07/17.
  */
-public class Booking extends ManagedObjectImpl {
+public class DriverBooking extends ManagedObjectImpl {
 
-    private int location;
+    private Long location;
     @ForeignKey(foreignCatalog = Driver.CATALOG)
     private Long driver;
     @CatalogValue(foreignCatalog = Driver.CATALOG)
@@ -18,14 +18,14 @@ public class Booking extends ManagedObjectImpl {
 
     @Override
     public String getCatalogType() {
-        return "Booking";
+        return "DriverBooking";
     }
 
-    public int getLocation() {
+    public Long getLocation() {
         return location;
     }
 
-    public void setLocation(int location) {
+    public void setLocation(Long location) {
         this.location = location;
     }
 
