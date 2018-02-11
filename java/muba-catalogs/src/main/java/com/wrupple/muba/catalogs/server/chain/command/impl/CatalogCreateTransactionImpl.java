@@ -175,24 +175,33 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 			Collection<CatalogEntry> entries = (Collection<CatalogEntry>) foreignValue;
 			List<CatalogEntry> createdValues = new ArrayList<CatalogEntry>(entries.size());
             CatalogEntry created;
+            boolean alterationsMade = false;
 			for (CatalogEntry entry : entries) {
 				if (entry.getId() == null&&!beeingCreated(context,entry)) {
 				    willBeCreated(context,entry);
                     created= context.triggerCreate(field.getCatalog(), entry);
 
 					createdValues.add(created);
+                    alterationsMade=true;
 				} else {
 					createdValues.add(entry);
 				}
 			}
 
-			reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
-			if (access.isWriteableProperty(reservedField, owner, instrospection)) {
-				access.setPropertyValue(reservedField, owner, createdValues, instrospection);
-			}
-			List<Object> keys = createdValues.stream().map(v -> v.getId()).collect(Collectors.toList());
+			if(alterationsMade){
+                reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+                if (access.isWriteableProperty(reservedField, owner, instrospection)) {
+                    access.setPropertyValue(reservedField, owner, createdValues, instrospection);
+                }
+                List<Object> keys = createdValues.stream().map(v -> v.getId()).filter(v -> v!=null).collect(Collectors.toList());
 
-			access.setPropertyValue(field, owner, keys, instrospection);
+                if(keys.isEmpty()){
+                    access.setPropertyValue(field, owner, null, instrospection);
+
+                }else{
+                    access.setPropertyValue(field, owner, keys, instrospection);
+                }
+            }
 		} else {
             CatalogEntry entry = (CatalogEntry) foreignValue;
             if (entry.getId() == null&&!beeingCreated(context,entry)) {
