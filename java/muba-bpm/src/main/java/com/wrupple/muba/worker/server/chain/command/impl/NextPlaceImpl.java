@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.google.inject.Inject;
+import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.Workflow;
 import com.wrupple.muba.worker.domain.ApplicationContext;
@@ -35,7 +36,7 @@ public class NextPlaceImpl implements NextPlace {
 		ApplicationContext context = (ApplicationContext) ctx;
         ApplicationState state = context.getStateValue();
 
-        Workflow currentItem = (Workflow) state.getApplicationValue();
+		Application currentItem = (Application) state.getApplicationValue();
         currentItem = findNextTreeNode(currentItem);
 		state.setApplicationValue(currentItem);
 
@@ -53,9 +54,9 @@ public class NextPlaceImpl implements NextPlace {
 	 * @return the first child, or the next sibling, or the parent, in that
 	 *         order
 	 */
-	Workflow findNextTreeNode(Workflow currentItem) {
+	Application findNextTreeNode(Application currentItem) {
 		// attempt to find the first child
-		List<ServiceManifest> children = currentItem.getChildrenValues();
+		List children = currentItem.getChildrenValues();
 		if (children == null) {
 			// find the next brother
             ServiceManifest currentItemParent = currentItem.getParentValue();
@@ -68,12 +69,12 @@ public class NextPlaceImpl implements NextPlace {
 					if (currentItem == children.get(i)) {
 						if ((i + 1) < children.size()) {
 							// next brother
-							return (Workflow) children.get(i + 1);
+							return (Application) children.get(i + 1);
 						} else {
 							// item is the last child of it's parent.
 
 							// default to go back to the parent
-							return (Workflow) currentItemParent;
+							return (Application) currentItemParent;
 							/*
 							 * another option would be to find the parents first
 							 * child or next brother like so: if
@@ -88,7 +89,7 @@ public class NextPlaceImpl implements NextPlace {
 			}
 
 		} else {
-			return (Workflow) children.get(0);
+			return (Application) children.get(0);
 		}
 		throw new NullPointerException("Unable to determine next activity");
 

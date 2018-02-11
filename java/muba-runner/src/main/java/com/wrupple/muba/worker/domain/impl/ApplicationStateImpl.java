@@ -16,19 +16,22 @@ import java.util.List;
  */
 public class ApplicationStateImpl extends ManagedObjectImpl implements ApplicationState {
 
-    @CatalogField(ignore = true)
-    private ServiceManifest handleValue;
-    @CatalogField(ignore = true)
-    private FilterData filterData;
-
     @ForeignKey(foreignCatalog = Application.CATALOG)
     private Long application;
+    @CatalogValue(foreignCatalog = Application.CATALOG)
+    @CatalogField(ignore = true)
+    private Application applicationValue;
+
+
+    @CatalogField(ignore = true)
+    private FilterData filterData;
 
     @ForeignKey(foreignCatalog = Task.CATALOG)
     private Long taskDescriptor;
 
     @ForeignKey(foreignCatalog = ApplicationState.CATALOG)
     private Long parent;
+    @CatalogValue(foreignCatalog = ApplicationState.CATALOG)
     @CatalogField(ignore = true)
     private ApplicationState parentValue;
     /*
@@ -108,12 +111,12 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
 
 
     @Override
-    public ServiceManifest getApplicationValue() {
-        return handleValue;
+    public Application getApplicationValue() {
+        return applicationValue;
     }
 
-    public void setApplicationValue(ServiceManifest handleValue) {
-        this.handleValue = handleValue;
+    public void setApplicationValue(Application handleValue) {
+        this.applicationValue = handleValue;
     }
 
     @Override

@@ -130,6 +130,8 @@ public class SolverModule extends AbstractModule {
         CatalogDescriptor r = builder.fromClass(ApplicationStateImpl.class, ApplicationState.CATALOG, "Thread",
                 -990094, timeline);
         r.setClazz(ApplicationStateImpl.class);
+        r.setConsolidated(true);
+
         return r;
     }
 

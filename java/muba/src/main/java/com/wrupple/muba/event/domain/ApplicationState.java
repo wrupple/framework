@@ -18,9 +18,9 @@ public interface ApplicationState extends HasDistinguishedName, ManagedObject, H
 
     Task getTaskDescriptorValue();
 
-    ServiceManifest getApplicationValue();
+    Application getApplicationValue();
 
-    void setApplicationValue(ServiceManifest applicationItemValue);
+    void setApplicationValue(Application applicationItemValue);
 
     FilterData getFilterData();
 

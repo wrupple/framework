@@ -83,7 +83,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     }
 
     private void setWorkingTask(ApplicationState state, ApplicationContext context) {
-        Workflow application = (Workflow) state.getApplicationValue();
+        Application application = state.getApplicationValue();
         List<Task> workflow = application.getProcessValues();
         List<Long> workflowKeys = application.getProcess();
 

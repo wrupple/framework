@@ -17,7 +17,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
 		ApplicationContext context = (ApplicationContext) ctx;
 		ApplicationState state=  context.getStateValue();
 
-        Workflow nextItem = findNextTreeNode(state);
+		Application nextItem = findNextTreeNode(state);
 		state.setApplicationValue(nextItem);
         state.setTaskDescriptorValue(null);
         state.setTaskDescriptor(null);

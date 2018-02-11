@@ -94,6 +94,9 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                 filter.setConstrained(false);
                 context.getRequest().setFollowReferences(false);
             }
+            if(filter==null){
+                throw new IllegalArgumentException("No entry or filters provided");
+            }
             FilterCriteria keyCriteria = filter.fetchCriteria(catalog.getKeyField());
             if (!filter.isConstrained() || keyCriteria == null) {
                 result = read(filter, catalog, context, cache, instrospection);

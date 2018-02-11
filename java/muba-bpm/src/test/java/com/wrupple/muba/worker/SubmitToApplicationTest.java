@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 
 public class SubmitToApplicationTest extends BPMTest {
-    private WorkflowImpl createStatisticsWorkflow;
+    private ApplicationImpl createStatisticsWorkflow;
 
 
     @Test(expected = IllegalStateException.class)
@@ -60,16 +60,20 @@ public class SubmitToApplicationTest extends BPMTest {
 
     }
 
-     ApplicationState acquireContext(Workflow initialState, SessionContext thread) throws Exception {
+     ApplicationState acquireContext(Application initialState, SessionContext thread) throws Exception {
         ApplicationState newState = injector.getInstance(ApplicationState.class);
         newState.setApplicationValue(initialState);
 
+        assertTrue("An application is not bound",newState.getApplicationValue()!=null);
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
 
         List results = wrupple.fireEvent(createRequest, thread, null);
 
-        return (ApplicationState) results.get(0);
-    }
+         newState= (ApplicationState) results.get(0);//si comento esto, funciona... se crea correctamente (se llam el setter)?
+         assertTrue("An application is not bound",newState.getApplicationValue()!=null);
+         return newState;
+
+     }
 
     private void postSolutionToApplication(ApplicationState applicationState) throws Exception {
         Statistics statistics = new Statistics();

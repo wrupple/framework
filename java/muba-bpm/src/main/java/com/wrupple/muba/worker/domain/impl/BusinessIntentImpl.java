@@ -24,6 +24,7 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
     @CatalogValue(
             foreignCatalog = ApplicationState.CATALOG
     )
+    @CatalogField(ignore = true)
     private ApplicationState stateValue;
 
     @CatalogField(ignore = true)

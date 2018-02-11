@@ -74,7 +74,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
         return CONTINUE_PROCESSING;
     }
 
-    public ApplicationState acquireContext(Workflow initialState, RuntimeContext thread) throws Exception {
+    public ApplicationState acquireContext(Application initialState, RuntimeContext thread) throws Exception {
         ApplicationState newState = applicationStateProvider.get();
         newState.setApplicationValue(initialState);
 

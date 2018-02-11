@@ -17,7 +17,9 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
     public boolean execute(Context  ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
             ApplicationState applicationState = context.getStateValue();
-
+            if(applicationState.getId()==null){
+                throw new RuntimeException("Application State has no id");
+            }
             CatalogActionRequestImpl request= new CatalogActionRequestImpl();
             //FIXME update application context of the right type
             request.setCatalog(ApplicationState.CATALOG);
