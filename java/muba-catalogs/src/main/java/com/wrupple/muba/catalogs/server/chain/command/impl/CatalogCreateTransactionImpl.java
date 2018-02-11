@@ -208,13 +208,13 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 
                 willBeCreated(context,entry);
 
-                CatalogEntry value =  context.triggerCreate(field.getCatalog(), entry);
+                entry =  context.triggerCreate(field.getCatalog(), entry);
                 reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
                 if (access.isWriteableProperty(reservedField, owner, instrospection)) {
-                    access.setPropertyValue(reservedField, owner, value, instrospection);
+                    access.setPropertyValue(reservedField, owner, entry, instrospection);
                 }
-                access.setPropertyValue(field, owner, value.getId(), instrospection);
             }
+            access.setPropertyValue(field, owner, entry.getId(), instrospection);
 
 		}
 	}
