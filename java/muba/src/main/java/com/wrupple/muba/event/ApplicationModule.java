@@ -96,7 +96,7 @@ public class ApplicationModule extends AbstractModule {
         regreso.setDistinguishedName(ServiceManifest.CATALOG);
         regreso.setId(-278532l);
         regreso.setKeyField(CatalogEntry.ID_FIELD);
-        regreso.setName("Revision");
+        regreso.setName("Service Manifest");
         regreso.setConsolidated(true);
         return regreso;
     }

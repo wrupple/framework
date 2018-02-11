@@ -52,6 +52,7 @@ public class InferNextTaskImpl implements InferNextTask {
 
             String command = (String) item.getExit();
             if(command==null){
+                log.warn("no exit command defined by application. best efort will be made");
                 if(item.getExplicitSuccessorValue()==null){
                     command= WorkflowEngine.NEXT_APPLICATION_ITEM;
                 }else{

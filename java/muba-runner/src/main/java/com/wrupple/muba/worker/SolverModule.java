@@ -11,6 +11,10 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.ApplicationDependencyImpl;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.reserved.HasChildren;
+import com.wrupple.muba.event.domain.reserved.HasChildrenValues;
+import com.wrupple.muba.event.domain.reserved.HasParent;
+import com.wrupple.muba.event.domain.reserved.HasParentValue;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;
@@ -100,6 +104,16 @@ public class SolverModule extends AbstractModule {
             CatalogDescriptorBuilder builder, @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest) {
         CatalogDescriptor r = builder.fromClass(ApplicationImpl.class, Application.CATALOG, "Application",
                 -900190, serviceManifest);
+        FieldDescriptor children = r.getFieldDescriptor(HasChildren.FIELD);
+        children.setCatalog(Application.CATALOG);
+        FieldDescriptor childValues = r.getFieldDescriptor(HasChildrenValues.FIELD);
+        childValues.setCatalog(Application.CATALOG);
+        FieldDescriptor parent = r.getFieldDescriptor(HasParent.FIELD);
+        parent.setCatalog(Application.CATALOG);
+
+
+        //FieldDescriptor parentValue = r.getFieldDescriptor(HasParentValue.VALUE_FIELD);
+       // parentValue.setCatalog(Application.CATALOG);
 
         //FIXME not consolidated
         r.setConsolidated(true);

@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wrupple.muba.catalogs.domain.CatalogEvent.CREATE_ACTION;
@@ -71,15 +68,29 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		log.trace("[catalog/storage] {}/{}",catalog.getDistinguishedName(),createDao.getClass());
 		if(follow||context.getRequest().getFollowReferences()){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
+			Object foreignValue,localvalue;
 			for(FieldDescriptor field: fields){
-				if (field.isKey() && access.getPropertyValue(field, result, null, instrospection) == null) {
-					Object foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
-					if(foreignValue!=null){
-						//if we got to this point, force the context to follow the reference graph
+				if (field.isKey()) {
+                    foreignValue=null;
+				    /*if(field.isMultiple()){
+                        localvalue= access.getPropertyValue(field, result, null, instrospection);
+                        if(localvalue==null||((Collection)localvalue).isEmpty()){
+                            foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
+                        }
+                    }else{
+				        if(access.getPropertyValue(field, result, null, instrospection) == null){
+                            foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
+                        }
+                    }*/
+                    if(access.getPropertyValue(field, result, null, instrospection) == null){
+                        foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
+                    }
+                    if(foreignValue!=null){
+                        //if we got to this point, force the context to follow the reference graph
 
 
-						 createRefereces(context,catalog,field,foreignValue,result, instrospection);
-					}
+                        createRefereces(context,catalog,field,foreignValue,result, instrospection);
+                    }
 				}
 			}
 		}
@@ -103,10 +114,11 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 			context.getRuntimeContext().getTransactionHistory().didCreate(context, regreso, createDao);
 		}
 		
-		//local cache FIXME only empty lists when storage is not guarantee sequential insertion
 		CatalogResultCache cache = context.getCache(catalog, context);
 		if (cache != null) {
-			cache.clearLists(context,catalog.getDistinguishedName());
+			if(createDao.isSequential()){
+                cache.clearLists(context,catalog.getDistinguishedName());
+            }
 		}
 
 
@@ -114,7 +126,9 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         postProcess(context,catalog.getDistinguishedName(),CREATE_ACTION,regreso);
         log.debug("</CatalogActionEvent-Broadcast>");
 
-		context.setResults(Collections.singletonList(regreso));
+        access.copy(regreso,result,catalog);
+
+        context.setResults(Collections.singletonList(regreso));
 		log.trace("</{}>",this.getClass().getSimpleName());
 		return CONTINUE_PROCESSING;
 	}
@@ -160,9 +174,13 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		if (field.isMultiple()) {
 			Collection<CatalogEntry> entries = (Collection<CatalogEntry>) foreignValue;
 			List<CatalogEntry> createdValues = new ArrayList<CatalogEntry>(entries.size());
+            CatalogEntry created;
 			for (CatalogEntry entry : entries) {
-				if (entry.getId() == null) {
-					createdValues.add(context.triggerCreate(field.getCatalog(), entry));
+				if (entry.getId() == null&&!beeingCreated(context,entry)) {
+				    willBeCreated(context,entry);
+                    created= context.triggerCreate(field.getCatalog(), entry);
+
+					createdValues.add(created);
 				} else {
 					createdValues.add(entry);
 				}
@@ -176,16 +194,42 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 
 			access.setPropertyValue(field, owner, keys, instrospection);
 		} else {
-			// FIXME this is not batch at all, must be able to load a context with
-			// multile input entries, just like there is multiple results by default
+            CatalogEntry entry = (CatalogEntry) foreignValue;
+            if (entry.getId() == null&&!beeingCreated(context,entry)) {
 
-			CatalogEntry value =  context.triggerCreate(field.getCatalog(), (CatalogEntry) foreignValue);
-			reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
-			if (access.isWriteableProperty(reservedField, owner, instrospection)) {
-				access.setPropertyValue(reservedField, owner, value, instrospection);
-			}
-			access.setPropertyValue(field, owner, value.getId(), instrospection);
+                willBeCreated(context,entry);
+
+                CatalogEntry value =  context.triggerCreate(field.getCatalog(), entry);
+                reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                if (access.isWriteableProperty(reservedField, owner, instrospection)) {
+                    access.setPropertyValue(reservedField, owner, value, instrospection);
+                }
+                access.setPropertyValue(field, owner, value.getId(), instrospection);
+            }
+
 		}
 	}
+
+    private void willBeCreated(CatalogActionContext context, CatalogEntry entry) {
+        Set<CatalogEntry> set = assertSet(context);
+        set.add(entry);
+    }
+
+    private static final String PROPERTY = "com.wrupple.catalog.creationGraph";
+
+    private Set<CatalogEntry> assertSet(CatalogActionContext c) {
+        RuntimeContext context = c.getRuntimeContext().getRootAncestor();
+        Set<CatalogEntry> set = (Set<CatalogEntry>) context.get(PROPERTY);
+        if(set==null){
+            set = new HashSet<>();
+            context.put(PROPERTY,set);
+        }
+        return  set;
+    }
+
+    private boolean beeingCreated(CatalogActionContext context, CatalogEntry entry) {
+        Set<CatalogEntry> set = assertSet(context);
+        return set.contains(entry);
+    }
 
 }

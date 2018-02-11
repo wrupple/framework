@@ -4,5 +4,5 @@ import com.wrupple.muba.event.server.chain.command.UserCommand;
 
 public interface DataCreationCommand extends UserCommand {
 
-
+    boolean isSequential();
 }

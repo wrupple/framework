@@ -79,6 +79,7 @@ public class HelloWorldTest extends IntegralTest {
         log.info("[-create a task with problem constraints-]");
         TaskImpl problem = createProblem(session);
         ApplicationStateImpl state = new ApplicationStateImpl();
+
         state.setTaskDescriptorValue(problem);
         state.setDomain(session.getSessionValue().getDomain());
         log.info("[-post a solver request to the runner engine-]");
@@ -88,9 +89,7 @@ public class HelloWorldTest extends IntegralTest {
                         Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")");
 
         runtimeContext.process();*/
-
-        WorkerState container = new WorkerStateImpl();
-        injector.getInstance(ProcessManager.class).setWorker(container, session);
+        state.setWorkerStateValue(new WorkerStateImpl());
         List results = wrupple.fireEvent(state, session, null);
         EquationSystemSolution solution = (EquationSystemSolution) results.get(0);
         assertTrue(solution.getX() == 2);

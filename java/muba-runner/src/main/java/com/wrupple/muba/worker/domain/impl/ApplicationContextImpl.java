@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 public class ApplicationContextImpl extends ContextBase implements ApplicationContext {
     private RuntimeContext runtimeContext;
     private String name;
-    private WorkerState workerStateValue;
 
     public void setStateValue(ApplicationState stateValue) {
         this.stateValue = stateValue;
@@ -37,9 +36,8 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     private ApplicationState stateValue;
 
     @Override
-    public ApplicationContext setRuntimeContext(RuntimeContext requestContext, WorkerState container) {
+    public ApplicationContext setRuntimeContext(RuntimeContext requestContext) {
         this.runtimeContext=requestContext;
-        this.workerStateValue = container;
         return this;
     }
 
@@ -48,10 +46,6 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
         return stateValue;
     }
 
-    @Override
-    public WorkerState getWorkerStateValue() {
-        return workerStateValue;
-    }
 
     @Override
     public RuntimeContext getRuntimeContext() {

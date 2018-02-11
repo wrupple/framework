@@ -144,20 +144,20 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
         return Long.parseLong(key, 36);
     }
 
+    /**
+     * if (StringUtils.isEmpty(str)) { return false; } for (int i = 0; i <
+     * str.length(); i++) { if (!Character.isDigit(str.charAt(i))) { return
+     * false; } }
+     */
     @Override
     public boolean isPrimaryKey(String vanityId) {
-		/*
-		 * if (StringUtils.isEmpty(str)) { return false; } for (int i = 0; i <
-		 * str.length(); i++) { if (!Character.isDigit(str.charAt(i))) { return
-		 * false; } }
-		 */
+
         // lets try, shall we?
         return true;
     }
 
     public String[][] getJoins(CatalogActionContext contexto, Object clientSide, CatalogDescriptor descriptor,
                                String[][] customJoins, Object domain, String host) throws Exception {
-        // TODO configure how many levels/orders deep to go into for
         // joinable fields
 
         Collection<FieldDescriptor> thisCatalogFields = descriptor.getFieldsValues();
@@ -245,8 +245,9 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
 
     @Override
     public boolean isFieldOwnedBy(FieldDescriptor fieldDescriptor, CatalogDescriptor catalogDescriptor) {
-        //a field is owned by a catalog if it is present in the catalog and not the parent
-        return catalogDescriptor.getFieldDescriptor(fieldDescriptor.getFieldId())!=null && (catalogDescriptor.getParent()==null||catalogDescriptor.getParentValue().getFieldDescriptor(fieldDescriptor.getFieldId())==null);
+        //a field is owned by a catalog if it is present in the catalog and not the parent, or is consolidated
+
+        return  catalogDescriptor.getFieldDescriptor(fieldDescriptor.getFieldId())!=null && (catalogDescriptor.getConsolidated() || (catalogDescriptor.getParent()==null||catalogDescriptor.getParentValue().getFieldDescriptor(fieldDescriptor.getFieldId())==null));
 
     }
 

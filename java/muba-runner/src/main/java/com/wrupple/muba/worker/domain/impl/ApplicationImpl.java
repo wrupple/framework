@@ -28,6 +28,8 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
     private Long exit, cancel, error;
     private String description, requiredRole,catalog;
 
+    @ForeignKey(foreignCatalog = Application.CATALOG)
+    private Long explicitSuccessor;
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Application.CATALOG)
     private Application explicitSuccessorValue;
@@ -135,5 +137,13 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
     @Override
     public void setCatalog(String catalog) {
         this.catalog = catalog;
+    }
+
+    public Long getExplicitSuccessor() {
+        return explicitSuccessor;
+    }
+
+    public void setExplicitSuccessor(Long explicitSuccessor) {
+        this.explicitSuccessor = explicitSuccessor;
     }
 }

@@ -21,7 +21,10 @@ import com.wrupple.muba.desktop.domain.WorkerRequestManifest;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.ApplicationDependencyImpl;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 import com.wrupple.muba.event.server.ExplicitIntentInterpret;
 import com.wrupple.muba.event.server.chain.command.BindService;
 import com.wrupple.muba.event.server.chain.command.Dispatch;
@@ -29,12 +32,13 @@ import com.wrupple.muba.event.server.chain.command.impl.BindServiceImpl;
 import com.wrupple.muba.event.server.chain.command.impl.DispatchImpl;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import com.wrupple.muba.worker.domain.Driver;
+import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import com.wrupple.muba.worker.server.service.ChocoRunner;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.worker.server.service.VariableConsensus;
 import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
-import com.wrupple.muba.worker.shared.services.ApplicationContainer;
+import com.wrupple.muba.worker.shared.services.WorkerContainer;
 import org.apache.commons.dbutils.QueryRunner;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
@@ -56,7 +60,7 @@ import java.util.List;
 
 public abstract class WorkerTest extends EasyMockSupport {
 
-    ApplicationContainer container;
+    WorkerContainer container;
 
     public WorkerTest() {
 
@@ -84,7 +88,7 @@ public abstract class WorkerTest extends EasyMockSupport {
                 LaunchWorkerHandlerImpl.class
         );
 
-        container= new ApplicationContainer(modules, handlers);
+        container= new WorkerContainer(modules, handlers);
 
         container.registerInterpret(Constraint.EVALUATING_VARIABLE, ChocoInterpret.class);
         container.registerInterpret(WorkerRequestManifest.NAME, ExplicitIntentInterpret.class);
@@ -166,6 +170,18 @@ public abstract class WorkerTest extends EasyMockSupport {
 
 
         @Provides
+        @com.google.inject.Singleton
+        @com.google.inject.Inject
+        @com.google.inject.name.Named(Person.CATALOG)
+        public CatalogDescriptor activity(
+                CatalogDescriptorBuilder builder) {
+            CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, Person.CATALOG,  Person.CATALOG,
+                    -13344556, null);
+
+            return r;
+        }
+
+        @Provides
         public ProcessWindow queryRunner() {
             return new ProcessWindow() {
                 @Override
@@ -202,8 +218,8 @@ public abstract class WorkerTest extends EasyMockSupport {
             @Inject
             @Singleton
             @Named("catalog.plugins")
-            public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, SystemCatalogPlugin system) {
-                CatalogPlugin[] plugins = new CatalogPlugin[]{system, runner};
+            public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm, SystemCatalogPlugin system) {
+                CatalogPlugin[] plugins = new CatalogPlugin[]{system,bpm, runner};
                 return plugins;
             }
 

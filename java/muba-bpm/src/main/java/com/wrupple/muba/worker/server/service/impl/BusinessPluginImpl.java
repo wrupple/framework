@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.List;
 
 /**
  * Deals with
@@ -57,15 +58,14 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
     @Inject
 	public BusinessPluginImpl(ValueChangeListener changeListener,
                               ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
-
+                              @Named(Person.CATALOG) CatalogDescriptor person,
                               // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
                               @Named(WorkRequest.CATALOG) CatalogDescriptor notificationProvider,
                               // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
-                              @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifestProvider, Provider<CatalogTriggerInterpret> triggerInterpret) {
+                               Provider<CatalogTriggerInterpret> triggerInterpret) {
 
         this.triggerInterpret = triggerInterpret;
-		super.put(serviceManifestProvider);
-
+        super.put(person);
 		super.put(notificationProvider);
 		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
 	}
@@ -78,8 +78,9 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 		if (stakeHolderField != null && !stakeHolderField.isMultiple()
 				&& stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
 				&& Person.CATALOG.equals(stakeHolderField.getCatalog())) {
-
-			if (catalog.getStorage().contains("secure")) {
+;
+			if (catalog.getStorage()!=null&&catalog.getStorage().contains("secure")) {
+				// FIXME writing (or reading require signed private key authentication)
 				e = new CatalogEventListenerImpl();
 				e.setAction(0l);
 				e.setAdvice(true);
@@ -105,8 +106,6 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
                 triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 			}
 
-			stakeHolderField.setWriteable(false);
-
 			e = new CatalogEventListenerImpl();
 			e.setAction(0l);
 			e.setAdvice(true);
@@ -114,9 +113,6 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
             triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
-			// asi como los triggers se agregan, modificadores de permisos
-			// especificos, alteran los filtros o la visibilidad de una entrada
-			// ((CatalogDescriptor) catalog).setStakeHolderProtected(true);
 
 			e = new CatalogEventListenerImpl();
 			e.setAction(1l);
@@ -133,9 +129,6 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 			e.setFailSilence(true);
 			e.setStopOnFail(true);
             triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
-
-			// FIXME writing (or reading require signed private key authentication)
-
 
 		}
 

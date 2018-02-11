@@ -1,10 +1,16 @@
 package com.wrupple.muba.worker;
 
+import com.google.inject.Key;
+import com.google.inject.name.Names;
+import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.domain.impl.WorkerRequestImpl;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.worker.domain.RiderBooking;
 import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
@@ -23,17 +29,39 @@ public class ContextSwitchTest extends WorkerTest {
     @Test
     public void submitBookingData() throws Exception {
 
+        // expectations
+        replayAll();
+
         CatalogDescriptorBuilder builder = container.getInstance(CatalogDescriptorBuilder.class);
         log.trace("[-register catalogs-]");
 
-        // expectations
 
-        replayAll();
+
+        CatalogDescriptor managed = builder.fromClass(ManagedObjectImpl.class, ManagedObjectImpl.class.getSimpleName(),
+                ManagedObjectImpl.class.getSimpleName(), 2, container.getInjector().getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
+
+        FieldDescriptor stakeHolderField = managed.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
+        assertTrue ("stakeHolder field missing",stakeHolderField != null);
+        assertTrue ("stakeHolder is multiple",!stakeHolderField.isMultiple());
+        assertTrue ("stakeHolder has the wrong data type",stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE);
+        assertTrue ("stakeHolder is not a Person key",Person.CATALOG.equals(stakeHolderField.getCatalog()));
+
+
+        CatalogActionRequestImpl action = new CatalogCreateRequestImpl(managed,CatalogDescriptor.CATALOG_ID);
+
+        managed = (CatalogDescriptor) ((List)container.fireEvent(action)).get(0);
 
         CatalogDescriptor bookingDescriptor = builder.fromClass(RiderBooking.class, RiderBooking.class.getSimpleName(),
-                RiderBooking.class.getSimpleName(), 0, null);
+                RiderBooking.class.getSimpleName(), 0, managed);
 
-        CatalogActionRequestImpl action = new CatalogCreateRequestImpl(bookingDescriptor,CatalogDescriptor.CATALOG_ID);
+         stakeHolderField = bookingDescriptor.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
+        assertTrue ("Booking inherit ManagedObject",stakeHolderField != null && !stakeHolderField.isMultiple()
+                && stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
+                && Person.CATALOG.equals(stakeHolderField.getCatalog()));
+
+        bookingDescriptor.setConsolidated(true);
+
+         action = new CatalogCreateRequestImpl(bookingDescriptor,CatalogDescriptor.CATALOG_ID);
 
         container.fireEvent(action);
 
@@ -66,17 +94,21 @@ public class ContextSwitchTest extends WorkerTest {
         updateBooking.setName(CatalogActionRequest.WRITE_ACTION);
 
 
-        log.trace("[-create riderBooking data handling application item-]");
-        ApplicationImpl item = new ApplicationImpl();
+        log.trace("[-create application tree-]");
+        ApplicationImpl root = new ApplicationImpl();
+        root.setDistinguishedName(container.getInjector().getInstance(Key.get(String.class, Names.named("worker.defaultActivity"))));
 
-        item.setDistinguishedName("createTrip");;
+        ApplicationImpl item = new ApplicationImpl();
+        String testActivity = "createTrip";
+        item.setDistinguishedName(testActivity);
         item.setProcessValues(Arrays.asList(pickDriver,updateBooking));
         //this tells bpm to use this application to resolve bookings
         //item.setCatalog(bookingDescriptor.getDistinguishedName());
         //item.setOutputCatalog(bookingDescriptor.getDistinguishedName());
         item.setOutputField("riderBooking");
 
-        action = new CatalogCreateRequestImpl(item,Application.CATALOG);
+        root.setChildrenValues(Arrays.<ServiceManifest>asList(item));
+        action = new CatalogCreateRequestImpl(root,Application.CATALOG);
         action.setFollowReferences(true);
 
         container.fireEvent(action);
@@ -101,10 +133,11 @@ public class ContextSwitchTest extends WorkerTest {
         riderBooking = (RiderBooking) results.get(0);
 
         assertTrue(riderBooking.getId()!=null);
-        assertTrue(riderBooking.getStakeHolder()!=null);
+//        assertTrue(riderBooking.getStakeHolder()!=null);
+//        assertTrue(riderBooking.getTimestamp()!=null);
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
-        container.fireEvent(new WorkerRequestImpl(Arrays.asList(item.getDistinguishedName(), riderBooking.getId().toString())));
+        container.fireEvent(new WorkerRequestImpl(Arrays.asList(testActivity, riderBooking.getId().toString())));
         //check conditions
         assertTrue(riderBooking.getDriverValue()!=null);
         //assertTrue(Math.abs(riderBooking.getDriverValue().getLocation()-riderBooking.getLocation())<0);

@@ -1,6 +1,7 @@
 package com.wrupple.muba.desktop.domain.impl;
 
 import com.wrupple.muba.desktop.domain.WorkerRequest;
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class WorkerRequestImpl extends CatalogEntryImpl implements WorkerRequest
     public WorkerRequestImpl(List<String> sentence) {
         this();
         this.sentence = sentence;
+        setDomain(CatalogEntry.PUBLIC_ID);
     }
 
     @Override

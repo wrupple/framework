@@ -48,4 +48,5 @@ public interface FieldAccessStrategy extends IntrospectionStrategy {
     void parseSetBoolean(CatalogEntry jso, FieldDescriptor field, String v, Instrospection instrospection) throws ReflectiveOperationException;
 
 
+    void copy(CatalogEntry origin, CatalogEntry destiny,CatalogDescriptor catalog) throws ReflectiveOperationException;
 }

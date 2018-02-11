@@ -43,7 +43,7 @@ import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.worker.server.service.VariableConsensus;
 import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
-import com.wrupple.muba.worker.shared.services.ApplicationContainer;
+import com.wrupple.muba.worker.shared.services.WorkerContainer;
 import com.wrupple.muba.worker.shared.services.HumanRunner;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
@@ -89,7 +89,7 @@ public class Example {
                 LaunchWorkerHandlerImpl.class
         );
 
-        ApplicationContainer container = new ApplicationContainer(modules, handlers);
+        WorkerContainer container = new WorkerContainer(modules, handlers);
 
         container.registerInterpret(Constraint.EVALUATING_VARIABLE, ChocoInterpret.class);
         container.registerInterpret(WorkerRequestManifest.NAME, ExplicitIntentInterpret.class);

@@ -1,6 +1,9 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.WorkerState;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.SelectSolution;
@@ -34,7 +37,7 @@ public class SelectSolutionImpl implements SelectSolution {
         log.info("Selecting best solution");
         ApplicationContext context = (ApplicationContext) ctx;
 
-        Long runnerId = context.getWorkerStateValue().getRunner();
+        Long runnerId = getWorker(context).getRunner();
 
         if (runnerId == null) {
             log.debug("no main runner selected for container");
@@ -78,5 +81,20 @@ public class SelectSolutionImpl implements SelectSolution {
 
 
         return CONTINUE_PROCESSING;
+    }
+
+    private WorkerState getWorker(ApplicationContext context) {
+        ApplicationState state = context.getStateValue();
+        WorkerState worker =state.getWorkerStateValue();
+
+        if(state==null){
+            ApplicationState  eldest = CatalogEntryImpl.getRootAncestor(state);
+            if(eldest!=null){
+                worker = eldest.getWorkerStateValue();
+            }
+        }
+
+        return worker;
+
     }
 }

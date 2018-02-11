@@ -474,7 +474,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         public CatalogDescriptor getDescriptorForName(String catalogId) throws Exception {
             CatalogDescriptor foreign = (CatalogDescriptor) getRuntimeContext().getRootAncestor().get(catalogId + CatalogActionContext.INCOMPLETO);
             if(foreign==null){
-                log.warn("[incomplete metadata found] null");
+                log.warn("[incomplete metadata found] NONE");
                 foreign=triggerGet(CatalogDescriptor.CATALOG_ID,catalogId);
             }else{
                 log.warn("[incomplete metadata found] {}",foreign);

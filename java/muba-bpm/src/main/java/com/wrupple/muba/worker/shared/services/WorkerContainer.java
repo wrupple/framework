@@ -31,14 +31,14 @@ import com.wrupple.muba.worker.server.service.Solver;
 
 import java.util.List;
 
-public class ApplicationContainer {
+public class WorkerContainer {
 
     private final EventBus processSwitches;
     private final SessionContext session;
     private final Solver solver;
     private final Injector injector;
 
-    public <T extends Module, V extends ImplicitEventResolver.Registration> ApplicationContainer(List<T> modules, List<Class<V>> eventHandlers) {
+    public <T extends Module, V extends ImplicitEventResolver.Registration> WorkerContainer(List<T> modules, List<Class<V>> eventHandlers) {
 
 
         injector = Guice.createInjector(modules);
@@ -105,5 +105,9 @@ public class ApplicationContainer {
 
     public <T> T getInstance(Class<T> catalogDescriptorBuilderClass) {
         return injector.getInstance(catalogDescriptorBuilderClass);
+    }
+
+    public Injector getInjector() {
+        return injector;
     }
 }

@@ -188,4 +188,8 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		return CONTINUE_PROCESSING;
 	}
 
+    @Override
+    public boolean isSequential() {
+        return compatibility.isSequential();
+    }
 }

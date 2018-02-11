@@ -2,6 +2,7 @@ package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
@@ -57,6 +58,10 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private CatalogEntry entryValue;
 
     private Boolean canceled,draft;
+    @CatalogField(ephemeral = true)
+    @CatalogValue(foreignCatalog = WorkerState.CATALOG)
+    private WorkerState workerStateValue;
+
     @Override
     public String getCatalog() {
         return catalog;
@@ -164,6 +169,11 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     }
 
     @Override
+    public WorkerState getWorkerStateValue() {
+        return workerStateValue;
+    }
+
+    @Override
     public Task getTaskDescriptorValue() {
         return taskDescriptorValue;
     }
@@ -245,4 +255,7 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
         this.parentValue = parentValue;
     }
 
+    public void setWorkerStateValue(WorkerState workerStateValue) {
+        this.workerStateValue = workerStateValue;
+    }
 }

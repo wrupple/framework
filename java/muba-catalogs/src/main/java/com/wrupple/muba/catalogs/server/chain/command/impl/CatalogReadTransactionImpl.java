@@ -286,17 +286,23 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
         if (regreso == null) {
             log.info("primary key {} returned no results", vanityId);
-            if (catalog.getFieldDescriptor(HasDistinguishedName.FIELD) != null) {
-                FilterData filter = FilterDataUtils.createSingleFieldFilter(HasDistinguishedName.FIELD, vanityId);
-                List<CatalogEntry> results = queryUnits(filter, catalog, context, instrospection);
-                if (results == null || results.isEmpty()) {
-                    log.error("attempt to use {} as discriminator returned no results", vanityId);
-                } else {
-                    if(CatalogDescriptor.CATALOG_ID.equals(catalog.getDistinguishedName())){
-                        log.warn("vanity id query for a catalog descriptor return a result, will force to fully build result graph");
+            FieldDescriptor dn = catalog.getFieldDescriptor(HasDistinguishedName.FIELD);
+            if (dn != null) {
+                if(dn.isFilterable()){
+
+                    FilterData filter = FilterDataUtils.createSingleFieldFilter(HasDistinguishedName.FIELD, vanityId);
+                    List<CatalogEntry> results = queryUnits(filter, catalog, context, instrospection);
+                    if (results == null || results.isEmpty()) {
+                        log.error("attempt to use {} as discriminator returned no results", vanityId);
+                    } else {
+                        if(CatalogDescriptor.CATALOG_ID.equals(catalog.getDistinguishedName())){
+                            log.warn("vanity id query for a catalog descriptor return a result, will force to fully build result graph");
+                        }
+                        context.getRequest().setFollowReferences(true);
+                        regreso = results.get(0);
                     }
-                    context.getRequest().setFollowReferences(true);
-                    regreso = results.get(0);
+                }else{
+                    log.error("{} is not a filterable field",HasDistinguishedName.FIELD);
                 }
             }
 

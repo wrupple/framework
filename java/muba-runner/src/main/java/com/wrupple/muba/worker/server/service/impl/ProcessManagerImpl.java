@@ -76,8 +76,6 @@ public class ProcessManagerImpl implements ProcessManager {
         this.solver = solver;
     }
 
-    private final String CONTAINER_STATE = "com.wrupple.worker.container.state";
-
     @Override
     public Solver getSolver() {
         return solver;
@@ -107,33 +105,6 @@ public class ProcessManagerImpl implements ProcessManager {
 
         }
     */
-
-
-
-
-    @Override
-    public WorkerState getWorker(RuntimeContext parent) {
-
-        RuntimeContext root = parent.getRootAncestor();
-        WorkerState container = (WorkerState) root.get(CONTAINER_STATE);
-        if (container == null) {
-            container = (WorkerState) parent.getSession().get(CONTAINER_STATE);
-        }
-        return container;
-    }
-
-    @Override
-    public void setWorker(WorkerState request, RuntimeContext parent) {
-        RuntimeContext root = parent.getRootAncestor();
-        root.put(CONTAINER_STATE, request);
-    }
-
-    @Override
-    public void setWorker(WorkerState request, SessionContext parent) {
-        parent.put(CONTAINER_STATE, request);
-    }
-
-
 
 
 /*

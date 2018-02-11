@@ -46,7 +46,14 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     @Override
     public CatalogEntry catalogCopy(CatalogDescriptor catalog, CatalogEntry entry) throws ReflectiveOperationException {
         CatalogEntry copy = synthesize(catalog);
+        copy(entry,copy,catalog);
+        return copy;
 
+    }
+
+
+    @Override
+    public void copy(CatalogEntry entry, CatalogEntry copy, CatalogDescriptor catalog) throws ReflectiveOperationException {
         Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 
         Instrospection instrospection = newSession(copy);
@@ -61,7 +68,6 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             }
         }
 
-        return copy;
     }
 
     @Override

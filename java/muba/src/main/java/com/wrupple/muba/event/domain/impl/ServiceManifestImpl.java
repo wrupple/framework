@@ -1,7 +1,12 @@
 package com.wrupple.muba.event.domain.impl;
 
+import com.wrupple.muba.event.domain.Constraint;
 import com.wrupple.muba.event.domain.ContractDescriptor;
+import com.wrupple.muba.event.domain.Person;
 import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,14 +15,27 @@ import java.util.Set;
 
 public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceManifest {
 	private static final long serialVersionUID = -2346526516336493001L;
-	private String distinguishedName, versionDistinguishedName,outputCatalog;
+	@CatalogField(filterable = true)
+	private String distinguishedName;
+	private String  versionDistinguishedName,outputCatalog;
+	@ForeignKey(foreignCatalog = Person.CATALOG)
 	private Long stakeHolder;
+	@CatalogField(ignore = true)
 	private ContractDescriptor catalogValue;
 	private List<String> grammar,properties;
+
+	@ForeignKey(foreignCatalog = ServiceManifest.CATALOG)
 	private List<Long> children;
-	private List<ServiceManifest> childrenValues;
+
+    @CatalogValue(foreignCatalog = ServiceManifest.CATALOG)
+    @CatalogField(ignore = true)
+    private List<ServiceManifest> childrenValues;
+	@CatalogField(ignore = true)
 	private List<String> childrenPaths;
+	@ForeignKey(foreignCatalog = ServiceManifest.CATALOG)
 	private Long parent;
+	@CatalogValue(foreignCatalog = ServiceManifest.CATALOG)
+	@CatalogField(ignore = true)
     private ServiceManifest parentValue;
 
     public ServiceManifestImpl() {
@@ -57,15 +75,20 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 		if(childrenValues==null){
 			childrenPaths = null;
 		}else{
-			Set<String >childarenPaths = new HashSet<String>(childrenValues.size());
-            children = new ArrayList<>(childrenValues.size());
-			for(ServiceManifest s : childrenValues){
-                s.setParentValue(this);
-				childarenPaths.add(s.getDistinguishedName());
+			if(childrenValues.isEmpty()){
+				childrenPaths = null;
+			}else{
+				Set<String >childarenPaths = new HashSet<String>(childrenValues.size());
+				for(ServiceManifest s : childrenValues){
+					s.setParentValue(this);
+					childarenPaths.add(s.getDistinguishedName());
+				}
+				childrenPaths = new ArrayList<>(childarenPaths);
 			}
-			childrenPaths = new ArrayList<>(childarenPaths);
+
 		}
 		setChildrenPaths(childrenPaths);
+
 	}
 
 	public String getDistinguishedName() {

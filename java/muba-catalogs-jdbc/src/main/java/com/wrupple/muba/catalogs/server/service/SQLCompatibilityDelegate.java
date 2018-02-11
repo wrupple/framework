@@ -13,4 +13,5 @@ public interface SQLCompatibilityDelegate {
 
 	Object getLastInsertedId(CatalogActionContext context, QueryRunner runner, JDBCSingleLongKeyResultHandler keyHandler) throws SQLException;
 
+    boolean isSequential();
 }

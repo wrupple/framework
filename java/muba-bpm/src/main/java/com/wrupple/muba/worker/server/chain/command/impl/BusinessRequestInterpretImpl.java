@@ -36,9 +36,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
-
-        WorkerState container = bpm.getWorker(requestContext);
-        return proveedor.get().setRuntimeContext(requestContext, container);
+        return proveedor.get().setRuntimeContext(requestContext);
     }
 
     @Override

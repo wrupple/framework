@@ -17,14 +17,14 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
 
         String rootActivity = context.getWorkerState().getHomeActivity();
         Application domainRoot;
-        try {
             domainRoot = triggerGet(rootActivity, context.getRuntimeContext(), true, null);
-        } catch (IndexOutOfBoundsException e) {
-            // Most likely because domain has not been set up
-            domainRoot = null;
-            throw new IllegalStateException("Application tree root is not found",e);
-            //FIXME context.getWorkerStateValue().setSetupFlag(true);
-        }
+
+            if(domainRoot==null){
+                // Most likely because domain has not been set up
+                domainRoot = null;
+                throw new IllegalStateException("Application tree root is not found with name "+rootActivity);
+                //FIXME context.getWorkerStateValue().setSetupFlag(true);
+            }
 
         /*if (domainRoot!=null && sliceWriters != null) {
             for (DesktopSliceWriter sliceWriter : sliceWriters) {

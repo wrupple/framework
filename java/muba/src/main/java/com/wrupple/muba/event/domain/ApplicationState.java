@@ -14,6 +14,9 @@ public interface ApplicationState extends HasDistinguishedName, ManagedObject, H
 
     String CATALOG = "ApplicationState";
 
+    WorkerState getWorkerStateValue();
+
+    Task getTaskDescriptorValue();
 
     ServiceManifest getApplicationValue();
 
@@ -26,8 +29,6 @@ public interface ApplicationState extends HasDistinguishedName, ManagedObject, H
     Long getTaskDescriptor();
 
     void setTaskDescriptor(Object id);
-
-    Task getTaskDescriptorValue();
 
     void setTaskDescriptorValue(Task request);
 
@@ -59,6 +60,8 @@ public interface ApplicationState extends HasDistinguishedName, ManagedObject, H
     void setDraft(Boolean b);
 
     void setApplication(Object id);
+
+    void setWorkerStateValue(WorkerState workerState);
 
     // public void setLayoutUnit(String s);
 

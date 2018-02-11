@@ -14,6 +14,7 @@ import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.domain.Statistics;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
+import com.wrupple.muba.worker.domain.impl.WorkerStateImpl;
 import com.wrupple.muba.worker.domain.impl.WorkflowImpl;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.junit.Test;
@@ -28,11 +29,9 @@ public class SubmitToApplicationTest extends BPMTest {
     private WorkflowImpl createStatisticsWorkflow;
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void explicitOutputPlace() throws Exception {
         createApplication();
-        ProcessManager bpm = injector.getInstance(ProcessManager.class);
-
         //createStatisticsWorkflow
 
         ApplicationState applicationState = acquireContext(createStatisticsWorkflow, session);
@@ -49,6 +48,7 @@ public class SubmitToApplicationTest extends BPMTest {
         assertTrue("statistics not created", statistics.getId() != null);
 
         //if state changed, next problem should be unsolvable and throw an exception
+        applicationState.setWorkerStateValue(new WorkerStateImpl());
         List results = wrupple.fireEvent(applicationState, session, null);
 /*    if problem where solvable
          statistics= (Statistics) results.get(0);
@@ -143,6 +143,9 @@ public class SubmitToApplicationTest extends BPMTest {
 
         List resultss = wrupple.fireEvent(catalogActionRequest, session, null);
         workflow = (ApplicationImpl) resultss.get(0);
+
+        assertTrue("workflow must have an explicit successor",workflow.getExplicitSuccessorValue()!=null);
+
         this.createStatisticsWorkflow = workflow;
     }
 

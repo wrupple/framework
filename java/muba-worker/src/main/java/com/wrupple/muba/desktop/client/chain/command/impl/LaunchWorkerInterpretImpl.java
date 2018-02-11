@@ -35,7 +35,6 @@ public class LaunchWorkerInterpretImpl implements LaunchWorkerInterpret {
         if (request == null) {
             throw new IllegalStateException("No container definition!");
         }
-        pm.setWorker(request, parent);
         parent.setServiceContract(request);
 
         ContextSwitch contextSwitch = contractProvider.get();

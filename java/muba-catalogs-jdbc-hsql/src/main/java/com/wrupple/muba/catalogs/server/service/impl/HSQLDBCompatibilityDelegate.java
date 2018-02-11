@@ -23,4 +23,9 @@ public class HSQLDBCompatibilityDelegate implements SQLCompatibilityDelegate {
 		return runner.query(LAST_ID, keyHandler);
 	}
 
+	@Override
+	public boolean isSequential() {
+		return true;
+	}
+
 }

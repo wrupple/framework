@@ -33,12 +33,13 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
     @Override
     public Context materializeBlankContext(RuntimeContext requestContext) {
         ApplicationContext r = activityContextProvider.get();
-        WorkerState container = bpm.getWorker(requestContext);
+        ApplicationState contract = (ApplicationState) requestContext.getServiceContract();
+        WorkerState container = contract.getWorkerStateValue();
         if (container == null) {
             throw new IllegalStateException("No application container");
         }
-        r.setStateValue((ApplicationState) requestContext.getServiceContract());
-        return r.setRuntimeContext(requestContext, container);
+        r.setStateValue(contract);
+        return r.setRuntimeContext(requestContext);
     }
 
     @Override

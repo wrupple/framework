@@ -21,8 +21,10 @@ import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.Person;
 import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
@@ -36,6 +38,7 @@ import com.wrupple.muba.worker.server.chain.SolverEngine;
 import com.wrupple.muba.worker.server.chain.command.ActivityRequestInterpret;
 import com.wrupple.muba.worker.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.worker.server.chain.command.IntentResolverRequestInterpret;
+import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import com.wrupple.muba.worker.server.service.VariableConsensus;
 import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
@@ -116,6 +119,17 @@ public abstract class BPMTest extends AbstractTest {
 
 
         }
+		@Provides
+		@com.google.inject.Singleton
+		@com.google.inject.Inject
+		@com.google.inject.name.Named(Person.CATALOG)
+		public CatalogDescriptor activity(
+				CatalogDescriptorBuilder builder) {
+			CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, Person.CATALOG,  Person.CATALOG,
+					-13344556, null);
+
+			return r;
+		}
 
 		@Provides
 		@Inject
@@ -144,8 +158,8 @@ public abstract class BPMTest extends AbstractTest {
 		@Inject
 		@Singleton
 		@Named("catalog.plugins")
-		public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, SystemCatalogPlugin system) {
-			CatalogPlugin[] plugins = new CatalogPlugin[] { system,runner };
+		public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm,SystemCatalogPlugin system) {
+			CatalogPlugin[] plugins = new CatalogPlugin[] { system,bpm,runner };
 			return plugins;
 		}
     }
