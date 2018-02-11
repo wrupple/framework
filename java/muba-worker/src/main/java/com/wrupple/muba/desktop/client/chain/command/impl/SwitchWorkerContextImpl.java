@@ -21,9 +21,19 @@ public class SwitchWorkerContextImpl implements SwitchWorkerContext {
 
         // Goes to the place represented on URL else default place
         log.info("Desktop Loading finished, handling current application state");
+/*
+    //hide home toolbar when in home activity
+            eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeListener(main, toolbar, dm));
+        eventBus.addHandler(DesktopProcessEvent.TYPE, toolbar);
+        eventBus.addHandler(VegetateEvent.TYPE, toolbar);
 
-        ContextSwitch order = context.handleCurrentApplictionState();
 
+
+
+     */
+
+        ContextSwitch order = context.getContextSwitch();
+        order.setDomain(order.getWorkerStateValue().getDomain());
         context.getRuntimeContext().getEventBus().fireEvent(order, context.getRuntimeContext(), null);
 
 

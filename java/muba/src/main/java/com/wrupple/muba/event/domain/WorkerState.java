@@ -35,4 +35,5 @@ public interface WorkerState extends Event, HasRunner, HasSentence {
 
     void setWordIndex(Long i);
 
+    void setStateValue(ApplicationState applicationState);
 }

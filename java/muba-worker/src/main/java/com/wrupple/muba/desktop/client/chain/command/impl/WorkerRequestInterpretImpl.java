@@ -30,7 +30,9 @@ public class WorkerRequestInterpretImpl extends ChainBase implements WorkerReque
     public Context materializeBlankContext(RuntimeContext requestContext) throws Exception {
         WorkerRequestContext c = contextProvider.get();
         //FIXME attemptToReuseExistingChannel
-        c.setWorkerState(workerProvider.get());
+        WorkerState worker = workerProvider.get();
+        worker.setDomain(requestContext.getSession().getSessionValue().getDomain());
+        c.setWorkerState(worker);
         return c.setRuntimeContext(requestContext);
     }
 

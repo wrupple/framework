@@ -1,6 +1,7 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.desktop.client.chain.command.BuildApplicationTree;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
@@ -17,7 +18,7 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
 
         String rootActivity = context.getWorkerState().getHomeActivity();
         Application domainRoot;
-            domainRoot = triggerGet(rootActivity, context.getRuntimeContext(), true, null);
+            domainRoot = triggerGet(rootActivity, context.getRuntimeContext());
 
             if(domainRoot==null){
                 // Most likely because domain has not been set up
@@ -31,46 +32,22 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
                 sliceWriter.writeItems(domainRoot);
             }
         }*/
+        domainRoot =  buildItemTree(domainRoot, context, null);
         context.getWorkerState().setApplicationTree(domainRoot);
         return CONTINUE_PROCESSING;
     }
 
-    private Application triggerGet(Object key, RuntimeContext runtimeContext, boolean assemble, CatalogActionRequest parent) throws Exception {
+    private Application triggerGet(Object key, RuntimeContext runtimeContext) throws Exception {
         CatalogActionRequestImpl event = new CatalogActionRequestImpl();
         event.setCatalog(Application.CATALOG);
         event.setEntry(key);
-        event.setParentValue(parent);
-        event.setFilter(null);
-        event.setFollowReferences(assemble);
+        event.setFollowReferences(true);
         event.setName(DataEvent.READ_ACTION);
         event.setDomain(runtimeContext.getSession().getSessionValue().getDomain());
         List<Application> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
         return results == null ? null : results.isEmpty() ? null : results.get(0);
     }
 
-
-    protected Application buildCurrentDomainSlice(WorkerRequestContext context, String homeActivity) throws Exception {
-
-        Application domainRoot;
-        FilterData filter = FilterDataUtils.createSingleFieldFilter(Application.NAME_FIELD, homeActivity);
-
-        CatalogActionRequestImpl event = new CatalogActionRequestImpl();
-        event.setParentValue(null);
-        event.setCatalog(Application.CATALOG);
-        event.setFilter(filter);
-        event.setFollowReferences(false);
-        event.setName(DataEvent.READ_ACTION);
-        event.setDomain(context.getRuntimeContext().getSession().getSessionValue().getDomain());
-
-        List<Application> domainRoots = context.getRuntimeContext().getEventBus().fireEvent(event, context.getRuntimeContext(), null);
-        domainRoot = domainRoots.get(0);
-        if (domainRoot == null) {
-            throw new IllegalArgumentException("no domain root");
-        }
-        domainRoot = buildItemTree(domainRoot, context, event);
-
-        return domainRoot;
-    }
 
     private Application buildItemTree(Application item, WorkerRequestContext context, CatalogActionRequestImpl parent) {
         Collection<Long> childItems = item.getChildren();
@@ -86,7 +63,7 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
 
             for (Long childId : childItems) {
                 try {
-                    child = triggerGet(childId, context.getRuntimeContext(), false, parent);
+                    child = triggerGet(childId, context.getRuntimeContext());
                 } catch (Exception e) {
                     child = null;
                 }

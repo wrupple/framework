@@ -6,4 +6,6 @@ import com.wrupple.muba.event.domain.reserved.HasSentence;
 
 public interface WorkerRequest extends Event, HasSentence{
     String CATALOG = "WorkerRequest";
+
+    Long getRunner();
 }

@@ -59,19 +59,30 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
 
         Task request = context.getStateValue().getTaskDescriptorValue();
         if(request==null){
-            //FIXME this implies the service contract will always be a task descriptor
-            request = (Task) requestContext.getServiceContract();
+            request = getFirstApplicationTask(context.getStateValue());
             if(request==null){
-                //TODO task plugin is used as a shorthand for the more verbose catalog engine
-
-                //TODO get task descriptor (from token¡?)
-                throw new NullPointerException("there is no task definition");
+                //FIXME this implies the service contract will always be a task descriptor
+                request = (Task) requestContext.getServiceContract();
+                if(request==null){
+                    //TODO get task descriptor (from token¡?)
+                    throw new NullPointerException("there is no task definition");
+                }
+                context.getStateValue().setTaskDescriptorValue(request);
             }
-            context.getStateValue().setTaskDescriptorValue(request);
         }
 
 
         return CONTINUE_PROCESSING;
+    }
+
+    private Task getFirstApplicationTask(ApplicationState stateValue) {
+        Application appllication = stateValue.getApplicationValue();
+        List<Task> tasks = appllication.getProcessValues();
+        if(tasks==null||tasks.isEmpty()){
+            throw new IllegalStateException("Application "+appllication.getDistinguishedName()+" has no tasks");
+        }else{
+            return tasks.get(0);
+        }
     }
 
     public ApplicationState acquireContext(Application initialState, RuntimeContext thread) throws Exception {

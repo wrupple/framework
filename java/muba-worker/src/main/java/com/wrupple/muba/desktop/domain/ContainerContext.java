@@ -88,18 +88,7 @@ public interface ContainerContext extends ServiceContext,YieldContext {
 
             RootLayoutPanel.get().add(main);
      */
-    ContextSwitch handleCurrentApplictionState();
 
-    /*
-    //hide home toolbar when in home activity
-            eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeListener(main, toolbar, dm));
-        eventBus.addHandler(DesktopProcessEvent.TYPE, toolbar);
-        eventBus.addHandler(VegetateEvent.TYPE, toolbar);
-
-
-
-
-     */
 
 
 }

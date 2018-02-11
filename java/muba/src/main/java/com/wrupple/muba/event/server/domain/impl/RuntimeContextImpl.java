@@ -382,7 +382,6 @@ serviceContext = null;
 		result = prime * result + ((format == null) ? 0 : format.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((locale == null) ? 0 : locale.hashCode());
-		result = prime * result + ((parentValue == null) ? 0 : parentValue.hashCode());
 		result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
 		result = prime * result + (scopedWriting ? 1231 : 1237);
 		result = prime * result + ((sentence == null) ? 0 : sentence.hashCode());

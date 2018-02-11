@@ -2,6 +2,7 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 
 import com.wrupple.muba.desktop.client.chain.command.DesktopWriterCommand;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
+import com.wrupple.muba.event.domain.WorkerState;
 
 public class DesktopWriterCommandImpl implements DesktopWriterCommand {
 
@@ -14,9 +15,10 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
         vegetate receives a runtime context and prints a ${tagged} html formated document
 
         */
+        WorkerState worker = context.getWorkerState();
+        worker.setRunner(context.getRequest().getRunner());
 
-
-        context.getRuntimeContext().getEventBus().fireEvent(context.getWorkerState(), context.getRuntimeContext(), null);
+        context.getRuntimeContext().getEventBus().fireEvent(worker, context.getRuntimeContext(), null);
 
         return CONTINUE_PROCESSING;
     }

@@ -44,8 +44,4 @@ public class ContainerContextImpl extends AbstractYieldContext implements Contai
 
     }
 
-    @Override
-    public ContextSwitch handleCurrentApplictionState() {
-        return null;
-    }
 }

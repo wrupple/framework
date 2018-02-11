@@ -53,6 +53,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 
 		// must have been deserialized by this point
 		CatalogEntry result = (CatalogEntry) context.getRequest().getEntryValue();
+		willBeCreated(context,  result);
 		if(result ==null){
 			throw new NullPointerException("no entry in context");
 		}
@@ -178,7 +179,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             boolean alterationsMade = false;
 			for (CatalogEntry entry : entries) {
 				if (entry.getId() == null&&!beeingCreated(context,entry)) {
-				    willBeCreated(context,entry);
+				    //willBeCreated(context,entry);
                     created= context.triggerCreate(field.getCatalog(), entry);
 
 					createdValues.add(created);

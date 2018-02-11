@@ -113,7 +113,7 @@ public class ContextSwitchTest extends WorkerTest {
 
         container.fireEvent(action);
 
-        item = (ApplicationImpl) action.getEntryValue();
+        root = (ApplicationImpl) action.getEntryValue();
 
         log.trace("[-create a pool of drivers to resolve the riderBooking-]");
 
@@ -137,7 +137,7 @@ public class ContextSwitchTest extends WorkerTest {
 //        assertTrue(riderBooking.getTimestamp()!=null);
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
-        container.fireEvent(new WorkerRequestImpl(Arrays.asList(testActivity, riderBooking.getId().toString())));
+        container.fireEvent(new WorkerRequestImpl(Arrays.asList(testActivity, riderBooking.getId().toString()),container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco")))));
         //check conditions
         assertTrue(riderBooking.getDriverValue()!=null);
         //assertTrue(Math.abs(riderBooking.getDriverValue().getLocation()-riderBooking.getLocation())<0);

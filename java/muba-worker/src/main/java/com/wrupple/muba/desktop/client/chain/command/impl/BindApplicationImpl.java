@@ -7,6 +7,7 @@ import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.worker.domain.impl.ApplicationStateImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +32,13 @@ public class BindApplicationImpl implements BindApplication {
         int currentIndex = 0;
 
         Application initialState = getInitialActivity(sentence,currentIndex,container.getApplicationTree());
-
+        ApplicationStateImpl state = new ApplicationStateImpl();
+        state.setDomain(container.getDomain());
+        state.setWorkerStateValue(container);
+        state.setApplicationValue(initialState);
+        state.setApplication(initialState.getId());
         container.setWordIndex(new Long(currentIndex));
-
-        container.getStateValue().setApplicationValue(initialState);
-        container.getStateValue().setApplication(initialState.getId());
+        container.setStateValue(state);
 
         return CONTINUE_PROCESSING;
     }
@@ -44,7 +47,7 @@ public class BindApplicationImpl implements BindApplication {
 
      Application getInitialActivity(List<String> sentence, int index, Application applicationTree) throws Exception {
 
-        if(sentence.size()<index){
+        if(sentence.size()>index){
             String token = sentence.get(index);
 
             List<ServiceManifest> children = applicationTree.getChildrenValues();
@@ -54,8 +57,8 @@ public class BindApplicationImpl implements BindApplication {
 
 
                 for(ServiceManifest current : children){
-                    String dn = current.getVersionDistinguishedName();
-                    if(dn==null && dn.equals(token)){
+                    String dn = current.getDistinguishedName();
+                    if(dn!=null && dn.equals(token)){
                         index = index +1;
                         return getInitialActivity(sentence,index, (Application) current);
                     }else {
