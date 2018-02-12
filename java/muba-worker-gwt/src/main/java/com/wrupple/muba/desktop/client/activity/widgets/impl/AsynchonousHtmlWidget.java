@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.cms.domain.WruppleDomainHTMLPage;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;

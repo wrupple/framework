@@ -3,7 +3,7 @@ package com.wrupple.vegetate.client.services;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
-import com.wrupple.muba.worker.shared.services.StorageManager.Unit;
+import com.wrupple.muba.desktop.shared.services.StorageManager.Unit;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.muba.worker.domain.BPMPeer;
 import com.wrupple.muba.worker.server.service.StateTransition;

@@ -67,12 +67,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.wrupple.muba</groupId>
             <artifactId>muba-runner-choco</artifactId>
             <version>${muba.version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>com.wrupple.muba</groupId>

@@ -37,43 +37,46 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
         //is there submission material?
         CatalogEntry userOutput = applicationState.getEntryValue();
-        //what task
-        //what action
-        //AQUI VA LO BUENO
-        Instrospection instrospection = aceess.newSession(applicationState);
+        if(userOutput==null){
 
-        //conditions from GWT desktop ( CommitEditTransaction CommitSelectTransaction )... do commit
+        }else{
+            //what task
+            //what action
+            //AQUI VA LO BUENO
+            Instrospection instrospection = aceess.newSession(applicationState);
 
-        //FIXME this is handled on the client when an application State is updated
-        if (producedField != null) {
-            //TODO certain saveTo fields are reserved, like those in CatalogAction
-            //GWTUtils.setAttribute(contextP, saveTo, userOutput);
-            aceess.setPropertyValue(producedField,applicationState,userOutput.getId(), instrospection);
+            //conditions from GWT desktop ( CommitEditTransaction CommitSelectTransaction )... do commit
 
-        }
+            //FIXME this is handled on the client when an application State is updated
+            if (producedField != null) {
+                //TODO certain saveTo fields are reserved, like those in CatalogAction
+                //GWTUtils.setAttribute(contextP, saveTo, userOutput);
+                aceess.setPropertyValue(producedField,applicationState,userOutput.getId(), instrospection);
+
+            }
 
 
 
-        String transactionType = applicationState.getTaskDescriptorValue().getName();
-        final String catalog = (String) applicationState.getTaskDescriptorValue().getCatalog();
+            String transactionType = applicationState.getTaskDescriptorValue().getName();
+            final String catalog = (String) applicationState.getTaskDescriptorValue().getCatalog();
 
-        boolean canceled = applicationState.getCanceled();
-        Object id =applicationState.getEntry();
-        if(id ==null){
-            id = userOutput.getId();
-        }
-        CatalogActionRequestImpl entryCommit = null;
-        if(CatalogActionRequest.READ_ACTION.equals(transactionType)){
-           // onDone.setResultAndFinish(context);
-        }else  if(CatalogActionRequest.WRITE_ACTION.equals(transactionType)){
-			/*
-			 * THIS TRANSACTION HAS SOME SORT OF USER OUTPUT THAT MUST BE COMMITED
-			 */
+            boolean canceled = applicationState.getCanceled();
+            Object id =applicationState.getEntry();
+            if(id ==null){
+                id = userOutput.getId();
+            }
+            CatalogActionRequestImpl entryCommit = null;
+            if(CatalogActionRequest.READ_ACTION.equals(transactionType)){
+                // onDone.setResultAndFinish(context);
+            }else  if(CatalogActionRequest.WRITE_ACTION.equals(transactionType)){
+                /*
+                 * THIS TRANSACTION HAS SOME SORT OF USER OUTPUT THAT MUST BE COMMITED
+                 */
 
-            if(userOutput==null){
-                //no user output, most likely canceled
+                if(userOutput==null){
+                    //no user output, most likely canceled
 
-            }else{
+                }else{
 
                 /*boolean draft = entry.getDraft();
                 if(draft){
@@ -105,20 +108,20 @@ public class CommitSubmissionImpl implements CommitSubmission {
                     sm.delete(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(), catalog, id, callback);
                 }*/
 
-                entryCommit= new CatalogActionRequestImpl();
+                    entryCommit= new CatalogActionRequestImpl();
 
-                entryCommit.setEntryValue(userOutput);
-                entryCommit.setEntry(id);
-                entryCommit.setCatalog(catalog);
-                entryCommit.setName(transactionType);
-            }
+                    entryCommit.setEntryValue(userOutput);
+                    entryCommit.setEntry(id);
+                    entryCommit.setCatalog(catalog);
+                    entryCommit.setName(transactionType);
+                }
 
-        }else if(CatalogActionRequest.CREATE_ACTION.equals(transactionType)){
-            if(canceled){
-                //no commiting required
-                //onDone.setResultAndFinish(context);
-            }else{
-                //final StateTransition<JsCatalogEntry> callback=new EntryUpdateCallback(context,onDone);
+            }else if(CatalogActionRequest.CREATE_ACTION.equals(transactionType)){
+                if(canceled){
+                    //no commiting required
+                    //onDone.setResultAndFinish(context);
+                }else{
+                    //final StateTransition<JsCatalogEntry> callback=new EntryUpdateCallback(context,onDone);
 
                 /*if(e.isClosed()||e.getCallback()==null){
                     sm.create(dm.getCurrentActivityHost(), dm.getCurrentActivityDomain(),catalog, entry, callback);
@@ -133,20 +136,22 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
                 }*/
 
-                entryCommit= new CatalogActionRequestImpl();
+                    entryCommit= new CatalogActionRequestImpl();
 
-                entryCommit.setEntryValue(userOutput);
-                entryCommit.setCatalog(catalog);
-                entryCommit.setName(transactionType);
+                    entryCommit.setEntryValue(userOutput);
+                    entryCommit.setCatalog(catalog);
+                    entryCommit.setName(transactionType);
 
+                }
             }
-        }
-        //no commit required for select
-        entryCommit.setFollowReferences(true);
+            //no commit required for select
+            entryCommit.setFollowReferences(true);
 
-        List results = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
-        userOutput = (CatalogEntry) results.get(0);
-        applicationState.setEntryValue(userOutput);
+            List results = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
+            userOutput = (CatalogEntry) results.get(0);
+            applicationState.setEntryValue(userOutput);
+        }
+
         return CONTINUE_PROCESSING;
     }
 

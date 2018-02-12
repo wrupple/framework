@@ -20,10 +20,10 @@ import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
-import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
-import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
-import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
-import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesDeletedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesRetrivedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntryCreatedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntryUpdatedEvent;
 
 @Singleton
 public class HomeToolbarImpl extends ResizeComposite implements HomeToolbar {

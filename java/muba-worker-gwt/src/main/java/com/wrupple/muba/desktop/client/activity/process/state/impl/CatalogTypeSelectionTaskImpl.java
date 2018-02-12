@@ -15,7 +15,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
 import com.wrupple.muba.desktop.client.activity.CatalogSelectionActivity;
 import com.wrupple.muba.desktop.client.activity.process.state.CatalogTypeSelectionTask;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser;
-import com.wrupple.muba.worker.shared.factory.dictionary.CatalogEntryBrowserMap;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.CatalogEntryBrowserMap;
 import com.wrupple.muba.desktop.client.services.logic.ConfigurationConstants;
 import com.wrupple.muba.desktop.client.services.presentation.DesktopTheme;
 import com.wrupple.muba.desktop.domain.DesktopPlace;

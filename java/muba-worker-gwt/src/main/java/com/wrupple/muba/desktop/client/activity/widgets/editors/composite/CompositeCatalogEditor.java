@@ -18,8 +18,8 @@ import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delega
 import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delegates.OneToManyRelationshipDelegate;
 import com.wrupple.muba.desktop.client.activity.widgets.editors.composite.delegates.OneToOneRelationshipDelegate;
 import com.wrupple.muba.desktop.client.activity.widgets.fields.cells.StringJSOadapter;
-import com.wrupple.muba.worker.shared.factory.dictionary.CatalogEditorMap;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.CatalogEditorMap;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.client.services.logic.ProcessManager;

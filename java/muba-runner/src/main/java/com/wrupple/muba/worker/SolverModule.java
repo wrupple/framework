@@ -125,7 +125,7 @@ public class SolverModule extends AbstractModule {
     @Singleton
     @Inject
     @Named(ApplicationState.CATALOG)
-    public CatalogDescriptor application(@Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
+    public CatalogDescriptor application(@Named(ManagedObject.CATALOG_TIMELINE) CatalogDescriptor timeline,
                                          CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(ApplicationStateImpl.class, ApplicationState.CATALOG, "Thread",
                 -990094, timeline);

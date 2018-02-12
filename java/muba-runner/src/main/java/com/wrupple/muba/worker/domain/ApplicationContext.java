@@ -18,6 +18,4 @@ public interface ApplicationContext extends ServiceContext {
 
 
     void setName(String command);
-
-    Command getStateInstance(Task step);
 }

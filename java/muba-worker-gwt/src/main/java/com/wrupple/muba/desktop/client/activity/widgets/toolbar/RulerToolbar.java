@@ -11,7 +11,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.activity.widgets.WruppleActivityToolbarBase;
 import com.wrupple.muba.desktop.client.activity.widgets.panels.DockLayoutTransactionPanel.DockToolbarProperties;
-import com.wrupple.muba.worker.shared.factory.dictionary.ToolbarMap;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.ToolbarMap;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;

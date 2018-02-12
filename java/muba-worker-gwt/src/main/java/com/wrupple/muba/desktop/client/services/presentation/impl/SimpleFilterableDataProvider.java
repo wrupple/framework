@@ -7,7 +7,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.FilterableDataProvider;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;

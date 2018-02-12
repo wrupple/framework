@@ -18,8 +18,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.cms.domain.WruppleActivityAction;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.ContentBrowser;
-import com.wrupple.muba.worker.shared.factory.dictionary.CatalogEntryBrowserMap;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.CatalogEntryBrowserMap;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.command.InterruptActivity;
 import com.wrupple.muba.desktop.client.services.logic.ConfigurationConstants;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
@@ -30,10 +30,10 @@ import com.wrupple.muba.worker.client.factory.dictionary.impl.ThemedImagesDictio
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
-import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
-import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
-import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
-import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesDeletedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesRetrivedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntryCreatedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntryUpdatedEvent;
 import com.wrupple.muba.worker.shared.widgets.Toolbar;
 
 import java.util.List;

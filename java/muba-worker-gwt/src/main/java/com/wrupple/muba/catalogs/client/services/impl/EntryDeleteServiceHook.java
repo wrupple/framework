@@ -3,7 +3,7 @@ package com.wrupple.muba.catalogs.client.services.impl;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;
-import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesDeletedEvent;
 
 import java.util.List;
 

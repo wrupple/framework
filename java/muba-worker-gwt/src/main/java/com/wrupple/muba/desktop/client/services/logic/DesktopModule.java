@@ -5,7 +5,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.desktop.client.activity.widgets.toolbar.HomeToolbar;
-import com.wrupple.muba.worker.shared.factory.dictionary.ActivityPresenterMap;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.ActivityPresenterMap;
 import com.wrupple.muba.desktop.client.services.command.CommitCommand;
 import com.wrupple.muba.desktop.client.services.command.HistoryBackCommand;
 import com.wrupple.muba.desktop.client.services.command.InterruptActivity;

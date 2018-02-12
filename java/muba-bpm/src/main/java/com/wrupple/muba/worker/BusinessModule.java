@@ -45,7 +45,6 @@ public class BusinessModule  extends AbstractModule {
         Context
          */
 
-        bind(ApplicationContext.class).to(ApplicationContextImpl.class);
         bind(IntentResolverContext.class).to(IntentResolverContextImpl.class);
 
         /*

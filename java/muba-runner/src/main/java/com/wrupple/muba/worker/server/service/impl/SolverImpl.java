@@ -58,7 +58,7 @@ public class SolverImpl implements Solver {
     }
 
     @Override
-    public <T extends CatalogEntry> boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callcback) {
+    public <T extends CatalogEntry> boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callcback) throws Exception {
 
         //TODO configure: all runners must return, first one, wait for main runner (default)
         ForkCallback<ApplicationContext> fork = new ForkCallback<ApplicationContext>(callcback);

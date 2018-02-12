@@ -7,6 +7,7 @@ import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.ApplicationState;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -41,6 +42,8 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Application.CATALOG)
     private Application homeApplicationValue;
+    @CatalogField(ignore = true)
+    private HasAccesablePropertyValues parametersValue;
 
 
 
@@ -153,5 +156,14 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
     @Override
     public void setWordIndex(Long wordIndex) {
         this.wordIndex = wordIndex;
+    }
+
+    @Override
+    public HasAccesablePropertyValues getParametersValue() {
+        return parametersValue;
+    }
+
+    public void setParametersValue(HasAccesablePropertyValues parametersValue) {
+        this.parametersValue = parametersValue;
     }
 }

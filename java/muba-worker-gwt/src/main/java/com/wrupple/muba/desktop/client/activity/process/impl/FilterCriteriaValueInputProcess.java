@@ -9,7 +9,7 @@ import com.wrupple.muba.cms.client.services.ContentManagementSystem;
 import com.wrupple.muba.cms.client.services.ContentManager;
 import com.wrupple.muba.desktop.client.activity.widgets.FilterOptionSelectionView;
 import com.wrupple.muba.desktop.client.activity.widgets.toolbar.FilterToolbarImpl;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.overlay.*;
 import com.wrupple.muba.worker.client.activity.process.impl.SequentialProcess;

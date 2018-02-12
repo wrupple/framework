@@ -17,22 +17,30 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
     public boolean execute(Context  ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
             ApplicationState applicationState = context.getStateValue();
-            if(applicationState.getId()==null){
-                throw new RuntimeException("Application State has no id");
-            }
-            CatalogActionRequestImpl request= new CatalogActionRequestImpl();
-            //FIXME update application context of the right type
-            request.setCatalog(ApplicationState.CATALOG);
-            request.setName(CatalogActionRequest.WRITE_ACTION);
-            request.setEntry(applicationState.getId());
-            request.setEntryValue(applicationState);
+        CatalogActionRequestImpl request= new CatalogActionRequestImpl();
+        //FIXME update application context of the right type
+        request.setCatalog(ApplicationState.CATALOG);
+        request.setEntryValue(applicationState);
         request.setFollowReferences(true);
+
+            if(applicationState.getId()==null){
+
+                request.setName(CatalogActionRequest.CREATE_ACTION);
+
+            }else{
+
+                request.setName(CatalogActionRequest.WRITE_ACTION);
+                request.setEntry(applicationState.getId());
+
+            }
+
         List results=context.getRuntimeContext().getEventBus().fireEvent(request,context.getRuntimeContext(),null);
 
         applicationState = (ApplicationState) results.get(0);
         context.setStateValue(applicationState);
-            //commit
-            context.getRuntimeContext().setResult(applicationState/* request.getEntryValue()*/);
+
+
+
         return CONTINUE_PROCESSING;
     }
 }

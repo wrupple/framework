@@ -54,9 +54,10 @@ public class CatalogTransaction {
             people.pushToPath(HasStakeHolder.STAKE_HOLDER_FIELD);
             observers = Collections.singletonList(people);
         }
+
         event.setDomain((Long) context.getNamespaceContext().getId());
 
-        context.getRuntimeContext().getEventBus().broadcastEvent(event,context.getRuntimeContext(),observers);
+        context.getRuntimeContext().getEventBus().broadcastEvent(event,context.getCatalogDescriptor(),context.getRuntimeContext(),observers);
 
     }
 

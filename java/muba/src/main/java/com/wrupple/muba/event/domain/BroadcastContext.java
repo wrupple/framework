@@ -18,4 +18,5 @@ public interface BroadcastContext extends ServiceContext{
     void addConcernedPeers(Collection<? extends Host> results);
 
     Collection<Host> getConcernedPeersValues();
+
 }

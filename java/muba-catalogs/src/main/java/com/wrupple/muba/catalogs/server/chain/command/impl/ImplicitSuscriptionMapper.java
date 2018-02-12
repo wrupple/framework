@@ -49,13 +49,7 @@ public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
         //FIXME Spawn Catalog context with system privileges:
         // if event stake holder has no permissions to see Observer or it's host, then the event wont get broadcasted to those poeple
 
-
-        CatalogActionRequestImpl catalogRequest = new CatalogActionRequestImpl();
-        catalogRequest.setEntry(entry.getCatalogType());
-        catalogRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
-        catalogRequest.setName(CatalogActionRequest.READ_ACTION);
-        List resultzs = (List) bus.fireEvent(catalogRequest, context.getRuntimeContext(), null);
-        CatalogDescriptor descriptor = (CatalogDescriptor) (resultzs).get(0);
+        CatalogDescriptor descriptor = queueElement.getCatalogDescriptor();
 
 
         Collection<FieldDescriptor> fields = descriptor.getFieldsValues();

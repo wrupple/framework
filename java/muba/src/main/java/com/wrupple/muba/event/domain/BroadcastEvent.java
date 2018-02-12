@@ -14,4 +14,8 @@ public interface BroadcastEvent extends Event {
     void setObserversValues(List<FilterCriteria> explicitlySuscriptedObservers);
 
     List<FilterCriteria> getObserversValues();
+
+    CatalogDescriptor getCatalogDescriptor();
+
+    void setCatalogDescriptor(CatalogDescriptor catalogDescriptor);
 }

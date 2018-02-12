@@ -11,7 +11,7 @@ import org.apache.commons.chain.Context;
 public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler {
 
     public void onApplicationStateChanged(ApplicationState e) {
-        asdf
+        //FIXME set worker, fire state
 
 
         //activity manager set display new NestedActivityPresenter(dm)

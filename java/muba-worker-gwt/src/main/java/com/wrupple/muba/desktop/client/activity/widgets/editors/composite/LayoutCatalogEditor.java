@@ -10,13 +10,13 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.catalogs.domain.CatalogAction;
 import com.wrupple.muba.cms.client.services.ContentManagementSystem;
-import com.wrupple.muba.worker.shared.factory.dictionary.CatalogEditorMap;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.CatalogEditorMap;
 import com.wrupple.muba.desktop.client.services.logic.GenericFieldFactory;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogEntry;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;
 import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
-import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesDeletedEvent;
 import com.wrupple.muba.worker.shared.services.FieldConversionStrategy;
 import com.wrupple.vegetate.domain.FieldDescriptor;
 

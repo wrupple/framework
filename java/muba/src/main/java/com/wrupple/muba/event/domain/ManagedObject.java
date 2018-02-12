@@ -4,4 +4,5 @@ import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
 public interface ManagedObject extends ContentNode, HasStakeHolder{
 
+    String MANAGED_CATALOG = "ManagedObject";
 }

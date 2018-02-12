@@ -63,6 +63,8 @@ public interface ApplicationState extends HasDistinguishedName, ManagedObject, H
 
     void setWorkerStateValue(WorkerState workerState);
 
+    void setUserSelection(List<String> userSelection);
+
     // public void setLayoutUnit(String s);
 
     //public void setTransactionViewClass(String s);

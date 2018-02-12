@@ -20,7 +20,7 @@ public interface EventBus
 
     EventRegistry getIntentInterpret();
 
-    void broadcastEvent(Event event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
+    void broadcastEvent(Event event, CatalogDescriptor catalogDescriptor, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
 
     boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception;
 

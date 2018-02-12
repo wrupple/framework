@@ -16,8 +16,8 @@ import com.wrupple.muba.desktop.client.activity.widgets.UserInteractionWidgetImp
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.impl.GoogleIndexedPointMapWidget;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.impl.GoogleIndexedPointMapWidget.CatalogKeyMarkerFactory;
 import com.wrupple.muba.desktop.client.activity.widgets.browsers.impl.GoogleIndexedPointMapWidget.GeoPositionEntry;
-import com.wrupple.muba.worker.shared.factory.dictionary.CatalogEditorMap;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.CatalogEditorMap;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.presentation.CatalogEditor;
 import com.wrupple.muba.desktop.client.services.presentation.impl.GWTUtils;

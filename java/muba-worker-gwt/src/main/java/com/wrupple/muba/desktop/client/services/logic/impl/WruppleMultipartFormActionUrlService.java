@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.client.services.logic.MultipartFormActionUrlService;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;

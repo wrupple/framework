@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+//FIXME use an interpret ChocoInterpret
 public class BindApplicationImpl implements BindApplication {
 
     protected static final Logger log = LoggerFactory.getLogger(BindApplicationImpl.class);

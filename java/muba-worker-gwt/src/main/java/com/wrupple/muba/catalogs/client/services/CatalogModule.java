@@ -1,9 +1,9 @@
 package com.wrupple.muba.catalogs.client.services;
 
 import com.google.gwt.inject.client.Ginjector;
-import com.wrupple.muba.worker.shared.factory.dictionary.SolverConcensorMap;
-import com.wrupple.muba.worker.shared.factory.help.TriggerAidProvider;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.SolverConcensorMap;
+import com.wrupple.muba.desktop.shared.services.factory.help.TriggerAidProvider;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.command.CatalogCommandService;
 import com.wrupple.muba.desktop.client.services.logic.DesktopModule;
 import com.wrupple.muba.desktop.shared.services.FieldDescriptionService;

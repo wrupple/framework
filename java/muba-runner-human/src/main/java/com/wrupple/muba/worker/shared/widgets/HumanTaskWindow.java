@@ -1,6 +1,5 @@
 package com.wrupple.muba.worker.shared.widgets;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.wrupple.muba.desktop.client.widgets.TaskWindow;
 
 public interface HumanTaskWindow extends AcceptsOneWidget, TaskWindow {
@@ -9,7 +8,7 @@ public interface HumanTaskWindow extends AcceptsOneWidget, TaskWindow {
     String REDRAW_FLAG = "toolbarRedraw";
     String ActivityPresenterToolbarHeight = "activityPresenterToolbarHeight";
 
-    void setMainTaskProcessor(HumanTaskProcessor<? extends JavaScriptObject, ?> ui);
+    void setMainTaskProcessor(HumanTaskProcessor<Object> ui);//.setWidget(transactionView);
 
     Toolbar getToolbarById(String toolbarId);
 
@@ -19,7 +18,7 @@ public interface HumanTaskWindow extends AcceptsOneWidget, TaskWindow {
 
     void focusToolbar(Toolbar activityToolbar);
 
-    void addToolbar(Toolbar toolbar, JavaScriptObject properties);
+    void addToolbar(Toolbar toolbar, Object properties);
 
     void setUnit(String layoutUnit);
 

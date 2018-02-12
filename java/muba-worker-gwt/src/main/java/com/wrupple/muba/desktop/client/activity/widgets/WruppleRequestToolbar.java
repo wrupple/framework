@@ -15,17 +15,17 @@ import com.wrupple.muba.bpm.client.services.ProcessContextServices;
 import com.wrupple.muba.desktop.client.event.NewVegetateRequestEvent;
 import com.wrupple.muba.desktop.client.event.VegetateRequestFailureEvent;
 import com.wrupple.muba.desktop.client.event.VegetateRequestSuccessEvent;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.impl.ActivityVegetateEventHandler;
 import com.wrupple.muba.desktop.domain.overlay.JsCatalogActionRequest;
 import com.wrupple.muba.desktop.domain.overlay.JsProcessTaskDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTaskToolbarDescriptor;
 import com.wrupple.muba.desktop.domain.overlay.JsTransactionApplicationContext;
 import com.wrupple.muba.worker.shared.domain.ReconfigurationBroadcastEvent;
-import com.wrupple.muba.worker.shared.event.EntriesDeletedEvent;
-import com.wrupple.muba.worker.shared.event.EntriesRetrivedEvent;
-import com.wrupple.muba.worker.shared.event.EntryCreatedEvent;
-import com.wrupple.muba.worker.shared.event.EntryUpdatedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesDeletedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntriesRetrivedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntryCreatedEvent;
+import com.wrupple.muba.desktop.shared.services.event.EntryUpdatedEvent;
 
 import javax.inject.Named;
 

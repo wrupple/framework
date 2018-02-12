@@ -59,10 +59,11 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
             contract.setStateValue(state);
         }
+        context.setStateValue(state);
+
         setWorkingTask(state,context);
 
 
-        context.setStateValue(state);
 
         return CONTINUE_PROCESSING;
     }

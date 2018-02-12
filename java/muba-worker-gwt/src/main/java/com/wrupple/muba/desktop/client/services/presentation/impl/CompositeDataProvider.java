@@ -5,7 +5,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.view.client.ProvidesKey;
 import com.wrupple.muba.catalogs.client.services.ClientCatalogCacheManager;
 import com.wrupple.muba.catalogs.shared.services.ImplicitJoinUtils;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.muba.desktop.domain.overlay.JsFilterData;
 import com.wrupple.muba.worker.client.services.impl.DataCallback;

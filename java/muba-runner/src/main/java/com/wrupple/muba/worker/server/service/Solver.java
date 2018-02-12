@@ -16,7 +16,7 @@ public interface Solver {
      * @param context
      * @return true if a solution has been found
      */
-    <T extends CatalogEntry> boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callcback);
+    <T extends CatalogEntry> boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callcback) throws Exception;
 
     void register(Runner plugin);
 }

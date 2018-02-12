@@ -90,11 +90,12 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
     @Override
-    public void broadcastEvent(Event event, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
+    public void broadcastEvent(Event event, CatalogDescriptor catalogDescriptor,RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
         BroadcastEvent queued = queueElementProvider.get();
         queued.setEventValue(event);
         queued.setObserversValues(explicitlySuscriptedObservers);
         queued.setDomain(event.getDomain());
+queued.setCatalogDescriptor(catalogDescriptor);
         fireEvent(queued,runtimeContext,null/*use all broadcast handlers*/);
     }
 

@@ -27,11 +27,6 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
         this.name=command;
     }
 
-    @Override
-    public Command getStateInstance(Task step) {
-        return null;
-    }
-
 
     private ApplicationState stateValue;
 

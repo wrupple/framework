@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 import com.wrupple.muba.catalogs.domain.CatalogActionRequest;
-import com.wrupple.muba.worker.shared.services.StorageManager;
+import com.wrupple.muba.desktop.shared.services.StorageManager;
 import com.wrupple.muba.desktop.client.services.logic.DesktopManager;
 import com.wrupple.vegetate.client.services.RemoteStorageUnit;
 import com.wrupple.vegetate.domain.CatalogEntry;

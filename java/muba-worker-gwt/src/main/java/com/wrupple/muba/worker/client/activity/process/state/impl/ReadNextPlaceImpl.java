@@ -5,7 +5,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.wrupple.muba.bpm.client.services.ProcessContextServices;
-import com.wrupple.muba.worker.shared.factory.dictionary.OutputHandlerMap;
+import com.wrupple.muba.desktop.shared.services.factory.dictionary.OutputHandlerMap;
 import com.wrupple.muba.desktop.client.services.logic.ServiceBus;
 import com.wrupple.muba.desktop.domain.DesktopPlace;
 import com.wrupple.muba.desktop.domain.overlay.JsApplicationItem;

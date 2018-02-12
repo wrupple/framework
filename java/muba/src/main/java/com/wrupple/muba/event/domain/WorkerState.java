@@ -1,5 +1,6 @@
 package com.wrupple.muba.event.domain;
 
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.reserved.HasRunner;
 import com.wrupple.muba.event.domain.reserved.HasSentence;
 
@@ -36,4 +37,6 @@ public interface WorkerState extends Event, HasRunner, HasSentence {
     void setWordIndex(Long i);
 
     void setStateValue(ApplicationState applicationState);
+
+    HasAccesablePropertyValues getParametersValue();
 }
