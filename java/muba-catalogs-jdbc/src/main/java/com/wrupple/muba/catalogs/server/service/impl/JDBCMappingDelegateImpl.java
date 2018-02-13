@@ -14,6 +14,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.SQLCompatibilityDelegate;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 
@@ -108,9 +109,9 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 
 	@Override
 	public void createRequiredTables(CatalogActionContext context, CatalogDescriptor catalog, QueryRunner runner,
-			Logger log) throws SQLException {
+									 Logger log, SQLCompatibilityDelegate compatibility) throws SQLException {
 		Collection<FieldDescriptor> fields = catalog.getFieldsValues();
-
+		List<String> indexes = new ArrayList<String>();
 		StringBuilder mainstmt = new StringBuilder(500);
 		StringBuilder indexstmt = null;
 		mainstmt.append(CREATE_TABLE);
@@ -135,7 +136,6 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		String primaryKey = catalog.getKeyField();
 		boolean first = true;
 		String mainTable,fieldCOlumn;
-		List<String> indexes = new ArrayList<String>();
 		for (FieldDescriptor field : fields) {
 			if (!field.isEphemeral() && (catalog.getConsolidated()||!keyDelegate.isInheritedField(field,catalog)||catalog.getKeyField().equals(field.getFieldId()))) {
 
@@ -173,6 +173,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexstmt.append(dbcDataType);
 						indexstmt.append(" )");
 
+
 						log.debug("[CREATED TABLE] {}", mainTable);
 						runner.update(indexstmt.toString());
 
@@ -194,7 +195,10 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexstmt.append(DELIMITER);
 						indexstmt.append(" )");
 						indexes.add(indexstmt.toString());
-
+                        if(compatibility.requiresPostCreationConfig()){
+                            indexstmt.setLength(0);
+                            indexes.add(configureTable(mainTable,null,indexstmt,compatibility, context));
+                        }
 					} else {
 						if (first) {
 							first = false;
@@ -247,10 +251,19 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		// create indexes
 		log.debug("[CREATED TABLE] {}", catalog.getDistinguishedName());
 		runner.update(mainstmt.toString());
+		if(compatibility.requiresPostCreationConfig()){
+			indexstmt.setLength(0);
+			indexes.add(configureTable(null,catalog,indexstmt,compatibility, context));
+		}
+
 		for (String st : indexes) {
 			runner.update(st);
 		}
 
+	}
+
+	private String configureTable(String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context) {
+		return compatibility.buildTableConfigurationStatement(this,mainTable,catalog,builder,compatibility, context);
 	}
 
 	@Override

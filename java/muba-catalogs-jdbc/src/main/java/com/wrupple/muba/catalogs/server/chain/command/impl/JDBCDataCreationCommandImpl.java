@@ -147,7 +147,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		} catch (SQLException ee) {
 			if (ee.getErrorCode() == missingTableErrorCode) {
 				log.warn("[DB table does not exist] will create catalog's table structure");
-				tableNames.createRequiredTables(context, catalogDescriptor, runner, log);
+				tableNames.createRequiredTables(context, catalogDescriptor, runner, log,compatibility);
 				id = runner.insert(builder.toString(), keyHandler, paramz.toArray());
 			} else {
 				log.error("[DB error while inserting] errorCode = {}", ee.getErrorCode(), ee);

@@ -21,9 +21,7 @@ import com.wrupple.muba.desktop.domain.WorkerRequestManifest;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.ApplicationDependencyImpl;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
-import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 import com.wrupple.muba.event.server.ExplicitIntentInterpret;
 import com.wrupple.muba.event.server.chain.command.BindService;
@@ -62,6 +60,8 @@ public abstract class WorkerTest extends EasyMockSupport {
 
     WorkerContainer container;
 
+    static final String LOCATION = "/home/ALTECMEXICO/z563926/Desktop/testdb/";
+
     public WorkerTest() {
 
         List<AbstractModule> modules = Arrays.asList(
@@ -70,7 +70,7 @@ public abstract class WorkerTest extends EasyMockSupport {
                 new BusinessModule(),
                 new ConstraintSolverModule(),
                 new SolverModule(),
-                new HSQLDBModule(),
+                new HSQLDBModule(LOCATION),
                 new JDBCModule(),
                 new SQLModule(),
                 new ValidationModule(),
@@ -210,7 +210,7 @@ public abstract class WorkerTest extends EasyMockSupport {
                 ds.setLogWriter(new PrintWriter(System.err));
                 ds.setPassword("");
                 ds.setUser("SA");
-                ds.setUrl("jdbc:hsqldb:mem:aname");
+                ds.setUrl("jdbc:hsqldb:file:"+LOCATION);
                 return ds;
             }
 

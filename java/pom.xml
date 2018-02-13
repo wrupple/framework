@@ -14,20 +14,22 @@
 		<module>validation-bval</module>
         <!--<module>vegetate</module>-->
 		<module>muba-catalogs</module>
-        <module>muba-catalogs-format</module>
+        <!--<module>muba-catalogs-format</module>-->
         <module>muba-catalogs-sql</module>
 		<module>muba-catalogs-jdbc</module>
-		<module>muba-catalogs-jdbc-mysql</module>
-		<module>muba-catalogs-jdbc-hsql</module>
-		<module>muba-runner</module>
-		<module>muba-runner-choco</module>
-        <module>muba-runner-human</module>
+        <!--<module>muba-catalogs-jdbc-mysql</module>-->
+        <module>muba-catalogs-jdbc-hsql</module>
+        <module>muba-runner</module>
+        <module>muba-runner-choco</module>
+        <!--
+        <module>muba-runner-human</module>-->
 		<module>muba-bpm</module>
         <module>muba-worker</module>
-        <module>muba-worker-text</module>
+		<!--
+		<module>muba-worker-text</module>
         <module>muba-worker-browser</module>
         <module>muba-worker-gwt</module>
-        <!--<module>vegetate-security</module>-->
+        <module>vegetate-security</module>-->
 	</modules>
 
 

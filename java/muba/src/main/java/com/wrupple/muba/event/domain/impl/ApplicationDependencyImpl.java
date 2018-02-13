@@ -1,6 +1,5 @@
 package com.wrupple.muba.event.domain.impl;
 
-import com.sun.org.apache.xml.internal.resolver.CatalogEntry;
 import com.wrupple.muba.event.domain.ApplicationDependency;
 
 public class ApplicationDependencyImpl extends CatalogEntryImpl implements ApplicationDependency {

@@ -49,7 +49,7 @@ public class IntegralTest extends AbstractTest{
                 new ChocoSolverTestModule(),
                 new ConstraintSolverModule(),
                 new SolverModule(),
-                new HSQLDBModule(),
+                new HSQLDBModule(null),
                 new JDBCModule(),
                 new SQLModule(),
                 new ValidationModule(),

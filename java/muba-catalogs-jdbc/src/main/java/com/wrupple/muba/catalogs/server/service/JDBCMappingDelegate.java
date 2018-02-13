@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface JDBCMappingDelegate extends TableMapper, ColumnMapper {
 
-	void createRequiredTables(CatalogActionContext context, CatalogDescriptor catalogDescriptor, QueryRunner runner, Logger log) throws SQLException;
+	void createRequiredTables(CatalogActionContext context, CatalogDescriptor catalogDescriptor, QueryRunner runner, Logger log, SQLCompatibilityDelegate compatibility) throws SQLException;
 
     void createForeignValueList(String foreignTableName, Long id, List<Object> fieldValue, QueryRunner runner, Logger log) throws SQLException;
 

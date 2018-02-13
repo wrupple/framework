@@ -36,7 +36,7 @@ public class IntegralTest extends AbstractTest{
 
 
     public IntegralTest() {
-        init(new IntegralTestModule(), new JDBCHSQLTestModule(), new HSQLDBModule(), new JDBCModule(), new SQLModule(),
+        init(new IntegralTestModule(), new JDBCHSQLTestModule(), new HSQLDBModule(null), new JDBCModule(), new SQLModule(),
                 new ValidationModule(), new SingleUserModule(), new CatalogModule(), new LambdaModule(), new DispatcherModule(), new ApplicationModule());
     }
 
