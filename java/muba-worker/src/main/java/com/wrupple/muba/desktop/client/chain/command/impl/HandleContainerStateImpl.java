@@ -14,14 +14,11 @@ public class HandleContainerStateImpl implements HandleContainerState {
     @Override
     public boolean execute(ContextSwitchRuntimeContext context) throws Exception {
         WorkerState worker = context.getContextSwitch().getWorkerStateValue();
-        ApplicationState state = worker.getStateValue();
-        BusinessIntentImpl intent = new BusinessIntentImpl();
-        intent.setStateValue(state);
-        intent.setDomain(state.getDomain());
+        ApplicationState state = worker.getStateValue();;
         context.
                 getRuntimeContext().
                 getEventBus().
-                fireEvent(intent
+                fireEvent(state
                         ,
                         context.getRuntimeContext(),
                         null

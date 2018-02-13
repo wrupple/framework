@@ -38,8 +38,7 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
 
         applicationState = (ApplicationState) results.get(0);
         context.setStateValue(applicationState);
-
-
+        context.getRuntimeContext().setResult(applicationState);
 
         return CONTINUE_PROCESSING;
     }

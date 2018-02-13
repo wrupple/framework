@@ -2,7 +2,12 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 
 import com.wrupple.muba.desktop.client.chain.command.DesktopWriterCommand;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
+import com.wrupple.muba.event.domain.Application;
+import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.event.domain.WorkerState;
+import com.wrupple.muba.worker.domain.impl.BusinessIntentImpl;
+
+import java.util.List;
 
 public class DesktopWriterCommandImpl implements DesktopWriterCommand {
 
@@ -18,6 +23,15 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
         WorkerState worker = context.getWorkerState();
         worker.setRunner(context.getRequest().getRunner());
 
+        BusinessIntentImpl intent = new BusinessIntentImpl();
+        intent.setStateValue(worker.getStateValue());
+        intent.setDomain(worker.getDomain());
+        ApplicationState state = ((List<ApplicationState>)context.getRuntimeContext().getEventBus().fireEvent(intent, context.getRuntimeContext(), null)).get(0);
+
+
+        //launch worker
+        state.setWorkerStateValue(worker);
+        worker.setStateValue(state);
         context.getRuntimeContext().getEventBus().fireEvent(worker, context.getRuntimeContext(), null);
 
         return CONTINUE_PROCESSING;
