@@ -11,6 +11,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.desktop.NaiveWorkerConfiguration;
 import com.wrupple.muba.desktop.WorkerModule;
 import com.wrupple.muba.desktop.client.service.WorkerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
@@ -66,10 +67,12 @@ public abstract class WorkerTest extends EasyMockSupport {
 
         List<AbstractModule> modules = Arrays.asList(
                 new IntegralTestModule(),
+                new NaiveWorkerConfiguration(),
                 new WorkerModule(),
                 new BusinessModule(),
                 new ConstraintSolverModule(),
                 new SolverModule(),
+                new SimpleDatabaseModule(LOCATION),
                 new HSQLDBModule(LOCATION),
                 new JDBCModule(),
                 new SQLModule(),
@@ -136,92 +139,17 @@ public abstract class WorkerTest extends EasyMockSupport {
     static class IntegralTestModule extends AbstractModule {
 
 
-            protected void configure() {
+        @Override
+        protected void configure() {
 
 
-                this.bind(BindService.class).to(BindServiceImpl.class);
-                this.bind(Dispatch.class).to(DispatchImpl.class);
+            bind(String.class).annotatedWith(Names.named("worker.defaultActivity")).toInstance("home");
+            bind(String.class).annotatedWith(Names.named("worker.intialTitle")).toInstance("..::Desktop::..");
+            bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.choco")).toInstance(1l);
 
-                bind(VariableConsensus.class).to(ArbitraryDesicion.class);
+            bind(VariableConsensus.class).to(ArbitraryDesicion.class);
 
-
-
-                bind(String.class).annotatedWith(Names.named("worker.defaultActivity")).toInstance("home");
-                bind(String.class).annotatedWith(Names.named("worker.charset")).toInstance("UTF-8");
-                bind(String.class).annotatedWith(Names.named("worker.intialTitle")).toInstance("..::Desktop::..");
-                bind(String.class).annotatedWith(Names.named("worker.importHandler.catalog")).toInstance("workerImportHandlers");
-                bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.choco")).toInstance(1l);
-                bind(String.class).annotatedWith(Names.named("host")).toInstance("localhost");
-                bind(Boolean.class).annotatedWith(Names.named("event.parallel")).toInstance(false);
-                bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
-                bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
-
-                // this makes JDBC the default storage unit
-                bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);
-                bind(DataQueryCommand.class).to(JDBCDataQueryCommandImpl.class);
-                bind(DataReadCommand.class).to(JDBCDataReadCommandImpl.class);
-                bind(DataWritingCommand.class).to(JDBCDataWritingCommandImpl.class);
-                bind(DataDeleteCommand.class).to(JDBCDataDeleteCommandImpl.class);
-            }
-
-            /*
-             * CONFIGURATION
-             */
-
-
-        @Provides
-        @com.google.inject.Singleton
-        @com.google.inject.Inject
-        @com.google.inject.name.Named(Person.CATALOG)
-        public CatalogDescriptor activity(
-                CatalogDescriptorBuilder builder) {
-            CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, Person.CATALOG,  Person.CATALOG,
-                    -13344556, null);
-
-            return r;
         }
-
-        @Provides
-        public ProcessWindow queryRunner() {
-            return new ProcessWindow() {
-                @Override
-                public TaskContainer getRootTaskPresenter() {
-                    return null;
-                }
-            };
-        }
-
-            @Provides
-            @Inject
-            public QueryRunner queryRunner(DataSource ds) {
-                return new QueryRunner(ds);
-            }
-
-            @Provides
-            @Singleton
-            @Inject
-            public DataSource dataSource() throws SQLException {
-                /*
-                 * Alternative
-                 * http://www.exampit.com/blog/javahunter/9-8-2016-Connection-
-                 * Pooling-using-Apache-common-DBCP-And-DBUtils
-                 */
-                JDBCDataSource ds = new JDBCDataSource();
-                ds.setLogWriter(new PrintWriter(System.err));
-                ds.setPassword("");
-                ds.setUser("SA");
-                ds.setUrl("jdbc:hsqldb:file:"+LOCATION);
-                return ds;
-            }
-
-            @Provides
-            @Inject
-            @Singleton
-            @Named("catalog.plugins")
-            public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm, SystemCatalogPlugin system) {
-                CatalogPlugin[] plugins = new CatalogPlugin[]{system,bpm, runner};
-                return plugins;
-            }
 
 
 

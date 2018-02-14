@@ -84,7 +84,6 @@ public class Example {
                 new WorkerModule(),
                 new BusinessModule(),
                 new HumanSolverModule(),
-                //new ConstraintSolverModule(),
                 new SolverModule(),
                 new HSQLDBModule(),
                 new JDBCModule(),
