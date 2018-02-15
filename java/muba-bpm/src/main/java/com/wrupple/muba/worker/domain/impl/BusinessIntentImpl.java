@@ -11,6 +11,7 @@ import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.domain.BusinessIntent;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
             foreignCatalog = ApplicationState.CATALOG
     )
     @CatalogField(ignore = true)
+    @NotNull
     private ApplicationState stateValue;
 
     @CatalogField(ignore = true)

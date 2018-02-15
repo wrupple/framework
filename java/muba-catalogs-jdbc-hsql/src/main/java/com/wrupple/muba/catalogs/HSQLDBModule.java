@@ -33,8 +33,13 @@ public class HSQLDBModule extends AbstractModule {
 		bind(String.class).annotatedWith(Names.named("catalog.sql.foreignKeyColumnDef")).toInstance("INT");
 		bind(String.class).annotatedWith(Names.named("catalog.sql.longStringType")).toInstance("LONGVARCHAR");
 		bind(String.class).annotatedWith(Names.named("catalog.sql.blobType")).toInstance("LONGVARBINARY");
-		bind(String.class).annotatedWith(Names.named("catalog.hsqldb.path")).toInstance(location);
+		if(location==null){
+			bind(String.class).annotatedWith(Names.named("catalog.hsqldb.path")).toInstance("");
 
+		}else{
+			bind(String.class).annotatedWith(Names.named("catalog.hsqldb.path")).toInstance(location);
+
+		}
 
 		bind(SQLCompatibilityDelegate.class).to(HSQLDBCompatibilityDelegate.class);
 	}

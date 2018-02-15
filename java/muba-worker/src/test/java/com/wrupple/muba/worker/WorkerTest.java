@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.ValidationModule;
@@ -61,19 +62,18 @@ public abstract class WorkerTest extends EasyMockSupport {
 
     WorkerContainer container;
 
-    static final String LOCATION = "/home/ALTECMEXICO/z563926/Desktop/testdb/";
 
     public WorkerTest() {
 
-        List<AbstractModule> modules = Arrays.asList(
-                new IntegralTestModule(),
+        List<Module> modules = Arrays.asList(
+                (Module)new IntegralTestModule(),
                 new NaiveWorkerConfiguration(),
                 new WorkerModule(),
                 new BusinessModule(),
                 new ConstraintSolverModule(),
                 new SolverModule(),
-                new SimpleDatabaseModule(LOCATION),
-                new HSQLDBModule(LOCATION),
+                new SimpleDatabaseModule(null),
+                new HSQLDBModule(null),
                 new JDBCModule(),
                 new SQLModule(),
                 new ValidationModule(),

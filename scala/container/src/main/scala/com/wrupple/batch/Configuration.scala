@@ -1,13 +1,14 @@
 package com.wrupple.batch
 
+import java.io.File
+
 import com.typesafe.config.ConfigFactory
 
 import scala.util.Properties
 
-class Configuration(fileNameOption: Option[String] = None) {
+class Configuration(fileName: String) {
 
-  val config = fileNameOption.fold(ifEmpty = ConfigFactory.load())(file =>
-    ConfigFactory.load(file))
+  val config = ConfigFactory.parseFile(new File(fileName)).resolve()
 
   def envOrElseConfig(name: String): String = {
     Properties.envOrElse(

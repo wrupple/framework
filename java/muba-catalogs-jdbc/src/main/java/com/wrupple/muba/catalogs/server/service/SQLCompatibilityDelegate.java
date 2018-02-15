@@ -1,6 +1,7 @@
 package com.wrupple.muba.catalogs.server.service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.wrupple.muba.catalogs.server.service.impl.JDBCMappingDelegateImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
@@ -17,7 +18,7 @@ public interface SQLCompatibilityDelegate {
 
     boolean isSequential();
 
-    String buildTableConfigurationStatement(JDBCMappingDelegateImpl jdbcMappingDelegate, String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context);
+    void buildTableConfigurationStatement(JDBCMappingDelegateImpl jdbcMappingDelegate, String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context, List<String> indexes);
 
     boolean requiresPostCreationConfig();
 }

@@ -27,7 +27,6 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
 
     private final Pattern pattern;
 
-    private final String TOKEN_SPLITTER;
     private final String ancestorIdField;
     private final FieldAccessStrategy access;
     private final CatalogKeyServices keyDelgeate;
@@ -37,9 +36,8 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
 
 
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.token.splitter") String splitter /* "\\." */, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider, @Named(CatalogDescriptor.CATALOG_ID) CatalogDescriptor metadataDescriptor) {
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider, @Named(CatalogDescriptor.CATALOG_ID) CatalogDescriptor metadataDescriptor) {
         this.pattern = pattern;
-        this.TOKEN_SPLITTER = splitter;
         this.ancestorIdField=ancestorIdField;
         this.access = access;
         this.keyDelgeate = keyDelgeate;

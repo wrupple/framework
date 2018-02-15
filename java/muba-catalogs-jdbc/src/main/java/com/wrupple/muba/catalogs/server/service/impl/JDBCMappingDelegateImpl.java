@@ -197,7 +197,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexes.add(indexstmt.toString());
                         if(compatibility.requiresPostCreationConfig()){
                             indexstmt.setLength(0);
-                            indexes.add(configureTable(mainTable,null,indexstmt,compatibility, context));
+                            configureTable(mainTable,null,indexstmt,compatibility, context,indexes);
                         }
 					} else {
 						if (first) {
@@ -253,7 +253,8 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		runner.update(mainstmt.toString());
 		if(compatibility.requiresPostCreationConfig()){
 			indexstmt.setLength(0);
-			indexes.add(configureTable(null,catalog,indexstmt,compatibility, context));
+			configureTable(null,catalog,indexstmt,compatibility, context,indexes);
+
 		}
 
 		for (String st : indexes) {
@@ -262,8 +263,8 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 
 	}
 
-	private String configureTable(String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context) {
-		return compatibility.buildTableConfigurationStatement(this,mainTable,catalog,builder,compatibility, context);
+	private void configureTable(String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context,List<String> indexes ) {
+		 compatibility.buildTableConfigurationStatement(this,mainTable,catalog,builder,compatibility, context,indexes);
 	}
 
 	@Override

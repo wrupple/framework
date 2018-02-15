@@ -28,7 +28,7 @@ lazy val container = project
     libraryDependencies ++= commonDependencies ++ Seq(
       dependencies.worker,
       dependencies.hsql,
-      dependencies.choco,
+      /*dependencies.choco,*/
       dependencies.lambda
     )
   )

@@ -38,7 +38,7 @@ public class WorkerContainer {
     private final Solver solver;
     private final Injector injector;
 
-    public <T extends Module, V extends ImplicitEventResolver.Registration> WorkerContainer(List<T> modules, List<Class<V>> eventHandlers) {
+    public WorkerContainer(List<Module> modules, List<Class<? extends ImplicitEventResolver.Registration>> eventHandlers) {
 
 
         injector = Guice.createInjector(modules);
@@ -83,7 +83,7 @@ public class WorkerContainer {
 
         processSwitches.getIntentInterpret().registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
 
-        for (Class<V> registration : eventHandlers) {
+        for (Class<? extends ImplicitEventResolver.Registration> registration : eventHandlers) {
             processSwitches.getIntentInterpret().registerService(injector.getInstance(registration));
         }
 

@@ -27,7 +27,9 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
         intent.setStateValue(worker.getStateValue());
         intent.setDomain(worker.getDomain());
         ApplicationState state = ((List<ApplicationState>)context.getRuntimeContext().getEventBus().fireEvent(intent, context.getRuntimeContext(), null)).get(0);
-
+        if(state==null){
+            throw new NullPointerException("Business intent resulted in no application state");
+        }
 
         //launch worker
         state.setWorkerStateValue(worker);

@@ -82,7 +82,11 @@ public class SimpleDatabaseModule extends AbstractModule {
         ds.setLogWriter(new PrintWriter(System.err));
         ds.setPassword("");
         ds.setUser("SA");
-        ds.setUrl("jdbc:hsqldb:file:"+location);
+        if(location==null){
+            ds.setUrl("jdbc:hsqldb:mem:aname");
+        }else{
+            ds.setUrl("jdbc:hsqldb:file:"+location);
+        }
         return ds;
     }
 

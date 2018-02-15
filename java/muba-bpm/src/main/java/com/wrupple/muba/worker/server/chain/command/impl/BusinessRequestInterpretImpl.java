@@ -88,6 +88,9 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
         List<Task> workflow = application.getProcessValues();
         List<Long> workflowKeys = application.getProcess();
 
+        if(workflow==null){
+            throw new NullPointerException("Application "+application.getDistinguishedName()+" defines no tasks to run");
+        }
             if(state.getTaskDescriptorValue()==null){
                 if(state.getTaskDescriptor()==null){
                     //default start at first
