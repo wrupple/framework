@@ -18,7 +18,7 @@ public interface SQLCompatibilityDelegate {
 
     boolean isSequential();
 
-    void buildTableConfigurationStatement(JDBCMappingDelegateImpl jdbcMappingDelegate, String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context, List<String> indexes);
+    void buildTableConfigurationStatement(JDBCMappingDelegateImpl jdbcMappingDelegate, String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context, List<String> columnNames, List<String> indexes);
 
     boolean requiresPostCreationConfig();
 }

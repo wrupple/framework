@@ -51,8 +51,8 @@ public class HSQLDBCompatibilityDelegate implements SQLCompatibilityDelegate {
 	}
 
 	@Override
-	public void buildTableConfigurationStatement(JDBCMappingDelegateImpl jdbcMappingDelegate, String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context, List<String> indexes) {
-// <tablename> SOURCE <quoted_filename_and_options> [DESC]
+	public void buildTableConfigurationStatement(JDBCMappingDelegateImpl jdbcMappingDelegate, String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context, List<String> columnNames, List<String> indexes) {
+        // <tablename> SOURCE <quoted_filename_and_options> [DESC]
 		builder.append("SET TABLE ");
         builder.append(delimiter);
 		if(mainTable==null){
@@ -68,11 +68,35 @@ public class HSQLDBCompatibilityDelegate implements SQLCompatibilityDelegate {
             builder.append(mainTable);
         }
         builder.append(".csv");
-        builder.append(";ignore_first=true;all_quoted=true;encoding=UTF-8");
+        //builder.append(";ignore_first=true;all_quoted=true;encoding=UTF-8");
+        builder.append(";ignore_first=true;encoding=UTF-8");
         builder.append('\"');
 		indexes.add(builder.toString());
-		//TODO SET TABLE TEXT_TABLE_01 SOURCE HEADER "ID_NUMBER:FIRST_NAME:LAST_NAME:DEAR_";
-		//SET TABLE MolSet SOURCE HEADER 'id,filename,expSolFilename,variance'
+		builder.setLength(0);
+
+		if(columnNames!=null && !columnNames.isEmpty()){
+
+			builder.append("SET TABLE ");
+			builder.append(delimiter);
+			if(mainTable==null){
+				jdbcMappingDelegate.getTableNameForCatalog(catalog,context,builder);
+			}else{
+				builder.append(mainTable);
+			}
+			builder.append(delimiter);
+			builder.append(" SOURCE HEADER \"");
+			for( int i = 0 ; i < columnNames.size() ; i++){
+				if(i>0){
+					builder.append(',');
+				}
+				//builder.append('\"');
+				builder.append(columnNames.get(i));
+				//builder.append('\"');
+			}
+			builder.append('\"');
+			indexes.add(builder.toString());
+		}
+
 	}
 
 	@Override
