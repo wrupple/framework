@@ -70,6 +70,9 @@ public class InferNextTaskImpl implements InferNextTask {
             if(newItem.isClearOutput()){
                 state.setEntryValue(null);
             }
+            if(newItem.getProcessValues()==null|| newItem.getProcessValues().isEmpty()){
+                throw new RuntimeException("Application "+(newItem.getDistinguishedName()==null? newItem.getId() : newItem.getDistinguishedName())+" defines no tasks");
+            }
             nextTask= newItem.getProcessValues().get(0);
         }
         context.getStateValue().setTaskDescriptorValue(nextTask);
@@ -79,7 +82,13 @@ public class InferNextTaskImpl implements InferNextTask {
     }
 
     private Task getNextWorkflowTask(List<Long> workflow, Workflow application, ApplicationState state) {
-        int index = workflow.indexOf(state.getTaskDescriptorValue().getId());
+        int index;
+        if(state.getTaskDescriptorValue()==null){
+            index= -1;
+        }else{
+             index= workflow.indexOf(state.getTaskDescriptorValue().getId());
+
+        }
         index++;
         if(index<workflow.size()){
             return application.getProcessValues().get(index);

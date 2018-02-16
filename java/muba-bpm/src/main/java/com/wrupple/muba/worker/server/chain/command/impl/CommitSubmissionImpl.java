@@ -32,14 +32,15 @@ public class CommitSubmissionImpl implements CommitSubmission {
 
         ApplicationContext context = (ApplicationContext) ctx;
         ApplicationState applicationState = context.getStateValue();
-        Task task = applicationState.getTaskDescriptorValue();
-        String producedField = task.getOutputField();
+
 
         //is there submission material?
         CatalogEntry userOutput = applicationState.getEntryValue();
         if(userOutput==null){
 
         }else{
+            Task task = applicationState.getTaskDescriptorValue();
+            String producedField = task.getOutputField();
             //what task
             //what action
             //AQUI VA LO BUENO

@@ -94,7 +94,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
             if(state.getTaskDescriptorValue()==null){
                 if(state.getTaskDescriptor()==null){
                     //default start at first
-                    state.setTaskDescriptorValue(workflow.get(0));
+                    //state.setTaskDescriptorValue(workflow.get(0));
                 }else{
                     //get key index and set
                     int index = workflowKeys.indexOf(state.getTaskDescriptor());

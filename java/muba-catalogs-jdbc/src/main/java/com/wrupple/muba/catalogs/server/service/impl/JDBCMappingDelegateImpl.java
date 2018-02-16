@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 @Singleton
 public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 
+	private static final String VALUE = "value";
 	private final String DEFAULT_BOOLEAN_COLUMN_DEFINITION;
 	private final String CREATE_TABLE;
 	private final String PRIMARY_KEY_COLUMN_DEFINITION;
@@ -40,8 +42,9 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 	private final String LARGE_STRING;
 	private final String BLOB_TYPE;
 	private final char DELIMITER;
-	private String parentKey;
+	private final String parentKey;
 	private  final CatalogKeyServices keyDelegate;
+	private final List<String> multipleFieldTableColumns;
 
 	@Inject
 	public JDBCMappingDelegateImpl(@Named("catalog.ancestorKeyField") String parentKey,
@@ -59,8 +62,8 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		FOREIGN_KEY_COLUMN_DEFINITION = fOREIGN_KEY_COLUMN_DEFINITION;
 		LARGE_STRING = lARGE_STRING;
 		BLOB_TYPE = bLOB_TYPE;
-
 		this.keyDelegate = keyDelegate;
+		multipleFieldTableColumns = Arrays.asList(CatalogEntry.ID_FIELD,parentKey,VALUE);
 	}
 
 	@Override
@@ -112,6 +115,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 									 Logger log, SQLCompatibilityDelegate compatibility) throws SQLException {
 		Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 		List<String> indexes = new ArrayList<String>();
+		List<String> columnNames = new ArrayList<String>();
 		StringBuilder mainstmt = new StringBuilder(500);
 		StringBuilder indexstmt = null;
 		mainstmt.append(CREATE_TABLE);
@@ -156,7 +160,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexstmt.append(DELIMITER);
 						indexstmt.append(" ( ");
 						indexstmt.append(DELIMITER);
-						indexstmt.append("id");
+						indexstmt.append(CatalogEntry.ID_FIELD);
 						indexstmt.append(DELIMITER);
 						indexstmt.append(' ');
 						indexstmt.append(PRIMARY_KEY_COLUMN_DEFINITION);
@@ -168,7 +172,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexstmt.append(FOREIGN_KEY_COLUMN_DEFINITION);
 						indexstmt.append(" ,");
 						indexstmt.append(DELIMITER);
-						indexstmt.append("value");
+						indexstmt.append(VALUE);
 						indexstmt.append(DELIMITER);
 						indexstmt.append(dbcDataType);
 						indexstmt.append(" )");
@@ -197,7 +201,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						indexes.add(indexstmt.toString());
                         if(compatibility.requiresPostCreationConfig()){
                             indexstmt.setLength(0);
-                            configureTable(mainTable,null,indexstmt,compatibility, context,indexes);
+                            configureTable(mainTable,null,indexstmt,compatibility, context,indexes, multipleFieldTableColumns);
                         }
 					} else {
 						if (first) {
@@ -209,6 +213,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						mainstmt.append(DELIMITER);
 						mainstmt.append(fieldCOlumn);
 						mainstmt.append(DELIMITER);
+						columnNames.add(fieldCOlumn);
 						mainstmt.append(' ');
 						if (field.isKey()) {
 							if (primaryKey.equals(field.getFieldId())) {
@@ -253,7 +258,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		runner.update(mainstmt.toString());
 		if(compatibility.requiresPostCreationConfig()){
 			indexstmt.setLength(0);
-			configureTable(null,catalog,indexstmt,compatibility, context,indexes);
+			configureTable(null,catalog,indexstmt,compatibility, context,indexes, columnNames);
 
 		}
 
@@ -263,8 +268,8 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 
 	}
 
-	private void configureTable(String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context,List<String> indexes ) {
-		 compatibility.buildTableConfigurationStatement(this,mainTable,catalog,builder,compatibility, context,indexes);
+	private void configureTable(String mainTable, CatalogDescriptor catalog, StringBuilder builder, SQLCompatibilityDelegate compatibility, CatalogActionContext context, List<String> indexes, List<String> columnNames) {
+		 compatibility.buildTableConfigurationStatement(this,mainTable,catalog,builder,compatibility, context, columnNames, indexes);
 	}
 
 	@Override

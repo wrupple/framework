@@ -38,7 +38,6 @@ public class SolveTaskImpl implements SolveTask {
         Task task = state.getTaskDescriptorValue();
         //FIXME missing methods might be in ProblemPresenterImpl
 
-        String catalog = (String) task.getCatalog();
         String saveTo = task.getOutputField();
         List<String> userSelection = null;
 
@@ -69,7 +68,7 @@ public class SolveTaskImpl implements SolveTask {
              * Runner INTERACTION REQUIRED
              */
 
-            log.info("Thinking synchronously...");
+            log.info("Solving {}...", task.getDistinguishedName());
 
             if (plugin.getSolver().solve(context, callback) == CONTINUE_PROCESSING) {
                 return CONTINUE_PROCESSING;
