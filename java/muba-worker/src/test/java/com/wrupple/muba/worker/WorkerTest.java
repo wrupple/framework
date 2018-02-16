@@ -67,7 +67,6 @@ public abstract class WorkerTest extends EasyMockSupport {
 
         List<Module> modules = Arrays.asList(
                 (Module)new IntegralTestModule(),
-                new NaiveWorkerConfiguration(),
                 new WorkerModule(),
                 new BusinessModule(),
                 new ConstraintSolverModule(),
@@ -152,6 +151,39 @@ public abstract class WorkerTest extends EasyMockSupport {
         }
 
 
+        @Provides
+        @com.google.inject.Singleton
+        @com.google.inject.Inject
+        @com.google.inject.name.Named(Person.CATALOG)
+        public CatalogDescriptor activity(
+                CatalogDescriptorBuilder builder) {
+            CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, Person.CATALOG,  Person.CATALOG,
+                    -13344556, null);
+
+            return r;
+        }
+
+
+
+        @Provides
+        @Inject
+        @Singleton
+        @Named("catalog.plugins")
+        public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm, SystemCatalogPlugin system) {
+            CatalogPlugin[] plugins = new CatalogPlugin[]{system,bpm, runner};
+            return plugins;
+        }
+
+
+        @Provides
+        public ProcessWindow queryRunner() {
+            return new ProcessWindow() {
+                @Override
+                public TaskContainer getRootTaskPresenter() {
+                    return null;
+                }
+            };
+        }
 
     }
 

@@ -28,6 +28,7 @@ lazy val container = project
     libraryDependencies ++= commonDependencies ++ Seq(
       dependencies.worker,
       dependencies.hsql,
+      dependencies.launcher,
       /*dependencies.choco,*/
       dependencies.lambda
     )
@@ -69,6 +70,8 @@ lazy val dependencies =
     val bval = wrupple % "validation-bval" % wruppleVersion
     val lambda = wrupple % "muba-lambda" % wruppleVersion
     val spark = "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope
+    val launcher = "org.apache.spark" %% "spark-launcher" % "2.2.1"
+    //val actor = "com.typesafe.akka" %% "akka-actor" % "2.5.9"
     val sql = "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope
     val hive = "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope
     val config = "com.typesafe" % "config" % "1.3.1"
@@ -108,6 +111,7 @@ lazy val commonSettings = Seq(
   scalacOptions ++= compilerOptions,
   resolvers ++= Seq(
     DefaultMavenRepository,
+    Resolver.mavenCentral,
     Resolver.defaultLocal,
     Resolver.mavenLocal,
     // Resolver.mavenLocal has issues - hence the duplication
