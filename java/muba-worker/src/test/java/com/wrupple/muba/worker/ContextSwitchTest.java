@@ -96,7 +96,7 @@ public class ContextSwitchTest extends WorkerTest {
 
         log.trace("[-create application tree-]");
         ApplicationImpl root = new ApplicationImpl();
-        root.setDistinguishedName(container.getInjector().getInstance(Key.get(String.class, Names.named("worker.defaultActivity"))));
+        root.setDistinguishedName(HOME);
 
         ApplicationImpl item = new ApplicationImpl();
         String testActivity = "createTrip";
@@ -137,7 +137,11 @@ public class ContextSwitchTest extends WorkerTest {
 //        assertTrue(riderBooking.getTimestamp()!=null);
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
-        container.fireEvent(new WorkerRequestImpl(Arrays.asList(testActivity, riderBooking.getId().toString()),container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco")))));
+        container.fireEvent(new WorkerRequestImpl(
+                Arrays.asList(testActivity, riderBooking.getId().toString()),
+                container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco"))),
+                HOME
+        ));
         //check conditions
         assertTrue(riderBooking.getDriverValue()!=null);
         //assertTrue(Math.abs(riderBooking.getDriverValue().getLocation()-riderBooking.getLocation())<0);

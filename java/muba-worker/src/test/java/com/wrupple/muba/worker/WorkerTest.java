@@ -59,6 +59,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class WorkerTest extends EasyMockSupport {
+    static final String HOME = "home";
 
     WorkerContainer container;
 
@@ -142,7 +143,6 @@ public abstract class WorkerTest extends EasyMockSupport {
         protected void configure() {
 
 
-            bind(String.class).annotatedWith(Names.named("worker.defaultActivity")).toInstance("home");
             bind(String.class).annotatedWith(Names.named("worker.intialTitle")).toInstance("..::Desktop::..");
             bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.choco")).toInstance(1l);
 

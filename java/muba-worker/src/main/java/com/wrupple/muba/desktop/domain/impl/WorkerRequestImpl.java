@@ -10,14 +10,16 @@ public class WorkerRequestImpl extends CatalogEntryImpl implements WorkerRequest
 
     private List<String> sentence;
     private Long runner;
+    private String rootActivity;
 
     public WorkerRequestImpl() {
     }
 
-    public WorkerRequestImpl(List<String> sentence,Long runner) {
+    public WorkerRequestImpl(List<String> sentence,Long runner,String rootActivity) {
         this();
         this.runner=runner;
         this.sentence = sentence;
+        this.rootActivity=rootActivity;
         setDomain(CatalogEntry.PUBLIC_ID);
     }
 
@@ -52,5 +54,14 @@ public class WorkerRequestImpl extends CatalogEntryImpl implements WorkerRequest
 
     public void setRunner(Long runner) {
         this.runner = runner;
+    }
+
+    @Override
+    public String getRootActivity() {
+        return rootActivity;
+    }
+
+    public void setRootActivity(String rootActivity) {
+        this.rootActivity = rootActivity;
     }
 }

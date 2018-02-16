@@ -141,7 +141,7 @@ public class Example {
 
         log.trace("[-create application tree-]");
         ApplicationImpl root = new ApplicationImpl();
-        root.setDistinguishedName(container.getInjector().getInstance(Key.get(String.class, Names.named("worker.defaultActivity"))));
+        root.setDistinguishedName(HOME);
 
         ApplicationImpl item = new ApplicationImpl();
         String testActivity = "createApp";
@@ -188,7 +188,6 @@ public static void main(String... args) throws Exception {
 
 
 
-            bind(String.class).annotatedWith(Names.named("worker.defaultActivity")).toInstance("home");
             bind(String.class).annotatedWith(Names.named("worker.charset")).toInstance("UTF-8");
             bind(String.class).annotatedWith(Names.named("worker.intialTitle")).toInstance("..::Desktop::..");
             bind(String.class).annotatedWith(Names.named("worker.importHandler.catalog")).toInstance("workerImportHandlers");

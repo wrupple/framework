@@ -8,4 +8,6 @@ public interface WorkerRequest extends Event, HasSentence{
     String CATALOG = "WorkerRequest";
 
     Long getRunner();
+
+    String getRootActivity();
 }
