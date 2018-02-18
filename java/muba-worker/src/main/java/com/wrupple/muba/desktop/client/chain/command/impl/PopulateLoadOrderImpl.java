@@ -11,16 +11,13 @@ import com.wrupple.muba.event.domain.RuntimeContext;
 @Singleton
 public class PopulateLoadOrderImpl implements PopulateLoadOrder {
 
-    private final String defaultActivity;
     private final String desktopTitle;
     private final String characterEncoding;
 
     @Inject
-    public PopulateLoadOrderImpl(    @Named("worker.defaultActivity")
-                                             String defaultActivity,     @Named("worker.intialTitle")
+    public PopulateLoadOrderImpl(     @Named("worker.intialTitle")
             String desktopTitle,     @Named("worker.charset")
             String characterEncoding) {
-        this.defaultActivity = defaultActivity;
         this.desktopTitle = desktopTitle;
         this.characterEncoding = characterEncoding;
     }
@@ -37,7 +34,7 @@ public class PopulateLoadOrderImpl implements PopulateLoadOrder {
 
         String rootActivity = context.getWorkerState().getHomeActivity();
         if (rootActivity == null || rootActivity.isEmpty()) {
-            rootActivity = defaultActivity;
+            rootActivity = request.getRootActivity();
         }
         context.getWorkerState().setHomeActivity(rootActivity);
 

@@ -59,16 +59,8 @@ public class IntentResolverContextImpl extends ContextBase implements IntentReso
 
     private RuntimeContext runtimeContext;
 
-    private String outputCatalog,catalog;
+    private String catalog;
 
-    @Override
-    public String getOutputCatalog() {
-        return outputCatalog;
-    }
-
-    public void setOutputCatalog(String outputCatalog) {
-        this.outputCatalog = outputCatalog;
-    }
 
     @Override
     public String getCatalog() {
@@ -82,7 +74,7 @@ public class IntentResolverContextImpl extends ContextBase implements IntentReso
 
     @Override
     public String getCatalogType() {
-        return CATALOG;
+        return Event_CATALOG;
     }
 
     @Override

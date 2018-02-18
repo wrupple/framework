@@ -59,7 +59,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class WorkerTest extends EasyMockSupport {
-    static final String HOME = "home";
 
     WorkerContainer container;
 

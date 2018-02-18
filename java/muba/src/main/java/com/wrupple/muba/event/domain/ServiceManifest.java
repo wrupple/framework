@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.wrupple.muba.event.domain.reserved.*;
 
-public interface ServiceManifest extends Service,ImplicitIntent,TreeNode<Long,ServiceManifest> {
+public interface ServiceManifest extends Service,Event,TreeNode<Long,ServiceManifest> {
 	final String ROOT_SERVICE_MANIFEST ="vegetate.manifest";
 	final String CATALOG = "ServiceManifest";
 	

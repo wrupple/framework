@@ -17,7 +17,7 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 	private static final long serialVersionUID = -2346526516336493001L;
 	@CatalogField(filterable = true)
 	private String distinguishedName;
-	private String  versionDistinguishedName,outputCatalog;
+	private String  versionDistinguishedName;
 	@ForeignKey(foreignCatalog = Person.CATALOG)
 	private Long stakeHolder;
 	@CatalogField(ignore = true)
@@ -173,15 +173,6 @@ public class ServiceManifestImpl extends CatalogEntryImpl implements ServiceMani
 	@Override
 	public ServiceManifest getRootAncestor() {
 		return CatalogEntryImpl.getRootAncestor(this);
-	}
-
-	@Override
-	public String getOutputCatalog() {
-		return outputCatalog;
-	}
-
-	public void setOutputCatalog(String outputCatalog) {
-		this.outputCatalog = outputCatalog;
 	}
 
 	@Override

@@ -29,41 +29,9 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
     @NotNull
     private ApplicationState stateValue;
 
-    @CatalogField(ignore = true)
-    private Workflow implicitIntentValue;
-    @ForeignKey(foreignCatalog = Application.CATALOG)
-    private Object implicitIntent;
-
     private Object entry;
     private CatalogEntry entryValue;
     private String catalog;
-    private Object result;
-    private Exception error;
-    private List<String> sentence;
-
-    @Override
-    public Workflow getImplicitIntentValue() {
-        return implicitIntentValue;
-    }
-
-    @Override
-    public void setImplicitIntentValue(Event stateValue) {
-        this.implicitIntentValue= (Workflow) stateValue;
-    }
-
-    public void setImplicitIntentValue(Workflow implicitIntentValue) {
-        this.implicitIntentValue = implicitIntentValue;
-    }
-
-    @Override
-    public Object getImplicitIntent() {
-        return implicitIntent;
-    }
-
-    @Override
-    public void setImplicitIntent(Object implicitIntent) {
-        this.implicitIntent = implicitIntent;
-    }
 
     @Override
     public String getCatalogType() {
@@ -107,31 +75,6 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
         this.stateValue=applicationState;
     }
 
-    @Override
-    public <T> T getConvertedResult() {
-        return (T) getResult();
-    }
-
-
-    public Exception getError() {
-        return error;
-    }
-
-    @Override
-    public void setError(Exception error) {
-        this.error = error;
-    }
-
-    @Override
-    public List<String> getSentence() {
-        return sentence;
-    }
-
-    public void setSentence(List<String> sentence) {
-        this.sentence = sentence;
-    }
-
-
 
     @Override
     public String getCatalog() {
@@ -143,12 +86,4 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
         this.catalog = catalog;
     }
 
-    public Object getResult() {
-        return result;
-    }
-
-    @Override
-    public void setResult(Object result) {
-        this.result = result;
-    }
 }

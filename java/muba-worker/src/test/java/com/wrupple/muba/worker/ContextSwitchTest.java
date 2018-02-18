@@ -13,8 +13,10 @@ import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.worker.domain.RiderBooking;
 import com.wrupple.muba.worker.domain.Driver;
+import com.wrupple.muba.worker.domain.WorkRequest;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
+import com.wrupple.muba.worker.shared.services.WorkerContainer;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -24,7 +26,7 @@ import static junit.framework.TestCase.assertTrue;
 
 public class ContextSwitchTest extends WorkerTest {
 
-
+    static final String HOME = "resolveBooking";
 
     @Test
     public void submitBookingData() throws Exception {
@@ -70,50 +72,10 @@ public class ContextSwitchTest extends WorkerTest {
 
         container.fireEvent(action);
 
-        log.trace("[-create tasks (problem definition)-]");
-
-        Task pickDriver = new TaskImpl();
-        pickDriver.setDistinguishedName("driverPick");
-        pickDriver.setName("Pick Best Driver");
-        pickDriver.setCatalog(Driver.class.getSimpleName());
-        pickDriver.setName(Task.SELECT_COMMAND);
-       /* problem.setSentence(
-                Arrays.asList(
-                        // x * y = 4
-                        Task.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
-                        // x + y < 5
-                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
-                )
-        );*/
-
-
-        Task updateBooking = new TaskImpl();
-        updateBooking.setDistinguishedName("UpdateBooking");
-        updateBooking.setName("Update DriverBooking");
-        updateBooking.setCatalog(RiderBooking.class.getSimpleName());
-        updateBooking.setName(CatalogActionRequest.WRITE_ACTION);
-
-
         log.trace("[-create application tree-]");
-        ApplicationImpl root = new ApplicationImpl();
-        root.setDistinguishedName(HOME);
+        ApplicationImpl root = createApplication(container,HOME);
 
-        ApplicationImpl item = new ApplicationImpl();
-        String testActivity = "createTrip";
-        item.setDistinguishedName(testActivity);
-        item.setProcessValues(Arrays.asList(pickDriver,updateBooking));
-        //this tells bpm to use this application to resolve bookings
-        //item.setCatalog(bookingDescriptor.getDistinguishedName());
-        //item.setOutputCatalog(bookingDescriptor.getDistinguishedName());
-        item.setOutputField("riderBooking");
-
-        root.setChildrenValues(Arrays.<ServiceManifest>asList(item));
-        action = new CatalogCreateRequestImpl(root,Application.CATALOG);
-        action.setFollowReferences(true);
-
-        container.fireEvent(action);
-
-        root = (ApplicationImpl) action.getEntryValue();
+        assertTrue("Application tree not created",!root.getChildrenValues().get(0).getChildrenValues().isEmpty());
 
         log.trace("[-create a pool of drivers to resolve the riderBooking-]");
 
@@ -138,7 +100,7 @@ public class ContextSwitchTest extends WorkerTest {
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
         container.fireEvent(new WorkerRequestImpl(
-                Arrays.asList(testActivity, riderBooking.getId().toString()),
+                Arrays.asList(riderBooking.getId().toString()),
                 container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco"))),
                 HOME
         ));
@@ -147,5 +109,46 @@ public class ContextSwitchTest extends WorkerTest {
         //assertTrue(Math.abs(riderBooking.getDriverValue().getLocation()-riderBooking.getLocation())<0);
 
     }
+
+    private ApplicationImpl createApplication(WorkerContainer container, String home) throws Exception {
+
+        TaskImpl resolve  = new TaskImpl();
+        resolve.setDistinguishedName("findDriver");
+        resolve.setName(DataEvent.WRITE_ACTION);
+        resolve.setCatalog(RiderBooking.class.getSimpleName());
+
+        TaskImpl cargar  = new TaskImpl();
+        cargar.setDistinguishedName("loadBooking");
+        cargar.setName(DataEvent.READ_ACTION);
+        cargar.setCatalog(RiderBooking.class.getSimpleName());
+
+        ApplicationImpl ilegal= new ApplicationImpl();
+        ilegal.setDistinguishedName("peticionInvalida");
+
+        ApplicationImpl trabajo = new ApplicationImpl();
+        trabajo.setDistinguishedName("findDriver");
+        trabajo.setProcessValues(Arrays.asList(resolve));
+
+        ApplicationImpl terminado = new ApplicationImpl();
+        terminado.setDistinguishedName("terminado");
+
+        ApplicationImpl error = new ApplicationImpl();
+        terminado.setDistinguishedName("error");
+
+        ApplicationImpl root  = new ApplicationImpl();
+        root.setDistinguishedName(home);
+        root.setProcessValues(Arrays.asList(cargar));
+
+        root.setChildrenValues(Arrays.asList( (ServiceManifest)trabajo,ilegal));
+
+        trabajo.setChildrenValues(Arrays.asList((ServiceManifest)terminado, error));
+
+
+        CatalogCreateRequestImpl action  = new CatalogCreateRequestImpl(root, Application.CATALOG);
+        action.setFollowReferences(true);
+
+        return ((List<ApplicationImpl>)container.fireEvent(action)).get(0);
+    }
+
 
 }

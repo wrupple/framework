@@ -44,9 +44,10 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         solutionTypeInquiry.setEntry(solutionType);
         solutionTypeInquiry.setCatalog(CatalogDescriptor.CATALOG_ID);
         solutionTypeInquiry.setName(DataEvent.READ_ACTION);
-
         List results = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
+
         CatalogDescriptor solutionDescriptor = (CatalogDescriptor) results.get(0);
+
         context.getStateValue().setCatalogValue(solutionDescriptor);
 
         log.debug("Resolving problem variable names");

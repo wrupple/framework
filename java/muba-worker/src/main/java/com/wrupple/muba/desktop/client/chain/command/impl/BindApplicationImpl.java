@@ -1,22 +1,31 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
-import com.wrupple.muba.catalogs.server.chain.command.impl.DataJoiner;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.desktop.client.chain.command.BindApplication;
 import com.wrupple.muba.desktop.domain.WorkerRequest;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
-import com.wrupple.muba.event.domain.Application;
-import com.wrupple.muba.event.domain.WorkerState;
-import com.wrupple.muba.event.domain.ServiceManifest;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.impl.ApplicationStateImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 
-//FIXME use an interpret ChocoInterpret
+@Singleton
 public class BindApplicationImpl implements BindApplication {
 
     protected static final Logger log = LoggerFactory.getLogger(BindApplicationImpl.class);
+
+    private final FieldAccessStrategy plugin;
+
+    @Inject
+    public BindApplicationImpl(FieldAccessStrategy plugin) {
+        this.plugin = plugin;
+    }
+
 
     @Override
     public boolean execute(WorkerRequestContext context) throws Exception {
@@ -33,7 +42,27 @@ public class BindApplicationImpl implements BindApplication {
         int currentIndex = 0;
 
         Application initialState = getInitialActivity(sentence,currentIndex,container.getApplicationTree());
-        ApplicationStateImpl state = new ApplicationStateImpl();
+
+        String stateType = (String) initialState.getCatalog();
+        ApplicationState state;
+        if(stateType==null){
+
+
+            state= new ApplicationStateImpl();
+        }else{
+
+            CatalogActionRequestImpl solutionTypeInquiry = new CatalogActionRequestImpl();
+            solutionTypeInquiry.setEntry(stateType);
+            solutionTypeInquiry.setCatalog(CatalogDescriptor.CATALOG_ID);
+            solutionTypeInquiry.setName(DataEvent.READ_ACTION);
+            List results = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
+
+            CatalogDescriptor solutionDescriptor = (CatalogDescriptor) results.get(0);
+            state= (ApplicationState) plugin.synthesize(solutionDescriptor);
+
+        }
+
+
         state.setDomain(container.getDomain());
         state.setWorkerStateValue(container);
         state.setApplicationValue(initialState);

@@ -15,10 +15,10 @@ public class IntentDelegateImpl implements EventBusImpl.IntentDelegate {
     protected static final Logger log = LoggerFactory.getLogger(EventBusImpl.class);
 
     @Override
-    public List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception {
+    public List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<Intent> handlers, EventBusImpl eventBus) throws Exception {
 
         RuntimeContextImpl runtimeContext = new RuntimeContextImpl(eventBus, session, parentTimeline);
-        for (ExplicitIntent handler : handlers) {
+        for (Intent handler : handlers) {
             log.info("[sequential invocation of handler] {}", handler);
             if (eventBus.fireHandlerWithRuntime(handler, runtimeContext) != Command.CONTINUE_PROCESSING) {
                 log.warn("[handler broke sequential invocation chain] {}", handler);
@@ -29,10 +29,10 @@ public class IntentDelegateImpl implements EventBusImpl.IntentDelegate {
     }
 
     @Override
-    public List<ExplicitIntent> interpretImlicitIntent(Event implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, EventBusImpl eventBus) {
+    public List<Intent> interpretImlicitIntent(Event implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, EventBusImpl eventBus) {
 
-        List<ExplicitIntent> regreso = new ArrayList<>(manifests.size());
-        ExplicitIntent intent;
+        List<Intent> regreso = new ArrayList<>(manifests.size());
+        Intent intent;
         for (ServiceManifest manifest : manifests) {
             intent = eventBus.getIntentInterpret().resolveIntent(implicitRequestContract, manifest, parentTimeline);
             if (intent != null) {

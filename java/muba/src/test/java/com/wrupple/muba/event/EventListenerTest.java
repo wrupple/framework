@@ -5,7 +5,7 @@ import com.wrupple.muba.event.chain.impl.OldVesionService;
 import com.wrupple.muba.event.chain.impl.UpdatedVersionService;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.ContractDescriptor;
-import com.wrupple.muba.event.domain.ExplicitIntent;
+import com.wrupple.muba.event.domain.Intent;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
@@ -114,7 +114,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void defaultVersion() throws Exception {
 		log.trace("[-defaultVersion-]");
 
-		ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "1", "2" );
+		Intent event = new IntentImpl(ADDITION, "1", "2" );
 
 		system.fireHandler(event,session);
 
@@ -128,7 +128,7 @@ public class EventListenerTest extends BootstrapTest {
 		log.trace("[-conflict-] insufficient and/or malformed arguments were provided,should fail");
 		// conflicting input data with version, fails
 
-        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "1.0", "1");
+        Intent event = new IntentImpl(ADDITION, "1.0", "1");
 
         system.fireHandler/*TODO Async*/(event, session);
 		// check rollback?
@@ -138,7 +138,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void invalidService() throws Exception {
 		log.trace("[-invalidService-]");
 
-        ExplicitIntent event = new ExplicitIntentImpl("invalidService", "input");
+        Intent event = new IntentImpl("invalidService", "input");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -149,7 +149,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void invalidInput() throws Exception {
 		log.trace("[-invalidInput-]");
 
-        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "one", "1.5");
+        Intent event = new IntentImpl(ADDITION, "one", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -160,7 +160,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void specificVersion() throws Exception {
 		log.trace("[-specificVersion-]");
 
-        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, UPGRADED_VERSION, "1", "1.5");
+        Intent event = new IntentImpl(ADDITION, UPGRADED_VERSION, "1", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -173,7 +173,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void invalidVersion() throws Exception {
 		log.trace("[-invalidVersion-]");
 
-        ExplicitIntent event = new ExplicitIntentImpl(ADDITION, "1..0", "2", "1.5");
+        Intent event = new IntentImpl(ADDITION, "1..0", "2", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 

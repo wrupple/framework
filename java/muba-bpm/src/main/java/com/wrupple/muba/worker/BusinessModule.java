@@ -8,7 +8,7 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.ExplicitIntentImpl;
+import com.wrupple.muba.event.domain.impl.IntentImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import com.wrupple.muba.worker.domain.*;
@@ -23,6 +23,8 @@ import com.wrupple.muba.worker.server.chain.impl.WorkflowEngineImpl;
 import com.wrupple.muba.worker.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import com.wrupple.muba.worker.server.service.impl.BusinessPluginImpl;
+
+import static com.wrupple.muba.event.domain.Intent.ExplicitIntent_CATALOG;
 
 /**
  * Created by japi on 11/08/17.
@@ -113,12 +115,12 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(ImplicitIntent.CATALOG)
+    @Named(Event.Event_CATALOG)
     public CatalogDescriptor intent(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(ImplicitIntentImpl.class, ImplicitIntent.CATALOG, "Event",
+        CatalogDescriptor r = builder.fromClass(EventImpl.class, Event.Event_CATALOG, "Event",
                 -990093, null);
-        r.setClazz(ImplicitIntentImpl.class);
+        r.setClazz(EventImpl.class);
         return r;
     }
 
@@ -127,7 +129,7 @@ public class BusinessModule  extends AbstractModule {
     @Singleton
     @Inject
     @Named(BusinessIntent.BusinessIntent_CATALOG)
-    public CatalogDescriptor commit(@Named(ExplicitIntent.CATALOG) CatalogDescriptor timeline,
+    public CatalogDescriptor commit(@Named(ExplicitIntent_CATALOG) CatalogDescriptor timeline,
                                          CatalogDescriptorBuilder builder) {
         CatalogDescriptor r = builder.fromClass(BusinessIntentImpl.class, BusinessIntent.BusinessIntent_CATALOG, "Commit",
                 -990095, timeline);
@@ -139,12 +141,12 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(ExplicitIntent.CATALOG)
+    @Named(ExplicitIntent_CATALOG)
     public CatalogDescriptor explicit(
                                     CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(ExplicitIntentImpl.class, ExplicitIntent.CATALOG, "Do",
+        CatalogDescriptor r = builder.fromClass(IntentImpl.class, ExplicitIntent_CATALOG, "Do",
                 -990096, null);
-        r.setClazz(ExplicitIntentImpl.class);
+        r.setClazz(IntentImpl.class);
         return r;
     }
 

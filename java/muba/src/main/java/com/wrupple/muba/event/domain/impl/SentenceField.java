@@ -1,7 +1,5 @@
 package com.wrupple.muba.event.domain.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.ExplicitIntent;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
 import javax.inject.Inject;

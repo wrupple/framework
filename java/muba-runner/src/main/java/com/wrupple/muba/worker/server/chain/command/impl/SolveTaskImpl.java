@@ -68,7 +68,7 @@ public class SolveTaskImpl implements SolveTask {
              * Runner INTERACTION REQUIRED
              */
 
-            log.info("Solving {}...", task.getDistinguishedName());
+            log.info("Solving {} ", task.getDistinguishedName());
 
             if (plugin.getSolver().solve(context, callback) == CONTINUE_PROCESSING) {
                 return CONTINUE_PROCESSING;

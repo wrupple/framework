@@ -1,16 +1,16 @@
 package com.wrupple.muba.worker.domain;
 
-import com.wrupple.muba.event.domain.ImplicitIntent;
+import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.Intent;
 
 
 /**
  * @author japi
  *
  */
-public interface WorkRequest extends BusinessIntent,ImplicitIntent {
+public interface WorkRequest extends BusinessIntent,Intent {
 
-	String CATALOG = "WorkRequest";
-
+String CATALOG = "WorkRequest";
 	/*
     Long getSource();
 	

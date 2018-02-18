@@ -1,7 +1,7 @@
 package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.Event;
-import com.wrupple.muba.event.domain.ExplicitIntent;
+import com.wrupple.muba.event.domain.Intent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by japi on 21/08/17.
  */
-public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitIntent {
+public class IntentImpl extends CatalogEntryImpl implements Intent {
 
     /**
      * it's up to the event contract to decide if the catalog is metadata to the result or the event
@@ -21,11 +21,11 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
     private Exception error;
     private List<String> sentence;
 
-    public ExplicitIntentImpl() {
+    public IntentImpl() {
     }
 
 
-    public ExplicitIntentImpl(String... sentence) {
+    public IntentImpl(String... sentence) {
         this();
         setSentence(Arrays.asList(sentence));
     }
@@ -50,12 +50,12 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
     }
 
     @Override
-    public Event getImplicitIntentValue() {
+    public Event getEventValue() {
         return implicitIntentValue;
     }
 
     @Override
-    public void setImplicitIntentValue(Event stateValue) {
+    public void setEventValue(Event stateValue) {
         this.implicitIntentValue = stateValue;
     }
 
@@ -86,21 +86,21 @@ public class ExplicitIntentImpl extends CatalogEntryImpl implements ExplicitInte
 
     @Override
     public String getCatalogType() {
-        return CATALOG;
+        return ExplicitIntent_CATALOG;
     }
 
     @Override
-    public Object getImplicitIntent() {
+    public Object getEvent() {
         return implicitIntent;
     }
 
-    public void setImplicitIntent(Object state) {
+    public void setEvent(Object state) {
         this.implicitIntent = state;
     }
 
     @Override
     public String toString() {
-        return "ExplicitIntentImpl{" +
+        return "IntentImpl{" +
                 "catalog='" + catalog + '\'' +
                 ", result=" + result +
                 ", error=" + error +

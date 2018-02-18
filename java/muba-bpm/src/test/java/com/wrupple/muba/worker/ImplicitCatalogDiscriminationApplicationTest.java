@@ -86,9 +86,8 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         item.setDistinguishedName("createTrip");
         item.setProcessValues(Arrays.asList(pickDriver,updateBooking));
-        //this tells bpm to use this application to resolve bookings
-        item.setCatalog(bookingDescriptor.getDistinguishedName());
-        item.setOutputCatalog(bookingDescriptor.getDistinguishedName());
+        //FIXME this tells bpm to use this application to resolve bookings
+        //item.setCatalog(bookingDescriptor.getDistinguishedName());
         item.setOutputField("booking");
 
         action = new CatalogActionRequestImpl();
@@ -177,7 +176,6 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         //item+booking;
         BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
-        bookingRequest.setImplicitIntent(item.getId());
         bookingRequest.setEntry(booking.getId());
         bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
 

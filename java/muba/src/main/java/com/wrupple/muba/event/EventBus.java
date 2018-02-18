@@ -22,7 +22,7 @@ public interface EventBus
 
     void broadcastEvent(Event event, CatalogDescriptor catalogDescriptor, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
 
-    boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception;
+    boolean fireHandler(Intent event, SessionContext session) throws Exception;
 
     <T> T fireEvent(Event implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception;
 

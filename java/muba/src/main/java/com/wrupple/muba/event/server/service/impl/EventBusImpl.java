@@ -56,9 +56,9 @@ public class EventBusImpl extends ContextBase implements EventBus {
         this.delegate = delegate;
     }
 
-    boolean fireHandlerWithRuntime(ExplicitIntent event, RuntimeContext runtimeContext) throws Exception {
+    boolean fireHandlerWithRuntime(Intent event, RuntimeContext runtimeContext) throws Exception {
         runtimeContext.setSentence(event.getSentence());
-        runtimeContext.setServiceContract(event.getImplicitIntentValue());
+        runtimeContext.setServiceContract(event.getEventValue());
         boolean regreso = resume(runtimeContext);
         event.setResult(runtimeContext.getResults());
         return regreso;
@@ -100,12 +100,12 @@ queued.setCatalogDescriptor(catalogDescriptor);
     }
 
     @Override
-    public boolean fireHandler(ExplicitIntent event, SessionContext session) throws Exception {
+    public boolean fireHandler(Intent event, SessionContext session) throws Exception {
         return fireHandler(event,session,null);
     }
 
 
-    public boolean fireHandler(ExplicitIntent event, SessionContext session, RuntimeContext parentTimeline) throws Exception {
+    public boolean fireHandler(Intent event, SessionContext session, RuntimeContext parentTimeline) throws Exception {
         RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
         return fireHandlerWithRuntime(event,runtimeContext);
     }
@@ -125,7 +125,7 @@ queued.setCatalogDescriptor(catalogDescriptor);
         }else{
             log.trace("[Count of matching services] {}",manifests.size());
             Instrospection introspector=instrospector.newSession(manifests.get(0));
-            List<ExplicitIntent> handlers = delegate.interpretImlicitIntent(implicitRequestContract, handlerCriterion, parentTimeline, manifests, introspector, this);
+            List<Intent> handlers = delegate.interpretImlicitIntent(implicitRequestContract, handlerCriterion, parentTimeline, manifests, introspector, this);
 
 
             if(handlers==null || handlers.isEmpty()){
@@ -133,7 +133,7 @@ queued.setCatalogDescriptor(catalogDescriptor);
                 throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
             } else if(handlers.size()==1){
                 log.info("[single handler invocation]");
-                ExplicitIntent call = handlers.get(0);
+                Intent call = handlers.get(0);
                 fireHandler(call,session,parentTimeline);
                 return call.getConvertedResult();
             } else {
@@ -152,9 +152,9 @@ queued.setCatalogDescriptor(catalogDescriptor);
     }
 
     public interface IntentDelegate {
-        List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<ExplicitIntent> handlers, EventBusImpl eventBus) throws Exception;
+        List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<Intent> handlers, EventBusImpl eventBus) throws Exception;
 
-        List<ExplicitIntent> interpretImlicitIntent(Event implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, EventBusImpl eventBus);
+        List<Intent> interpretImlicitIntent(Event implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, EventBusImpl eventBus);
 
     }
 

@@ -1,7 +1,7 @@
 package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.ExplicitIntentImpl;
+import com.wrupple.muba.event.domain.impl.IntentImpl;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.beanutils.BeanUtils;
@@ -191,7 +191,7 @@ public class EventRegistryImpl implements EventRegistry {
 
 
     @Override
-    public ExplicitIntent resolveIntent(ImplicitIntent intent, RuntimeContext context) throws Exception {
+    public Intent resolveIntent(Event intent, RuntimeContext context) throws Exception {
         String input = (String) intent.getCatalog();
 
         if(input!=null) {
@@ -205,29 +205,24 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
     @Override
-    public ExplicitIntent resolveIntent(Event implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
+    public Intent resolveIntent(Event implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
         log.trace("will resolve implicit handler for {}",implicitRequestContract);
         if (serviceManifest != null) {
-            String output =implicitRequestContract instanceof ImplicitIntent ?  ((ImplicitIntent)implicitRequestContract).getOutputCatalog() :null;
-            if (output == null) {
-                return createIntent(parentTimeline, implicitRequestContract, serviceManifest);
-            }/*else if (output.equals(serviceManifest.getC)){
-               FIXME support output type discrimination
-            }*/
+            return createIntent(parentTimeline, implicitRequestContract, serviceManifest);
         }
         log.warn("could not find implicit handler for event");
         return null;
     }
 
 
-    private ExplicitIntent createIntent(RuntimeContext context, Event intent, ServiceManifest serviceManifest) {
+    private Intent createIntent(RuntimeContext context, Event intent, ServiceManifest serviceManifest) {
 
         List<String> pathTokens = generatePathTokens(serviceManifest);
         //TODO Business Event or User Event
-        ExplicitIntentImpl event = new ExplicitIntentImpl( );
+        IntentImpl event = new IntentImpl( );
         event.setSentence(pathTokens);
-        event.setImplicitIntent(intent.getId());
-        event.setImplicitIntentValue(intent);
+        event.setEvent(intent.getId());
+        event.setEventValue(intent);
         return event;
     }
 

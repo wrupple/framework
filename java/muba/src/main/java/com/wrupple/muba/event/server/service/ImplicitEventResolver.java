@@ -24,7 +24,7 @@ public interface ImplicitEventResolver {
 
     ParentServiceManifest getRootService();
 
-    ExplicitIntent resolveIntent(ImplicitIntent intent, RuntimeContext context) throws Exception;
+    Intent resolveIntent(Event intent, RuntimeContext context) throws Exception;
 
     //contract interpret per type? bpm?
     void registerService(ServiceManifest manifest, Command service, RequestInterpret contractInterpret);
@@ -39,7 +39,7 @@ public interface ImplicitEventResolver {
      */
     RequestInterpret getExplicitIntentInterpret(RuntimeContext context);
 
-    ExplicitIntent resolveIntent(Event implicitRequestContract, ServiceManifest manifest, RuntimeContext parentTimeline);
+    Intent resolveIntent(Event implicitRequestContract, ServiceManifest manifest, RuntimeContext parentTimeline);
 
     interface Registration {
         ServiceManifest getManifest();
