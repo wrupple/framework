@@ -127,8 +127,8 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
             return (Long) targetEntryId;
         } else {
             String rawKey = (String) targetEntryId;
-            if(rawKey.charAt(0)==':'){
-                return decodeKey((String) targetEntryId);
+            if(rawKey.charAt(0)==':'&&rawKey.length()>1){
+                return decodeKey( ((String) targetEntryId).substring(1));
             }else{
                 return rawKey;
             }
