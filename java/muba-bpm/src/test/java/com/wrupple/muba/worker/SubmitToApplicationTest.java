@@ -9,7 +9,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Intent;
+import com.wrupple.muba.event.domain.Intent;
 import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.domain.Statistics;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;

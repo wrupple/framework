@@ -83,7 +83,7 @@ public class IntentResolverContextImpl extends ContextBase implements IntentReso
     }
 
     @Override
-    public void setExcecutionContext(RuntimeContext requestContext) {
+    public void setRuntimeContext(RuntimeContext requestContext) {
         this.runtimeContext=requestContext;
     }
 }

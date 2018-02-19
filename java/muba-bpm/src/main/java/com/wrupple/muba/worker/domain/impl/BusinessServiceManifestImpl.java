@@ -2,7 +2,7 @@ package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.impl.ParentServiceManifestImpl;
-import com.wrupple.muba.worker.domain.Intent;
+import com.wrupple.muba.event.domain.Intent;
 import com.wrupple.muba.worker.domain.BusinessServiceManifest;
 
 import javax.inject.Inject;

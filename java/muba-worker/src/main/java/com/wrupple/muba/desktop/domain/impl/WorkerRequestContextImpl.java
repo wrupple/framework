@@ -22,9 +22,8 @@ public class WorkerRequestContextImpl extends ContextBase implements WorkerReque
     }
 
     @Override
-    public Context setRuntimeContext(RuntimeContext requestContext) {
+    public void setRuntimeContext(RuntimeContext requestContext) {
         this.runtimeContext = requestContext;
-        return this;
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.wrupple.muba.worker.domain.impl.WorkerStateImpl;
 public class WorkerModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(ContainerContext.class).to(ContainerContextImpl.class);
         bind(ContextSwitchHandler.class).to(ContextSwitchHandlerImpl.class);
         bind(WorkerRequestHandler.class).to(WorkerRequestHandlerImpl.class);
 

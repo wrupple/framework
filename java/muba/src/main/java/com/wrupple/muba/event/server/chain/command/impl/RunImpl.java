@@ -3,6 +3,7 @@ package com.wrupple.muba.event.server.chain.command.impl;
 import com.wrupple.muba.event.domain.ContractDescriptor;
 import com.wrupple.muba.event.domain.ParentServiceManifest;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.event.server.chain.command.Run;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -115,7 +116,9 @@ public class RunImpl implements Run {
                 log.warn("Using request context space to excecute service");
                 context = requestContext;
             } else {
-                context = explicitInterpret.materializeBlankContext(requestContext);
+                ServiceContext ccontext = explicitInterpret.getProvider(requestContext).get();
+                ccontext.setRuntimeContext(requestContext);
+                context=ccontext;
             }
 
         }

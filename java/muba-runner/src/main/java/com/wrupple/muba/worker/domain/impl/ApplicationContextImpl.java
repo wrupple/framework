@@ -1,10 +1,7 @@
 package com.wrupple.muba.worker.domain.impl;
 
-import com.wrupple.muba.event.domain.WorkerState;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.Task;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.event.domain.ApplicationState;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.ContextBase;
 
@@ -31,9 +28,22 @@ public class ApplicationContextImpl extends ContextBase implements ApplicationCo
     private ApplicationState stateValue;
 
     @Override
-    public ApplicationContext setRuntimeContext(RuntimeContext requestContext) {
+    public void setRuntimeContext(RuntimeContext requestContext) {
+        Object contract = requestContext.getServiceContract();
+        ApplicationState state;
+        if(contract instanceof ApplicationState){
+           state = (ApplicationState) contract;
+
+        }else{
+            Intent intent = (Intent) contract;
+            state = intent.getStateValue();
+        }
+        WorkerState container = state.getWorkerStateValue();
+        if (container == null) {
+            throw new IllegalStateException("No application container");
+        }
+        setStateValue(state);
         this.runtimeContext=requestContext;
-        return this;
     }
 
     @Override

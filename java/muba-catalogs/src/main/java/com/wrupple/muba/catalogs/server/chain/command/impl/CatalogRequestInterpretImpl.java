@@ -36,10 +36,9 @@ import java.util.List;
 public final class CatalogRequestInterpretImpl implements CatalogRequestInterpret {
     protected static final Logger log = LoggerFactory.getLogger(CatalogRequestInterpretImpl.class);
 
-    private final ObjectMapper mapper;
+
     private final CatalogKeyServices keydelegate;
     private final FieldAccessStrategy access;
-    private final CatalogTriggerInterpret triggerInterpret;
     private final Provider<CatalogActionRequest> contractProvider;
     private final Provider<NamespaceContext> namespaceProvider;
 
@@ -49,34 +48,23 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
     private final ActionsDictionary dictionary;
 
     @Inject
-    public CatalogRequestInterpretImpl(CatalogKeyServices keydelegate, FieldAccessStrategy access, CatalogTriggerInterpret triggerInterpret, CatalogResultCache cache,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider, ActionsDictionary dictionary) {
+    public CatalogRequestInterpretImpl(CatalogKeyServices keydelegate, FieldAccessStrategy access,  CatalogResultCache cache,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider, ActionsDictionary dictionary) {
         super();
         this.keydelegate = keydelegate;
         this.access = access;
-        this.triggerInterpret = triggerInterpret;
         this.cache=cache;
         this.contractProvider = contractProvider;
         this.namespaceProvider = namespaceProvider;
         this.metadataDescriptorProvider = metadataDescriptorProvider;
         this.readerProvider = readerProvider;
         this.dictionary = dictionary;
-        this.mapper = null;
     }
 
-    @Override
-    public Context materializeBlankContext(RuntimeContext parent) throws InvocationTargetException, IllegalAccessException {
-        CatalogActionRequest request = (CatalogActionRequest) parent.getServiceContract();
-        if (request == null) {
-            request = contractProvider.get();
-            parent.setServiceContract(request);
-        }
-        return new CatalogActionContextImpl(dictionary ,cache,namespaceProvider.get(), parent, request);
-    }
+
 
     @Override
-    public boolean execute(Context ctx) throws Exception {
+    public boolean execute(RuntimeContext requestContext) throws Exception {
 
-        RuntimeContext requestContext = (RuntimeContext) ctx;
         CatalogActionRequest request = (CatalogActionRequest) requestContext.getServiceContract();
         CatalogActionContext context = requestContext.getServiceContext();
 
@@ -224,9 +212,18 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
     }
 
+    @Override
+    public Provider<CatalogActionContext> getProvider(RuntimeContext runtime) {
+        return new Provider<CatalogActionContext>() {
+            @Override
+            public CatalogActionContext get() {
+                return new CatalogActionContextImpl(contractProvider,dictionary ,cache,namespaceProvider.get());
+            }
+        };
+    }
 
 
-    class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {
+    static class CatalogActionContextImpl extends ContextBase implements CatalogActionContext {
 
         private static final long serialVersionUID = 3599727649189964912L;
 	/*
@@ -236,8 +233,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         private final CatalogResultCache cache;
 
         private final NamespaceContext namespace;
+        private final Provider<CatalogActionRequest> contractProvider;
 
-        private final RuntimeContext runtimeContext;
+        private RuntimeContext runtimeContext;
 
         /*
          * INPUT
@@ -256,16 +254,11 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         private CatalogDescriptor catalogDescriptor;
 
         // not injectable, always construct with an event
-        protected CatalogActionContextImpl(ActionsDictionary dictionary,CatalogResultCache cache, NamespaceContext domainContext,
-                                           RuntimeContext requestContext, CatalogActionRequest catalogActionRequest) {
+        protected CatalogActionContextImpl(Provider<CatalogActionRequest> contractProvider, ActionsDictionary dictionary, CatalogResultCache cache, NamespaceContext domainContext) {
             this.cache = cache;
+            this.contractProvider=contractProvider;
             this.dictionary=dictionary;
-            if (requestContext == null) {
-                throw new NullPointerException("Must provide an excecution context");
-            }
-            this.runtimeContext = requestContext;
             this.namespace = domainContext;
-            setRequest(catalogActionRequest);
         }
 
 
@@ -371,6 +364,22 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         public RuntimeContext getRuntimeContext() {
             return runtimeContext;
+        }
+
+        @Override
+        public void setRuntimeContext(RuntimeContext requestContext) {
+            if (requestContext == null) {
+                throw new NullPointerException("Must provide an excecution context");
+            }
+            this.runtimeContext = requestContext;
+            if (getRequest() == null) {
+                setRequest((CatalogActionRequest) requestContext.getServiceContract());
+                if (getRequest() == null) {
+                    setRequest(contractProvider.get());
+                    requestContext.setServiceContract(request);
+                }
+            }
+
         }
 
         @Override

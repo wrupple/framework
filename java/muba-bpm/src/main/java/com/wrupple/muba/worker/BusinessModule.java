@@ -8,11 +8,10 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.InvocationImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import com.wrupple.muba.worker.domain.*;
-import com.wrupple.muba.worker.domain.Intent;
+import com.wrupple.muba.event.domain.Intent;
 import com.wrupple.muba.worker.domain.impl.*;
 import com.wrupple.muba.worker.server.chain.BusinessEngine;
 import com.wrupple.muba.worker.server.chain.IntentResolverEngine;
@@ -25,8 +24,7 @@ import com.wrupple.muba.worker.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import com.wrupple.muba.worker.server.service.impl.BusinessPluginImpl;
 
-import static com.wrupple.muba.event.domain.Invocation.Invocation_CATALOG;
-import static com.wrupple.muba.worker.domain.Intent.Intent_CATALOG;
+import static com.wrupple.muba.event.domain.Intent.Intent_CATALOG;
 
 
 /**

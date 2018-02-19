@@ -31,9 +31,9 @@ public class BroadcastContextImpl extends ContextBase implements BroadcastContex
     }
 
     @Override
-    public BroadcastContext setRuntimeContext(RuntimeContext runtimeContext) {
+    public void setRuntimeContext(RuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
-        return this;
+
     }
 
     @Override

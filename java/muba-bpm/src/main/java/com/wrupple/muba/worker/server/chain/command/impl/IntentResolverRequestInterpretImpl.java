@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.worker.domain.IntentResolverContext;
 import com.wrupple.muba.worker.server.chain.command.IntentResolverRequestInterpret;
 import org.apache.commons.chain.Context;
@@ -22,15 +23,9 @@ public class IntentResolverRequestInterpretImpl implements IntentResolverRequest
         this.contextProvider = contextProvider;
     }
 
-    @Override
-    public Context materializeBlankContext(RuntimeContext requestContext) {
-        IntentResolverContext r = contextProvider.get();
-        r.setExcecutionContext(requestContext);
-        return r;
-    }
 
     @Override
-    public boolean execute(Context ctx) throws Exception {
+    public boolean execute(RuntimeContext ctx) throws Exception {
        /* RuntimeContext requestContext = (RuntimeContext) ctx;
         IntentResolverContext context = requestContext.getServiceContext();
         Contract request = (Contract) requestContext.getServiceContract();
@@ -39,5 +34,10 @@ public class IntentResolverRequestInterpretImpl implements IntentResolverRequest
         }*/
 
         return CONTINUE_PROCESSING;
+    }
+
+    @Override
+    public Provider<IntentResolverContext> getProvider(RuntimeContext runtime) {
+        return contextProvider;
     }
 }

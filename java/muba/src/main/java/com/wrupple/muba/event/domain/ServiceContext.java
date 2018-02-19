@@ -8,6 +8,7 @@ import org.apache.commons.chain.Context;
 public interface ServiceContext extends Context {
 
     public RuntimeContext getRuntimeContext();
+    void setRuntimeContext(RuntimeContext context);
 
     //void setCallback(/*chain so anyone can add his own callback*/Chain callback);
 }

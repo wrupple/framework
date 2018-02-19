@@ -4,10 +4,8 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Intent;
+import com.wrupple.muba.event.domain.Intent;
 import com.wrupple.muba.worker.server.chain.command.BusinessRequestInterpret;
-import com.wrupple.muba.worker.server.service.ProcessManager;
-import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,22 +24,19 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
 
     private final Provider<ApplicationContext> proveedor;
-    private final ProcessManager bpm;
 
     @Inject
-    public BusinessRequestInterpretImpl(Provider<ApplicationContext> proveedor, ProcessManager bpm) {
+    public BusinessRequestInterpretImpl(Provider<ApplicationContext> proveedor) {
         this.proveedor = proveedor;
-        this.bpm = bpm;
     }
 
     @Override
-    public Context materializeBlankContext(RuntimeContext requestContext) {
-        return proveedor.get().setRuntimeContext(requestContext);
+    public Provider<? extends ServiceContext> getProvider(RuntimeContext runtime) {
+        return proveedor;
     }
 
     @Override
-    public boolean execute(Context ctx) throws Exception {
-        RuntimeContext thread = (RuntimeContext) ctx;
+    public boolean execute(RuntimeContext thread )throws Exception {
         Intent contract = (Intent) thread.getServiceContract();
         ApplicationContext context = thread.getServiceContext();
 
@@ -120,4 +115,6 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
 
     }
+
+
 }

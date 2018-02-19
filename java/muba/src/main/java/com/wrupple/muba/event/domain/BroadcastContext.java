@@ -13,8 +13,6 @@ public interface BroadcastContext extends ServiceContext{
 
     void setEventValue(BroadcastEvent contract);
 
-    BroadcastContext setRuntimeContext(RuntimeContext requestContext);
-
     void addConcernedPeers(Collection<? extends Host> results);
 
     Collection<Host> getConcernedPeersValues();

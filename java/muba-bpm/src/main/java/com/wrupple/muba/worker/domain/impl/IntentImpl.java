@@ -6,7 +6,7 @@ import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.event.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.Intent;
+import com.wrupple.muba.event.domain.Intent;
 
 import javax.validation.constraints.NotNull;
 

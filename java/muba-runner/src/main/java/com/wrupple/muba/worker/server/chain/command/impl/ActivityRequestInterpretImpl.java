@@ -17,34 +17,19 @@ import java.util.List;
 public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
 
     private final Provider<ApplicationContext> activityContextProvider;
-    private final ProcessManager bpm;
     private final Provider<ApplicationState> applicationStateProvider;
 
 
 
     @Inject
     public ActivityRequestInterpretImpl(
-            Provider<ApplicationContext> activityContextProvider, ProcessManager bpm, Provider<ApplicationState> applicationStateProvider){
+            Provider<ApplicationContext> activityContextProvider,Provider<ApplicationState> applicationStateProvider){
         this.activityContextProvider=activityContextProvider;
-        this.bpm = bpm;
         this.applicationStateProvider = applicationStateProvider;
     }
 
     @Override
-    public Context materializeBlankContext(RuntimeContext requestContext) {
-        ApplicationContext r = activityContextProvider.get();
-        ApplicationState contract = (ApplicationState) requestContext.getServiceContract();
-        WorkerState container = contract.getWorkerStateValue();
-        if (container == null) {
-            throw new IllegalStateException("No application container");
-        }
-        r.setStateValue(contract);
-        return r.setRuntimeContext(requestContext);
-    }
-
-    @Override
-    public boolean execute(Context ctx) throws Exception {
-        RuntimeContext requestContext = (RuntimeContext) ctx;
+    public boolean execute(RuntimeContext requestContext) throws Exception {
         ApplicationContext context = requestContext.getServiceContext();
         ApplicationState state = context.getStateValue();
         if(state==null){
@@ -85,7 +70,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
         }
     }
 
-    public ApplicationState acquireContext(Application initialState, RuntimeContext thread) throws Exception {
+    private ApplicationState acquireContext(Application initialState, RuntimeContext thread) throws Exception {
         ApplicationState newState = applicationStateProvider.get();
         newState.setApplicationValue(initialState);
 
@@ -94,5 +79,10 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
         List results = thread.getServiceBus().fireEvent(createRequest, thread, null);
 
         return (ApplicationState) results.get(0);
+    }
+
+    @Override
+    public Provider<ApplicationContext> getProvider(RuntimeContext runtime) {
+        return activityContextProvider;
     }
 }

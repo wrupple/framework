@@ -3,6 +3,7 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 import com.wrupple.muba.desktop.client.chain.command.ContextSwitchInterpret;
 import com.wrupple.muba.desktop.domain.ContextSwitchRuntimeContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
+import com.wrupple.muba.event.domain.ServiceContext;
 import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
@@ -17,13 +18,14 @@ public class ContextSwitchInterpretImpl implements ContextSwitchInterpret {
         this.contextProvider = contextProvider;
     }
 
+
     @Override
-    public Context materializeBlankContext(RuntimeContext requestContext) throws Exception {
-        return contextProvider.get().intialize(requestContext);
+    public Provider<ContextSwitchRuntimeContext> getProvider(RuntimeContext runtime) {
+        return contextProvider;
     }
 
     @Override
-    public boolean execute(Context context) throws Exception {
+    public boolean execute(RuntimeContext context) throws Exception {
         return CONTINUE_PROCESSING;
     }
 }

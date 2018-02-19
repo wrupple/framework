@@ -1,8 +1,4 @@
-package com.wrupple.muba.worker.domain;
-
-import com.wrupple.muba.event.domain.ApplicationState;
-import com.wrupple.muba.event.domain.DataContract;
-import com.wrupple.muba.event.domain.ManagedObject;
+package com.wrupple.muba.event.domain;
 
 public interface Intent extends ManagedObject, DataContract {
     String Intent_CATALOG = "Intent";

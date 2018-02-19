@@ -14,14 +14,15 @@ public class ContextSwitchRuntimeContextImpl extends ContextBase implements Cont
         return (ContextSwitch) runtimeContext.getServiceContract();
     }
 
-    @Override
-    public ContextSwitchRuntimeContext intialize(RuntimeContext requestContext) {
-        this.runtimeContext=requestContext;
-        return this;
-    }
+
 
     @Override
     public RuntimeContext getRuntimeContext() {
         return runtimeContext;
+    }
+
+    @Override
+    public void setRuntimeContext(RuntimeContext requestContext) {
+        this.runtimeContext=requestContext;
     }
 }

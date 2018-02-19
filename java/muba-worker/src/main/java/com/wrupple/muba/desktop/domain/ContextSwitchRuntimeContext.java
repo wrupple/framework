@@ -11,7 +11,6 @@ public interface ContextSwitchRuntimeContext extends ServiceContext {
     ContextSwitch getContextSwitch();
 
 
-    ContextSwitchRuntimeContext intialize(RuntimeContext requestContext);
 
 
     //StorageManager getStorageManager();
