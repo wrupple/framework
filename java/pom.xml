@@ -20,6 +20,7 @@
         <!--<module>muba-catalogs-jdbc-mysql</module>-->
         <module>muba-catalogs-jdbc-hsql</module>
         <module>muba-runner</module>
+		<module>muba-runner-catalog</module>
         <module>muba-runner-choco</module>
         <!--
         <module>muba-runner-human</module>-->

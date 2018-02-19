@@ -80,7 +80,12 @@
             <version>${muba.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.wrupple.muba</groupId>
+            <artifactId>muba-runner-catalog</artifactId>
+            <version>${muba.version}</version>
+            <scope>test</scope>
+        </dependency>
 
 
     </dependencies>
