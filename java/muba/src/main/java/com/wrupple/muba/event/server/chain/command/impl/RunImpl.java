@@ -3,7 +3,7 @@ package com.wrupple.muba.event.server.chain.command.impl;
 import com.wrupple.muba.event.domain.ContractDescriptor;
 import com.wrupple.muba.event.domain.ParentServiceManifest;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.server.chain.command.Dispatch;
+import com.wrupple.muba.event.server.chain.command.Run;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.chain.Command;
@@ -16,8 +16,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Singleton
-public class DispatchImpl implements Dispatch {
-    private static final Logger log = LoggerFactory.getLogger(DispatchImpl.class);
+public class RunImpl implements Run {
+    private static final Logger log = LoggerFactory.getLogger(RunImpl.class);
 
     @Override
     public boolean execute(Context context) throws Exception {
@@ -32,7 +32,7 @@ public class DispatchImpl implements Dispatch {
             log.trace("excecution permission GRANTED for request {}, transaction will begin on {}",
                     requestContext.getId(), requestContext.getServiceManifest().getServiceId());
             if (CONTINUE_PROCESSING == incorporateContract(requestContext)) {
-                Command serviceHandler = requestContext.getEventBus().getIntentInterpret().getDictionaryFactory()
+                Command serviceHandler = requestContext.getServiceBus().getIntentInterpret().getDictionaryFactory()
                         .getCatalog(ParentServiceManifest.NAME)
                         .getCommand(requestContext.getServiceManifest().getServiceId());
                 log.debug("delegating to service handler {}", serviceHandler);
@@ -56,7 +56,7 @@ public class DispatchImpl implements Dispatch {
     private boolean incorporateContract(RuntimeContext requestContext) throws Exception {
 
         List<String> tokens = requestContext.getServiceManifest().getGrammar();
-        RequestInterpret explicitInterpret = requestContext.getEventBus().getIntentInterpret().getExplicitIntentInterpret(requestContext);
+        RequestInterpret explicitInterpret = requestContext.getServiceBus().getIntentInterpret().getExplicitIntentInterpret(requestContext);
         Object contract = requestContext.getServiceContext();
         Context context = materializeContext(requestContext,
                 /* we know it's this class:registration is private */ explicitInterpret);

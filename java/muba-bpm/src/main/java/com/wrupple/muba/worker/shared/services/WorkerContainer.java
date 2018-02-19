@@ -10,9 +10,8 @@ import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.ServiceBus;
+import com.wrupple.muba.event.domain.Contract;
 import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
@@ -33,7 +32,7 @@ import java.util.List;
 
 public class WorkerContainer {
 
-    private final EventBus processSwitches;
+    private final ServiceBus processSwitches;
     private final SessionContext session;
     private final Solver solver;
     private final Injector injector;
@@ -43,7 +42,7 @@ public class WorkerContainer {
 
         injector = Guice.createInjector(modules);
         solver = injector.getInstance(Solver.class);
-        processSwitches = injector.getInstance(EventBus.class);
+        processSwitches = injector.getInstance(ServiceBus.class);
         session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
 
 /*
@@ -99,8 +98,8 @@ public class WorkerContainer {
         solver.register(injector.getInstance(runner));
     }
 
-    public <T> T  fireEvent(Event event) throws Exception {
-        return processSwitches.fireEvent(event, session, null);
+    public <T> T  fireEvent(Contract contract) throws Exception {
+        return processSwitches.fireEvent(contract, session, null);
     }
 
     public <T> T getInstance(Class<T> catalogDescriptorBuilderClass) {

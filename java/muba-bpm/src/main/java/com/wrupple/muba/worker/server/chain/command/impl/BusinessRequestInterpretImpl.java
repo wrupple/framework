@@ -4,7 +4,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.BusinessIntent;
+import com.wrupple.muba.worker.domain.Intent;
 import com.wrupple.muba.worker.server.chain.command.BusinessRequestInterpret;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;
@@ -42,7 +42,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
     @Override
     public boolean execute(Context ctx) throws Exception {
         RuntimeContext thread = (RuntimeContext) ctx;
-        BusinessIntent contract = (BusinessIntent) thread.getServiceContract();
+        Intent contract = (Intent) thread.getServiceContract();
         ApplicationContext context = thread.getServiceContext();
 
         ApplicationState state = contract.getStateValue();
@@ -78,7 +78,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
         request.setEntry(existingApplicationStateId);
         request.setName(CatalogActionRequest.READ_ACTION);
         request.setFollowReferences(true);
-        List results = session.getEventBus().fireEvent(request, session, null);
+        List results = session.getServiceBus().fireEvent(request, session, null);
 
         return (ApplicationState) results.get(0);
     }

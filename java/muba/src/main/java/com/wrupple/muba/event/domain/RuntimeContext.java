@@ -1,13 +1,12 @@
 package com.wrupple.muba.event.domain;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.reserved.*;
 import org.apache.commons.chain.Context;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.ListIterator;
 
 public interface RuntimeContext extends YieldContext, HasValidations, HasLocale, CatalogKey,
 		HasParentValue<Object,RuntimeContext>, HasResult<Object> ,HasResults<Object> {
@@ -17,7 +16,7 @@ public interface RuntimeContext extends YieldContext, HasValidations, HasLocale,
 
 	String FORMAT = "format";
 
-	EventBus getEventBus();
+	ServiceBus getServiceBus();
 
     SessionContext getSession();
 

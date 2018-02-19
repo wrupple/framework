@@ -3,13 +3,13 @@ package com.wrupple.muba.event.domain;
 
 import java.util.List;
 
-public interface BroadcastEvent extends Event {
+public interface BroadcastEvent extends Contract {
 
     String CATALOG = "BroadcastEvent";
 
-    Event getEventValue();
+    Contract getEventValue();
 
-    void setEventValue(Event event);
+    void setEventValue(Contract contract);
 
     void setObserversValues(List<FilterCriteria> explicitlySuscriptedObservers);
 

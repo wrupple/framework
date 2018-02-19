@@ -90,8 +90,7 @@ public class HelloWorldTest extends IntegralTest {
 
         runtimeContext.process();*/
         state.setWorkerStateValue(new WorkerStateImpl());
-        List results = wrupple.fireEvent(state, session, null);
-        EquationSystemSolution solution = (EquationSystemSolution) results.get(0);
+        EquationSystemSolution solution =  wrupple.fireEvent(state, session, null);
         assertTrue(solution.getX() == 2);
 
         assertTrue(solution.getY() == 2);
@@ -124,7 +123,7 @@ public class HelloWorldTest extends IntegralTest {
         catalogRequest.setCatalog(Task.CATALOG);
         catalogRequest.setName(CatalogActionRequest.CREATE_ACTION);
 
-        problem = (TaskImpl) ((List) wrupple.fireEvent(catalogRequest, session, null)).get(0);
+        problem = wrupple.fireEvent(catalogRequest, session, null);
         return problem;
     }
 

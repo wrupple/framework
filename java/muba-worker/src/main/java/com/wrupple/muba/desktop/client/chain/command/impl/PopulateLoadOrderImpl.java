@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.wrupple.muba.desktop.client.chain.command.PopulateLoadOrder;
-import com.wrupple.muba.desktop.domain.WorkerRequest;
+import com.wrupple.muba.desktop.domain.WorkerContract;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
 
@@ -24,7 +24,7 @@ public class PopulateLoadOrderImpl implements PopulateLoadOrder {
 
     @Override
     public boolean execute(RuntimeContext requestContext) throws Exception {
-        WorkerRequest request = (WorkerRequest) requestContext.getServiceContract();
+        WorkerContract request = (WorkerContract) requestContext.getServiceContract();
         WorkerRequestContext context = requestContext.getServiceContext();
 
 

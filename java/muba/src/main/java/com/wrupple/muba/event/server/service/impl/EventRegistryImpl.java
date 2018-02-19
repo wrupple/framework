@@ -1,7 +1,7 @@
 package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.IntentImpl;
+import com.wrupple.muba.event.domain.impl.InvocationImpl;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import org.apache.commons.beanutils.BeanUtils;
@@ -191,7 +191,7 @@ public class EventRegistryImpl implements EventRegistry {
 
 
     @Override
-    public Intent resolveIntent(Event intent, RuntimeContext context) throws Exception {
+    public Invocation resolveIntent(Contract intent, RuntimeContext context) throws Exception {
         String input = (String) intent.getCatalog();
 
         if(input!=null) {
@@ -205,7 +205,7 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
     @Override
-    public Intent resolveIntent(Event implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
+    public Invocation resolveIntent(Contract implicitRequestContract, ServiceManifest serviceManifest, RuntimeContext parentTimeline) {
         log.trace("will resolve implicit handler for {}",implicitRequestContract);
         if (serviceManifest != null) {
             return createIntent(parentTimeline, implicitRequestContract, serviceManifest);
@@ -215,11 +215,11 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
 
-    private Intent createIntent(RuntimeContext context, Event intent, ServiceManifest serviceManifest) {
+    private Invocation createIntent(RuntimeContext context, Contract intent, ServiceManifest serviceManifest) {
 
         List<String> pathTokens = generatePathTokens(serviceManifest);
-        //TODO Business Event or User Event
-        IntentImpl event = new IntentImpl( );
+        //TODO Business Contract or User Contract
+        InvocationImpl event = new InvocationImpl( );
         event.setSentence(pathTokens);
         event.setEvent(intent.getId());
         event.setEventValue(intent);

@@ -1,21 +1,21 @@
 package com.wrupple.muba.desktop.domain.impl;
 
-import com.wrupple.muba.desktop.domain.WorkerRequest;
+import com.wrupple.muba.desktop.domain.WorkerContract;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 import java.util.List;
 
-public class WorkerRequestImpl extends CatalogEntryImpl implements WorkerRequest {
+public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContract {
 
     private List<String> sentence;
     private Long runner;
     private String rootActivity;
 
-    public WorkerRequestImpl() {
+    public WorkerContractImpl() {
     }
 
-    public WorkerRequestImpl(List<String> sentence,Long runner,String rootActivity) {
+    public WorkerContractImpl(List<String> sentence, Long runner, String rootActivity) {
         this();
         this.runner=runner;
         this.sentence = sentence;

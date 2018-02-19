@@ -2,7 +2,6 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
-import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -24,7 +23,7 @@ import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wrupple.muba.catalogs.domain.CatalogEvent.CREATE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogContract.CREATE_ACTION;
 
 @Singleton
 public class CatalogCreateTransactionImpl extends CatalogTransaction implements CatalogCreateTransaction {

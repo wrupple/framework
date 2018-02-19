@@ -1,9 +1,9 @@
 package com.wrupple.muba.desktop.domain;
 
 import com.wrupple.muba.event.domain.WorkerState;
-import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.Contract;
 
-public interface ContextSwitch extends Event {
+public interface ContextSwitch extends Contract {
 
     String CATALOG = "ContextSwitch";
 

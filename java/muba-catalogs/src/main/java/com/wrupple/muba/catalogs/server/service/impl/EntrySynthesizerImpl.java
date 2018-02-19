@@ -63,7 +63,7 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
                 if(tempNotRealContract==null){
                     tempNotRealContract = new CatalogActionRequestImpl();
 
-                    tempNotRealContract.setName(DataEvent.READ_ACTION);
+                    tempNotRealContract.setName(DataContract.READ_ACTION);
                     tempNotRealContract.setCatalog(CatalogDescriptor.CATALOG_ID);
                 }
                 tempNotRealContract.setEntry(result.getParent());

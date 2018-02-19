@@ -5,9 +5,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.wrupple.muba.event.server.chain.command.ValidateContract;
-import com.wrupple.muba.event.server.chain.command.ValidateRequest;
+import com.wrupple.muba.event.server.chain.command.ValidateContext;
 import com.wrupple.muba.event.server.command.impl.ValidateContractImpl;
-import com.wrupple.muba.event.server.command.impl.ValidateRequestImpl;
+import com.wrupple.muba.event.server.command.impl.ValidateContextImpl;
 import com.wrupple.muba.event.server.service.AvailableCommandValidator;
 import com.wrupple.muba.event.server.service.ContextAwareValidator;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
@@ -36,7 +36,7 @@ public class ValidationModule extends AbstractModule {
 		bind(AvailableCommandValidator.class).to(AvailableCommandValidatorImpl.class);
 		bind(ContextAwareValidator.class).to(ContextAwareValidatorImpl.class);
         bind(ValidateContract.class).to(ValidateContractImpl.class);
-        bind(ValidateRequest.class).to(ValidateRequestImpl.class);
+        bind(ValidateContext.class).to(ValidateContextImpl.class);
     }
 
 	@Provides

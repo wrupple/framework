@@ -1,6 +1,6 @@
 package com.wrupple.muba.event.server.chain.command.impl;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.BroadcastContext;
 import com.wrupple.muba.event.domain.BroadcastEvent;
 import com.wrupple.muba.event.domain.Host;
@@ -30,7 +30,7 @@ public class PublishEventsImpl    implements PublishEvents {
     public boolean execute(Context ctx) throws Exception {
         BroadcastContext context = (BroadcastContext) ctx;
         BroadcastEvent queueElement=context.getEventValue();
-        EventBus eventBus = context.getRuntimeContext().getEventBus();
+        ServiceBus serviceBus = context.getRuntimeContext().getServiceBus();
         log.debug("<PublishEventsImpl>");
         log.debug("Broadcast event {}",queueElement);
 
@@ -41,7 +41,7 @@ public class PublishEventsImpl    implements PublishEvents {
             log.debug("no peer concerned in event");
         }else{
             log.debug("streaming event to concerned peers");
-            delegate.streamToConcernedPeers(context, queueElement, eventBus, concernedPeers);
+            delegate.streamToConcernedPeers(context, queueElement, serviceBus, concernedPeers);
         }
 
 
@@ -52,7 +52,7 @@ public class PublishEventsImpl    implements PublishEvents {
     }
 
     public interface StreamingDelegate {
-        void streamToConcernedPeers(BroadcastContext context, BroadcastEvent queueElement, EventBus eventBus, Collection<Host> concernedPeers) throws Exception;
+        void streamToConcernedPeers(BroadcastContext context, BroadcastEvent queueElement, ServiceBus serviceBus, Collection<Host> concernedPeers) throws Exception;
 
     }
 

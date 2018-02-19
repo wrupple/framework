@@ -40,7 +40,7 @@ public class ApplicationModule extends AbstractModule {
         /*
          * Application
          */
-		bind(EventBus.class).to(EventBusImpl.class);//ServletContext
+		bind(ServiceBus.class).to(ServiceBusImpl.class);//ServletContext
 
         /*
          * model

@@ -12,7 +12,7 @@ import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
 import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.server.chain.PublishEvents;
@@ -63,7 +63,7 @@ public class IntegralTest extends AbstractTest{
     }
 
     @Override
-    protected void registerServices(Validator v, ValidationGroupProvider g, EventBus switchs) {
+    protected void registerServices(Validator v, ValidationGroupProvider g, ServiceBus switchs) {
         CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
         switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
 
@@ -82,7 +82,7 @@ public class IntegralTest extends AbstractTest{
 
     @Before
     public void setUp() throws Exception {
-        runtimeContext = new RuntimeContextImpl(injector.getInstance(EventBus.class), injector.getInstance(Key.get(SessionContext.class, Names.named(SYSTEM))));
+        runtimeContext = new RuntimeContextImpl(injector.getInstance(ServiceBus.class), injector.getInstance(Key.get(SessionContext.class, Names.named(SYSTEM))));
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 

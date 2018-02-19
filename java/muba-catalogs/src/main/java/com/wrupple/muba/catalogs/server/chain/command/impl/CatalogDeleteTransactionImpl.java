@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
-import static com.wrupple.muba.catalogs.domain.CatalogEvent.DELETE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogContract.DELETE_ACTION;
 
 @Singleton
 public class CatalogDeleteTransactionImpl extends CatalogTransaction implements CatalogDeleteTransaction {

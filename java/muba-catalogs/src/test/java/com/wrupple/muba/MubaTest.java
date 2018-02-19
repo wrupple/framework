@@ -1,6 +1,6 @@
 package com.wrupple.muba;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
@@ -32,11 +32,11 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices( injector.getInstance(EventBus.class));
+		registerServices( injector.getInstance(ServiceBus.class));
 
 	}
 	
-	protected abstract void registerServices(EventBus switchs);
+	protected abstract void registerServices(ServiceBus switchs);
 	
 	protected abstract void setUp() throws Exception;
 

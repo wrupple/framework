@@ -1,8 +1,6 @@
 package com.wrupple.muba.desktop.client.chain.command.impl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.desktop.client.chain.command.BuildApplicationTree;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.*;
@@ -42,10 +40,9 @@ public class BuildApplicationTreeImpl implements BuildApplicationTree {
         event.setCatalog(Application.CATALOG);
         event.setEntry(key);
         event.setFollowReferences(true);
-        event.setName(DataEvent.READ_ACTION);
+        event.setName(DataContract.READ_ACTION);
         event.setDomain(runtimeContext.getSession().getSessionValue().getDomain());
-        List<Application> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
-        return results == null ? null : results.isEmpty() ? null : results.get(0);
+        return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
     }
 
 

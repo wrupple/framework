@@ -2,7 +2,7 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.desktop.client.chain.command.BindApplication;
-import com.wrupple.muba.desktop.domain.WorkerRequest;
+import com.wrupple.muba.desktop.domain.WorkerContract;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
@@ -31,7 +31,7 @@ public class BindApplicationImpl implements BindApplication {
     public boolean execute(WorkerRequestContext context) throws Exception {
 
 
-        WorkerRequest request = context.getRequest();
+        WorkerContract request = context.getRequest();
 
         List<String> sentence = request.getSentence();
 
@@ -54,8 +54,8 @@ public class BindApplicationImpl implements BindApplication {
             CatalogActionRequestImpl solutionTypeInquiry = new CatalogActionRequestImpl();
             solutionTypeInquiry.setEntry(stateType);
             solutionTypeInquiry.setCatalog(CatalogDescriptor.CATALOG_ID);
-            solutionTypeInquiry.setName(DataEvent.READ_ACTION);
-            List results = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
+            solutionTypeInquiry.setName(DataContract.READ_ACTION);
+            List results = context.getRuntimeContext().getServiceBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
 
             CatalogDescriptor solutionDescriptor = (CatalogDescriptor) results.get(0);
             state= (ApplicationState) plugin.synthesize(solutionDescriptor);

@@ -16,11 +16,8 @@ import com.wrupple.muba.desktop.client.service.impl.ContextSwitchHandlerImpl;
 import com.wrupple.muba.desktop.client.service.impl.WorkerRequestHandlerImpl;
 import com.wrupple.muba.desktop.domain.*;
 import com.wrupple.muba.desktop.domain.impl.*;
-import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.WorkerState;
-import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
 import com.wrupple.muba.worker.domain.impl.WorkerStateImpl;
 
 public class WorkerModule extends AbstractModule {
@@ -76,10 +73,10 @@ public class WorkerModule extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(WorkerRequest.CATALOG)
+    @Named(WorkerContract.CATALOG)
     public CatalogDescriptor request(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(WorkerRequestImpl.class, WorkerRequest.CATALOG, "Worker Request",
+        CatalogDescriptor r = builder.fromClass(WorkerContractImpl.class, WorkerContract.CATALOG, "Worker Request",
                 -700161, null);
 
         return r;

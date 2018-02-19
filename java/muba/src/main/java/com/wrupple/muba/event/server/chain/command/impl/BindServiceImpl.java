@@ -35,7 +35,7 @@ public class BindServiceImpl implements BindService {
         }
 
         String service = requestContext.next();
-        ServiceManifest manifest = getChildServiceManifest(requestContext.getEventBus().getIntentInterpret().getRootService(),service, requestContext);
+        ServiceManifest manifest = getChildServiceManifest(requestContext.getServiceBus().getIntentInterpret().getRootService(),service, requestContext);
         requestContext.setServiceManifest(manifest);
 
         log.debug("</{}>", this.getClass().getSimpleName());

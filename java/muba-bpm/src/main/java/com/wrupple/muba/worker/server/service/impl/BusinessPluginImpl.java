@@ -1,13 +1,13 @@
 package com.wrupple.muba.worker.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
+import com.wrupple.muba.catalogs.domain.CatalogContractListenerImpl;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.impl.StaticCatalogDescriptorProvider;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
-import com.wrupple.muba.worker.domain.WorkRequest;
+import com.wrupple.muba.worker.domain.Request;
 import com.wrupple.muba.worker.server.chain.command.CheckSecureConditions;
 import com.wrupple.muba.worker.server.chain.command.StakeHolderTrigger;
 import com.wrupple.muba.worker.server.chain.command.ValueChangeAudit;
@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.util.List;
 
 /**
  * Deals with
@@ -60,7 +59,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
                               ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
                               @Named(Person.CATALOG) CatalogDescriptor person,
                               // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
-                              @Named(WorkRequest.CATALOG) CatalogDescriptor notificationProvider,
+                              @Named(Request.CATALOG) CatalogDescriptor notificationProvider,
                               // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider,
                                Provider<CatalogTriggerInterpret> triggerInterpret) {
 
@@ -74,14 +73,14 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 	@Override
 	public void postProcessCatalogDescriptor(CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
 		FieldDescriptor stakeHolderField = catalog.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
-		CatalogEventListenerImpl e;
+		CatalogContractListenerImpl e;
 		if (stakeHolderField != null && !stakeHolderField.isMultiple()
 				&& stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
 				&& Person.CATALOG.equals(stakeHolderField.getCatalog())) {
 ;
 			if (catalog.getStorage()!=null&&catalog.getStorage().contains("secure")) {
 				// FIXME writing (or reading require signed private key authentication)
-				e = new CatalogEventListenerImpl();
+				e = new CatalogContractListenerImpl();
 				e.setAction(0l);
 				e.setAdvice(true);
 				e.setName(CheckSecureConditions.class.getSimpleName());
@@ -89,7 +88,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 				e.setStopOnFail(true);
                 triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
-				e = new CatalogEventListenerImpl();
+				e = new CatalogContractListenerImpl();
 				e.setAction(1l);
 				e.setAdvice(true);
 				e.setName(CheckSecureConditions.class.getSimpleName());
@@ -97,7 +96,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 				e.setStopOnFail(true);
                 triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
-				e = new CatalogEventListenerImpl();
+				e = new CatalogContractListenerImpl();
 				e.setAction(2l);
 				e.setAdvice(true);
 				e.setName(CheckSecureConditions.class.getSimpleName());
@@ -106,7 +105,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
                 triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 			}
 
-			e = new CatalogEventListenerImpl();
+			e = new CatalogContractListenerImpl();
 			e.setAction(0l);
 			e.setAdvice(true);
 			e.setName(StakeHolderTrigger.class.getSimpleName());
@@ -114,7 +113,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 			e.setStopOnFail(true);
             triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
-			e = new CatalogEventListenerImpl();
+			e = new CatalogContractListenerImpl();
 			e.setAction(1l);
 			e.setAdvice(true);
 			e.setName(ValueChangeAudit.class.getSimpleName());
@@ -122,7 +121,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 			e.setStopOnFail(true);
             triggerInterpret.get().addNamespaceScopeTrigger(e, catalog,context);
 
-			e = new CatalogEventListenerImpl();
+			e = new CatalogContractListenerImpl();
 			e.setAction(1l);
 			e.setAdvice(false);
 			e.setName(ValueChangeListener.class.getSimpleName());

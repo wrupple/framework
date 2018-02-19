@@ -50,7 +50,7 @@ public class ServiceRequestValidation extends MubaTest {
 		init(new MockModule(), new ValidationModule(), new LambdaModule(), new DispatcherModule(), new ApplicationModule());
 	}
 	
-	protected void registerServices(EventBus switchs) {
+	protected void registerServices(ServiceBus switchs) {
         List<String> grammar = Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME);
         ContractDescriptor operationContract = new ContractDescriptorImpl(
                 Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), null);
@@ -90,7 +90,7 @@ public class ServiceRequestValidation extends MubaTest {
 	@Before
 	@Override
 	public void setUp() throws Exception {
-        runtimeContext = new RuntimeContextImpl(injector.getInstance(EventBus.class), injector.getInstance(Key.get(SessionContext.class, Names.named(SYSTEM))));
+        runtimeContext = new RuntimeContextImpl(injector.getInstance(ServiceBus.class), injector.getInstance(Key.get(SessionContext.class, Names.named(SYSTEM))));
 
 	}
 
@@ -178,7 +178,7 @@ public class ServiceRequestValidation extends MubaTest {
 			String second = (String) context.get(SECOND_OPERAND_NAME);
             RuntimeContext runtimeContext = (RuntimeContext) context;
             log.debug("{} for: {},{}", this.getClass().getSimpleName(), first, second);
-            Map<String, ServiceManifest> versions = runtimeContext.getEventBus().getIntentInterpret().getRootService()
+            Map<String, ServiceManifest> versions = runtimeContext.getServiceBus().getIntentInterpret().getRootService()
 					.getVersions(second);
 			// is there an operation named like this?
 			if (versions == null) {

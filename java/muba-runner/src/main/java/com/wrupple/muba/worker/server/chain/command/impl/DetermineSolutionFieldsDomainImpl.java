@@ -2,7 +2,7 @@ package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.DataEvent;
+import com.wrupple.muba.event.domain.DataContract;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.VariableDescriptor;
@@ -43,10 +43,9 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         CatalogActionRequestImpl solutionTypeInquiry = new CatalogActionRequestImpl();
         solutionTypeInquiry.setEntry(solutionType);
         solutionTypeInquiry.setCatalog(CatalogDescriptor.CATALOG_ID);
-        solutionTypeInquiry.setName(DataEvent.READ_ACTION);
-        List results = context.getRuntimeContext().getEventBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
+        solutionTypeInquiry.setName(DataContract.READ_ACTION);
 
-        CatalogDescriptor solutionDescriptor = (CatalogDescriptor) results.get(0);
+        CatalogDescriptor solutionDescriptor = context.getRuntimeContext().getServiceBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
 
         context.getStateValue().setCatalogValue(solutionDescriptor);
 

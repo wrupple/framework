@@ -179,7 +179,7 @@ public class CatalogEngineTest extends IntegralTest {
 		CatalogActionRequestImpl request = new CatalogActionRequestImpl();
 		request.setCatalog(CatalogDescriptor.CATALOG_ID);
 		request.setDomain(CatalogEntry.PUBLIC_ID);
-        request.setName(DataEvent.CREATE_ACTION);
+        request.setName(DataContract.CREATE_ACTION);
 		log.trace("NEW TEST EXCECUTION CONTEXT READY");
 
 		String TRES = "TRES";
@@ -192,7 +192,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 		for (Argument arg : argumentsToDeclare) {
 			request.setEntryValue(arg);
-			runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+			runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		}
 		log.trace("[-read all-]");
 
@@ -200,7 +200,7 @@ public class CatalogEngineTest extends IntegralTest {
 		FilterData filterData = FilterDataUtils.newFilterData();
 		request.setFilter(filterData);
 
-        List<CatalogEntry> results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        List<CatalogEntry> results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
 		assertTrue(results.size() == argumentsToDeclare.size());
 
@@ -209,8 +209,8 @@ public class CatalogEngineTest extends IntegralTest {
 		setUp();
 		Object lodId = results.get(0).getId();
 		request.setEntry(lodId);
-        request.setName(DataEvent.READ_ACTION);
-		results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        request.setName(DataContract.READ_ACTION);
+		results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		assertTrue(results.size() == 1);
 		assertTrue(results.get(0).getName().equals(TRES));
 
@@ -220,7 +220,7 @@ public class CatalogEngineTest extends IntegralTest {
 		request.setFilter(filterData);
 		filterData.addOrdering(new FilterDataOrderingImpl(Argument.VALUE, false));
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
 		assertTrue(results.size() == argumentsToDeclare.size());
 		assertTrue(((Argument) results.get(0)).getValue() == 5);
@@ -230,7 +230,7 @@ public class CatalogEngineTest extends IntegralTest {
 		filterData.setConstrained(true);
 		filterData.setStart(2);
 		filterData.setLength(2);
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		assertTrue(results.size() == 2);
 
 		// EQUALS = "==";
@@ -239,7 +239,7 @@ public class CatalogEngineTest extends IntegralTest {
 		request.setFilter(filterData);
 
 
-		results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		assertTrue(results.size() == 1);
 		assertTrue(results.get(0).getName().equals(TRES));
 
@@ -253,14 +253,14 @@ public class CatalogEngineTest extends IntegralTest {
 		criteria.setOperator(FilterData.DIFFERENT);
 
 
-		results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+		results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		assertTrue(results.size() == 3);
 
 		// GREATEREQUALS = ">=";
 		log.trace("[-find element by single >= criteria-]");
 		criteria.setOperator(FilterData.GREATEREQUALS);
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 5);
 
@@ -268,7 +268,7 @@ public class CatalogEngineTest extends IntegralTest {
 		log.trace("[-find element by single <= criteria-]");
 		criteria.setOperator(FilterData.LESSEQUALS);
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 2);
 
@@ -277,7 +277,7 @@ public class CatalogEngineTest extends IntegralTest {
 		criteria.setOperator(FilterData.LESS);
 		criteria.setValue(2l);
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 2);
 
@@ -285,7 +285,7 @@ public class CatalogEngineTest extends IntegralTest {
 		log.trace("[-find element by single > criteria-]");
 		criteria.setOperator(FilterData.GREATER);
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 3);
 
@@ -297,19 +297,19 @@ public class CatalogEngineTest extends IntegralTest {
 
 		criteria.setValue("f???");
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 1);
 
 		criteria.setValue("f????");
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 0);
 
 		criteria.setValue("f%");
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 2);
 
@@ -320,7 +320,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 		criteria.setOperator(FilterData.STARTS); criteria.setValue("f");
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 2);
 
@@ -329,7 +329,7 @@ public class CatalogEngineTest extends IntegralTest {
 		log.trace("[-find element by single ENDS criteria-]");
 		criteria.setOperator(FilterData.ENDS); criteria.setValue("o");
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 1);
 
@@ -339,7 +339,7 @@ public class CatalogEngineTest extends IntegralTest {
 		criteria.setOperator(FilterData.REGEX);
 		criteria.setValue("([A-Z])\\w+");
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 1);
 
@@ -350,7 +350,7 @@ public class CatalogEngineTest extends IntegralTest {
 		criteria.setOperator(FilterData.IN);
 		criteria.setValues(Arrays.asList((Object)TRES,FIVE));
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 2);
 
@@ -361,9 +361,9 @@ public class CatalogEngineTest extends IntegralTest {
 		//request.setOldValue((CatalogEntry) request.getConvertedResult());
 		request.setEntry(lodId);
 		request.setEntryValue(new Argument("TROI", 3l));
-        request.setName(DataEvent.WRITE_ACTION);
+        request.setName(DataContract.WRITE_ACTION);
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		assertTrue(results.size() == 1);
 		assertTrue(lodId.equals(results.get(0).getId()));
 		assertTrue(results.get(0).getName().equals("TROI"));
@@ -371,9 +371,9 @@ public class CatalogEngineTest extends IntegralTest {
 		log.trace("[delete element]");
 		setUp();
 		request.setEntry(lodId);
-        request.setName(DataEvent.DELETE_ACTION);
+        request.setName(DataContract.DELETE_ACTION);
 
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 1);
 		assertTrue(lodId.equals(results.get(0).getId()));
@@ -383,8 +383,8 @@ public class CatalogEngineTest extends IntegralTest {
 		filterData = FilterDataUtils.newFilterData();
 		request.setFilter(filterData);
         request.setEntry(null);
-        request.setName(DataEvent.READ_ACTION);
-        results = runtimeContext.getEventBus().fireEvent(request,runtimeContext,null);
+        request.setName(DataContract.READ_ACTION);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == (argumentsToDeclare.size() - 1));
 

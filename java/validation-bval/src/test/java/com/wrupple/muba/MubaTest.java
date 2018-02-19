@@ -1,5 +1,6 @@
 package com.wrupple.muba;
 
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import org.easymock.EasyMockRule;
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.wrupple.muba.event.EventBus;
 
 public abstract class MubaTest extends EasyMockSupport {
 
@@ -34,11 +34,11 @@ public abstract class MubaTest extends EasyMockSupport {
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices( injector.getInstance(EventBus.class));
+		registerServices( injector.getInstance(ServiceBus.class));
 
 	}
 	
-	protected abstract void registerServices(EventBus switchs);
+	protected abstract void registerServices(ServiceBus switchs);
 	
 	protected abstract void setUp() throws Exception;
 

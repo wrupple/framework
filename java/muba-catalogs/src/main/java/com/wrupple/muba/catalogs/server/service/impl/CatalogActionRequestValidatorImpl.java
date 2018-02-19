@@ -5,7 +5,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -35,7 +35,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	private final CatalogKeyServices keyDelegate;
 	//FIXME this session object should base universal privileges as it is isolated from the to-be excecuted runtime context
     private final Provider<SessionContext> exp;
-    private final Provider<EventBus> bus;
+    private final Provider<ServiceBus> bus;
 	private final ContextAwareValidator delegate;
 	/*
 	 * secondary services
@@ -45,7 +45,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 	@Inject
     public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, @Named(SessionContext.SYSTEM) Provider<SessionContext> exp,
-                                             JSRAnnotationsDictionary cms, CatalogKeyServices keyDelegate, Provider<EventBus> bus, LargeStringFieldDataAccessObject lsdao) {
+											 JSRAnnotationsDictionary cms, CatalogKeyServices keyDelegate, Provider<ServiceBus> bus, LargeStringFieldDataAccessObject lsdao) {
         this.keyDelegate = keyDelegate;
         this.bus = bus;
 		this.lsdao = lsdao;
@@ -250,20 +250,16 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 				context.setParentValue(req);
 				context.setCatalog(CatalogDescriptor.CATALOG_ID);
 				context.setEntry(catalogId);
-            context.setName(DataEvent.READ_ACTION);
+            context.setName(DataContract.READ_ACTION);
             context.setFollowReferences(true);
-			List results =null;
+
 			try {
 				//TODO event always returns fill result list, can we make it so it doesnt have to wrap single results?ss
-                results = bus.get().fireEvent(context, system, null);
+				descriptor = bus.get().fireEvent(context, system, null);
 
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-			if(results==null||results.isEmpty()){
-				throw new IllegalArgumentException(catalogId+"@"+domain);
-			}
-			descriptor = (CatalogDescriptor) (results).get(0);
 
 		}
 		return descriptor;

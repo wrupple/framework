@@ -2,24 +2,24 @@ package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.BroadcastEvent;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.Contract;
 import com.wrupple.muba.event.domain.FilterCriteria;
 
 import java.util.List;
 
 public class BroadcastEventImpl extends CatalogEntryImpl implements BroadcastEvent {
-    private Event eventValue;
+    private Contract eventValue;
     private CatalogDescriptor catalogDescriptor;
     private List<FilterCriteria> observersValues;
 
     @Override
-    public Event getEventValue() {
+    public Contract getEventValue() {
         return eventValue;
     }
 
     @Override
-    public void setEventValue(Event eventValue) {
-        this.eventValue = eventValue;
+    public void setEventValue(Contract contractValue) {
+        this.eventValue = contractValue;
     }
 
     public List<FilterCriteria> getObserversValues() {

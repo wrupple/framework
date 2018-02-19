@@ -44,8 +44,8 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     private void processNextConstraint(ListIterator<String> sentence, ApplicationContext context) throws Exception {
         if (sentence.hasNext()) {
             String next = sentence.next();
-            if (context.getRuntimeContext().getEventBus().hasInterpret(next)) {
-                NaturalLanguageInterpret interpret = context.getRuntimeContext().getEventBus().getInterpret(next);
+            if (context.getRuntimeContext().getServiceBus().hasInterpret(next)) {
+                NaturalLanguageInterpret interpret = context.getRuntimeContext().getServiceBus().getInterpret(next);
                 log.trace(" {} token signals usage of interpret {}", next, interpret);
                 interpret.resolve(sentence, context, next);
                 processNextConstraint(sentence, context);

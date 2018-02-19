@@ -148,7 +148,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
             //no commit required for select
             entryCommit.setFollowReferences(true);
 
-            List results = context.getRuntimeContext().getEventBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
+            List results = context.getRuntimeContext().getServiceBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
             userOutput = (CatalogEntry) results.get(0);
             applicationState.setEntryValue(userOutput);
         }

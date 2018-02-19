@@ -27,7 +27,7 @@ public class ParallelProcess<I, O>/* implements Process<List<I>, List<O>>*/ {
 
     @Override
     public void start(final List<I> parameter, final StateTransition<List<O>> onDone,
-                      final EventBus eventBus) {
+                      final ServiceBus eventBus) {
         if (pending != null || resolved != null) {
             throw new IllegalStateException("this paralel process has already been resolved");
         }
@@ -105,9 +105,9 @@ public class ParallelProcess<I, O>/* implements Process<List<I>, List<O>>*/ {
 
         private int i;
         private List<I> parameter;
-        private EventBus eventBus;
+        private ServiceBus eventBus;
 
-        public SequentialCallback(List<I> parameter, EventBus eventBus) {
+        public SequentialCallback(List<I> parameter, ServiceBus eventBus) {
             i = 0;
             this.eventBus = eventBus;
             this.parameter = parameter;

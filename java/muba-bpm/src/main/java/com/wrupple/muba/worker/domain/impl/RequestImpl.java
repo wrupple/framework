@@ -1,18 +1,19 @@
 package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.Application;
-import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.Contract;
 import com.wrupple.muba.event.domain.Workflow;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
-import com.wrupple.muba.worker.domain.WorkRequest;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
+import com.wrupple.muba.worker.domain.Request;
 
 import java.util.List;
 
 /**
  * Created by japi on 12/08/17.
  */
-public class WorkRequestImpl extends BusinessIntentImpl implements WorkRequest {
+public class RequestImpl extends ManagedObjectImpl implements Request {
 
     @CatalogField(ignore = true)
     private Object result;
@@ -20,7 +21,7 @@ public class WorkRequestImpl extends BusinessIntentImpl implements WorkRequest {
     private Exception error;
     private List<String> sentence;
 
-
+    private String catalog;
 
     @CatalogField(ignore = true)
     private Workflow implicitIntentValue;
@@ -29,7 +30,7 @@ public class WorkRequestImpl extends BusinessIntentImpl implements WorkRequest {
 
     @Override
     public String getCatalogType() {
-        return WorkRequest.CATALOG;
+        return Request.CATALOG;
     }
 
 
@@ -40,7 +41,7 @@ public class WorkRequestImpl extends BusinessIntentImpl implements WorkRequest {
     }
 
     @Override
-    public void setEventValue(Event stateValue) {
+    public void setEventValue(Contract stateValue) {
         this.implicitIntentValue= (Workflow) stateValue;
     }
 
@@ -91,6 +92,16 @@ public class WorkRequestImpl extends BusinessIntentImpl implements WorkRequest {
     @Override
     public void setResult(Object result) {
         this.result = result;
+    }
+
+    @Override
+    public String getCatalog() {
+        return catalog;
+    }
+
+    @Override
+    public void setCatalog(String catalog) {
+        this.catalog = catalog;
     }
 }
 

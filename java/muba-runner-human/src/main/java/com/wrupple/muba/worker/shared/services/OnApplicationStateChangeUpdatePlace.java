@@ -31,7 +31,7 @@ public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler 
                  *
                  *  esta llamad en realidad solo tiene sentido en el cliente (paquete runner human), pero esta logica no se debe perder, y debe realizarse aqui mismo
                  *
-                 * on ApplicationState Update Catalog Event
+                 * on ApplicationState Update Catalog Contract
                  *
                  * the original implementation of user catalog invalidation heartbeat socket channel is in workspace/src/desktop/server/java/GAE/src/main/java/com/wrupple/base/client/state/impl/StartUserHeartBeatImpl.java and CacheInvalidationBroadcasterImpl
                  *
@@ -75,7 +75,7 @@ public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler 
 
     /*
     @Override
-	CacheInvalidationBroadcasterImpl:: public void broadcastInvalidationEventToUpperLayers(JsCacheInvalidationData e, EventBus eventBus) {
+	CacheInvalidationBroadcasterImpl:: public void broadcastInvalidationEventToUpperLayers(JsCacheInvalidationData e, ServiceBus eventBus) {
 		String targetCatalog = e.getCatalog();
 		String sourceAction = e.getName();
 		JsCatalogEntry key=e.getEntry();

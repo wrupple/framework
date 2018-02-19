@@ -1,7 +1,7 @@
 package com.wrupple.muba.event.domain.impl;
 
-import com.wrupple.muba.event.domain.Event;
-import com.wrupple.muba.event.domain.Intent;
+import com.wrupple.muba.event.domain.Contract;
+import com.wrupple.muba.event.domain.Invocation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,23 +9,22 @@ import java.util.List;
 /**
  * Created by japi on 21/08/17.
  */
-public class IntentImpl extends CatalogEntryImpl implements Intent {
+public class InvocationImpl extends CatalogEntryImpl implements Invocation {
 
     /**
      * it's up to the event contract to decide if the catalog is metadata to the result or the event
      */
     private String catalog;
-    private Object result;
-    private Event implicitIntentValue;
+    private Contract implicitIntentValue;
     private Object implicitIntent;
     private Exception error;
     private List<String> sentence;
 
-    public IntentImpl() {
+    public InvocationImpl() {
     }
 
 
-    public IntentImpl(String... sentence) {
+    public InvocationImpl(String... sentence) {
         this();
         setSentence(Arrays.asList(sentence));
     }
@@ -40,28 +39,15 @@ public class IntentImpl extends CatalogEntryImpl implements Intent {
         this.catalog = catalog;
     }
 
-    public Object getResult() {
-        return result;
-    }
 
     @Override
-    public void setResult(Object result) {
-        this.result = result;
-    }
-
-    @Override
-    public Event getEventValue() {
+    public Contract getEventValue() {
         return implicitIntentValue;
     }
 
     @Override
-    public void setEventValue(Event stateValue) {
+    public void setEventValue(Contract stateValue) {
         this.implicitIntentValue = stateValue;
-    }
-
-    @Override
-    public <T> T getConvertedResult() {
-        return (T) getResult();
     }
 
     public Exception getError() {
@@ -85,11 +71,6 @@ public class IntentImpl extends CatalogEntryImpl implements Intent {
     }
 
     @Override
-    public String getCatalogType() {
-        return ExplicitIntent_CATALOG;
-    }
-
-    @Override
     public Object getEvent() {
         return implicitIntent;
     }
@@ -100,11 +81,15 @@ public class IntentImpl extends CatalogEntryImpl implements Intent {
 
     @Override
     public String toString() {
-        return "IntentImpl{" +
+        return "InvocationImpl{" +
                 "catalog='" + catalog + '\'' +
-                ", result=" + result +
                 ", error=" + error +
                 ", sentence=" + sentence +
                 '}';
+    }
+
+    @Override
+    public String getCatalogType() {
+        return Invocation_CATALOG;
     }
 }

@@ -1,7 +1,7 @@
 package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.Event;
+import com.wrupple.muba.event.domain.Contract;
 import com.wrupple.muba.event.domain.impl.ServiceManifestImpl;
 import com.wrupple.muba.worker.domain.IntentResolverServiceManifest;
 
@@ -17,8 +17,8 @@ import java.util.Arrays;
 public class IntentResolverServiceManifestImpl extends ServiceManifestImpl implements IntentResolverServiceManifest {
 
     @Inject
-    public IntentResolverServiceManifestImpl(@Named(Event.Event_CATALOG)CatalogDescriptor contractDescriptorValue) {
+    public IntentResolverServiceManifestImpl(@Named(Contract.Event_CATALOG)CatalogDescriptor contractDescriptorValue) {
         super(IntentResolverServiceManifest.SERVICE_NAME, "1.0", contractDescriptorValue, Arrays.asList(
-                Event.CATALOG_FIELD));
+                Contract.CATALOG_FIELD));
     }
 }

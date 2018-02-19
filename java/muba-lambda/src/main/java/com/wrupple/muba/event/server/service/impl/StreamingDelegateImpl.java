@@ -1,6 +1,6 @@
 package com.wrupple.muba.event.server.service.impl;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.BroadcastContext;
 import com.wrupple.muba.event.domain.BroadcastEvent;
 import com.wrupple.muba.event.domain.BroadcastQueueAppend;
@@ -31,7 +31,7 @@ public class StreamingDelegateImpl implements PublishEventsImpl.StreamingDelegat
     }
 
     @Override
-    public void streamToConcernedPeers(BroadcastContext context, BroadcastEvent queueElement, EventBus eventBus, Collection<Host> concernedPeers) {
+    public void streamToConcernedPeers(BroadcastContext context, BroadcastEvent queueElement, ServiceBus serviceBus, Collection<Host> concernedPeers) {
         Stream<Host> s = parallel ? concernedPeers.parallelStream() : concernedPeers.stream();
 
         s.forEach((Host host) -> {
@@ -41,7 +41,7 @@ public class StreamingDelegateImpl implements PublishEventsImpl.StreamingDelegat
             queue.setCatalog(queueElement.getEventValue().getCatalogType());
             try {
                 log.debug("Append to broadcast channel of host {}", host);
-                eventBus.fireEvent(queue, context.getRuntimeContext(), null);
+                serviceBus.fireEvent(queue, context.getRuntimeContext(), null);
             } catch (Exception e) {
                 log.error("failed to append event to host broadcast queue", e);
             }

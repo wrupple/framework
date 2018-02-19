@@ -33,7 +33,7 @@ public class ValueChangeAuditImpl extends AbstractComparationCommand implements 
         fieldValueChange.setName(field.getFieldId());
         fieldValueChange.setOldValue(codedInitialValue);
         fieldValueChange.setValue(codedFinalValue);
-		List<String> sentence = context.getRuntimeContext().getEventBus().getIntentInterpret().resolveContractSentence(fieldValueChange);
+		List<String> sentence = context.getRuntimeContext().getServiceBus().getIntentInterpret().resolveContractSentence(fieldValueChange);
 
 		//REQUEST FOR PERMISSION CHANGING VALUE OF A FIELD
 

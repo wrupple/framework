@@ -1,16 +1,20 @@
 package com.wrupple.muba.worker.domain;
 
-import com.wrupple.muba.event.domain.Event;
-import com.wrupple.muba.event.domain.Intent;
+import com.wrupple.muba.event.domain.Invocation;
+import com.wrupple.muba.event.domain.reserved.HasResult;
 
 
 /**
  * @author japi
  *
  */
-public interface WorkRequest extends BusinessIntent,Intent {
+public interface Request extends Invocation,HasResult<Object> {
 
-String CATALOG = "WorkRequest";
+    String CATALOG = "Request";
+
+
+    void setError(Exception e);
+
 	/*
     Long getSource();
 	

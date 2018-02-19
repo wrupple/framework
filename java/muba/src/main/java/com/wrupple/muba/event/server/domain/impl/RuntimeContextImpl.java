@@ -1,6 +1,6 @@
 package com.wrupple.muba.event.server.domain.impl;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.SessionContext;
@@ -11,7 +11,6 @@ import com.wrupple.muba.event.domain.reserved.HasLocale;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.event.domain.reserved.HasResults;
 import org.apache.commons.chain.Context;
-import org.apache.commons.chain.impl.ContextBase;
 
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
@@ -39,7 +38,7 @@ public class RuntimeContextImpl extends AbstractYieldContext implements RuntimeC
 
 	private Context serviceContext;
     private final SessionContext session;
-    private final EventBus eventBus;
+    private final ServiceBus serviceBus;
 
 	private String locale, format, callbackFunction, id;
 	private boolean scopedWriting;
@@ -51,16 +50,16 @@ public class RuntimeContextImpl extends AbstractYieldContext implements RuntimeC
 	private long totalResponseSize;
 	private Set<ConstraintViolation<?>> constraintViolations;
 
-    public RuntimeContextImpl(EventBus appication, SessionContext session, RuntimeContext parent) {
+    public RuntimeContextImpl(ServiceBus appication, SessionContext session, RuntimeContext parent) {
         super();
-		this.eventBus = appication;
+		this.serviceBus = appication;
 		this.session = session;
 		this.parentValue = parent;
 	}
 
 	@Override
 	public boolean process() throws Exception {
-		return getEventBus().resume(this);
+		return getServiceBus().resume(this);
 	}
 	@Override
 	public void reset() {
@@ -68,7 +67,7 @@ super.reset();
 serviceContext = null;
 	}
 
-    public RuntimeContextImpl(EventBus appication, SessionContext session) {
+    public RuntimeContextImpl(ServiceBus appication, SessionContext session) {
         this( appication, session, null);
 	}
 
@@ -139,7 +138,7 @@ serviceContext = null;
 			}
 			return r;
 		} else {
-			return getEventBus().getOutputWriter();
+			return getServiceBus().getOutputWriter();
 
 		}
 
@@ -263,8 +262,8 @@ serviceContext = null;
 		return parentValue;
 	}
 
-	public EventBus getEventBus() {
-		return eventBus;
+	public ServiceBus getServiceBus() {
+		return serviceBus;
 	}
 
 	@Override
@@ -279,7 +278,6 @@ serviceContext = null;
 		} else {
 			return (T) this.result;
 		}
-
 	}
 
     @Override
@@ -303,7 +301,7 @@ serviceContext = null;
 
 	@Override
 	public RuntimeContext spawnChild() {
-		return new RuntimeContextImpl( getEventBus(), getSession(), this);
+		return new RuntimeContextImpl( getServiceBus(), getSession(), this);
 	}
 
 	@Override
@@ -374,7 +372,7 @@ serviceContext = null;
 	public int hashCode() {
 		final int prime = 31;
 		int result = prime;
-		result = prime * result + ((eventBus == null) ? 0 : eventBus.hashCode());
+		result = prime * result + ((serviceBus == null) ? 0 : serviceBus.hashCode());
 		result = prime * result + ((callbackFunction == null) ? 0 : callbackFunction.hashCode());
 		result = prime * result + ((caughtException == null) ? 0 : caughtException.hashCode());
 		result = prime * result + ((constraintViolations == null) ? 0 : constraintViolations.hashCode());
@@ -404,10 +402,10 @@ serviceContext = null;
 		if (getClass() != obj.getClass())
 			return false;
 		RuntimeContextImpl other = (RuntimeContextImpl) obj;
-		if (eventBus == null) {
-			if (other.eventBus != null)
+		if (serviceBus == null) {
+			if (other.serviceBus != null)
 				return false;
-		} else if (!eventBus.equals(other.eventBus))
+		} else if (!serviceBus.equals(other.serviceBus))
 			return false;
 		if (callbackFunction == null) {
 			if (other.callbackFunction != null)

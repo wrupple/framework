@@ -3,7 +3,7 @@ package com.wrupple.muba.worker;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
@@ -25,11 +25,11 @@ public abstract class AbstractTest extends EasyMockSupport {
 
     public final void init(Module... modules) {
         injector = Guice.createInjector(modules);
-        registerServices(injector.getInstance(EventBus.class));
+        registerServices(injector.getInstance(ServiceBus.class));
 
     }
 
-    protected abstract void registerServices(EventBus switchs);
+    protected abstract void registerServices(ServiceBus switchs);
 
 
 }

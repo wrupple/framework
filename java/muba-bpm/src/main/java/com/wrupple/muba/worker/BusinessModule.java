@@ -8,10 +8,11 @@ import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.IntentImpl;
+import com.wrupple.muba.event.domain.impl.InvocationImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import com.wrupple.muba.worker.domain.*;
+import com.wrupple.muba.worker.domain.Intent;
 import com.wrupple.muba.worker.domain.impl.*;
 import com.wrupple.muba.worker.server.chain.BusinessEngine;
 import com.wrupple.muba.worker.server.chain.IntentResolverEngine;
@@ -24,7 +25,9 @@ import com.wrupple.muba.worker.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import com.wrupple.muba.worker.server.service.impl.BusinessPluginImpl;
 
-import static com.wrupple.muba.event.domain.Intent.ExplicitIntent_CATALOG;
+import static com.wrupple.muba.event.domain.Invocation.Invocation_CATALOG;
+import static com.wrupple.muba.worker.domain.Intent.Intent_CATALOG;
+
 
 /**
  * Created by japi on 11/08/17.
@@ -87,13 +90,13 @@ public class BusinessModule  extends AbstractModule {
          *
          */
         bind(ApplicationState.class).to(ApplicationStateImpl.class);
-        bind(BusinessIntent.class).to(BusinessIntentImpl.class);
+        bind(Intent.class).to(IntentImpl.class);
         //a host can have many sessions that can have many application states
         bind(String.class).annotatedWith(Names.named(Host.CATALOG)).toInstance( "/static/img/session.png");
 
         bind(String.class).annotatedWith(Names.named(Application.CATALOG)).toInstance("/static/img/process.png");
 
-        bind(String.class).annotatedWith(Names.named(WorkRequest.CATALOG)).toInstance("/static/img/notification.png");
+        bind(String.class).annotatedWith(Names.named(Request.CATALOG)).toInstance("/static/img/notification.png");
 
     }
 
@@ -102,12 +105,12 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(WorkRequest.CATALOG)
+    @Named(Request.CATALOG)
     public CatalogDescriptor notification(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(WorkRequestImpl.class, WorkRequest.CATALOG, "WorkRequest",
+        CatalogDescriptor r = builder.fromClass(RequestImpl.class, Request.CATALOG, "Request",
                 -990091, null);
-        r.setClazz(WorkRequestImpl.class);
+        r.setClazz(RequestImpl.class);
         return r;
     }
 
@@ -115,12 +118,12 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(Event.Event_CATALOG)
+    @Named(Contract.Event_CATALOG)
     public CatalogDescriptor intent(
             CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(EventImpl.class, Event.Event_CATALOG, "Event",
+        CatalogDescriptor r = builder.fromClass(ContractImpl.class, Contract.Event_CATALOG, "Contract",
                 -990093, null);
-        r.setClazz(EventImpl.class);
+        r.setClazz(ContractImpl.class);
         return r;
     }
 
@@ -128,27 +131,15 @@ public class BusinessModule  extends AbstractModule {
     @Provides
     @Singleton
     @Inject
-    @Named(BusinessIntent.BusinessIntent_CATALOG)
-    public CatalogDescriptor commit(@Named(ExplicitIntent_CATALOG) CatalogDescriptor timeline,
+    @Named(Intent_CATALOG)
+    public CatalogDescriptor commit(/*@Named(ManagedObject.MANAGED_CATALOG) CatalogDescriptor timeline,*/
                                          CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(BusinessIntentImpl.class, BusinessIntent.BusinessIntent_CATALOG, "Commit",
-                -990095, timeline);
-        r.setClazz(BusinessIntentImpl.class);
-        return r;
-    }
-
-
-    @Provides
-    @Singleton
-    @Inject
-    @Named(ExplicitIntent_CATALOG)
-    public CatalogDescriptor explicit(
-                                    CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(IntentImpl.class, ExplicitIntent_CATALOG, "Do",
-                -990096, null);
+        CatalogDescriptor r = builder.fromClass(IntentImpl.class, Intent_CATALOG, "Commit",
+                -990095, null);
         r.setClazz(IntentImpl.class);
         return r;
     }
+
 
 
 

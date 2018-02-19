@@ -13,7 +13,7 @@ import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 public interface CatalogActionContext
         extends ServiceContext, HasResult<CatalogEntry>, HasResults<CatalogEntry> {
 
-    final String CATALOG = "CatalogActionContext";
+    String CATALOG = "CatalogActionContext";
     String INCOMPLETO = "_incompleto";
 
     CatalogActionRequest getRequest();

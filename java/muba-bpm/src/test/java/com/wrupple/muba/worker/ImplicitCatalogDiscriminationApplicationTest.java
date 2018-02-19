@@ -8,7 +8,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.*;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
-import com.wrupple.muba.worker.domain.impl.BusinessIntentImpl;
+import com.wrupple.muba.worker.domain.impl.IntentImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
 import com.wrupple.muba.worker.domain.impl.WorkflowImpl;
 import org.junit.Before;
@@ -175,7 +175,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         log.trace("[-Create DriverBooking Handling Application Context-]");
 
         //item+booking;
-        BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
+        IntentImpl bookingRequest = new IntentImpl();
         bookingRequest.setEntry(booking.getId());
         bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
 
@@ -214,7 +214,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
         log.info("post solution of first task to the business engine");
 
-        bookingRequest = new BusinessIntentImpl();
+        bookingRequest = new IntentImpl();
         bookingRequest.setEntryValue(driver);
         //we explicitly avoid exposing the applicationId to test service location bookingRequest.setStateValue((Long) activityState.getId());
 

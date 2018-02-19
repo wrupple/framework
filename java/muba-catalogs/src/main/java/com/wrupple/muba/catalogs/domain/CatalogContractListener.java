@@ -4,8 +4,8 @@ package com.wrupple.muba.catalogs.domain;
  * @author japi
  *
  */
-public interface CatalogEventListener extends UserDefinedCatalogActionConstraint {
-    String CATALOG = "CatalogEventListener";
+public interface CatalogContractListener extends UserDefinedCatalogActionConstraint {
+    String CATALOG = "CatalogContractListener";
 	String ACTION_FIELD="action";
 
     Long getAction();

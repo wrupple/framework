@@ -1,10 +1,10 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.DataEvent;
+import com.wrupple.muba.event.domain.DataContract;
 import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.server.service.KeyDomainValidator;
@@ -23,13 +23,13 @@ import java.util.Set;
 public class KeyDomainValidatorImpl implements KeyDomainValidator {
 
     private final Provider<SessionContext> exp;
-    private final Provider<EventBus> bus;
+    private final Provider<ServiceBus> bus;
 	private final ObjectNativeInterface nativeInterface;
 	private String foreignCatalog;
 	private boolean unique;
 
 	@Inject
-    public KeyDomainValidatorImpl(@Named(SessionContext.SYSTEM) Provider<SessionContext> exp, Provider<EventBus> bus, ObjectNativeInterface nativeInterface) {
+    public KeyDomainValidatorImpl(@Named(SessionContext.SYSTEM) Provider<SessionContext> exp, Provider<ServiceBus> bus, ObjectNativeInterface nativeInterface) {
         this.exp = exp;
 		this.bus = bus;
 		this.nativeInterface=nativeInterface;
@@ -51,7 +51,7 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 
 			CatalogActionRequestImpl context = new CatalogActionRequestImpl();
 			context.setCatalog(foreignCatalog);
-			context.setName(DataEvent.READ_ACTION);
+			context.setName(DataContract.READ_ACTION);
             SessionContext runtime = this.exp.get();
             if (unique && nativeInterface.isCollection(value)) {
 				Collection<Object> colection = (Collection<Object>) value;
@@ -97,8 +97,7 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
         context.setEntry(value);
 //FIXME TEST FOR existence of key
 
-        List<CatalogEntry> results = bus.get().fireEvent(context,runtime,null);
-        return results != null && !results.isEmpty();
+        return bus.get().fireEvent(context,runtime,null)!=null;
 	}
 
 }

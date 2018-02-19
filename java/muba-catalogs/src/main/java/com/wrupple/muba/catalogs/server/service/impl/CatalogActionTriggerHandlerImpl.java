@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.wrupple.muba.catalogs.domain.CatalogEventListener;
+import com.wrupple.muba.catalogs.domain.CatalogContractListener;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +31,12 @@ public class CatalogActionTriggerHandlerImpl  {
 
 
 	protected boolean extecute(CatalogActionContext context, boolean advise) throws Exception {
-		List<CatalogEventListener> triggers = interpret.getTriggersValues(context);
+		List<CatalogContractListener> triggers = interpret.getTriggersValues(context);
 		if (triggers == null || triggers.isEmpty()) {
 			log.trace("no triggers to process");
 		} else {
 			boolean r;
-			CatalogEventListener trigger;
+			CatalogContractListener trigger;
 			for (int i = 0; i < triggers.size(); i++) {
 				trigger = triggers.get(i);
 				if(trigger.isAdvice()==advise){
@@ -54,7 +54,7 @@ public class CatalogActionTriggerHandlerImpl  {
 	}
 
 
-	private boolean excecuteTrigger(CatalogEventListener trigger, CatalogActionContext context)
+	private boolean excecuteTrigger(CatalogContractListener trigger, CatalogActionContext context)
 			throws Exception {
 
 		log.trace("[PROCESS trigger] ");
@@ -87,7 +87,7 @@ public class CatalogActionTriggerHandlerImpl  {
 		return Command.CONTINUE_PROCESSING;
 	}
 
-	private static Map<String, String> parseProperties(List<String> rawProperties, CatalogEventListener trigger,
+	private static Map<String, String> parseProperties(List<String> rawProperties, CatalogContractListener trigger,
 			CatalogActionContext context) {
 		Map<String, String> regreso = getParsedProperties(rawProperties, context.getNamespaceContext(),trigger);
 		if (regreso == null) {
@@ -97,11 +97,11 @@ public class CatalogActionTriggerHandlerImpl  {
 		return regreso;
 	}
 
-	 static Map<String, String> getParsedProperties(List<String> rawProperties, Map context, CatalogEventListener trigger) {
+	 static Map<String, String> getParsedProperties(List<String> rawProperties, Map context, CatalogContractListener trigger) {
 		return (Map<String, String>) context.get(trigger.getCatalogType()+trigger.getId());
 	}
 
-	static void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context, CatalogEventListener trigger) {
+	static void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context, CatalogContractListener trigger) {
 		context.put(trigger.getCatalogType()+trigger.getId(), parsed);
 	}
 

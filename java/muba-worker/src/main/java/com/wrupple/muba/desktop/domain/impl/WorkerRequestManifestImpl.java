@@ -1,6 +1,6 @@
 package com.wrupple.muba.desktop.domain.impl;
 
-import com.wrupple.muba.desktop.domain.WorkerRequest;
+import com.wrupple.muba.desktop.domain.WorkerContract;
 import com.wrupple.muba.desktop.domain.WorkerRequestManifest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -16,7 +16,7 @@ public class WorkerRequestManifestImpl extends ServiceManifestImpl implements Wo
 
     @Inject
     //as used by workerRequestInterpretImpl
-    public WorkerRequestManifestImpl(@Named(WorkerRequest.CATALOG) CatalogDescriptor catalogValue) {
+    public WorkerRequestManifestImpl(@Named(WorkerContract.CATALOG) CatalogDescriptor catalogValue) {
         super(NAME, catalogValue, Arrays.asList(CatalogEntry.NAME_FIELD));
     }
 }

@@ -11,7 +11,7 @@ import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogEventImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogContractImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
 import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
@@ -53,7 +53,7 @@ public class CatalogModule extends AbstractModule {
 		BeanUtilsBean2.getInstance().getConvertUtils().register(new LongConverter(null), Long.class);
 		BeanUtilsBean2.getInstance().getConvertUtils().register(false, true, 0);
 		/*
-	     * Event Handlers
+	     * Contract Handlers
 	     */
         bind(CatalogServiceManifest.class).to(CatalogServiceManifestImpl.class);
         bind(CatalogActionFilterManifest.class).to(CatalogActionFilterManifestImpl.class);
@@ -98,7 +98,7 @@ public class CatalogModule extends AbstractModule {
 
         bind(String.class).annotatedWith(Names.named(FieldDescriptor.CATALOG_ID)).toInstance( "/static/img/fields.png");
         bind(String.class).annotatedWith(Names.named(Constraint.CATALOG_ID)).toInstance("/static/img/check.png");
-        bind(String.class).annotatedWith(Names.named(CatalogEventListener.CATALOG)).toInstance("/static/img/excecute.png");
+        bind(String.class).annotatedWith(Names.named(CatalogContractListener.CATALOG)).toInstance("/static/img/excecute.png");
         bind(String.class).annotatedWith(Names.named(WebEventTrigger.CATALOG)).toInstance( "/static/img/excecute.png");
         bind(String.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG)).toInstance("/static/img/locale.png");
         bind(String.class).annotatedWith(Names.named(LocalizedString.CATALOG)).toInstance( "/static/img/locale.png");
@@ -111,8 +111,8 @@ public class CatalogModule extends AbstractModule {
 		bind(Class.class).annotatedWith(Names.named(LocalizedString.CATALOG))
 				.toInstance(HasAccesablePropertyValues.class);
 		bind(Class.class).annotatedWith(Names.named(Trash.CATALOG)).toInstance(HasAccesablePropertyValues.class);
-		bind(Class.class).annotatedWith(Names.named(CatalogEventListener.CATALOG))
-				.toInstance(CatalogEventListenerImpl.class);
+		bind(Class.class).annotatedWith(Names.named(CatalogContractListener.CATALOG))
+				.toInstance(CatalogContractListenerImpl.class);
 		bind(Class.class).annotatedWith(Names.named(FieldDescriptor.CATALOG_ID)).toInstance(FieldDescriptorImpl.class);
 		bind(Class.class).annotatedWith(Names.named(CatalogDescriptor.CATALOG_ID))
 				.toInstance(CatalogDescriptorImpl.class);
@@ -120,8 +120,8 @@ public class CatalogModule extends AbstractModule {
                 .toInstance(CatalogActionRequestImpl.class);
         bind(Class.class).annotatedWith(Names.named(CatalogActionCommit.CATALOG))
                 .toInstance(CatalogActionCommitImpl.class);
-        bind(Class.class).annotatedWith(Names.named(CatalogEvent.CATALOG))
-                .toInstance(CatalogEventImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogContract.CATALOG))
+                .toInstance(CatalogContractImpl.class);
 
 		/*
 		 * CONFIGURATION
@@ -233,7 +233,7 @@ public class CatalogModule extends AbstractModule {
 	@Inject
 	@Named(ContentNode.CATALOG_TIMELINE)
 	public CatalogDescriptor timeline(CatalogDescriptorBuilder builder) {
-		CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG_TIMELINE, "Timeline Event", -1911192, null);
+		CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, ContentNode.CATALOG_TIMELINE, "Timeline Contract", -1911192, null);
 		return r;
 	}
 
@@ -303,10 +303,10 @@ public class CatalogModule extends AbstractModule {
 	@Provides
 	@Inject
 	@Singleton
-	@Named(CatalogEventListener.CATALOG)
-	public CatalogDescriptor catalogActionTrigger(@Named(CatalogEventListener.CATALOG) Class clazz,
+	@Named(CatalogContractListener.CATALOG)
+	public CatalogDescriptor catalogActionTrigger(@Named(CatalogContractListener.CATALOG) Class clazz,
 			CatalogDescriptorBuilder builder) {
-		CatalogDescriptor r = builder.fromClass(clazz, CatalogEventListener.CATALOG,
+		CatalogDescriptor r = builder.fromClass(clazz, CatalogContractListener.CATALOG,
 				"Catalog Trigger", -194949, null);
 		r.setClazz(clazz);
 		return r;
@@ -318,11 +318,11 @@ public class CatalogModule extends AbstractModule {
     @Provides
     @Inject
     @Singleton
-    @Named(CatalogEvent.CATALOG)
-    public CatalogDescriptor eventCatalog(@Named(CatalogEvent.CATALOG) Class clazz,
+    @Named(CatalogContract.CATALOG)
+    public CatalogDescriptor eventCatalog(@Named(CatalogContract.CATALOG) Class clazz,
                                           CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(clazz, CatalogEvent.CATALOG,
-                "Catalog Event", -13939395, null);
+        CatalogDescriptor r = builder.fromClass(clazz, CatalogContract.CATALOG,
+                "Catalog Contract", -13939395, null);
         r.setClazz(clazz);
         return r;
     }

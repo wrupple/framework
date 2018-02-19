@@ -197,7 +197,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
                 CatalogActionRequest parentContext = context.getRequest();
                 CatalogActionRequest childContext = new CatalogActionRequestImpl();
 
-                childContext.setName(DataEvent.READ_ACTION);
+                childContext.setName(DataContract.READ_ACTION);
                 childContext.setEntry(catalogid);
                 childContext.setCatalog(CatalogDescriptor.CATALOG_ID);
 
@@ -407,7 +407,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setCatalog(catalogId);
             request.setEntry(entryId);
             request.setFilter(null);
-            request.setName(DataEvent.READ_ACTION);
+            request.setName(DataContract.READ_ACTION);
             request.setFollowReferences(true);
 
             dictionary.getRead().execute(this);
@@ -420,7 +420,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setCatalog(catalog);
             request.setEntry(id);
             request.setFilter(o);
-            request.setName(DataEvent.DELETE_ACTION);
+            request.setName(DataContract.DELETE_ACTION);
             dictionary.getDelete().execute(this);
             return (List<T>) getResults();
         }
@@ -430,7 +430,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setCatalog(catalogId);
             request.setEntry(null);
             request.setFilter(all);
-            request.setName(DataEvent.READ_ACTION);
+            request.setName(DataContract.READ_ACTION);
             dictionary.getRead().execute(this);
             return (List<T>) getResults();
         }
@@ -441,7 +441,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setCatalog(catalogId);
             request.setEntry(entryId);
             request.setEntryValue(updatedEntry);
-            request.setName(DataEvent.WRITE_ACTION);
+            request.setName(DataContract.WRITE_ACTION);
             request.setFollowReferences(true);
 
             dictionary.getWrite().execute(this);
@@ -453,7 +453,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             request.setCatalog(catalogId);
             request.setEntry(null);
             request.setEntryValue(createdEntry);
-            request.setName(DataEvent.CREATE_ACTION);
+            request.setName(DataContract.CREATE_ACTION);
             request.setFollowReferences(true);
 
             dictionary.getNew().execute(this);
@@ -509,10 +509,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setEntry(key);
             event.setFilter(null);
             event.setFollowReferences(assemble);
-            event.setName(DataEvent.READ_ACTION);
+            event.setName(DataContract.READ_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            List<T> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
-            return results == null ? null : results.isEmpty() ? null : results.get(0);
+            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
         }
 
 
@@ -530,9 +529,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setCatalog(catalogId);
             event.setFilter(filter);
             event.setFollowReferences(assemble);
-            event.setName(DataEvent.READ_ACTION);
+            event.setName(DataContract.READ_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            return runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
+            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
 
         }
 
@@ -543,9 +542,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setCatalog(catalog);
             event.setFilter(o);
             event.setEntry(id);
-            event.setName(DataEvent.DELETE_ACTION);
+            event.setName(DataContract.DELETE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            return runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
+            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
         }
 
 
@@ -557,9 +556,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setEntry(entryId);
             event.setFollowReferences(true);
             event.setEntryValue(updatedEntry);
-            event.setName(DataEvent.WRITE_ACTION);
+            event.setName(DataContract.WRITE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            List<T> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
+            List<T> results = runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
             return results == null ? null : results.isEmpty() ? null : results.get(0);
         }
 
@@ -570,17 +569,21 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setParentValue(request);
             event.setCatalog(catalogId);
             event.setEntryValue(createdEntry);
-            event.setName(DataEvent.CREATE_ACTION);
+            event.setName(DataContract.CREATE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
             event.setFollowReferences(true);
 
-            List<T> results = runtimeContext.getEventBus().fireEvent(event, runtimeContext, null);
-            return results == null ? null : results.isEmpty() ? null : results.get(0);        }
+            return  runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+        }
 
 
         @Override
-        public <T extends CatalogEntry> T getConvertedResult() {
-            return getEntryResult();
+        public <T > T getConvertedResult() {
+            if(request.getEntry()==null){
+                return (T) getResults();
+            }else{
+                return getEntryResult();
+            }
         }
 
         @Override

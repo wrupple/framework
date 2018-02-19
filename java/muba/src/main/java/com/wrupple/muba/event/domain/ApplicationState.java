@@ -10,7 +10,7 @@ import java.util.List;
  * EntryId determines the input contract that created this context according to the data type referenced by the (HasCatalogId:)Workflow.
  * The reference to this contract is found in the runtineContext
  */
-public interface ApplicationState extends HasDistinguishedName, ManagedObject, HasEntryId, HasParentValue<Long, ApplicationState>, Event {
+public interface ApplicationState extends HasDistinguishedName, ManagedObject, HasEntryId, HasParentValue<Long, ApplicationState>, Contract {
 
     String CATALOG = "ApplicationState";
 

@@ -3,7 +3,6 @@ package com.wrupple.muba.event.server.service.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
-import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
-public class StreamingIntentDelegate implements EventBusImpl.IntentDelegate {
+public class StreamingIntentDelegate implements ServiceBusImpl.IntentDelegate {
 
-    protected static final Logger log = LoggerFactory.getLogger(EventBusImpl.class);
+    protected static final Logger log = LoggerFactory.getLogger(ServiceBusImpl.class);
 
     private final CatalogDescriptor handleField;
 
@@ -31,26 +30,21 @@ public class StreamingIntentDelegate implements EventBusImpl.IntentDelegate {
     }
 
     @Override
-    public List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<Intent> handlers, EventBusImpl eventBus) throws Exception {
+    public List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<Invocation> handlers, ServiceBusImpl eventBus) throws Exception {
         if (parallel) {
             return handlers.parallelStream().map(handler -> {
                 try {
-                    eventBus.fireHandler(handler, session, parentTimeline);
+                    return eventBus.fireHandler(handler, session, parentTimeline);
                 } catch (Exception e) {
-                    handler.setError(e);
-                    //implicitRequestContract.addError(e);
-                    return handler;
+                    throw new RuntimeException(e);
+
                 }
-                return handler.getConvertedResult();
             }).collect(Collectors.toList());
         } else {
             RuntimeContextImpl runtimeContext = new RuntimeContextImpl(eventBus, session, parentTimeline);
-            for (Intent handler : handlers) {
+            for (Invocation handler : handlers) {
                 log.info("[sequential invocation of handler] {}", handler);
-                if (eventBus.fireHandlerWithRuntime(handler, runtimeContext) != Command.CONTINUE_PROCESSING) {
-                    log.warn("[handler broke sequential invocation chain] {}", handler);
-                    break;
-                }
+                eventBus.fireHandlerWithRuntime(handler, runtimeContext);
             }
             return runtimeContext.getConvertedResult();
         }
@@ -59,7 +53,7 @@ public class StreamingIntentDelegate implements EventBusImpl.IntentDelegate {
     }
 
     @Override
-    public List<Intent> interpretImlicitIntent(Event implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, EventBusImpl eventBus) {
+    public List<Invocation> interpretImlicitIntent(Contract implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, ServiceBusImpl eventBus) {
         return manifests.stream().
                 filter(handler -> {
                     if (handlerCriterion == null || handleField == null || handlerCriterion.isEmpty()) {

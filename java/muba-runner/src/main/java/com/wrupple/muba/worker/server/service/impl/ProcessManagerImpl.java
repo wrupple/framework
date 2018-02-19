@@ -1,7 +1,6 @@
 package com.wrupple.muba.worker.server.service.impl;
 
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import com.wrupple.muba.worker.server.service.Solver;
 
@@ -13,7 +12,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.ServiceBus;
 import com.wrupple.muba.bpm.client.activity.ActivityProcess;
 import com.wrupple.muba.bpm.client.activity.process.state.StateTransition;
 import com.wrupple.muba.bpm.client.services.Process;
@@ -49,7 +48,7 @@ import com.wrupple.vegetate.shared.services.PeerManager;
 */
 @Singleton
 public class ProcessManagerImpl implements ProcessManager {
-    private final EventBus eventBus;
+    private final ServiceBus serviceBus;
     private final Solver solver;
 
 /*
@@ -71,8 +70,8 @@ public class ProcessManagerImpl implements ProcessManager {
 */
 
     @Inject
-    public ProcessManagerImpl(EventBus eventBus, Solver solver) {
-        this.eventBus = eventBus;
+    public ProcessManagerImpl(ServiceBus serviceBus, Solver solver) {
+        this.serviceBus = serviceBus;
         this.solver = solver;
     }
 
@@ -110,7 +109,7 @@ public class ProcessManagerImpl implements ProcessManager {
 /*
 
 @Override
-    public void contextSwitch(ActivityProcess activityProcess, JsApplicationItem applicationItem, AcceptsOneWidget containerr, EventBus bus) {
+    public void contextSwitch(ActivityProcess activityProcess, JsApplicationItem applicationItem, AcceptsOneWidget containerr, ServiceBus bus) {
         // Read output feature for this application
         JavaScriptObject configuration = applicationItem.getPropertiesObject();
         ProcessPresenter outputFeature = presenterMap.getConfigured(configuration, null, bus, null);
@@ -144,11 +143,11 @@ public class ProcessManagerImpl implements ProcessManager {
 		childTaskPresenter.setProcessName(localizedName, oldContext.getProcessLocalizedName());
 		ProcessContextServices context = new HumanActivityContextServices(newProcess, oldContext.getItem(), placeController, childTaskPresenter,
 				oldContext.getActivityOutputFeature(), this, serviceBus, new NestedProcessDesktopManager(desktopManager), contentManager, storageManager,
-				peerManager, oldContext.getEventBus());
+				peerManager, oldContext.getServiceBus());
 		context.setProcessLocalizedName(localizedName);
 		newProcess.setContext(context);
 
-		context.getEventBus().fireEvent(new ProcessSwitchEvent(oldContext.getProcess(), newProcess));
+		context.getServiceBus().fireEvent(new ProcessSwitchEvent(oldContext.getProcess(), newProcess));
 		callback.hook(new DataCallback<O>() {
 
 			@Override
@@ -157,7 +156,7 @@ public class ProcessManagerImpl implements ProcessManager {
 				killer.setResultAndFinish(null);
 			}
 		});
-		newProcess.start(input, callback, context.getEventBus());
+		newProcess.start(input, callback, context.getServiceBus());
 	}
 
 	private static class ProcessKiller extends DataCallback<Void> {
@@ -203,7 +202,7 @@ public class ProcessManagerImpl implements ProcessManager {
 				VegetateServiceManifest bpmServiceManifest = null;
 				BPMPeer peer = context.getPeerManager().getPeer(hostId);
 				SerializationService<JsTaskProcessRequest, JsonVegetateResponse> serializer;
-				bpm = new ProcessVegetateChannelImpl(dm.getCurrentActivityHost(), dm.isSSL(), bpmServiceManifest, context.getEventBus(), serializer,
+				bpm = new ProcessVegetateChannelImpl(dm.getCurrentActivityHost(), dm.isSSL(), bpmServiceManifest, context.getServiceBus(), serializer,
 						peer.getPublicKey(), peer.getPrivateKey());
 			}
 			JsTaskProcessRequest object = JsTaskProcessRequest.createObject().cast();
@@ -235,7 +234,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
 	@Override
 	public void excecuteCommand(String command, JavaScriptObject properties,
-								EventBus eventBus, ProcessContextServices processContext,
+								ServiceBus serviceBus, ProcessContextServices processContext,
 								JsTransactionApplicationContext processParameters,
 								StateTransition<JsTransactionApplicationContext> callback) {
 
@@ -243,23 +242,23 @@ public class ProcessManagerImpl implements ProcessManager {
 
 		setCommand(properties,command);
 
-		CommandService service = commandRegistry.getConfigured(properties, processContext, eventBus, processParameters);
+		CommandService service = commandRegistry.getConfigured(properties, processContext, serviceBus, processParameters);
 
-		excecuteCommand(command,service, properties, eventBus, processContext, processParameters, callback);
+		excecuteCommand(command,service, properties, serviceBus, processContext, processParameters, callback);
 	}
 	private native void setCommand(JavaScriptObject properties,  String command) /*-{
 		properties.command=command;
 	}-*//*;
 
 	public void excecuteCommand( CommandService service, JavaScriptObject properties,
-								 EventBus eventBus, ProcessContextServices processContext,
+								 ServiceBus serviceBus, ProcessContextServices processContext,
 								 JsTransactionApplicationContext processParameters,
 								 StateTransition<JsTransactionApplicationContext> callback) {
-		excecuteCommand(null,service, properties, eventBus, processContext, processParameters, callback);
+		excecuteCommand(null,service, properties, serviceBus, processContext, processParameters, callback);
 	}
 
 	private void excecuteCommand(String command, CommandService service, JavaScriptObject properties,
-								 EventBus eventBus, ProcessContextServices processContext,
+								 ServiceBus serviceBus, ProcessContextServices processContext,
 								 JsTransactionApplicationContext processParameters,
 								 StateTransition<JsTransactionApplicationContext> callback) {
 
@@ -268,7 +267,7 @@ public class ProcessManagerImpl implements ProcessManager {
 			callback = DataCallback.nullCallback();
 		}
 
-		service.prepare(command, properties, eventBus, processContext,
+		service.prepare(command, properties, serviceBus, processContext,
 				processParameters, callback);
 		service.execute();
 	}

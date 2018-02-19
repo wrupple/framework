@@ -33,7 +33,7 @@ public class IntentResolverRequestInterpretImpl implements IntentResolverRequest
     public boolean execute(Context ctx) throws Exception {
        /* RuntimeContext requestContext = (RuntimeContext) ctx;
         IntentResolverContext context = requestContext.getServiceContext();
-        Event request = (Event) requestContext.getServiceContract();
+        Contract request = (Contract) requestContext.getServiceContract();
         if(request==null){
                 throw new NullPointerException("there is no intent definition");
         }*/

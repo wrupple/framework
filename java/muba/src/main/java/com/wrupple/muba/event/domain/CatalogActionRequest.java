@@ -3,7 +3,7 @@ package com.wrupple.muba.event.domain;
 import com.wrupple.muba.event.domain.reserved.HasLocale;
 import com.wrupple.muba.event.domain.reserved.HasParentValue;
 
-public interface CatalogActionRequest extends HasLocale,DataEvent,HasParentValue<Void,CatalogActionRequest> {
+public interface CatalogActionRequest extends HasLocale,DataContract,HasParentValue<Void,CatalogActionRequest> {
 
 	final String CATALOG = "CatalogAction";
 

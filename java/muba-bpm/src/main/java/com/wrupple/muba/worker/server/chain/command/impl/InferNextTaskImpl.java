@@ -34,7 +34,7 @@ public class InferNextTaskImpl implements InferNextTask {
         ApplicationContext context = (ApplicationContext) ctx;
         ApplicationState state = context.getStateValue();
          /*
-            BusinessIntentImpl bookingRequest = new BusinessIntentImpl();
+            InvocationImpl bookingRequest = new InvocationImpl();
         bookingRequest.setHandle(item.getId());
         bookingRequest.setEntry(booking.getId());
         bookingRequest.setStateValue(null);

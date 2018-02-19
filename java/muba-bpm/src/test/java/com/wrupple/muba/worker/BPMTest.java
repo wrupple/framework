@@ -18,7 +18,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.Person;
@@ -57,7 +57,7 @@ import java.sql.SQLException;
 
 public abstract class BPMTest extends AbstractTest {
 
-    protected EventBus wrupple;
+    protected ServiceBus wrupple;
 	protected SessionContext session;
 
     protected void createMockDrivers() throws Exception {
@@ -165,7 +165,7 @@ public abstract class BPMTest extends AbstractTest {
     }
 
 	@Override
-	protected void registerServices(EventBus switchs) {
+	protected void registerServices(ServiceBus switchs) {
 		/*
 		 Catalog
 		 */
@@ -225,7 +225,7 @@ public abstract class BPMTest extends AbstractTest {
 	public void setUp() throws Exception {
 
 		session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
-		wrupple = injector.getInstance(EventBus.class);
+		wrupple = injector.getInstance(ServiceBus.class);
         log.trace("NEW TEST EXCECUTION ENVIROMENT READY");
     }
 

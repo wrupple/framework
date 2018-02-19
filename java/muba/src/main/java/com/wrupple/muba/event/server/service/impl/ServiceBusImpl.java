@@ -1,6 +1,6 @@
 package com.wrupple.muba.event.server.service.impl;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-public class EventBusImpl extends ContextBase implements EventBus {
+public class ServiceBusImpl extends ContextBase implements ServiceBus {
 
 
     private final IntentDelegate delegate;
 
 
-    protected static final Logger log = LoggerFactory.getLogger(EventBusImpl.class);
+    protected static final Logger log = LoggerFactory.getLogger(ServiceBusImpl.class);
 
 	private static final long serialVersionUID = -7144539787781019055L;
 
@@ -43,7 +43,7 @@ public class EventBusImpl extends ContextBase implements EventBus {
     private final IntrospectionStrategy instrospector;
     private final Provider<BroadcastEvent> queueElementProvider;
     @Inject
-    public EventBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, FieldAccessStrategy instrospector, Provider<BroadcastEvent> queueElementProvider, IntentDelegate delegate) {
+    public ServiceBusImpl(EventRegistry intentInterpret, EventDispatcher process, @Named("System.out") OutputStream out, @Named("System.in") InputStream in, FieldAccessStrategy instrospector, Provider<BroadcastEvent> queueElementProvider, IntentDelegate delegate) {
         super();
         this.process=process;
         this.out=out;
@@ -56,12 +56,12 @@ public class EventBusImpl extends ContextBase implements EventBus {
         this.delegate = delegate;
     }
 
-    boolean fireHandlerWithRuntime(Intent event, RuntimeContext runtimeContext) throws Exception {
+    <T> T fireHandlerWithRuntime(Invocation event, RuntimeContext runtimeContext) throws Exception {
         runtimeContext.setSentence(event.getSentence());
         runtimeContext.setServiceContract(event.getEventValue());
-        boolean regreso = resume(runtimeContext);
-        event.setResult(runtimeContext.getResults());
-        return regreso;
+        resume(runtimeContext);
+
+        return runtimeContext.getConvertedResult();
     }
 
     //TODO public UserTransaction getTransaction() {
@@ -90,32 +90,32 @@ public class EventBusImpl extends ContextBase implements EventBus {
     }
 
     @Override
-    public void broadcastEvent(Event event, CatalogDescriptor catalogDescriptor,RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
+    public void broadcastEvent(Contract contract, CatalogDescriptor catalogDescriptor, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception {
         BroadcastEvent queued = queueElementProvider.get();
-        queued.setEventValue(event);
+        queued.setEventValue(contract);
         queued.setObserversValues(explicitlySuscriptedObservers);
-        queued.setDomain(event.getDomain());
+        queued.setDomain(contract.getDomain());
 queued.setCatalogDescriptor(catalogDescriptor);
         fireEvent(queued,runtimeContext,null/*use all broadcast handlers*/);
     }
 
     @Override
-    public boolean fireHandler(Intent event, SessionContext session) throws Exception {
+    public <T> T fireHandler(Invocation event, SessionContext session) throws Exception {
         return fireHandler(event,session,null);
     }
 
 
-    public boolean fireHandler(Intent event, SessionContext session, RuntimeContext parentTimeline) throws Exception {
+    public <T> T fireHandler(Invocation event, SessionContext session, RuntimeContext parentTimeline) throws Exception {
         RuntimeContextImpl runtimeContext = new RuntimeContextImpl(this,session,parentTimeline);
         return fireHandlerWithRuntime(event,runtimeContext);
     }
 
     @Override
-    public <T> T fireEvent(Event implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception {
+    public <T> T fireEvent(Contract implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception {
         return fireonRuntimeline(implicitRequestContract,parent.getSession(),handlerCriterion,parent);
     }
 
-    public <T> T fireonRuntimeline(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline) throws Exception {
+    public <T> T fireonRuntimeline(Contract implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline) throws Exception {
         List<ServiceManifest> manifests = getIntentInterpret().resolveHandlers(implicitRequestContract.getCatalogType());
 
         if(manifests==null || manifests.isEmpty()){
@@ -125,7 +125,7 @@ queued.setCatalogDescriptor(catalogDescriptor);
         }else{
             log.trace("[Count of matching services] {}",manifests.size());
             Instrospection introspector=instrospector.newSession(manifests.get(0));
-            List<Intent> handlers = delegate.interpretImlicitIntent(implicitRequestContract, handlerCriterion, parentTimeline, manifests, introspector, this);
+            List<Invocation> handlers = delegate.interpretImlicitIntent(implicitRequestContract, handlerCriterion, parentTimeline, manifests, introspector, this);
 
 
             if(handlers==null || handlers.isEmpty()){
@@ -133,9 +133,8 @@ queued.setCatalogDescriptor(catalogDescriptor);
                 throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
             } else if(handlers.size()==1){
                 log.info("[single handler invocation]");
-                Intent call = handlers.get(0);
-                fireHandler(call,session,parentTimeline);
-                return call.getConvertedResult();
+                Invocation call = handlers.get(0);
+                return fireHandler(call,session,parentTimeline);
             } else {
 
                 log.info("[parallel invocation of handlers]");
@@ -147,14 +146,14 @@ queued.setCatalogDescriptor(catalogDescriptor);
     }
 
     @Override
-    public <T> T fireEvent(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
+    public <T> T fireEvent(Contract implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception {
         return fireonRuntimeline(implicitRequestContract, session, handlerCriterion, null);
     }
 
     public interface IntentDelegate {
-        List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<Intent> handlers, EventBusImpl eventBus) throws Exception;
+        List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<Invocation> handlers, ServiceBusImpl eventBus) throws Exception;
 
-        List<Intent> interpretImlicitIntent(Event implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, EventBusImpl eventBus);
+        List<Invocation> interpretImlicitIntent(Contract implicitRequestContract, List<FilterCriteria> handlerCriterion, RuntimeContext parentTimeline, List<ServiceManifest> manifests, Instrospection introspector, ServiceBusImpl eventBus);
 
     }
 

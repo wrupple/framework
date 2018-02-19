@@ -1,23 +1,19 @@
 package com.wrupple.muba.worker.domain.impl;
 
-import com.wrupple.muba.event.domain.Application;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Event;
-import com.wrupple.muba.event.domain.Workflow;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.event.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.BusinessIntent;
+import com.wrupple.muba.worker.domain.Intent;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * Created by japi on 12/08/17.
  */
-public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessIntent {
+public class IntentImpl extends ManagedObjectImpl implements Intent {
     @ForeignKey(
             foreignCatalog = ApplicationState.CATALOG
     )
@@ -35,7 +31,7 @@ public class BusinessIntentImpl extends ManagedObjectImpl implements BusinessInt
 
     @Override
     public String getCatalogType() {
-        return BusinessIntent_CATALOG;
+        return Intent_CATALOG;
     }
 
     public Long getState() {

@@ -7,7 +7,7 @@ import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
  * @author japi
  *
  */
-public interface DataEvent extends Event,HasCatalogKey {
+public interface DataContract extends Contract,HasCatalogKey {
 
 
     String DELETE_ACTION = "delete";

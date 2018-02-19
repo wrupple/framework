@@ -91,7 +91,7 @@ public class ActivityRequestInterpretImpl  implements ActivityRequestInterpret {
 
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
 
-        List results = thread.getEventBus().fireEvent(createRequest, thread, null);
+        List results = thread.getServiceBus().fireEvent(createRequest, thread, null);
 
         return (ApplicationState) results.get(0);
     }

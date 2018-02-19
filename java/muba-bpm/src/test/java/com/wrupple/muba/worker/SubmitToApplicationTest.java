@@ -9,14 +9,12 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.domain.ApplicationState;
-import com.wrupple.muba.worker.domain.BusinessIntent;
+import com.wrupple.muba.worker.domain.Intent;
 import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.domain.Statistics;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
 import com.wrupple.muba.worker.domain.impl.WorkerStateImpl;
-import com.wrupple.muba.worker.domain.impl.WorkflowImpl;
-import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -79,7 +77,7 @@ public class SubmitToApplicationTest extends BPMTest {
         Statistics statistics = new Statistics();
         statistics.setCatalog(Driver.CATALOG);
 
-        BusinessIntent intent = injector.getInstance(BusinessIntent.class);
+        Intent intent = injector.getInstance(Intent.class);
         applicationState.setEntryValue(statistics);
         intent.setStateValue(applicationState);
         intent.setDomain(CatalogEntry.PUBLIC_ID);
@@ -109,7 +107,7 @@ public class SubmitToApplicationTest extends BPMTest {
     private void createWorkflow() throws Exception {
         TaskImpl task = new TaskImpl();
         task.setCatalog(Statistics.CATALOG);
-        task.setName(DataEvent.WRITE_ACTION);
+        task.setName(DataContract.WRITE_ACTION);
         //TODO SUBQUERY solver service appends, resolving variables if necesary, excecutes sql and attempts to resolve fields from result set
         task.setSentence(Arrays.asList(
                 "SUBQUERY",
@@ -134,7 +132,7 @@ public class SubmitToApplicationTest extends BPMTest {
 
         task = new TaskImpl();
         task.setCatalog(Statistics.CATALOG);
-        task.setName(DataEvent.CREATE_ACTION);
+        task.setName(DataContract.CREATE_ACTION);
 
         ApplicationImpl workflow = new ApplicationImpl();
         workflow.setName("Create");
@@ -164,7 +162,7 @@ public class SubmitToApplicationTest extends BPMTest {
 
 
         catalogActionRequest.setEntryValue(solutionContract);
-        catalogActionRequest.setName(DataEvent.CREATE_ACTION);
+        catalogActionRequest.setName(DataContract.CREATE_ACTION);
         catalogActionRequest.setFollowReferences(true);
         catalogActionRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
         wrupple.fireEvent(catalogActionRequest, session, null);
@@ -172,7 +170,7 @@ public class SubmitToApplicationTest extends BPMTest {
 
     /**
      * Done -Triggers are serializable listeners, move trigger logit to an event (fire a workflow with one catalog task)
-     * Done - fire a catalog change event (PublishEventsImpl) ( install remote listeners on Event CHain (vegetate web hooks))
+     * Done - fire a catalog change event (PublishEventsImpl) ( install remote listeners on Contract CHain (vegetate web hooks))
      * ???? - listen event  and have the desktop fire the first task of a workflow and install a listener for the task submission(desktop)
      **/
     //CREATE ApplicationState

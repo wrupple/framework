@@ -1,6 +1,6 @@
 package com.wrupple.muba.event.server;
 
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
@@ -16,10 +16,10 @@ import java.util.ListIterator;
 @Singleton
 public class ExplicitIntentInterpret implements NaturalLanguageInterpret {
 
-    private final EventBus bus;
+    private final ServiceBus bus;
 
     @Inject
-    public ExplicitIntentInterpret(EventBus bus) {
+    public ExplicitIntentInterpret(ServiceBus bus) {
         this.bus = bus;
     }
 

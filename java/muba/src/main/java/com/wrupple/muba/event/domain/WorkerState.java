@@ -6,7 +6,7 @@ import com.wrupple.muba.event.domain.reserved.HasSentence;
 
 import java.util.List;
 
-public interface WorkerState extends Event, HasRunner, HasSentence {
+public interface WorkerState extends Contract, HasRunner, HasSentence {
 
     String CATALOG = "WorkerState";
 

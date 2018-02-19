@@ -17,7 +17,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
-import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
+import com.wrupple.muba.catalogs.domain.CatalogContractListenerImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogExcecutionContext;
 import com.wrupple.muba.catalogs.server.domain.ConstraintDTO;
 import com.wrupple.muba.catalogs.server.service.CatalogEntryBeanDAO;
@@ -29,7 +29,7 @@ import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.desktop.domain.ConstraintImpl;
 import com.wrupple.muba.desktop.server.service.CatalogTableNameService;
 import com.wrupple.muba.catalogs.domain.AncestryConclusions;
-import com.wrupple.muba.catalogs.domain.CatalogEventListener;
+import com.wrupple.muba.catalogs.domain.CatalogContractListener;
 import com.wrupple.muba.catalogs.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.domain.Constraint;
 import com.wrupple.muba.catalogs.domain.FieldDescriptor;
@@ -190,10 +190,10 @@ public class DatabaseDomainDrivenServerModule extends AbstractDatabaseDrivenServ
 
 		if (triggers != null) {
 			dao = localDatasourceProvider.get();
-			GenericJavaObjectDAO<CatalogEventListenerImpl> triggerDao = dao.cast(CatalogEventListenerImpl.class,
-					namespace.getDescriptorForName(CatalogEventListenerImpl.CATALOG));
-			CatalogEventListenerImpl trigger;
-			List<CatalogEventListener> values = regreso.getTriggersValues();
+			GenericJavaObjectDAO<CatalogContractListenerImpl> triggerDao = dao.cast(CatalogContractListenerImpl.class,
+					namespace.getDescriptorForName(CatalogContractListenerImpl.CATALOG));
+			CatalogContractListenerImpl trigger;
+			List<CatalogContractListener> values = regreso.getTriggersValues();
 			for (Long triggerId : triggers) {
 				trigger = triggerDao.read(String.valueOf(triggerId));
 				values.add(trigger);

@@ -5,14 +5,14 @@ import com.wrupple.muba.event.chain.impl.OldVesionService;
 import com.wrupple.muba.event.chain.impl.UpdatedVersionService;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.ContractDescriptor;
-import com.wrupple.muba.event.domain.Intent;
+import com.wrupple.muba.event.domain.Invocation;
 import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.ValidateContract;
-import com.wrupple.muba.event.server.chain.command.ValidateRequest;
+import com.wrupple.muba.event.server.chain.command.ValidateContext;
 import com.wrupple.muba.event.server.chain.command.impl.BindServiceImpl;
-import com.wrupple.muba.event.server.chain.command.impl.DispatchImpl;
+import com.wrupple.muba.event.server.chain.command.impl.RunImpl;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
 import com.wrupple.muba.event.server.chain.command.impl.IncorporateImpl;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
@@ -28,15 +28,15 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class EventListenerTest extends BootstrapTest {
+public class ContractListenerTest extends BootstrapTest {
 
-	private EventBus system;
+	private ServiceBus system;
 
 	protected ContractDescriptor operationContract = new ContractDescriptorImpl(
             Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), null);
 
 
-    public EventListenerTest() {
+    public ContractListenerTest() {
 
 
 		LargeStringFieldDataAccessObject largeStringDelegate= new LargeStringFieldDataAccessObjectImpl();
@@ -45,7 +45,7 @@ public class EventListenerTest extends BootstrapTest {
 		FieldAccessStrategy instrospector=new JavaFieldAccessStrategy(null,oni);
 
 
-        EventDispatcher dispatcher = new EventDispatcherImpl(new ValidateRequest() {
+        EventDispatcher dispatcher = new EventDispatcherImpl(new ValidateContext() {
             @Override
             public boolean execute(Context context) throws Exception {
                 return CONTINUE_PROCESSING;
@@ -55,13 +55,13 @@ public class EventListenerTest extends BootstrapTest {
             public boolean execute(Context context) throws Exception {
                 return CONTINUE_PROCESSING;
             }
-        }, new DispatchImpl());
+        }, new RunImpl());
 
         ParentServiceManifestImpl rootService = new ParentServiceManifestImpl();
         EventRegistry interpret = new EventRegistryImpl(rootService,CatalogFactory.getInstance());
 
-        EventBusImpl.IntentDelegate delegate = new IntentDelegateImpl();
-        this.system = new EventBusImpl(interpret, dispatcher, System.out, System.in, instrospector, null, delegate);
+        ServiceBusImpl.IntentDelegate delegate = new IntentDelegateImpl();
+        this.system = new ServiceBusImpl(interpret, dispatcher, System.out, System.in, instrospector, null, delegate);
 
 
         List<String> grammar = Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME);
@@ -114,11 +114,11 @@ public class EventListenerTest extends BootstrapTest {
 	public void defaultVersion() throws Exception {
 		log.trace("[-defaultVersion-]");
 
-		Intent event = new IntentImpl(ADDITION, "1", "2" );
+		Invocation event = new InvocationImpl(ADDITION, "1", "2" );
 
-		system.fireHandler(event,session);
 
-		Integer result = (Integer) ((List)event.getConvertedResult()).get(0);
+
+		Integer result = system.fireHandler(event,session);
 		assertNotNull(result);
 		assertEquals(result.intValue(), 3);
 	}
@@ -128,7 +128,7 @@ public class EventListenerTest extends BootstrapTest {
 		log.trace("[-conflict-] insufficient and/or malformed arguments were provided,should fail");
 		// conflicting input data with version, fails
 
-        Intent event = new IntentImpl(ADDITION, "1.0", "1");
+        Invocation event = new InvocationImpl(ADDITION, "1.0", "1");
 
         system.fireHandler/*TODO Async*/(event, session);
 		// check rollback?
@@ -138,7 +138,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void invalidService() throws Exception {
 		log.trace("[-invalidService-]");
 
-        Intent event = new IntentImpl("invalidService", "input");
+        Invocation event = new InvocationImpl("invalidService", "input");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -149,7 +149,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void invalidInput() throws Exception {
 		log.trace("[-invalidInput-]");
 
-        Intent event = new IntentImpl(ADDITION, "one", "1.5");
+        Invocation event = new InvocationImpl(ADDITION, "one", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 
@@ -160,11 +160,11 @@ public class EventListenerTest extends BootstrapTest {
 	public void specificVersion() throws Exception {
 		log.trace("[-specificVersion-]");
 
-        Intent event = new IntentImpl(ADDITION, UPGRADED_VERSION, "1", "1.5");
+        Invocation event = new InvocationImpl(ADDITION, UPGRADED_VERSION, "1", "1.5");
 
-        system.fireHandler/*TODO Async*/(event, session);
 
-		Double result = (Double) ((List)event.getConvertedResult()).get(0);
+
+		Double result = system.fireHandler/*TODO Async*/(event, session);
 		assertNotNull(result);
 		assertEquals(result.doubleValue(), 2.5, 0);
 	}
@@ -173,7 +173,7 @@ public class EventListenerTest extends BootstrapTest {
 	public void invalidVersion() throws Exception {
 		log.trace("[-invalidVersion-]");
 
-        Intent event = new IntentImpl(ADDITION, "1..0", "2", "1.5");
+        Invocation event = new InvocationImpl(ADDITION, "1..0", "2", "1.5");
 
         system.fireHandler/*TODO Async*/(event, session);
 

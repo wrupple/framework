@@ -2,6 +2,7 @@ package com.wrupple.muba;
 
 import javax.validation.Validator;
 
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.wrupple.muba.event.EventBus;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 
 public abstract class AbstractTest extends EasyMockSupport {
@@ -35,11 +35,11 @@ public abstract class AbstractTest extends EasyMockSupport {
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices(injector.getInstance(Validator.class), injector.getInstance(ValidationGroupProvider.class), injector.getInstance(EventBus.class));
+		registerServices(injector.getInstance(Validator.class), injector.getInstance(ValidationGroupProvider.class), injector.getInstance(ServiceBus.class));
 
 	}
 	
-	protected abstract void registerServices(Validator v, ValidationGroupProvider g,EventBus switchs);
+	protected abstract void registerServices(Validator v, ValidationGroupProvider g,ServiceBus switchs);
 
 
 

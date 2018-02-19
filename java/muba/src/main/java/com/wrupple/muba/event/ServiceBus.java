@@ -10,8 +10,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
-public interface EventBus
-		/* basic implementation: EventBusImpl */ extends Context {
+public interface ServiceBus
+		/* basic implementation: ServiceBusImpl */ extends Context {
 
     OutputStream getOutput();
     InputStream getInput();
@@ -20,13 +20,13 @@ public interface EventBus
 
     EventRegistry getIntentInterpret();
 
-    void broadcastEvent(Event event, CatalogDescriptor catalogDescriptor, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
+    void broadcastEvent(Contract contract, CatalogDescriptor catalogDescriptor, RuntimeContext runtimeContext, List<FilterCriteria> explicitlySuscriptedObservers) throws Exception;
 
-    boolean fireHandler(Intent event, SessionContext session) throws Exception;
+    <T> T  fireHandler(Invocation event, SessionContext session) throws Exception;
 
-    <T> T fireEvent(Event implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception;
+    <T> T fireEvent(Contract implicitRequestContract, RuntimeContext parent, List<FilterCriteria> handlerCriterion) throws Exception;
 
-    <T> T fireEvent(Event implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception;
+    <T> T fireEvent(Contract implicitRequestContract, SessionContext session, List<FilterCriteria> handlerCriterion) throws Exception;
 
     boolean resume(RuntimeContext runtimeContext) throws Exception;
 

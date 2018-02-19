@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.wrupple.muba.catalogs.domain.CatalogEvent.WRITE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogContract.WRITE_ACTION;
 
 @Singleton
 public class CatalogUpdateTransactionImpl extends CatalogTransaction implements CatalogUpdateTransaction {

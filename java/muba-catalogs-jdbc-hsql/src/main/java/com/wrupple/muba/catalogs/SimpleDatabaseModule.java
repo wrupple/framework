@@ -5,21 +5,14 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.Person;
-import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 import com.wrupple.muba.event.server.chain.command.BindService;
-import com.wrupple.muba.event.server.chain.command.Dispatch;
+import com.wrupple.muba.event.server.chain.command.Run;
 import com.wrupple.muba.event.server.chain.command.impl.BindServiceImpl;
-import com.wrupple.muba.event.server.chain.command.impl.DispatchImpl;
+import com.wrupple.muba.event.server.chain.command.impl.RunImpl;
 import org.apache.commons.dbutils.QueryRunner;
 import org.hsqldb.jdbc.JDBCDataSource;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 import java.io.InputStream;
@@ -48,7 +41,7 @@ public class SimpleDatabaseModule extends AbstractModule {
         bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
 
         bind(BindService.class).to(BindServiceImpl.class);
-        bind(Dispatch.class).to(DispatchImpl.class);
+        bind(Run.class).to(RunImpl.class);
 
         // this makes JDBC the default storage unit
         bind(DataCreationCommand.class).to(JDBCDataCreationCommandImpl.class);

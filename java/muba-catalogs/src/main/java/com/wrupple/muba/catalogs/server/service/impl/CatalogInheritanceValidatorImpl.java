@@ -8,14 +8,10 @@ import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.annotations.InheritanceTree;
 import com.wrupple.muba.event.server.service.CatalogInheritanceValidator;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 
 public class CatalogInheritanceValidatorImpl implements CatalogInheritanceValidator {
 	private final Provider<RuntimeContext> exp;
@@ -58,7 +54,7 @@ public class CatalogInheritanceValidatorImpl implements CatalogInheritanceValida
                 try {
                     request.setCatalog(catalogid);
                     request.setEntry(currentParentKey);
-                    currentParent =exc.getEventBus().fireEvent(request ,exc,null);
+                    currentParent =exc.getServiceBus().fireEvent(request ,exc,null);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

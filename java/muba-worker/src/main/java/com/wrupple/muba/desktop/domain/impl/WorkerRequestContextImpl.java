@@ -1,6 +1,6 @@
 package com.wrupple.muba.desktop.domain.impl;
 
-import com.wrupple.muba.desktop.domain.WorkerRequest;
+import com.wrupple.muba.desktop.domain.WorkerContract;
 import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.WorkerState;
@@ -17,8 +17,8 @@ public class WorkerRequestContextImpl extends ContextBase implements WorkerReque
     }
 
     @Override
-    public WorkerRequest getRequest() {
-        return (WorkerRequest) runtimeContext.getServiceContract();
+    public WorkerContract getRequest() {
+        return (WorkerContract) runtimeContext.getServiceContract();
     }
 
     @Override

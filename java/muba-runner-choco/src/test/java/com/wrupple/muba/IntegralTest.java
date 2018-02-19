@@ -11,7 +11,7 @@ import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.BroadcastServiceManifest;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Session;
@@ -41,7 +41,7 @@ public class IntegralTest extends AbstractTest{
 
 
     private Session stakeHolderValue;
-    protected EventBus wrupple;
+    protected ServiceBus wrupple;
 
 
     public IntegralTest() {
@@ -88,7 +88,7 @@ public class IntegralTest extends AbstractTest{
     }
 
     @Override
-    protected void registerServices(EventBus switchs) {
+    protected void registerServices(ServiceBus switchs) {
 		/*
 		 Catalog
 		 */
@@ -140,7 +140,7 @@ public class IntegralTest extends AbstractTest{
         expect(stakeHolderValue.getDomain()).andStubReturn(CatalogEntry.PUBLIC_ID);
         expect(stakeHolderValue.getId()).andStubReturn(CatalogEntry.PUBLIC_ID);
 
-        wrupple = injector.getInstance(EventBus.class);
+        wrupple = injector.getInstance(ServiceBus.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 

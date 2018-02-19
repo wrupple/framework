@@ -2,7 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
-import com.wrupple.muba.event.EventBus;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.reserved.HasEntryId;
@@ -24,10 +24,10 @@ FIXME use in ExplicitSuscriptionMapperImpl
 public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
 
     private final FieldAccessStrategy accessor;
-    private final EventBus bus;
+    private final ServiceBus bus;
 
     @Inject
-    public ImplicitSuscriptionMapper(FieldAccessStrategy catalog, EventBus bus) {
+    public ImplicitSuscriptionMapper(FieldAccessStrategy catalog, ServiceBus bus) {
         this.accessor = catalog;
         this.bus = bus;
     }
@@ -37,17 +37,17 @@ public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
         BroadcastContext context = (BroadcastContext) ctx;
         BroadcastEvent queueElement=context.getEventValue();
         List<FilterCriteria> explicitObservers = queueElement.getObserversValues();
-        Event event = queueElement.getEventValue();
+        Contract contract = queueElement.getEventValue();
 
 
-        CatalogEntry entry = event;
+        CatalogEntry entry = contract;
         if(entry instanceof HasEntryId){
             entry = (CatalogEntry) ((HasEntryId)entry).getEntryValue();
         }
-        //FIXME read explicitly suscribed observers from event? (does observer dat belong in the event?)
+        //FIXME read explicitly suscribed observers from contract? (does observer dat belong in the contract?)
         //FIXME read explicit suscriptors from ExplicitEventSuscription catalog? (in BusinessPluginImpl)
         //FIXME Spawn Catalog context with system privileges:
-        // if event stake holder has no permissions to see Observer or it's host, then the event wont get broadcasted to those poeple
+        // if contract stake holder has no permissions to see Observer or it's host, then the contract wont get broadcasted to those poeple
 
         CatalogDescriptor descriptor = queueElement.getCatalogDescriptor();
 
@@ -75,7 +75,7 @@ public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
             CatalogActionRequestImpl read = new CatalogActionRequestImpl();
             read.setCatalog(Host.CATALOG);
             read.setFilter(concernedPeopleClients);
-            read.setName(DataEvent.READ_ACTION);
+            read.setName(DataContract.READ_ACTION);
             Collection<? extends Host> results = bus.fireEvent(read,context.getRuntimeContext(),null);
             if(results!=null){
                 context.addConcernedPeers(results);

@@ -3,16 +3,12 @@ package com.wrupple.muba;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.wrupple.muba.event.EventBus;
-import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.server.service.ValidationGroupProvider;
+import com.wrupple.muba.event.ServiceBus;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.Validator;
 
 public abstract class AbstractTest extends EasyMockSupport {
 
@@ -32,11 +28,11 @@ public abstract class AbstractTest extends EasyMockSupport {
 
 	public final  void init(Module... modules) {
 		injector = Guice.createInjector(modules);
-		registerServices( injector.getInstance(EventBus.class));
+		registerServices( injector.getInstance(ServiceBus.class));
 
 	}
 
-	protected abstract void registerServices(EventBus switchs);
+	protected abstract void registerServices(ServiceBus switchs);
 
 
 

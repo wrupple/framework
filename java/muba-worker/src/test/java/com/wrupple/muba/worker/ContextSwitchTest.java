@@ -2,18 +2,15 @@ package com.wrupple.muba.worker;
 
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-import com.wrupple.muba.catalogs.domain.CatalogEventListenerImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.desktop.domain.impl.WorkerRequestImpl;
+import com.wrupple.muba.desktop.domain.impl.WorkerContractImpl;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.worker.domain.RiderBooking;
 import com.wrupple.muba.worker.domain.Driver;
-import com.wrupple.muba.worker.domain.WorkRequest;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
 import com.wrupple.muba.worker.shared.services.WorkerContainer;
@@ -51,7 +48,7 @@ public class ContextSwitchTest extends WorkerTest {
 
         CatalogActionRequestImpl action = new CatalogCreateRequestImpl(managed,CatalogDescriptor.CATALOG_ID);
 
-        managed = (CatalogDescriptor) ((List)container.fireEvent(action)).get(0);
+        managed = container.fireEvent(action);
 
         CatalogDescriptor bookingDescriptor = builder.fromClass(RiderBooking.class, RiderBooking.class.getSimpleName(),
                 RiderBooking.class.getSimpleName(), 0, managed);
@@ -90,16 +87,15 @@ public class ContextSwitchTest extends WorkerTest {
         action = new CatalogCreateRequestImpl(riderBooking,RiderBooking.class.getSimpleName());
         action.setFollowReferences(true);
 
-        List<RiderBooking> results = container.fireEvent(action);
 
-        riderBooking = (RiderBooking) results.get(0);
+        riderBooking =  container.fireEvent(action);
 
         assertTrue(riderBooking.getId()!=null);
 //        assertTrue(riderBooking.getStakeHolder()!=null);
 //        assertTrue(riderBooking.getTimestamp()!=null);
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
-        container.fireEvent(new WorkerRequestImpl(
+        container.fireEvent(new WorkerContractImpl(
                 Arrays.asList(riderBooking.getId().toString()),
                 container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco"))),
                 HOME
@@ -114,12 +110,12 @@ public class ContextSwitchTest extends WorkerTest {
 
         TaskImpl resolve  = new TaskImpl();
         resolve.setDistinguishedName("findDriver");
-        resolve.setName(DataEvent.WRITE_ACTION);
+        resolve.setName(DataContract.WRITE_ACTION);
         resolve.setCatalog(RiderBooking.class.getSimpleName());
 
         TaskImpl cargar  = new TaskImpl();
         cargar.setDistinguishedName("loadBooking");
-        cargar.setName(DataEvent.READ_ACTION);
+        cargar.setName(DataContract.READ_ACTION);
         cargar.setCatalog(RiderBooking.class.getSimpleName());
 
         ApplicationImpl ilegal= new ApplicationImpl();
@@ -147,7 +143,7 @@ public class ContextSwitchTest extends WorkerTest {
         CatalogCreateRequestImpl action  = new CatalogCreateRequestImpl(root, Application.CATALOG);
         action.setFollowReferences(true);
 
-        return ((List<ApplicationImpl>)container.fireEvent(action)).get(0);
+        return container.fireEvent(action);
     }
 
 

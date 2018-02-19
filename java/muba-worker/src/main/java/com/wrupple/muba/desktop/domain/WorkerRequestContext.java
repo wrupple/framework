@@ -10,7 +10,7 @@ public interface WorkerRequestContext extends ServiceContext {
 
     WorkerState getWorkerState();
 
-    WorkerRequest getRequest();
+    WorkerContract getRequest();
 
     Context setRuntimeContext(RuntimeContext requestContext);
 }

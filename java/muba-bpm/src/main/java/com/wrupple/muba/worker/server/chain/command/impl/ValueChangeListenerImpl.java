@@ -53,7 +53,7 @@ public class ValueChangeListenerImpl extends AbstractComparationCommand implemen
 				filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getFieldId()));
 				spawned.setFilter(filterData);
 
-				changeTriggers = context.getRuntimeContext().getEventBus().fireEvent(spawned,context.getRuntimeContext(),null);
+				changeTriggers = context.getRuntimeContext().getServiceBus().fireEvent(spawned,context.getRuntimeContext(),null);
 				context.put(CONTEXT_TRIGGERS_KEY, changeTriggers);
 			}
 			if (changeTriggers != null) {

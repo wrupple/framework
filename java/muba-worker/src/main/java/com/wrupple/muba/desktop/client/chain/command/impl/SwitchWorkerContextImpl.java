@@ -34,7 +34,7 @@ public class SwitchWorkerContextImpl implements SwitchWorkerContext {
 
         ContextSwitch order = context.getContextSwitch();
         order.setDomain(order.getWorkerStateValue().getDomain());
-        context.getRuntimeContext().getEventBus().fireEvent(order, context.getRuntimeContext(), null);
+        context.getRuntimeContext().getServiceBus().fireEvent(order, context.getRuntimeContext(), null);
 
 
 
