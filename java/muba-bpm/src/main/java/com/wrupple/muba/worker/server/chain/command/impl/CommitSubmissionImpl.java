@@ -51,7 +51,6 @@ public class CommitSubmissionImpl implements CommitSubmission {
             //FIXME this is handled on the client when an application State is updated
             if (producedField != null) {
                 //TODO certain saveTo fields are reserved, like those in CatalogAction
-                //GWTUtils.setAttribute(contextP, saveTo, userOutput);
                 aceess.setPropertyValue(producedField,applicationState,userOutput.getId(), instrospection);
 
             }

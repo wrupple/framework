@@ -25,12 +25,6 @@ public class SelectSolutionImpl implements SelectSolution {
 
     protected Logger log = LoggerFactory.getLogger(SelectSolutionImpl.class);
 
-    private final SolverCatalogPlugin plugin;
-
-    @Inject
-    public SelectSolutionImpl(SolverCatalogPlugin plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public boolean execute(Context ctx) throws Exception {

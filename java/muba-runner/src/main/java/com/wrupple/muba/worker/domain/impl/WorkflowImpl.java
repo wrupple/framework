@@ -14,24 +14,13 @@ import java.util.List;
  */
 public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
 
-    private String outputField;
 
-    private boolean clearOutput;
     @ForeignKey(foreignCatalog = Task.CATALOG)
     private List<Long> process;
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Task.CATALOG)
     private List<Task> processValues;
 
-
-    @Override
-    public boolean isClearOutput() {
-        return clearOutput;
-    }
-
-    public void setClearOutput(boolean clearOutput) {
-        this.clearOutput = clearOutput;
-    }
 
 
     @Override
@@ -53,15 +42,6 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
         this.processValues = (List<Task>) processValues;
     }
 
-    @Override
-    public String getOutputField() {
-        return outputField;
-    }
-
-    @Override
-    public void setOutputField(String outputField) {
-        this.outputField = outputField;
-    }
 
     @Override
     public String getCatalogType() {

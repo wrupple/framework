@@ -19,6 +19,17 @@ public class TaskImpl extends CatalogActionConstraintImpl implements Task {
     private Object stakeHolder;
     private Long exit, cancel, error;
 
+    private Boolean keepOutput;
+
+    @Override
+    public Boolean getKeepOutput() {
+        return keepOutput;
+    }
+
+    public void setKeepOutput(Boolean keepOutput) {
+        this.keepOutput = keepOutput;
+    }
+
     @Override
     public Object getStakeHolder() {
         return stakeHolder;

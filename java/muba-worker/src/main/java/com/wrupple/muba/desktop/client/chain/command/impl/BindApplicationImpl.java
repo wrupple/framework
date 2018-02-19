@@ -40,6 +40,7 @@ public class BindApplicationImpl implements BindApplication {
         container.setSentence(sentence);
 
         int currentIndex = 0;
+        //FIXME ONLY READ HOME FROM TOKENS IF GRAMMAR DEMANDS IT
 
         Application initialState = getInitialActivity(sentence,currentIndex,container.getApplicationTree());
 

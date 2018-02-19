@@ -7,7 +7,7 @@ import java.util.List;
 /**
  *
  */
-public interface Workflow extends ServiceManifest, HasOutput {
+public interface Workflow extends ServiceManifest {
 
     //String WORKFLOW_CATALOG = "Workflow";
 
@@ -18,5 +18,4 @@ public interface Workflow extends ServiceManifest, HasOutput {
 
     <T extends Task> List<T> getProcessValues();
 
-    boolean isClearOutput();
 }

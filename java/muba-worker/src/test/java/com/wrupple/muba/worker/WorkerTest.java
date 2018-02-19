@@ -27,6 +27,7 @@ import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.server.service.*;
 import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
+import com.wrupple.muba.worker.server.service.impl.CatalogRunnerImpl;
 import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
 import com.wrupple.muba.worker.shared.services.WorkerContainer;
 import org.easymock.EasyMockRule;
@@ -124,12 +125,13 @@ public abstract class WorkerTest extends EasyMockSupport {
         @Override
         protected void configure() {
 
-
             bind(String.class).annotatedWith(Names.named("worker.intialTitle")).toInstance("..::Desktop::..");
             bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.choco")).toInstance(1l);
+            bind(Long.class).annotatedWith(Names.named("com.wrupple.runner.catalog")).toInstance(2l);
 
             bind(VariableConsensus.class).to(ArbitraryDesicion.class);
 
+            bind(CatalogRunner.class).to(CatalogRunnerImpl.class);
         }
 
 

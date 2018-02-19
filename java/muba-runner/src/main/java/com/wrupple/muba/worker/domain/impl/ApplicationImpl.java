@@ -34,6 +34,30 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
     @CatalogValue(foreignCatalog = Application.CATALOG)
     private Application explicitSuccessorValue;
 
+
+
+    private String outputField;
+    private Boolean keepOutput;
+
+    @Override
+    public Boolean getKeepOutput() {
+        return keepOutput;
+    }
+
+    public void setKeepOutput(Boolean keepOutput) {
+        this.keepOutput = keepOutput;
+    }
+
+    @Override
+    public String getOutputField() {
+        return outputField;
+    }
+
+    @Override
+    public void setOutputField(String outputField) {
+        this.outputField = outputField;
+    }
+
     @Override
     public List<ApplicationDependency> getDependenciesValues() {
         return dependenciesValues;

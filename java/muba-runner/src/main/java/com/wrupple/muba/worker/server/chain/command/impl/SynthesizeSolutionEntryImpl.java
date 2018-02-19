@@ -1,12 +1,8 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.SynthesizeSolutionEntry;
 import org.apache.commons.chain.Context;
 import org.slf4j.Logger;
@@ -33,15 +29,25 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
     @Override
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
+        CatalogEntry solution = context.getStateValue().getEntryValue();
         log.info("Synthesize solution...");
         CatalogDescriptor solutionDescriptor = context.getStateValue().getCatalogValue();
-        CatalogEntry solution = plugin.synthesize(solutionDescriptor);
+        if(solution==null ){
+
+
+            solution = plugin.synthesize(solutionDescriptor);
+
+        }else{
+            log.warn("appears solutions is already there");
+
+        }
+
 
         List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariablesValues();
 
         log.trace("solution has {} variables",variableDescriptors.size());
 
-        Instrospection solutionWritingInstrospection = plugin.newSession(solution);
+        Instrospection solutionWritingInstrospection = assertInstrospector(context);
 
         FieldDescriptor fieldId;
         Object fieldValue;
@@ -55,4 +61,16 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
         context.getRuntimeContext().setResult(solution);
         return CONTINUE_PROCESSING;
     }
+
+
+
+    private Instrospection assertInstrospector(ApplicationContext context) {
+        Instrospection r = (Instrospection) context.get(INTROSPECTIONKEY);
+        if(r==null){
+            r = plugin.newSession(context.getStateValue().getEntryValue());
+            context.put(INTROSPECTIONKEY,r);
+        }
+        return r;
+    }
+
 }
