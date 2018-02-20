@@ -43,8 +43,8 @@ public class NaiveWorkerConfiguration extends AbstractModule{
     @Inject
     @Singleton
     @Named("catalog.plugins")
-    public Object plugins(CatalogPlugin applicationPlugin, SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm, SystemCatalogPlugin system) {
-        CatalogPlugin[] plugins = new CatalogPlugin[]{system,bpm, runner,applicationPlugin};
+    public Object plugins(CatalogPlugin user, SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm, SystemCatalogPlugin system) {
+        CatalogPlugin[] plugins = new CatalogPlugin[]{system,bpm, runner,user};
         return plugins;
     }
 

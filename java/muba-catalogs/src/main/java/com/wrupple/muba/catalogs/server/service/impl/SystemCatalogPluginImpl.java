@@ -30,7 +30,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
             @Named(CatalogDescriptor.CATALOG_ID) CatalogDescriptor catalogProvider,
             @Named(Host.CATALOG) CatalogDescriptor peerProvider,
             @Named(DistributiedLocalizedEntry.CATALOG) CatalogDescriptor i18nProvider,
-            @Named(CatalogContractListener.CATALOG) CatalogDescriptor triggerProvider,
+            @Named(Trigger.CATALOG) CatalogDescriptor triggerProvider,
             @Named(LocalizedString.CATALOG) CatalogDescriptor localizedStringProvider,
             @Named(Constraint.CATALOG_ID) CatalogDescriptor constraintProvider,
             @Named(Trash.CATALOG) CatalogDescriptor trashP,
@@ -65,25 +65,25 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 	public void postProcessCatalogDescriptor(CatalogDescriptor regreso, CatalogActionContext context) throws Exception {
         String catalogId = regreso.getDistinguishedName();
         CatalogTriggerInterpret triggerInterpret = triggerInterpretProvider.get();
-        CatalogContractListenerImpl trigger;
+        TriggerImpl trigger;
         if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
-            trigger = new CatalogContractListenerImpl(1,
+            trigger = new TriggerImpl(1,
                     FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
             triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
-            trigger = new CatalogContractListenerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
+            trigger = new TriggerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
                     null, null, null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
             triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
         }  else if (Trash.CATALOG.equals(catalogId)) {
-            trigger = new CatalogContractListenerImpl(1, RestoreTrash.class.getSimpleName(),
+            trigger = new TriggerImpl(1, RestoreTrash.class.getSimpleName(),
                     true, null, null, null);
             trigger.setFailSilence(false);
             trigger.setStopOnFail(false);
             triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
-            trigger = new CatalogContractListenerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
+            trigger = new TriggerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
                     null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
@@ -91,7 +91,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
         }
 
 
-		trigger = new CatalogContractListenerImpl(2, GarbageCollection.class.getSimpleName(), false, null, null, null);
+		trigger = new TriggerImpl(2, GarbageCollection.class.getSimpleName(), false, null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
@@ -100,7 +100,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 		FieldDescriptor field = regreso.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
 
-			trigger = new CatalogContractListenerImpl(1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
+			trigger = new TriggerImpl(1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
 					null);
 			trigger.setFailSilence(true);
 			trigger.setStopOnFail(true);

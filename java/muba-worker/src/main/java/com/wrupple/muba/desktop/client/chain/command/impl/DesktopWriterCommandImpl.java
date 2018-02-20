@@ -29,6 +29,9 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
         if(state==null){
             throw new NullPointerException("Business intent resulted in no application state");
         }
+        if(state.getStakeHolder()==null){
+            throw new NullPointerException("No one owns this application");
+        }
 
         //launch worker
         state.setWorkerStateValue(worker);

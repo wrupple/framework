@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.annotations.CatalogField;
 
 import java.util.List;
 
-public class CatalogContractListenerImpl extends CatalogActionConstraintImpl implements CatalogContractListener {
+public class TriggerImpl extends CatalogActionConstraintImpl implements Trigger {
 
 	private static final long serialVersionUID = 1609115127939733426L;
 
@@ -18,10 +18,10 @@ public class CatalogContractListenerImpl extends CatalogActionConstraintImpl imp
 	private Boolean advice,runAsStakeHolder,failSilence,stopOnFail;
 
 
-	public CatalogContractListenerImpl(){
+	public TriggerImpl(){
 	}
 	
-	public CatalogContractListenerImpl(int action, String handler, boolean before, String targetCatalogId, List<String> properties, String seed) {
+	public TriggerImpl(int action, String handler, boolean before, String targetCatalogId, List<String> properties, String seed) {
 		super();
 		this.action=Long.valueOf(action);
 		super.setSeed(seed);
@@ -105,7 +105,7 @@ public class CatalogContractListenerImpl extends CatalogActionConstraintImpl imp
 
     @Override
     public String getCatalogType() {
-        return CatalogContractListener.CATALOG;
+        return Trigger.CATALOG;
     }
 
 }

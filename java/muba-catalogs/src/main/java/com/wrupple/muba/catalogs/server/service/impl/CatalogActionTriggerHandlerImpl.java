@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.wrupple.muba.catalogs.domain.CatalogContractListener;
+import com.wrupple.muba.catalogs.domain.Trigger;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +31,12 @@ public class CatalogActionTriggerHandlerImpl  {
 
 
 	protected boolean extecute(CatalogActionContext context, boolean advise) throws Exception {
-		List<CatalogContractListener> triggers = interpret.getTriggersValues(context);
+		List<Trigger> triggers = interpret.getTriggersValues(context);
 		if (triggers == null || triggers.isEmpty()) {
 			log.trace("no triggers to process");
 		} else {
 			boolean r;
-			CatalogContractListener trigger;
+			Trigger trigger;
 			for (int i = 0; i < triggers.size(); i++) {
 				trigger = triggers.get(i);
 				if(trigger.isAdvice()==advise){
@@ -54,7 +54,7 @@ public class CatalogActionTriggerHandlerImpl  {
 	}
 
 
-	private boolean excecuteTrigger(CatalogContractListener trigger, CatalogActionContext context)
+	private boolean excecuteTrigger(Trigger trigger, CatalogActionContext context)
 			throws Exception {
 
 		log.trace("[PROCESS trigger] ");
@@ -87,7 +87,7 @@ public class CatalogActionTriggerHandlerImpl  {
 		return Command.CONTINUE_PROCESSING;
 	}
 
-	private static Map<String, String> parseProperties(List<String> rawProperties, CatalogContractListener trigger,
+	private static Map<String, String> parseProperties(List<String> rawProperties, Trigger trigger,
 			CatalogActionContext context) {
 		Map<String, String> regreso = getParsedProperties(rawProperties, context.getNamespaceContext(),trigger);
 		if (regreso == null) {
@@ -97,11 +97,11 @@ public class CatalogActionTriggerHandlerImpl  {
 		return regreso;
 	}
 
-	 static Map<String, String> getParsedProperties(List<String> rawProperties, Map context, CatalogContractListener trigger) {
+	 static Map<String, String> getParsedProperties(List<String> rawProperties, Map context, Trigger trigger) {
 		return (Map<String, String>) context.get(trigger.getCatalogType()+trigger.getId());
 	}
 
-	static void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context, CatalogContractListener trigger) {
+	static void setParsedProperties(Map<String, String> parsed, List<String> rawProperties, Map context, Trigger trigger) {
 		context.put(trigger.getCatalogType()+trigger.getId(), parsed);
 	}
 

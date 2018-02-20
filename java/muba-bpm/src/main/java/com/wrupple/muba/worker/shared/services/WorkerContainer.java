@@ -33,7 +33,7 @@ import java.util.List;
 public class WorkerContainer {
 
     private final ServiceBus processSwitches;
-    private final SessionContext session;
+    private  SessionContext session;
     private final Solver solver;
     private final Injector injector;
 
@@ -43,7 +43,7 @@ public class WorkerContainer {
         injector = Guice.createInjector(modules);
         solver = injector.getInstance(Solver.class);
         processSwitches = injector.getInstance(ServiceBus.class);
-        session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
+
 
 /*
          Catalog
@@ -85,6 +85,12 @@ public class WorkerContainer {
         for (Class<? extends ImplicitEventResolver.Registration> registration : eventHandlers) {
             processSwitches.getIntentInterpret().registerService(injector.getInstance(registration));
         }
+
+        /*
+         * Security
+         */
+
+        session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
 
     }
 

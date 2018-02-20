@@ -46,8 +46,8 @@ public class SingleUserModule extends AbstractModule {
 		bind(CatalogReaderInterceptor.class).to(NonOperativeCatalogReaderInterceptor.class);
 		
 	}
-	
-	
+
+
 	@Provides
 	public CatalogNamespace publicNamespace() {
 		return new PublicNamespace();

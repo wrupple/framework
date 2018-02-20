@@ -12,7 +12,10 @@ public class HandleContainerStateImpl implements HandleContainerState {
     @Override
     public boolean execute(ContextSwitchRuntimeContext context) throws Exception {
         WorkerState worker = context.getContextSwitch().getWorkerStateValue();
-        ApplicationState state = worker.getStateValue();;
+        ApplicationState state = worker.getStateValue();
+
+
+        //FIXME fire inderectly through handler
         context.
                 getRuntimeContext().
                 getServiceBus().

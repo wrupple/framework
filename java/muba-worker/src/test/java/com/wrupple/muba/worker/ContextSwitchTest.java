@@ -87,6 +87,7 @@ public class ContextSwitchTest extends WorkerTest {
         action = new CatalogCreateRequestImpl(riderBooking,RiderBooking.class.getSimpleName());
         action.setFollowReferences(true);
 
+        assertTrue(riderBooking.getId()==null);
 
         riderBooking =  container.fireEvent(action);
 
@@ -96,7 +97,7 @@ public class ContextSwitchTest extends WorkerTest {
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
         container.fireEvent(new WorkerContractImpl(
-                Arrays.asList(riderBooking.getId().toString()),
+                Arrays.asList(":"+riderBooking.getId().toString()),
                 container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco"))),
                 HOME
         ));

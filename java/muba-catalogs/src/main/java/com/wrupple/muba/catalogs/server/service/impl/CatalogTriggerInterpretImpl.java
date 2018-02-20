@@ -29,7 +29,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private final ActionsDictionary dictionary;
     private final EntrySynthesizer synthetizationDelegate;
 	private final FieldAccessStrategy access;
-	private final List<CatalogContractListener> metadataTriggers;
+	private final List<Trigger> metadataTriggers;
 
 	@Inject
 	public CatalogTriggerInterpretImpl(FieldAccessStrategy access,ActionsDictionary dictionary, Provider<CatalogServiceManifest> manifestP,
@@ -41,19 +41,19 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 		this.deserializer = deserializer;
         this.synthetizationDelegate = synthetizationDelegate;
         //FIXME this may be an indication that a static storage unit for triggers is necessary
-        CatalogContractListenerImpl[] triggg = new CatalogContractListenerImpl[3];
-		CatalogContractListenerImpl trigger = new CatalogContractListenerImpl(1,
+        TriggerImpl[] triggg = new TriggerImpl[3];
+		TriggerImpl trigger = new TriggerImpl(1,
 				CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
         triggg[0]= (trigger);
-		trigger = new CatalogContractListenerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
+		trigger = new TriggerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
 				null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
         triggg[1]=(trigger);
 
-		trigger = new CatalogContractListenerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
+		trigger = new TriggerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
         triggg[2]=(trigger);
@@ -143,7 +143,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	}
 
 	@Override
-	public List<CatalogContractListener> getTriggersValues(CatalogActionContext context) throws Exception {
+	public List<Trigger> getTriggersValues(CatalogActionContext context) throws Exception {
 		String catalogId = context.getCatalogDescriptor().getDistinguishedName();
 		if(CatalogDescriptor.CATALOG_ID.equals(catalogId)){
 			return metadataTriggers;
@@ -161,17 +161,17 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
         }
 
         FilterData triggerFilter = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,catalogId);
-        triggerFilter.addFilter(FilterDataUtils.createSingleFieldFilter(Collections.singletonList(CatalogContractListener.ACTION_FIELD),triggerAction));
+        triggerFilter.addFilter(FilterDataUtils.createSingleFieldFilter(Collections.singletonList(Trigger.ACTION_FIELD),triggerAction));
 
-        return context.triggerRead(CatalogContractListener.CATALOG,triggerFilter);
+        return context.triggerRead(Trigger.CATALOG,triggerFilter);
 	}
 
 
 
     @Override
-    public void addNamespaceScopeTrigger(CatalogContractListener trigger, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
+    public void addNamespaceScopeTrigger(Trigger trigger, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
         trigger.setCatalog(catalog.getDistinguishedName());
-	    context.triggerCreate(CatalogContractListener.CATALOG,trigger);
+	    context.triggerCreate(Trigger.CATALOG,trigger);
     }
 
 

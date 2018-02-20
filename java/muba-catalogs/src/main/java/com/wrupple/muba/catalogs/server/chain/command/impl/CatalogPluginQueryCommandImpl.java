@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogPluginQueryCommand;
+import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
@@ -27,10 +28,12 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
     protected static final Logger log = LoggerFactory.getLogger(CatalogPluginQueryCommandImpl.class);
 
     private final CatalogPlugin[] plugins;
+    private final PluginConsensus consensus;
 
     @Inject
-    public CatalogPluginQueryCommandImpl( @Named("catalog.plugins") Provider<Object> pluginProvider) {
+    public CatalogPluginQueryCommandImpl(@Named("catalog.plugins") Provider<Object> pluginProvider, PluginConsensus consensus) {
         this.plugins = (CatalogPlugin[]) pluginProvider.get();
+        this.consensus=consensus;
     }
 
 
@@ -45,6 +48,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                 if (filter == null) {
                     //FIXME CATALOG_TYPE (DTO) SHOULD EXPOSE A SEPARATE DATASOURCE FOR THIS
                     //no puede ser que el dto sea del mismo catalogo porque contaminaría el cache
+                    //debe ser una entidad separada, de la que catlogos hereda
                     List<CatalogEntry> results = getAvailableCatalogs(context);
                     context.setResults(results);
                 }else if (filter.containsKey(catalogDescriptor.getKeyField())) {
@@ -63,7 +67,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                             })
                             .collect(Collectors.toList());
 
-                    context.setResults(results);
+                    consenseResults(context, results);
                 } else if (filter.containsKey(HasDistinguishedName.FIELD)) {
                     //distinguished name
                     List<String> names = (List) filter.fetchCriteria(HasDistinguishedName.FIELD).getValues();
@@ -81,7 +85,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                                 return descriptor != null;
                             }).collect(Collectors.toList());
 
-                    context.setResults(results);
+                    consenseResults(context, results);
                 }
             }else{
                 CatalogDescriptor result;
@@ -91,7 +95,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
                     result = getDescriptorForKey((Long) entry, context);
                 }
 
-                context.setResults(Collections.singletonList(result));
+                consenseResults(context, Collections.singletonList(result));
             }
         }
 
@@ -100,6 +104,9 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
         return CONTINUE_PROCESSING;
     }
 
+    private void consenseResults(CatalogActionContext context, List<CatalogDescriptor> results) throws Exception {
+        context.setResults(results);
+    }
 
 
     public List<CatalogEntry> getAvailableCatalogs(CatalogActionContext context) throws Exception {

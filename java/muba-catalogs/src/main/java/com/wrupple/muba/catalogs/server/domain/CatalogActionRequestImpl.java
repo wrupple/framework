@@ -161,7 +161,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
 	@Override
 	public String toString() {
-		return "\n"+parentValue+"\nCatalogActionRequestImpl{" +
+		return "\n\nCatalogActionRequestImpl{" +
 
                 "catalog='" + catalog + '\'' +
 				",entry=" + entry +
