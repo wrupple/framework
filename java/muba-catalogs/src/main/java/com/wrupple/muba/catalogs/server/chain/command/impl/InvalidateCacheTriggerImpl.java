@@ -29,7 +29,7 @@ public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigge
 
 	@Override
 	public boolean execute(Context c) throws Exception {
-		log.trace("<{}>",this.getClass().getSimpleName());
+
 		CatalogActionContext context = (CatalogActionContext) c;
 		List<HasCatalogId> e= (List)context.getResults();
 		if(e==null){
@@ -38,7 +38,7 @@ public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigge
 		for(HasCatalogId i :e){
 			cache.delete(context, SystemCatalogPlugin.DOMAIN_METADATA, i.getCatalog());
 		}
-		log.trace("</{}>",this.getClass().getSimpleName());
+
 		return CONTINUE_PROCESSING;
 	}
 

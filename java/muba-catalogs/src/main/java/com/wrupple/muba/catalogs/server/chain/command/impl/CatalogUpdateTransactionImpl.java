@@ -44,7 +44,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 
 	@Override
 	public boolean execute(Context c) throws Exception {
-		log.trace("<{}>",this.getClass().getSimpleName());
+
 		CatalogActionContext context = (CatalogActionContext) c;
 		dictionary.getRead().execute(context);
 
@@ -110,7 +110,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 
 
 
-		log.trace("</{}>",this.getClass().getSimpleName());
+
 		return CONTINUE_PROCESSING;
 	}
 

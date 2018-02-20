@@ -22,7 +22,7 @@ public class RunImpl implements Run {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        log.debug("<{}>", this.getClass().getSimpleName());
+
 
         RuntimeContext requestContext = (RuntimeContext) context;
 
@@ -38,17 +38,17 @@ public class RunImpl implements Run {
                         .getCommand(requestContext.getServiceManifest().getServiceId());
                 log.debug("delegating to service handler {}", serviceHandler);
                 boolean r = serviceHandler.execute(requestContext.getServiceContext());
-                log.debug("</{}>", this.getClass().getSimpleName());
+
                 return r;
             } else {
                 log.error("could not understand contract");
-                log.debug("</{}>", this.getClass().getSimpleName());
+
                 return PROCESSING_COMPLETE;
             }
 
         } else {
             log.error("Permission to process request denied");
-            log.debug("</{}>", this.getClass().getSimpleName());
+
             return PROCESSING_COMPLETE;
         }
 

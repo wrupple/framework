@@ -28,12 +28,10 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
     protected static final Logger log = LoggerFactory.getLogger(CatalogPluginQueryCommandImpl.class);
 
     private final CatalogPlugin[] plugins;
-    private final PluginConsensus consensus;
 
     @Inject
-    public CatalogPluginQueryCommandImpl(@Named("catalog.plugins") Provider<Object> pluginProvider, PluginConsensus consensus) {
+    public CatalogPluginQueryCommandImpl(@Named("catalog.plugins") Provider<Object> pluginProvider) {
         this.plugins = (CatalogPlugin[]) pluginProvider.get();
-        this.consensus=consensus;
     }
 
 

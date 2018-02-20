@@ -24,7 +24,7 @@ public class IncorporateImpl implements Incorporate {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        log.debug("<{}>", this.getClass().getSimpleName());
+
         RuntimeContext requestContext = (RuntimeContext) context;
         String key, value;
         Object contract = requestContext.getServiceContract();
@@ -71,7 +71,7 @@ public class IncorporateImpl implements Incorporate {
 
         }
 
-        log.debug("</{}>", this.getClass().getSimpleName());
+
 
         return CONTINUE_PROCESSING;
     }

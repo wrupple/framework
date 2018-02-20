@@ -30,7 +30,7 @@ public class ValidateContractImpl implements ValidateContract {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        log.debug("<{}>", this.getClass().getSimpleName());
+
 
         RuntimeContext requestContext = (RuntimeContext) context;
 
@@ -47,7 +47,7 @@ public class ValidateContractImpl implements ValidateContract {
                         log.info("\t{} : {}", v.getPropertyPath(), v.getMessage());
                     }
                 }
-                log.debug("</{}>", this.getClass().getSimpleName());
+
                 throw new IllegalArgumentException("Contract violates constrains");
             }
 
@@ -55,7 +55,7 @@ public class ValidateContractImpl implements ValidateContract {
         }
 
 
-        log.debug("</{}>", this.getClass().getSimpleName());
+
 
         return CONTINUE_PROCESSING;
     }

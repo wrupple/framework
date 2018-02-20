@@ -25,7 +25,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
-		log.trace("<{}>",this.getClass().getSimpleName());
+
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		if (!(context.getResults() == null || context.getResults().isEmpty())) {
 			CatalogDescriptor descriptor = context.getCatalogDescriptor();
@@ -36,7 +36,7 @@ public class CompleteCatalogGraphImpl extends DataJoiner implements CompleteCata
 			joinWithGivenJoinData(context.getResults(),descriptor, joins,
 					context, filterMap, access.newSession(null));
 		}
-		log.trace("</{}>",this.getClass().getSimpleName());
+
 		return CONTINUE_PROCESSING;
 	}
 

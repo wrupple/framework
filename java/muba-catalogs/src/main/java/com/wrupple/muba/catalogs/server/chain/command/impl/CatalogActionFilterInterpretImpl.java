@@ -16,11 +16,11 @@ public class CatalogActionFilterInterpretImpl implements CatalogActionFilterInte
 
     @Override
     public boolean execute(RuntimeContext requestContext) throws Exception {
-        log.trace("<{}>",this.getClass().getSimpleName());
 
 
 
-        log.trace("</{}>",this.getClass().getSimpleName());
+
+
         return CONTINUE_PROCESSING;
     }
 

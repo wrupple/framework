@@ -31,12 +31,11 @@ public class BroadcastInterpretImpl implements BroadcastInterpret {
 
     @Override
     public boolean execute(RuntimeContext ctx) throws Exception {
-        log.debug("<{}>",this.getClass().getSimpleName());
         RuntimeContext requestContext = (RuntimeContext) ctx;
         BroadcastEvent contract = (BroadcastEvent) requestContext.getServiceContract();
         BroadcastContext context = requestContext.getServiceContext();
         context.setEventValue(contract);
-        log.debug("</{}>",this.getClass().getSimpleName());
+
         return concernedInterests.execute(context);
     }
 

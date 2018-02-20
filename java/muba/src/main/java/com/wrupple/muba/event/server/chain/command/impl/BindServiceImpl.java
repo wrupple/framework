@@ -20,7 +20,7 @@ public class BindServiceImpl implements BindService {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        log.debug("<{}>", this.getClass().getSimpleName());
+
 
         RuntimeContext requestContext = (RuntimeContext) context;
 
@@ -38,7 +38,7 @@ public class BindServiceImpl implements BindService {
         ServiceManifest manifest = getChildServiceManifest(requestContext.getServiceBus().getIntentInterpret().getRootService(),service, requestContext);
         requestContext.setServiceManifest(manifest);
 
-        log.debug("</{}>", this.getClass().getSimpleName());
+
 
 
         return CONTINUE_PROCESSING;

@@ -46,7 +46,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 
 	@Override
 	public boolean execute(Context c) throws Exception {
-		log.trace("<{}>",this.getClass().getSimpleName());
+
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
 		FieldDescriptor trashableField = catalog.getFieldDescriptor(Trash.TRASH_FIELD);
@@ -112,7 +112,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 
 		}
 
-		log.trace("</{}>",this.getClass().getSimpleName());
+
 		return CONTINUE_PROCESSING;
 	}
 

@@ -31,7 +31,7 @@ public class ValidateContextImpl implements ValidateContext {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        log.debug("<{}>", this.getClass().getSimpleName());
+
 
         RuntimeContext requestContext = (RuntimeContext) context;
 
@@ -46,7 +46,7 @@ public class ValidateContextImpl implements ValidateContext {
             //}
             throw new IllegalArgumentException();
         }
-        log.debug("</{}>", this.getClass().getSimpleName());
+
 
         return CONTINUE_PROCESSING;
     }
