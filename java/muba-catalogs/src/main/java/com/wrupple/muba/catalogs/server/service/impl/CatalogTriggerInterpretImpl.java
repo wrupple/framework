@@ -144,35 +144,43 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 	@Override
 	public List<Trigger> getTriggersValues(CatalogActionContext context) throws Exception {
-		String catalogId = context.getCatalogDescriptor().getDistinguishedName();
+		CatalogDescriptor catalog = context.getCatalogDescriptor();
+		String catalogId = catalog.getDistinguishedName();
+
 		if(CatalogDescriptor.CATALOG_ID.equals(catalogId)){
 			return metadataTriggers;
 		}
+
         String action = context.getRequest().getName();
-        Integer triggerAction ;
+        Long triggerAction ;
         if (CatalogActionRequest.CREATE_ACTION.equals(action)) {
-            triggerAction=0;
+            triggerAction=0l;
         }else if (CatalogActionRequest.WRITE_ACTION.equals(action)) {
-            triggerAction=1;
+            triggerAction=1l;
         }else  if (CatalogActionRequest.DELETE_ACTION.equals(action)) {
-            triggerAction=2;
+            triggerAction=2l;
         }else{
             return null;
         }
 
-        FilterData triggerFilter = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,catalogId);
+		List<String> allCatalogs = new ArrayList<>();
+		allCatalogs.add(catalogId);
+
+		if(!catalog.getConsolidated()){
+			while(catalog.getParentValue()!=null){
+				catalog = catalog.getParentValue();
+				allCatalogs.add(catalog.getDistinguishedName());
+
+			}
+		}
+
+        FilterData triggerFilter = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,allCatalogs);
         triggerFilter.addFilter(FilterDataUtils.createSingleFieldFilter(Collections.singletonList(Trigger.ACTION_FIELD),triggerAction));
 
         return context.triggerRead(Trigger.CATALOG,triggerFilter);
 	}
 
 
-
-    @Override
-    public void addNamespaceScopeTrigger(Trigger trigger, CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
-        trigger.setCatalog(catalog.getDistinguishedName());
-	    context.triggerCreate(Trigger.CATALOG,trigger);
-    }
 
 
     private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,

@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
-import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.TriggerCreationScope;
 import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
@@ -21,7 +21,6 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 	protected static final Logger log = LoggerFactory.getLogger(SystemCatalogPluginImpl.class);
 
 
-	private final Provider<CatalogTriggerInterpret> triggerInterpretProvider;
 
     @Inject
 	public SystemCatalogPluginImpl(
@@ -37,10 +36,8 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
             @Named(ContentRevision.CATALOG) CatalogDescriptor revisionP,
             @Named(ContentNode.CATALOG_TIMELINE) CatalogDescriptor timeline,
             @Named(ServiceManifest.CATALOG) CatalogDescriptor serviceManifest,
-            @Named(Session.CATALOG) CatalogDescriptor session,
-            Provider<CatalogTriggerInterpret> triggerInterpret) {
+            @Named(Session.CATALOG) CatalogDescriptor session) {
         super();
-        this.triggerInterpretProvider = triggerInterpret;
         super.put(fieldProvider);
         super.put(serviceManifest);
             super.put(catalogProvider);
@@ -62,32 +59,31 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 
 
 	@Override
-	public void postProcessCatalogDescriptor(CatalogDescriptor regreso, CatalogActionContext context) throws Exception {
+	public void postProcessCatalogDescriptor(CatalogDescriptor regreso, CatalogActionContext context, TriggerCreationScope triggerInterpret) throws Exception {
         String catalogId = regreso.getDistinguishedName();
-        CatalogTriggerInterpret triggerInterpret = triggerInterpretProvider.get();
         TriggerImpl trigger;
         if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
             trigger = new TriggerImpl(1,
                     FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            triggerInterpret.add(trigger, regreso,context);
             trigger = new TriggerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
                     null, null, null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            triggerInterpret.add(trigger, regreso,context);
         }  else if (Trash.CATALOG.equals(catalogId)) {
             trigger = new TriggerImpl(1, RestoreTrash.class.getSimpleName(),
                     true, null, null, null);
             trigger.setFailSilence(false);
             trigger.setStopOnFail(false);
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            triggerInterpret.add(trigger, regreso,context);
             trigger = new TriggerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
                     null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            triggerInterpret.add(trigger, regreso,context);
         }
 
 
@@ -95,7 +91,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
-        triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+        triggerInterpret.add(trigger, regreso,context);
 
 		FieldDescriptor field = regreso.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
@@ -106,7 +102,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 			trigger.setStopOnFail(true);
 
 
-            triggerInterpret.addNamespaceScopeTrigger(trigger, regreso,context);
+            triggerInterpret.add(trigger, regreso,context);
 
 		}
 

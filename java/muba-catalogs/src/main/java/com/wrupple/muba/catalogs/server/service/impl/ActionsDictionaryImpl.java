@@ -41,8 +41,13 @@ public class ActionsDictionaryImpl extends CatalogBase implements ActionsDiction
         for(CatalogPlugin plugin: plugins){
             actions = plugin.getCatalogActions();
             if(actions!=null){
+                String commandName;
                 for(Command action:actions){
-                    addCommand(action.getClass().getSimpleName(),action);
+                    commandName = action.getClass().getSimpleName();
+                    if(commandName.endsWith("Impl")){
+                        commandName = commandName.substring(0,commandName.length()-4);
+                    }
+                    addCommand(commandName,action);
                 }
             }
 

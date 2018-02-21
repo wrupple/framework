@@ -2,6 +2,7 @@ package com.wrupple.muba.worker.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
+import com.wrupple.muba.catalogs.server.service.TriggerCreationScope;
 import com.wrupple.muba.catalogs.server.service.impl.StaticCatalogDescriptorProvider;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.ApplicationState;
@@ -47,7 +48,7 @@ public class SolverCatalogPluginImpl extends StaticCatalogDescriptorProvider imp
     }
 
     @Override
-    public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context) {
+    public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context, TriggerCreationScope scope) {
 
     }
 

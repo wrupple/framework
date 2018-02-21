@@ -6,10 +6,8 @@ import com.wrupple.muba.catalogs.domain.TriggerImpl;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
-import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
+import com.wrupple.muba.catalogs.server.service.*;
+import com.wrupple.muba.catalogs.server.service.impl.StorageTriggerScope;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.*;
 import org.apache.commons.chain.Context;
@@ -30,7 +28,6 @@ public class PluginConsensusImpl implements PluginConsensus {
     private final String host;
 
     private final EntrySynthesizer entrySynthesizer;
-    private final CatalogTriggerInterpret triggerInterpret;
     /*
 	 * versioning
 	 */
@@ -47,11 +44,11 @@ public class PluginConsensusImpl implements PluginConsensus {
     private TriggerImpl timestamp;
     private ArrayList<String> defaultVersioningTriggerproperties;
     private WritePublicTimelineEventDiscriminator inheritanceHandler;
+    private final StorageTriggerScope defaultScope;
 
     @Inject
-    public PluginConsensusImpl(@Named("catalog.plugins") Provider<Object> pluginProvider, @Named("host") String host, EntrySynthesizer entrySynthesizer, CatalogTriggerInterpret triggerInterpret, WritePublicTimelineEventDiscriminator inheritanceHandler) {
+    public PluginConsensusImpl(@Named("catalog.plugins") Provider<Object> pluginProvider, @Named("host") String host, EntrySynthesizer entrySynthesizer,WritePublicTimelineEventDiscriminator inheritanceHandler) {
         this.entrySynthesizer = entrySynthesizer;
-        this.triggerInterpret = triggerInterpret;
 
         this.host=host;
         this.pluginProvider=pluginProvider;
@@ -84,6 +81,7 @@ public class PluginConsensusImpl implements PluginConsensus {
         defaultVersioningTriggerproperties.add(putCatalogId);
         defaultVersioningTriggerproperties
                 .add("value=" + SystemCatalogPlugin.SOURCE_OLD + "." + Trigger.SERIALIZED);
+        defaultScope= new StorageTriggerScope();
 
     }
 
@@ -91,10 +89,13 @@ public class PluginConsensusImpl implements PluginConsensus {
     public boolean execute(Context c) throws Exception {
 
         CatalogActionContext context = (CatalogActionContext) c;
-        //Instrospection instrospection = access.newSession((CatalogEntry) context.getRequest().getEntryValue());
         CatalogDescriptor catalog = (CatalogDescriptor)context.getRequest().getEntryValue();
         String name = catalog.getDistinguishedName();
+        TriggerCreationScope scope = (TriggerCreationScope) context.get(OVERRIDE_SCOPE);
 
+        if(scope==null){
+            scope = defaultScope;
+        }
 
         if(log.isTraceEnabled()){
             log.trace("process descriptor with DN :"+name);
@@ -106,12 +107,12 @@ public class PluginConsensusImpl implements PluginConsensus {
                 // MUST HAVE VERSION FIELD
                 catalog.putField(new VersionFields());
             }
-            triggerInterpret.addNamespaceScopeTrigger(getVersioningTrigger(), catalog,context);
+            scope.add(getVersioningTrigger(), catalog,context);
 
         }
 
         if (catalog.getRevised()!=null&&catalog.getRevised()) {
-            triggerInterpret.addNamespaceScopeTrigger(getRevisionTrigger(catalog), catalog,context);
+            scope.add(getRevisionTrigger(catalog), catalog,context);
 
         }
         if (catalog.getParent() != null) {
@@ -119,7 +120,7 @@ public class PluginConsensusImpl implements PluginConsensus {
             if (greatAncestor != null && (catalog.getConsolidated()==null||!catalog.getConsolidated())
                     && ContentNode.CATALOG_TIMELINE.equals(greatAncestor)) {
 
-                triggerInterpret.addNamespaceScopeTrigger(timestamp, catalog,context);
+                scope.add(timestamp, catalog,context);
 
                 List<FilterDataOrdering> sorts = catalog.getAppliedSorts();
                 FilterDataOrderingImpl index;
@@ -141,7 +142,7 @@ public class PluginConsensusImpl implements PluginConsensus {
                 if (catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null
                         && catalog.getFieldDescriptor(inheritanceHandler.getDiscriminatorField()) != null) {
                     log.debug("catalog is public timeline");
-                    triggerInterpret.addNamespaceScopeTrigger(afterCreateHandledTimeline(), catalog,context);
+                    scope.add(afterCreateHandledTimeline(), catalog,context);
                 }
 
                 if (catalog.getFieldDescriptor(ContentNode.CHILDREN_TREE_LEVEL_INDEX) != null && field != null
@@ -149,14 +150,14 @@ public class PluginConsensusImpl implements PluginConsensus {
                     index = new FilterDataOrderingImpl(ContentNode.CHILDREN_TREE_LEVEL_INDEX, true);
                     sorts.add(index);
                     // INDEXED TREE
-                    triggerInterpret.addNamespaceScopeTrigger(beforeIndexedTreeCreate(), catalog,context);
+                    scope.add(beforeIndexedTreeCreate(), catalog,context);
                 }
             }
         }
         CatalogPlugin[] plugins = (CatalogPlugin[]) pluginProvider.get();
         for (CatalogPlugin interpret2 : plugins) {
             log.trace("POST process {} IN {}", name, interpret2);
-            interpret2.postProcessCatalogDescriptor(catalog, context);
+            interpret2.postProcessCatalogDescriptor(catalog, context, scope);
         }
         if (catalog.getHost() == null) {
             log.trace("locally bound catalog {} @ {}", name, host);

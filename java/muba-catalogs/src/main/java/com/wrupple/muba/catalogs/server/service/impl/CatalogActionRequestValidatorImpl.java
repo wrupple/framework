@@ -256,9 +256,11 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			try {
 				//TODO event always returns fill result list, can we make it so it doesnt have to wrap single results?ss
 				descriptor = bus.get().fireEvent(context, system, null);
-
 			} catch (Exception e) {
 				throw new RuntimeException(e);
+			}
+			if(descriptor==null){
+				throw new IllegalArgumentException(catalogId);
 			}
 
 		}

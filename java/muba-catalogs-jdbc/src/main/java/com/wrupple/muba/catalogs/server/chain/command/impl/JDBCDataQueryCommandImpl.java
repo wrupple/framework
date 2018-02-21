@@ -124,8 +124,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
     }
 
 	@Override
-	public boolean execute(Context ctx) throws Exception {
-		CatalogActionContext context = (CatalogActionContext) ctx;
+	public boolean execute(CatalogActionContext context) throws Exception {
 		CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
 		FilterData filter = context.getRequest().getFilter();
 

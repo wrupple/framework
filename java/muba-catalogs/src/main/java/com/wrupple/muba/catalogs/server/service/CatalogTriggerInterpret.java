@@ -13,10 +13,4 @@ public interface CatalogTriggerInterpret {
 
 	List<Trigger> getTriggersValues(CatalogActionContext context) throws Exception;
 
-    //void addCatalogScopeTrigger(Trigger trigger, CatalogDescriptor regreso) throws Exception;
-
-	void addNamespaceScopeTrigger(Trigger trigger, CatalogDescriptor catalog, CatalogActionContext context) throws Exception;
-
-
-    //void configureContext(CatalogActionContext userContext, UserDefinedCatalogActionConstraint matchingRegistry, Long domain, TransactionHistory transaction) throws Exception;
 }

@@ -75,7 +75,9 @@ public class CatalogModule extends AbstractModule {
         bind(String.class).annotatedWith(Names.named("catalog.storage")).toInstance("default");
         bind(String.class).annotatedWith(Names.named("catalog.storage.secure")).toInstance("Secure");
         bind(String.class).annotatedWith(Names.named("catalog.storage.metadata")).toInstance(CatalogDescriptor.CATALOG_ID);
-        bind(String.class).annotatedWith(Names.named("template.token.splitter")).toInstance("\\.");
+		bind(String.class).annotatedWith(Names.named("catalog.storage.trigger")).toInstance(Trigger.CATALOG);
+
+		bind(String.class).annotatedWith(Names.named("template.token.splitter")).toInstance("\\.");
 		Pattern pattern = Pattern.compile(rawPattern);
 		bind(Pattern.class).annotatedWith(Names.named("template.pattern")).toInstance(pattern);
 
@@ -175,6 +177,7 @@ public class CatalogModule extends AbstractModule {
 		/*
 		 * Services
 		 */
+		bind(TriggerPluginQueryCommand.class).to(TriggerPluginQueryCommandImpl.class);
         bind(CatalogDeserializationService.class).to(CatalogDeserializationServiceImpl.class);
         bind(CatalogKeyServices.class).to(CatalogKeyServicesImpl.class);
 		bind(EntrySynthesizer.class).to(EntrySynthesizerImpl.class);
@@ -305,9 +308,12 @@ public class CatalogModule extends AbstractModule {
 	@Singleton
 	@Named(Trigger.CATALOG)
 	public CatalogDescriptor catalogActionTrigger(@Named(CatalogDescriptor.CATALOG_ID) String image,@Named(Trigger.CATALOG) Class clazz,
+												  @Named("catalog.storage.trigger") String catalogPluginStorage,
+												  @Named("catalog.storage") String defaultStorage,
 			CatalogDescriptorBuilder builder) {
 		CatalogDescriptor r = builder.fromClass(clazz, Trigger.CATALOG,
 				"Catalog Trigger", -194949, null);
+		r.setStorage(Arrays.asList(defaultStorage, catalogPluginStorage));
 		r.setImage(image);
 		r.setClazz(clazz);
 		return r;

@@ -1,10 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogPluginQueryCommand;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
-import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
+import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
@@ -50,9 +47,17 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     private int MIN_TREE_LEVELS;
 
     @Inject
-    public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage, @com.google.inject.name.Named("catalog.storage.metadata") String catalogPluginStorage, CatalogKeyServices keyDelegate, FieldAccessStrategy access, EntrySynthesizer synthesizer, @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
-                                      QueryReaders queryers, PrimaryKeyReaders primaryKeyers, CompleteCatalogGraph graphJoin,
-                                      ExplicitDataJoin join, CatalogReaderInterceptor queryRewriter) {
+    public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage,
+                                      TriggerPluginQueryCommand triggerStorage,
+                                      @Named("catalog.storage.trigger") String triggerPluginStorage,
+                                      @Named("catalog.storage.metadata") String catalogPluginStorage,
+                                      CatalogKeyServices keyDelegate, FieldAccessStrategy access,
+                                      EntrySynthesizer synthesizer,
+                                      @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
+                                      QueryReaders queryers, PrimaryKeyReaders primaryKeyers,
+                                      CompleteCatalogGraph graphJoin,
+                                      ExplicitDataJoin join,
+                                      CatalogReaderInterceptor queryRewriter) {
         this.keyDelegate = keyDelegate;
         this.access = access;
         this.synthesizer = synthesizer;
@@ -67,6 +72,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         this.queryers.addCommand(catalogPluginStorage,pluginStorage);
         primaryKeyers.addCommand(catalogPluginStorage,pluginStorage);
 
+        this.queryers.addCommand(triggerPluginStorage,triggerStorage);
     }
 
     /*

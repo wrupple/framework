@@ -42,7 +42,7 @@ public interface CatalogPlugin  {
 	 */
 	void modifyAvailableCatalogList(List<? super CatalogEntry> names, CatalogActionContext context) throws Exception;
 	
-	public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context) throws Exception;
+	public void postProcessCatalogDescriptor(CatalogDescriptor c, CatalogActionContext context, TriggerCreationScope scope) throws Exception;
 
 	CatalogDescriptor getDescriptor(Long primariKey, CatalogActionContext context)throws Exception;
 	CatalogDescriptor getDescriptor(String primariKey, CatalogActionContext context) throws Exception;

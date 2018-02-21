@@ -36,8 +36,7 @@ public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand 
 
 
     @Override
-    public boolean execute(Context ctx) throws Exception {
-        CatalogActionContext context = (CatalogActionContext) ctx;
+    public boolean execute(CatalogActionContext context) throws Exception {
         CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
         if(catalogDescriptor.getDistinguishedName().equals(CatalogDescriptor.CATALOG_ID)){
             FilterData filter = context.getRequest().getFilter();
