@@ -33,7 +33,7 @@ public class StakeHolderTriggerImpl implements StakeHolderTrigger {
 		//get person Id
 		CatalogActionContext context = (CatalogActionContext) c;
 		CatalogDescriptor catalog = context.getCatalogDescriptor();
-		CatalogEntry old = context.getOldValue();
+		CatalogEntry old = (CatalogEntry) context.getRequest().getEntryValue();
 		long actualStakeHolder = context.getRuntimeContext().getSession().getStakeHolderPrincipal(Long.class);
 		if(actualStakeHolder==CatalogEntry.PUBLIC_ID && ! anonStakeHolder){
 			throw new KnownExceptionImpl("User Identity Unknown",null, unknownUser);

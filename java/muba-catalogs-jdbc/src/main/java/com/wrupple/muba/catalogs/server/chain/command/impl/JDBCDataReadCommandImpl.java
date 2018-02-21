@@ -86,9 +86,8 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 	}
 
 	@Override
-	public boolean execute(Context ctx) throws Exception {
+	public boolean execute(CatalogActionContext context) throws Exception {
 		log.trace("[START]");
-		CatalogActionContext context = (CatalogActionContext) ctx;
 
 		CatalogDescriptor catalogDescriptor = context.getCatalogDescriptor();
 		Object id = context.getRequest().getEntry();

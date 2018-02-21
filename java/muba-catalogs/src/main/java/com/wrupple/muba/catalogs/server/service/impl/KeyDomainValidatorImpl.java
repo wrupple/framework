@@ -88,7 +88,7 @@ public class KeyDomainValidatorImpl implements KeyDomainValidator {
 		context.setFilter(
 				FilterDataUtils.createSingleKeyFieldFilter(foreignCatalogDescriptor.getKeyField(), value));
 
-        //FIXME TEST FOR SATISFACTION OF CRITERIA without deserializing entries
+        //FIXME TEST FOR SATISFACTION OF CRITERIA without deserializing entries (Validacion de dominio batch)
 		List<CatalogEntry> results = bus.get().fireEvent(context,runtime,null);
 		return results != null && !results.isEmpty();
 	}

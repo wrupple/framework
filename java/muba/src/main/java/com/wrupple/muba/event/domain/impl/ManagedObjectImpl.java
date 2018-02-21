@@ -3,6 +3,7 @@ package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.ManagedObject;
 import com.wrupple.muba.event.domain.Person;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
 /**
@@ -10,9 +11,9 @@ import com.wrupple.muba.event.domain.annotations.ForeignKey;
  */
 public class ManagedObjectImpl extends ContentNodeImpl implements ManagedObject {
 
+    @CatalogField(filterable = true)
     @ForeignKey(foreignCatalog = Person.CATALOG)
     private Long stakeHolder;
-
 
     @Override
     public Long getStakeHolder() {

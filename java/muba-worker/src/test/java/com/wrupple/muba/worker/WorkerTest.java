@@ -135,21 +135,6 @@ public abstract class WorkerTest extends EasyMockSupport {
             bind(CatalogRunner.class).to(CatalogRunnerImpl.class);
         }
 
-
-        @Provides
-        @com.google.inject.Singleton
-        @com.google.inject.Inject
-        @com.google.inject.name.Named(Person.CATALOG)
-        public CatalogDescriptor activity(
-                CatalogDescriptorBuilder builder) {
-            CatalogDescriptor r = builder.fromClass(ContentNodeImpl.class, Person.CATALOG,  Person.CATALOG,
-                    -13344556, null);
-
-            return r;
-        }
-
-
-
         @Provides
         @Inject
         @Singleton

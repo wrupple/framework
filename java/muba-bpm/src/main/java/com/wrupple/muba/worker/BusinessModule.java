@@ -6,8 +6,11 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.wrupple.muba.catalogs.domain.Trigger;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
+import com.wrupple.muba.event.domain.impl.PersonImpl;
 import com.wrupple.muba.event.server.service.EventRegistry;
 import com.wrupple.muba.event.server.service.impl.EventRegistryImpl;
 import com.wrupple.muba.worker.domain.*;
@@ -23,6 +26,8 @@ import com.wrupple.muba.worker.server.chain.impl.WorkflowEngineImpl;
 import com.wrupple.muba.worker.server.domain.IntentResolverContextImpl;
 import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import com.wrupple.muba.worker.server.service.impl.BusinessPluginImpl;
+
+import java.util.Arrays;
 
 import static com.wrupple.muba.event.domain.Intent.Intent_CATALOG;
 
@@ -95,9 +100,22 @@ public class BusinessModule  extends AbstractModule {
         bind(String.class).annotatedWith(Names.named(Application.CATALOG)).toInstance("/static/img/process.png");
 
         bind(String.class).annotatedWith(Names.named(Request.CATALOG)).toInstance("/static/img/notification.png");
+        bind(String.class).annotatedWith(Names.named("catalog.storage.people")).toInstance(Person.CATALOG);
 
     }
 
+    @Provides
+    @Singleton
+    @Inject
+    @Named(Person.CATALOG)
+    public CatalogDescriptor activity(
+            CatalogDescriptorBuilder builder, @Named("catalog.storage.people") String catalogPluginStorage, @Named("catalog.storage") String defaultStorage) {
+        CatalogDescriptor r = builder.fromClass(PersonImpl.class, Person.CATALOG,  Person.CATALOG,
+                -13344556, null);
+        r.setStorage(Arrays.asList(defaultStorage, catalogPluginStorage));
+
+        return r;
+    }
 
 
     @Provides

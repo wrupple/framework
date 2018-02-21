@@ -2,16 +2,16 @@ package com.wrupple.muba.worker.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.TriggerImpl;
+import com.wrupple.muba.catalogs.server.chain.command.SystemPersonalitiesStorage;
 import com.wrupple.muba.catalogs.server.domain.ValidationExpression;
+import com.wrupple.muba.catalogs.server.service.PrimaryKeyReaders;
+import com.wrupple.muba.catalogs.server.service.QueryReaders;
 import com.wrupple.muba.catalogs.server.service.TriggerCreationScope;
 import com.wrupple.muba.catalogs.server.service.impl.StaticCatalogDescriptorProvider;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.worker.domain.Request;
-import com.wrupple.muba.worker.server.chain.command.CheckSecureConditions;
-import com.wrupple.muba.worker.server.chain.command.StakeHolderTrigger;
-import com.wrupple.muba.worker.server.chain.command.ValueChangeAudit;
-import com.wrupple.muba.worker.server.chain.command.ValueChangeListener;
+import com.wrupple.muba.worker.server.chain.command.*;
 import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import org.apache.commons.chain.Command;
 
@@ -53,17 +53,20 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 
 
     @Inject
-	public BusinessPluginImpl(ValueChangeListener changeListener,
-                              ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
-                              @Named(Person.CATALOG) CatalogDescriptor person,
-                              // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
-                              @Named(Request.CATALOG) CatalogDescriptor notificationProvider
-                              // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider
+	public BusinessPluginImpl(SystemPersonalitiesStorage peopleStorage, @Named("catalog.storage.people") String catalogPluginStorage, QueryReaders queryers,
+							  PrimaryKeyReaders primaryKeyers, ValueChangeListener changeListener,
+							  ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
+							  @Named(Person.CATALOG) CatalogDescriptor person,
+							  // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
+							  @Named(Request.CATALOG) CatalogDescriptor notificationProvider
+							  // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider
 							  ) {
 
         super.put(person);
 		super.put(notificationProvider);
 		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
+		queryers.addCommand(catalogPluginStorage,peopleStorage);
+		primaryKeyers.addCommand(catalogPluginStorage,peopleStorage);
 	}
 
 

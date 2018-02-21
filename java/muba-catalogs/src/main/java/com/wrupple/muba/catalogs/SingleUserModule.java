@@ -6,13 +6,17 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.domain.CatalogNamespace;
 import com.wrupple.muba.catalogs.domain.PublicNamespace;
+import com.wrupple.muba.catalogs.server.chain.command.SystemPersonalitiesStorage;
+import com.wrupple.muba.catalogs.server.chain.command.impl.SingleSystemPersonalityStorageImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogResultCacheImpl;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.Person;
 import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.impl.PersonImpl;
 import com.wrupple.muba.event.domain.impl.SessionImpl;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
@@ -27,8 +31,9 @@ public class SingleUserModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		
-		/*
+        bind(SystemPersonalitiesStorage.class).to(SingleSystemPersonalityStorageImpl.class);
+
+        /*
 		 * CONFIGURATION
 		 */
 		// used when building urls for outsiders
@@ -67,11 +72,24 @@ public class SingleUserModule extends AbstractModule {
 	@Inject
 	@javax.inject.Singleton
     @Named(SessionContext.SYSTEM)
-    public Session sessionContext() {
+    public Session session(@Named(SessionContext.SYSTEM) Person stakeHolderValue) {
         SessionImpl sessionValue = new SessionImpl();
         sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
 		sessionValue.setId(CatalogEntry.PUBLIC_ID);
+		sessionValue.setStakeHolderValue(stakeHolderValue);
 		return sessionValue;
 	}
+
+	@Provides
+	@Inject
+	@javax.inject.Singleton
+	@Named(SessionContext.SYSTEM)
+	public Person user() {
+		PersonImpl sessionValue = new PersonImpl();
+		sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
+		sessionValue.setId(CatalogEntry.PUBLIC_ID);
+		return sessionValue;
+	}
+
 
 }

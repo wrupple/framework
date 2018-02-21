@@ -20,6 +20,9 @@ public class SessionContextImpl extends ContextBase implements SessionContext {
 
     @Override
 	public <T> T getStakeHolderPrincipal(Class<T> clazz) {
+    	if(clazz.equals(Long.class)){
+    		return (T) sessionValue.getStakeHolderValue().getId();
+		}
 		return null;
 	}
 	@Override
