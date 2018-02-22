@@ -58,12 +58,6 @@ public class WorkerContainer {
         CatalogIntentListenerManifest listenerManifest = injector.getInstance(CatalogIntentListenerManifest.class);
         processSwitches.getIntentInterpret().registerService(listenerManifest, injector.getInstance(CatalogEventHandler.class), injector.getInstance(CatalogEventInterpret.class));
 
-		/*
-		 Vegetate
-		 */
-
-
-        processSwitches.getIntentInterpret().registerService(injector.getInstance(BroadcastEventHandlerImpl.class));
 
 		/*
 		 BPM
@@ -74,6 +68,8 @@ public class WorkerContainer {
         processSwitches.getIntentInterpret().registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
 
         processSwitches.getIntentInterpret().registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
+
+        processSwitches.getIntentInterpret().registerService(injector.getInstance(BroadcastEventHandlerImpl.class));
 
 
         /*

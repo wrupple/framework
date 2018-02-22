@@ -86,6 +86,12 @@
             <version>${muba.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.wrupple.muba</groupId>
+            <artifactId>vegetate</artifactId>
+            <version>${muba.version}</version>
+            <scope>test</scope>
+        </dependency>
 
 
     </dependencies>

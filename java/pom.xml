@@ -10,9 +10,9 @@
 	<name>Human Interaction API</name>
 	<modules>
 		<module>muba</module>
-        <module>muba-lambda</module>
+		<module>vegetate</module>
+		<module>muba-lambda</module>
 		<module>validation-bval</module>
-        <!--<module>vegetate</module>-->
 		<module>muba-catalogs</module>
         <!--<module>muba-catalogs-format</module>-->
         <module>muba-catalogs-sql</module>

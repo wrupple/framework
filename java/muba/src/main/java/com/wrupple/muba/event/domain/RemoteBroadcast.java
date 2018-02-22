@@ -1,7 +1,7 @@
 package com.wrupple.muba.event.domain;
 
-public interface BroadcastQueueAppend extends Contract {
-    String CATALOG = "BroadcastQueueAppend";
+public interface RemoteBroadcast extends Contract {
+    String CATALOG = "RemoteBroadcast";
 
     void setHostValue(Host host);
 

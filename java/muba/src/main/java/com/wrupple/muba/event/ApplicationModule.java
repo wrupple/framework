@@ -50,7 +50,7 @@ public class ApplicationModule extends AbstractModule {
         bind(BroadcastEvent.class).to(BroadcastEventImpl.class);
         bind(PersistentCatalogEntity.class).to(PersistentCatalogEntityImpl.class);
         bind(BroadcastServiceManifest.class).to(BroadcastServiceManifestImpl.class);
-        bind(BroadcastQueueAppend.class).to(BroadcastQueueAppendImpl.class);
+        bind(RemoteBroadcast.class).to(RemoteBroadcastImpl.class);
 
 		/*
 		 * Commands

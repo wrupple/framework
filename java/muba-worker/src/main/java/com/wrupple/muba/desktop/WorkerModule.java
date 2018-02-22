@@ -12,8 +12,10 @@ import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
 import com.wrupple.muba.desktop.client.chain.WorkerRequestEngine;
 import com.wrupple.muba.desktop.client.chain.command.*;
 import com.wrupple.muba.desktop.client.chain.command.impl.*;
+import com.wrupple.muba.desktop.client.service.LaunchWorkerHandler;
 import com.wrupple.muba.desktop.client.service.WorkerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.ContextSwitchHandlerImpl;
+import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
 import com.wrupple.muba.desktop.client.service.impl.WorkerRequestHandlerImpl;
 import com.wrupple.muba.desktop.domain.*;
 import com.wrupple.muba.desktop.domain.impl.*;
@@ -52,6 +54,7 @@ public class WorkerModule extends AbstractModule {
         bind(LaunchWorkerEngine.class).to(LaunchWorkerEngineImpl.class);
         bind(LaunchWorkerInterpret.class).to(LaunchWorkerInterpretImpl.class);
         bind(LaunchWorkerManifest.class).to(LaunchWorkerManifestImpl.class);
+        bind(LaunchWorkerHandler.class).to(LaunchWorkerHandlerImpl.class);
         bind(ReadWorkerMetadata.class).to(ReadWorkerMetadataImpl.class);
         bind(StartWorkerHeartBeat.class).to(StartWorkerHeartBeatImpl.class);
         bind(CreateWorkerStructure.class).to(CreateWorkerStructureImpl.class);

@@ -1,10 +1,10 @@
 package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.BroadcastEvent;
-import com.wrupple.muba.event.domain.BroadcastQueueAppend;
+import com.wrupple.muba.event.domain.RemoteBroadcast;
 import com.wrupple.muba.event.domain.Host;
 
-public class BroadcastQueueAppendImpl extends CatalogEntryImpl implements BroadcastQueueAppend {
+public class RemoteBroadcastImpl extends CatalogEntryImpl implements RemoteBroadcast {
     private BroadcastEvent queuedElementValue;
     private Host hostValue;
     private String catalog;

@@ -12,6 +12,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.desktop.WorkerModule;
+import com.wrupple.muba.desktop.client.service.LaunchWorkerHandler;
 import com.wrupple.muba.desktop.client.service.WorkerRequestHandler;
 import com.wrupple.muba.desktop.client.service.impl.LaunchWorkerHandlerImpl;
 import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
@@ -31,6 +32,7 @@ import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.worker.server.service.impl.CatalogRunnerImpl;
 import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
 import com.wrupple.muba.worker.shared.services.WorkerContainer;
+import com.wrupple.vegetate.service.RemoteBroadcastHandler;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
@@ -72,7 +74,9 @@ public abstract class WorkerTest extends EasyMockSupport {
         List handlers = Arrays.asList(
                 ContextSwitchHandler.class,
                 WorkerRequestHandler.class,
-                LaunchWorkerHandlerImpl.class
+                LaunchWorkerHandler.class,
+                RemoteBroadcastHandler.class
+
         );
 
         container= new WorkerContainer(modules, handlers);

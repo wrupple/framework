@@ -3,7 +3,7 @@ package com.wrupple.muba.event.server.service.impl;
 import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.BroadcastContext;
 import com.wrupple.muba.event.domain.BroadcastEvent;
-import com.wrupple.muba.event.domain.BroadcastQueueAppend;
+import com.wrupple.muba.event.domain.RemoteBroadcast;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.server.chain.command.impl.PublishEventsImpl;
 import org.slf4j.Logger;
@@ -22,10 +22,10 @@ public class StreamingDelegateImpl implements PublishEventsImpl.StreamingDelegat
 
     private final boolean parallel;
 
-    private final Provider<BroadcastQueueAppend> queueProvider;
+    private final Provider<RemoteBroadcast> queueProvider;
 
     @Inject
-    public StreamingDelegateImpl(@Named("event.parallel") Boolean parallel, Provider<BroadcastQueueAppend> queueProvider) {
+    public StreamingDelegateImpl(@Named("event.parallel") Boolean parallel, Provider<RemoteBroadcast> queueProvider) {
         this.parallel = parallel;
         this.queueProvider = queueProvider;
     }
@@ -35,7 +35,7 @@ public class StreamingDelegateImpl implements PublishEventsImpl.StreamingDelegat
         Stream<Host> s = parallel ? concernedPeers.parallelStream() : concernedPeers.stream();
 
         s.forEach((Host host) -> {
-            BroadcastQueueAppend queue = queueProvider.get();
+            RemoteBroadcast queue = queueProvider.get();
             queue.setHostValue(host);
             queue.setQueuedElementValue(queueElement);
             queue.setCatalog(queueElement.getEventValue().getCatalogType());
