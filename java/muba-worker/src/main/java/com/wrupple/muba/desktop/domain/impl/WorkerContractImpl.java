@@ -2,6 +2,11 @@ package com.wrupple.muba.desktop.domain.impl;
 
 import com.wrupple.muba.desktop.domain.WorkerContract;
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.Constraint;
+import com.wrupple.muba.event.domain.Host;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
+import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 
 import java.util.List;
@@ -12,15 +17,20 @@ public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContra
     private Long runner;
     private String rootActivity;
 
-    public WorkerContractImpl() {
-    }
+    @CatalogField(ignore = true)
+    @CatalogValue(foreignCatalog = Host.CATALOG)
+    private Host hostValue;
+    @ForeignKey(foreignCatalog = Host.CATALOG)
+    private Long host;
 
-    public WorkerContractImpl(List<String> sentence, Long runner, String rootActivity) {
-        this();
+
+    public WorkerContractImpl(List<String> sentence, Long runner, String rootActivity, Host hostValue) {
+        super();
         this.runner=runner;
         this.sentence = sentence;
+        this.hostValue=hostValue;
         this.rootActivity=rootActivity;
-        setDomain(CatalogEntry.PUBLIC_ID);
+        setDomain(hostValue.getDomain());
     }
 
     @Override
@@ -63,5 +73,23 @@ public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContra
 
     public void setRootActivity(String rootActivity) {
         this.rootActivity = rootActivity;
+    }
+
+    @Override
+    public Host getHostValue() {
+        return hostValue;
+    }
+
+    public void setHostValue(Host hostValue) {
+        this.hostValue = hostValue;
+    }
+
+    @Override
+    public Long getHost() {
+        return host;
+    }
+
+    public void setHost(Long host) {
+        this.host = host;
     }
 }

@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.Application;
+import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
@@ -16,7 +17,7 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
 
     private List<String> sentence;
     private Long wordIndex;
-    @NotNull
+    @NotNull //FIXME static storage unit
     private Long runner;
     private String characterEncoding, homeActivity;
 
@@ -35,6 +36,12 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
     private ApplicationState stateValue;
 
 
+
+    @CatalogField(ignore = true)
+    @CatalogValue(foreignCatalog = Host.CATALOG)
+    private Host hostValue;
+    @ForeignKey(foreignCatalog = Host.CATALOG)
+    private Long host;
 
 
     @ForeignKey(foreignCatalog =  Application.CATALOG)
@@ -165,5 +172,24 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
 
     public void setParametersValue(HasAccesablePropertyValues parametersValue) {
         this.parametersValue = parametersValue;
+    }
+
+    @Override
+    public Host getHostValue() {
+        return hostValue;
+    }
+
+    @Override
+    public void setHostValue(Host hostValue) {
+        this.hostValue = hostValue;
+    }
+
+    @Override
+    public Long getHost() {
+        return host;
+    }
+
+    public void setHost(Long host) {
+        this.host = host;
     }
 }

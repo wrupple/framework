@@ -1,12 +1,13 @@
 package com.wrupple.muba.event.domain;
 
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
+import com.wrupple.muba.event.domain.reserved.HasHostValue;
 import com.wrupple.muba.event.domain.reserved.HasRunner;
 import com.wrupple.muba.event.domain.reserved.HasSentence;
 
 import java.util.List;
 
-public interface WorkerState extends Contract, HasRunner, HasSentence {
+public interface WorkerState extends Contract, HasRunner, HasSentence ,HasHostValue {
 
     String CATALOG = "WorkerState";
 
@@ -39,4 +40,6 @@ public interface WorkerState extends Contract, HasRunner, HasSentence {
     void setStateValue(ApplicationState applicationState);
 
     HasAccesablePropertyValues getParametersValue();
+
+    void setHostValue(Host hostValue);
 }

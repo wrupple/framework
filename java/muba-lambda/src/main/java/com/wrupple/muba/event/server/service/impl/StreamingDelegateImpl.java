@@ -43,7 +43,7 @@ public class StreamingDelegateImpl implements PublishEventsImpl.StreamingDelegat
                 log.debug("Append to broadcast channel of host {}", host);
                 serviceBus.fireEvent(queue, context.getRuntimeContext(), null);
             } catch (Exception e) {
-                log.error("failed to append event to host broadcast queue", e);
+                throw new RuntimeException(e);
             }
             //return queue;
         });

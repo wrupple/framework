@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.client.chain.ContextSwitchEngine;
 import com.wrupple.muba.desktop.client.chain.LaunchWorkerEngine;
@@ -34,6 +35,7 @@ public class WorkerModule extends AbstractModule {
         bind(WorkerRequestManifest.class).to(WorkerRequestManifestImpl.class);
         bind(WorkerState.class).to(WorkerStateImpl.class);
 
+        bind(BindHost.class).to(BindHostImpl.class);
         bind(PopulateLoadOrder.class).to(PopulateLoadOrderImpl.class);
         bind(BindApplication.class).to(BindApplicationImpl.class);
         bind(DesktopWriterCommand.class).to(DesktopWriterCommandImpl.class);

@@ -120,7 +120,7 @@ queued.setCatalogDescriptor(catalogDescriptor);
 
         if(manifests==null || manifests.isEmpty()){
 
-            throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
+            throw new RuntimeException("no handlers for event "+implicitRequestContract.getCatalogType());
 
         }else{
             log.trace("[Count of matching services] {}",manifests.size());

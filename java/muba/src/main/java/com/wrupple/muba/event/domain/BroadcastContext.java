@@ -7,8 +7,6 @@ import java.util.Collection;
  */
 public interface BroadcastContext extends ServiceContext{
 
-    final String CURRENT_EVENT="catalog.event.processing";
-    final String CONCERNED_CLIENTS = "catalog.event.concerned";
     BroadcastEvent getEventValue();
 
     void setEventValue(BroadcastEvent contract);

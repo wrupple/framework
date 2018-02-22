@@ -4,6 +4,7 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
+import com.wrupple.muba.catalogs.server.domain.HostImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.domain.impl.WorkerContractImpl;
 import com.wrupple.muba.event.domain.*;
@@ -17,7 +18,6 @@ import com.wrupple.muba.worker.shared.services.WorkerContainer;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -92,15 +92,26 @@ public class ContextSwitchTest extends WorkerTest {
         riderBooking =  container.fireEvent(action);
 
         assertTrue(riderBooking.getId()!=null);
-//        assertTrue(riderBooking.getStakeHolder()!=null);
-//        assertTrue(riderBooking.getTimestamp()!=null);
+        //assertTrue(riderBooking.getTimestamp()!=null);
+
+        Host hostValue = new HostImpl();
+
+        action = new CatalogCreateRequestImpl(hostValue,Host.CATALOG);
+        action.setFollowReferences(true);
+
+        assertTrue(hostValue.getId()==null);
+
+        hostValue =  container.fireEvent(action);
+
+        assertTrue(hostValue.getId()!=null);
+       assertTrue(hostValue.getStakeHolder()!=null);
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
         container.fireEvent(new WorkerContractImpl(
                 Arrays.asList(":"+riderBooking.getId().toString()),
                 container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco"))),
-                HOME
-        ));
+                HOME,
+                hostValue));
         //check conditions
         assertTrue(riderBooking.getDriverValue()!=null);
         //assertTrue(Math.abs(riderBooking.getDriverValue().getLocation()-riderBooking.getLocation())<0);
