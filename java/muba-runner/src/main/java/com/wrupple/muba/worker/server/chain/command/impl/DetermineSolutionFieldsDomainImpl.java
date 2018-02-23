@@ -1,6 +1,6 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.DataContract;
 import com.wrupple.muba.event.domain.Task;

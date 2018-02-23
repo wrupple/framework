@@ -4,7 +4,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.Trigger;
 import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
 import com.wrupple.muba.catalogs.server.chain.command.TriggerPluginQueryCommand;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.TriggerCreationScope;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;

@@ -32,6 +32,8 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
         if(state.getStakeHolder()==null){
             throw new NullPointerException("No one owns this application");
         }
+        // TODO a trigger for application state creation handles launching the worker or broadcasting worker?
+
 
         //launch worker
         state.setWorkerStateValue(worker);

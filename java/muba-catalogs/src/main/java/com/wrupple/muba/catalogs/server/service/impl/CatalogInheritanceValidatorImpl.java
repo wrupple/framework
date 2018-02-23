@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.annotations.InheritanceTree;

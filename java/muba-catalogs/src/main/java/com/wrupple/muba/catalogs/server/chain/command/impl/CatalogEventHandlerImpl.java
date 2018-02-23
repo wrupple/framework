@@ -18,11 +18,9 @@ public class CatalogEventHandlerImpl extends CatalogActionTriggerHandlerImpl imp
     }
 
     @Override
-    public boolean execute(Context ctx) throws Exception {
-
-        CatalogActionContext context= (CatalogActionContext) ctx;
+    public boolean execute(CatalogActionContext context) throws Exception {
         //Advise = false (AFTER)
-        CatalogDescriptor catalog = context.getCatalogDescriptor();
+        //CatalogDescriptor catalog = context.getCatalogDescriptor();
         // AFTER
         try {
             boolean r = extecute(context, false);

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils.newFilterCriteria;
+import static com.wrupple.muba.event.server.service.impl.FilterDataUtils.newFilterCriteria;
 
 public class CatalogTransaction {
 

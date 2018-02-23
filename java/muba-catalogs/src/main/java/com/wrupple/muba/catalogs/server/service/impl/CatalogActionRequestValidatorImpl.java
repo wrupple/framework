@@ -1,8 +1,8 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
-import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogActionRequestValidator;
+import com.wrupple.muba.event.domain.annotations.ValidCatalogActionRequest;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
 import com.wrupple.muba.event.ServiceBus;

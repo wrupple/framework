@@ -3,7 +3,7 @@ package com.wrupple.muba.worker;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
@@ -21,7 +21,6 @@ import org.apache.commons.chain.Context;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.ListIterator;
 
 import static com.wrupple.muba.worker.domain.EquationSystemSolution.WITNESS_FIELD;

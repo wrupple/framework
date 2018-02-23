@@ -24,7 +24,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogEntryBeanDAO;
 import com.wrupple.muba.catalogs.server.service.GenericJavaObjectDAO;
 import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
 import com.wrupple.muba.catalogs.server.service.PersistentCatalogEntityDAO;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.catalogs.shared.services.CatalogTokenInterpret;
 import com.wrupple.muba.desktop.domain.ConstraintImpl;
 import com.wrupple.muba.desktop.server.service.CatalogTableNameService;

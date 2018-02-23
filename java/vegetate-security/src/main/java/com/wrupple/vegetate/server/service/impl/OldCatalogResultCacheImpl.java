@@ -13,7 +13,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogExcecutionContext;
 import com.wrupple.muba.catalogs.domain.FilterData;
-import com.wrupple.muba.catalogs.server.domain.FilterDataImpl;
+import com.wrupple.muba.event.domain.impl.FilterDataImpl;
 
 public class OldCatalogResultCacheImpl implements CatalogResultCache {
 	private static final Logger log = LoggerFactory.getLogger(OldCatalogResultCacheImpl.class);

@@ -1,6 +1,4 @@
-package com.wrupple.muba.catalogs.server.domain;
-
-import com.wrupple.muba.event.domain.CatalogEntry;
+package com.wrupple.muba.event.domain.impl;
 
 public class CatalogReadRequestImpl extends CatalogActionRequestImpl{
     public CatalogReadRequestImpl(Object key, String catalog) {

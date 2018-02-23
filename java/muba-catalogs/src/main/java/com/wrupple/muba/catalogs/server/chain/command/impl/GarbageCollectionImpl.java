@@ -20,8 +20,8 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.GarbageCollection;
-import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
+import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 
 @Singleton
 public class GarbageCollectionImpl implements GarbageCollection {

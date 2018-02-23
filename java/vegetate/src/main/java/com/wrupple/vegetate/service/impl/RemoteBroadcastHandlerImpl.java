@@ -1,7 +1,7 @@
 package com.wrupple.vegetate.service.impl;
 
 import com.wrupple.muba.event.server.service.impl.ImplicitEventResolverRegistration;
-import com.wrupple.vegetate.chain.RemoteServiceChain;
+import com.wrupple.muba.event.server.chain.RemoteServiceChain;
 import com.wrupple.vegetate.chain.command.RemoteServiceInterpret;
 import com.wrupple.vegetate.domain.RemoteServiceManifest;
 import com.wrupple.vegetate.service.RemoteBroadcastHandler;

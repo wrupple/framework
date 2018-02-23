@@ -7,12 +7,12 @@ import com.wrupple.muba.catalogs.domain.Argument;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.catalogs.domain.MathProblem;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
-import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
+import com.wrupple.muba.event.domain.impl.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import org.junit.Test;
 

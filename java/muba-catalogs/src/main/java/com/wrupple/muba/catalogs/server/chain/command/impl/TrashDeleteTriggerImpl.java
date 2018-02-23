@@ -13,9 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.Trash;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.TrashDeleteTrigger;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 
 @Singleton
 public class TrashDeleteTriggerImpl implements TrashDeleteTrigger {

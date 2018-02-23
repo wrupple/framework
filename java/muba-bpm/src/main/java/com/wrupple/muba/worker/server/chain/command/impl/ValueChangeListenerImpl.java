@@ -1,11 +1,11 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
-import com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils;
+import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.FilterData;

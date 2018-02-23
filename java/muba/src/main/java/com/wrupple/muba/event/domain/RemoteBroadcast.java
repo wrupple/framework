@@ -1,9 +1,13 @@
 package com.wrupple.muba.event.domain;
 
-public interface RemoteBroadcast extends Contract {
+import com.wrupple.muba.event.domain.reserved.HasHostValue;
+
+public interface RemoteBroadcast extends Contract,HasHostValue {
     String CATALOG = "RemoteBroadcast";
 
-    void setHostValue(Host host);
-
     void setQueuedElementValue(BroadcastEvent queueElement);
+
+    BroadcastEvent getQueuedElementValue();
+
+    void setHostValue(Host host);
 }

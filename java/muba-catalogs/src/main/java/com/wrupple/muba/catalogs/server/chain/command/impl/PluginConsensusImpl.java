@@ -4,7 +4,7 @@ import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.domain.Trigger;
 import com.wrupple.muba.catalogs.domain.TriggerImpl;
 import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
+import com.wrupple.muba.event.domain.impl.FilterDataOrderingImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.VersionFields;
 import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.catalogs.server.service.impl.StorageTriggerScope;

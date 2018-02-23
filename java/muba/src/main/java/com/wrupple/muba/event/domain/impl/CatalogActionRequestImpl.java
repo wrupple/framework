@@ -1,13 +1,13 @@
-package com.wrupple.muba.catalogs.server.domain;
+package com.wrupple.muba.event.domain.impl;
 
 import javax.validation.constraints.NotNull;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.annotations.AvailableCommand;
-import com.wrupple.muba.catalogs.domain.annotations.ValidCatalogActionRequest;
 
 @ValidCatalogActionRequest
 public class CatalogActionRequestImpl  implements CatalogActionRequest {

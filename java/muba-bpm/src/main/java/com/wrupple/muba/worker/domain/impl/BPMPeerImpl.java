@@ -1,9 +1,8 @@
 package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.catalogs.domain.Location;
-import com.wrupple.muba.catalogs.server.domain.HostImpl;
+import com.wrupple.muba.event.domain.impl.HostImpl;
 import com.wrupple.muba.event.domain.Host;
-import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.worker.domain.BPMPeer;
 
 import java.util.Date;

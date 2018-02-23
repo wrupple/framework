@@ -1,11 +1,9 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.worker.server.service.ProcessManager;
-import org.apache.commons.chain.Context;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

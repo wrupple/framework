@@ -1,13 +1,11 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.chain.command.UpdateApplicationContext;
 import org.apache.commons.chain.Context;
-
-import java.util.List;
 
 /**
  * Created by japi on 18/08/17.

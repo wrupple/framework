@@ -1,14 +1,39 @@
-package com.wrupple.muba.worker.shared.services;
+package com.wrupple.muba.desktop.client.chain.command;
 
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
 import com.wrupple.muba.event.domain.ApplicationState;
+import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
 /**
+ * after update trigger installed by com.wrupple.muba.desktop.client.chain.command.impl.InstallActivityEventHandlerImpl
+ *
  * When a catalog update event is fired for an application state we update desktop place
  * Created by japi on 24/08/17.
  */
-public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler {
+public class ApplicationStateListenerImpl implements Command<CatalogActionContext> {
+
+
+    @Override
+    public boolean execute(CatalogActionContext context) throws Exception {
+
+        ApplicationState state = (ApplicationState) context.getResult();
+
+        state.getWorkerStateValue().setStateValue(state);
+
+        context.
+                getRuntimeContext().
+                getServiceBus().
+                fireEvent(state
+                        ,
+                        context.getRuntimeContext(),
+                        null
+                );
+
+        return CONTINUE_PROCESSING;
+    }
+
 
     public void onApplicationStateChanged(ApplicationState e) {
         //FIXME set worker, fire state
@@ -66,11 +91,6 @@ public class OnApplicationStateChangeUpdatePlace implements CatalogEventHandler 
 
 */
 
-    }
-
-    @Override
-    public boolean execute(Context context) throws Exception {
-        return false;
     }
 
     /*

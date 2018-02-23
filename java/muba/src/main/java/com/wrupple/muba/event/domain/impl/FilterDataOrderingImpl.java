@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.server.domain;
+package com.wrupple.muba.event.domain.impl;
 
 import java.io.Serializable;
 

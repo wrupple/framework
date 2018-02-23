@@ -2,9 +2,9 @@ package com.wrupple.muba.worker;
 
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-import com.wrupple.muba.catalogs.server.domain.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.CatalogCreateRequestImpl;
-import com.wrupple.muba.catalogs.server.domain.HostImpl;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
+import com.wrupple.muba.event.domain.impl.HostImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.domain.impl.WorkerContractImpl;
 import com.wrupple.muba.event.domain.*;

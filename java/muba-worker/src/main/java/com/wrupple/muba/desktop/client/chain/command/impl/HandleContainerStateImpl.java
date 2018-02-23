@@ -15,8 +15,7 @@ public class HandleContainerStateImpl implements HandleContainerState {
         WorkerState worker = context.getContextSwitch().getWorkerStateValue();
         ApplicationState state = worker.getStateValue();
 
-
-        //FIXME fire inderectly through application state update handler
+        //subsequent updates are handled via Catalog Events
         context.
                 getRuntimeContext().
                 getServiceBus().

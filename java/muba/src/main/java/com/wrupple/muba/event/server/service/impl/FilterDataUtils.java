@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.server.service.impl;
+package com.wrupple.muba.event.server.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,9 +8,9 @@ import java.util.List;
 import com.wrupple.muba.event.domain.FilterCriteria;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.FilterDataOrdering;
-import com.wrupple.muba.catalogs.server.domain.FilterCriteriaImpl;
-import com.wrupple.muba.catalogs.server.domain.FilterDataImpl;
-import com.wrupple.muba.catalogs.server.domain.FilterDataOrderingImpl;
+import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
+import com.wrupple.muba.event.domain.impl.FilterDataImpl;
+import com.wrupple.muba.event.domain.impl.FilterDataOrderingImpl;
 
 public class FilterDataUtils {
 	public static final FilterData filter = FilterDataUtils.newFilterData();
@@ -54,20 +54,19 @@ public class FilterDataUtils {
 		regreso.addFilter(product);
 		return regreso;
 	}
-	public static FilterData createSingleFieldFilter(String field, String value) {
+	public static FilterData createSingleFieldFilter(String field, Object value) {
 		if (field == null) {
 			throw new IllegalArgumentException();
 		}
 		FilterData regreso = newFilterData();
 		regreso.setConstrained(false);
-		if (value == null || value.length() == 0) {
-		} else {
+
 			FilterCriteria product = newFilterCriteria();
 			product.setOperator(FilterData.EQUALS);
 			product.setValue(value);
 			product.pushToPath(field);
 			regreso.addFilter(product);
-		}
+
 		return regreso;
 	}
 

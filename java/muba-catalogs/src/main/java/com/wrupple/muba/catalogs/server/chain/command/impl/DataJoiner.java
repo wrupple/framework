@@ -8,7 +8,6 @@ import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
@@ -18,7 +17,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wrupple.muba.catalogs.server.service.impl.FilterDataUtils.*;
+import static com.wrupple.muba.event.server.service.impl.FilterDataUtils.*;
 
 public abstract class DataJoiner implements Command {
 

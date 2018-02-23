@@ -1,6 +1,6 @@
 package com.wrupple.muba.worker.server.service.impl;
 
-import com.wrupple.muba.catalogs.server.domain.CatalogReadRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
