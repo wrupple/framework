@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.PersistentImageMetadata;
+import com.wrupple.muba.event.domain.PersistentImageMetadata;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
 import org.slf4j.Logger;

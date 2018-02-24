@@ -1,13 +1,12 @@
-package com.wrupple.muba.catalogs.server.chain.command.impl;
+package com.wrupple.vegetate.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.server.chain.command.ChannelStorage;
+import com.wrupple.muba.catalogs.server.chain.command.impl.CommandStorage;
 import com.wrupple.muba.event.server.chain.ChannelCatalog;
+import com.wrupple.vegetate.chain.command.ChannelStorage;
 import org.apache.commons.chain.CatalogFactory;
 
-import javax.inject.Named;
-
-public class ChannelStorageImpl extends CommandStorage implements ChannelStorage{
+public class ChannelStorageImpl extends CommandStorage implements ChannelStorage {
 
 
     protected ChannelStorageImpl(CatalogFactory factory,ChannelCatalog catalog) {

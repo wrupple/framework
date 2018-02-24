@@ -14,7 +14,6 @@ import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.domain.reserved.HasChildren;
 import com.wrupple.muba.event.domain.reserved.HasChildrenValues;
 import com.wrupple.muba.event.domain.reserved.HasParent;
-import com.wrupple.muba.event.domain.reserved.HasParentValue;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;

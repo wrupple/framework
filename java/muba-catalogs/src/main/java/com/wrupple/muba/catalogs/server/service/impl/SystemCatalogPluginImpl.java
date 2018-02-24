@@ -20,8 +20,6 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 
 	protected static final Logger log = LoggerFactory.getLogger(SystemCatalogPluginImpl.class);
 
-
-
     @Inject
 	public SystemCatalogPluginImpl(
             Provider<NamespaceContext> domainContextProvider,

@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.server.domain.fields;
+package com.wrupple.muba.event.domain.impl;
 
 import javax.inject.Inject;
 import javax.inject.Named;

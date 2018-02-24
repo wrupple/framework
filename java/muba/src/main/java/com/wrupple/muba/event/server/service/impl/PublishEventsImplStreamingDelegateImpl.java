@@ -28,6 +28,7 @@ public class PublishEventsImplStreamingDelegateImpl implements PublishEventsImpl
             queue.setHostValue(host);
             queue.setQueuedElementValue(queueElement);
             queue.setCatalog(queueElement.getEventValue().getCatalogType());
+            queue.setDomain(queueElement.getDomain());
             serviceBus.fireEvent(queue, context.getRuntimeContext(), null);
 
         }

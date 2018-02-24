@@ -39,6 +39,7 @@ public class StreamingDelegateImpl implements PublishEventsImpl.StreamingDelegat
             queue.setHostValue(host);
             queue.setQueuedElementValue(queueElement);
             queue.setCatalog(queueElement.getEventValue().getCatalogType());
+            queue.setDomain(queueElement.getDomain());
             try {
                 log.debug("Append to broadcast channel of host {}", host);
                 serviceBus.fireEvent(queue, context.getRuntimeContext(), null);

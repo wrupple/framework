@@ -38,7 +38,7 @@ import com.wrupple.muba.catalogs.server.domain.CatalogDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.FieldDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;
-import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
+import com.wrupple.muba.event.domain.impl.PrimaryKeyField;
 import com.wrupple.muba.catalogs.server.services.SessionContext;
 
 public class DatabaseDomainDrivenServerModule extends AbstractDatabaseDrivenServerModule {

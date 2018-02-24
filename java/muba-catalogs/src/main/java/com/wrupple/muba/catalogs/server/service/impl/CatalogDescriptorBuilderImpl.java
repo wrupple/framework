@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
-import com.wrupple.muba.catalogs.server.domain.fields.ImageField;
-import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
+import com.wrupple.muba.event.domain.impl.ImageField;
+import com.wrupple.muba.event.domain.impl.PrimaryKeyField;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 
 import static com.wrupple.muba.event.domain.PersistentCatalogEntity.IMAGE_FIELD;

@@ -36,6 +36,7 @@ public class WorkerModule extends AbstractModule {
         bind(WorkerRequestManifest.class).to(WorkerRequestManifestImpl.class);
         bind(WorkerState.class).to(WorkerStateImpl.class);
 
+        bind(ApplicationStateListener.class).to(ApplicationStateListenerImpl.class);
         bind(BindHost.class).to(BindHostImpl.class);
         bind(PopulateLoadOrder.class).to(PopulateLoadOrderImpl.class);
         bind(BindApplication.class).to(BindApplicationImpl.class);

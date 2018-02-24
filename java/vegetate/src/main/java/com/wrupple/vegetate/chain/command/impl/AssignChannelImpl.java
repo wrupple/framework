@@ -23,6 +23,9 @@ public class AssignChannelImpl implements AssignChannel {
 
         List<ChannelAgreement> channels= context.getRuntimeContext().getServiceBus().fireEvent(inquiry,context.getRuntimeContext(),null);
 
+        if(channels==null|| channels.isEmpty()){
+            throw new IllegalStateException("No adecuate channel found for broadcast");
+        }
         context.setChannels(channels);
 
 

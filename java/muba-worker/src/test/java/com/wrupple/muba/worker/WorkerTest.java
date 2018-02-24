@@ -29,6 +29,9 @@ import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.worker.server.service.impl.CatalogRunnerImpl;
 import com.wrupple.muba.worker.server.service.impl.ChocoInterpret;
 import com.wrupple.muba.worker.shared.services.WorkerContainer;
+import com.wrupple.vegetate.VegetateCatalogsModule;
+import com.wrupple.vegetate.VegetateModule;
+import com.wrupple.vegetate.server.service.VegetateCatalogPlugin;
 import com.wrupple.vegetate.service.RemoteBroadcastHandler;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
@@ -61,8 +64,10 @@ public abstract class WorkerTest extends EasyMockSupport {
                 new SQLModule(),
                 new ValidationModule(),
                 new SingleUserModule(),
+                new VegetateCatalogsModule(),
                 new CatalogModule(),
                 new LambdaModule(),
+                new VegetateModule(),
                 new DispatcherModule(),
                 new ApplicationModule()
         );
@@ -140,8 +145,8 @@ public abstract class WorkerTest extends EasyMockSupport {
         @Inject
         @Singleton
         @Named("catalog.plugins")
-        public Object plugins(SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm, SystemCatalogPlugin system) {
-            CatalogPlugin[] plugins = new CatalogPlugin[]{system,bpm, runner};
+        public Object plugins(VegetateCatalogPlugin vegetate,SolverCatalogPlugin /* this is what makes it purr */ runner, BusinessPlugin bpm, SystemCatalogPlugin system) {
+            CatalogPlugin[] plugins = new CatalogPlugin[]{system,bpm, runner,vegetate};
             return plugins;
         }
 

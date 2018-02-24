@@ -1,7 +1,8 @@
-package com.wrupple.muba.desktop.client.chain.command;
+package com.wrupple.muba.desktop.client.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
+import com.wrupple.muba.desktop.client.chain.command.ApplicationStateListener;
 import com.wrupple.muba.event.domain.ApplicationState;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -12,7 +13,7 @@ import org.apache.commons.chain.Context;
  * When a catalog update event is fired for an application state we update desktop place
  * Created by japi on 24/08/17.
  */
-public class ApplicationStateListenerImpl implements Command<CatalogActionContext> {
+public class ApplicationStateListenerImpl implements ApplicationStateListener {
 
 
     @Override

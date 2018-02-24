@@ -7,7 +7,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;
-import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
+import com.wrupple.muba.event.domain.impl.PrimaryKeyField;
 
 @Singleton
 public class CatalogEntryDescriptor extends CatalogDescriptorImpl {

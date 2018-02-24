@@ -11,7 +11,7 @@ import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.LocaleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;
-import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
+import com.wrupple.muba.event.domain.impl.PrimaryKeyField;
 import com.wrupple.muba.catalogs.server.domain.fields.PropertiesField;
 
 public class DistributiedLocalizedEntryDescriptor extends CatalogEntryDescriptor {

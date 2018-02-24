@@ -7,7 +7,7 @@ import com.wrupple.muba.catalogs.domain.LocalizedString;
 import com.wrupple.muba.catalogs.server.domain.fields.AnonymouslyVisibleField;
 import com.wrupple.muba.catalogs.server.domain.fields.LocaleField;
 import com.wrupple.muba.catalogs.server.domain.fields.NameField;
-import com.wrupple.muba.catalogs.server.domain.fields.PrimaryKeyField;
+import com.wrupple.muba.event.domain.impl.PrimaryKeyField;
 import com.wrupple.muba.catalogs.server.domain.fields.StringValue;
 
 public class LocalizedStringDescriptor extends CatalogEntryDescriptor {

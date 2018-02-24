@@ -14,7 +14,8 @@
 		<module>muba-lambda</module>
 		<module>validation-bval</module>
 		<module>muba-catalogs</module>
-        <!--<module>muba-catalogs-format</module>-->
+		<module>vegetate-catalogs</module>
+		<!--<module>muba-catalogs-format</module>-->
         <module>muba-catalogs-sql</module>
 		<module>muba-catalogs-jdbc</module>
         <!--<module>muba-catalogs-jdbc-mysql</module>-->
