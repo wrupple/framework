@@ -15,20 +15,28 @@ public class AssignChannelImpl implements AssignChannel {
 
     @Override
     public boolean execute(RemoteServiceContext context) throws Exception {
-        //Host threadHost = context.getRuntimeContext().getSession().getSessionValue().getPeerValue();
+        Host threadHost = context.getRuntimeContext().getSession().getSessionValue().getPeerValue();
         RemoteBroadcast broadcast = context.getRequest();
         Host runningHost = broadcast.getHostValue();
-        FilterData filter= FilterDataUtils.createSingleFieldFilter(CatalogEntry.ID_FIELD,runningHost.getId());
-        CatalogQueryRequestImpl inquiry = new CatalogQueryRequestImpl(filter, ChannelAgreement.CATALOG);
 
-        List<ChannelAgreement> channels= context.getRuntimeContext().getServiceBus().fireEvent(inquiry,context.getRuntimeContext(),null);
+        if(threadHost.equals(runningHost)){
+            //we don't broadcast to outselves
+            return CONTINUE_PROCESSING;
+        }else{
 
-        if(channels==null|| channels.isEmpty()){
-            throw new IllegalStateException("No adecuate channel found for broadcast");
+            FilterData filter= FilterDataUtils.createSingleFieldFilter(CatalogEntry.ID_FIELD,runningHost.getId());
+            CatalogQueryRequestImpl inquiry = new CatalogQueryRequestImpl(filter, ChannelAgreement.CATALOG);
+
+            List<ChannelAgreement> channels= context.getRuntimeContext().getServiceBus().fireEvent(inquiry,context.getRuntimeContext(),null);
+
+            if(channels==null|| channels.isEmpty()){
+                throw new IllegalStateException("No adecuate channel found for broadcast");
+            }
+            context.setChannels(channels);
+            return CONTINUE_PROCESSING;
+
         }
-        context.setChannels(channels);
 
 
-        return CONTINUE_PROCESSING;
     }
 }

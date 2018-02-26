@@ -77,6 +77,8 @@ public class HostImpl extends ManagedObjectImpl implements com.wrupple.muba.even
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
 	}
+
+
 	@Override
 	public boolean setMinimumActivityStatus(int statusIdle) {
 		if(this.subscriptionStatus==null||this.subscriptionStatus.intValue()<statusIdle){

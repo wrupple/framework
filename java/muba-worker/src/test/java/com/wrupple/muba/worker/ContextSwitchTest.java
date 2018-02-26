@@ -94,22 +94,14 @@ public class ContextSwitchTest extends WorkerTest {
         assertTrue(riderBooking.getId()!=null);
         //assertTrue(riderBooking.getTimestamp()!=null);
 
-        Host hostValue = new HostImpl();
+        Host hostValue = container.getInjector().getInstance(Key.get(Host.class,Names.named(SessionContext.SYSTEM)));
 
-        action = new CatalogCreateRequestImpl(hostValue,Host.CATALOG);
-        action.setFollowReferences(true);
-
-        assertTrue(hostValue.getId()==null);
-
-        hostValue =  container.fireEvent(action);
-
-        assertTrue(hostValue.getId()!=null);
-       assertTrue(hostValue.getStakeHolder()!=null);
+        Long mainRunner = container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco")));
 
         log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
         container.fireEvent(new WorkerContractImpl(
                 Arrays.asList(":"+riderBooking.getId().toString()),
-                container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco"))),
+                mainRunner,
                 HOME,
                 hostValue));
         //check conditions

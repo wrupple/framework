@@ -102,8 +102,6 @@ public class ContractListenerTest extends BootstrapTest {
 	@Before
 	public void prepare() {
 
-        // http://stackoverflow.com/questions/4796172/is-there-a-way-to-get-users-uid-on-linux-machine-using-java
-        //new SessionContextImpl(1, person, "localhost", peerValue, CatalogEntry.PUBLIC_ID);
         SessionImpl sessionValue = new SessionImpl();
         sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
         session = new SessionContextImpl(sessionValue);

@@ -15,6 +15,7 @@ import com.wrupple.muba.event.domain.impl.ChannelImpl;
 import com.wrupple.muba.event.domain.impl.RemoteBroadcastImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.vegetate.chain.command.ChannelStorage;
+import com.wrupple.vegetate.chain.command.impl.ChannelStorageImpl;
 import com.wrupple.vegetate.server.service.VegetateCatalogPlugin;
 import com.wrupple.vegetate.server.service.impl.VegetateCatalogPluginImpl;
 
@@ -24,6 +25,7 @@ public class VegetateCatalogsModule extends AbstractModule{
     @Override
     protected void configure() {
         bind(VegetateCatalogPlugin.class).to(VegetateCatalogPluginImpl.class);
+        bind(ChannelStorage.class).to(ChannelStorageImpl.class);
     }
 
 

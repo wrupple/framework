@@ -6,13 +6,16 @@ import com.wrupple.muba.event.server.chain.ChannelCatalog;
 import com.wrupple.vegetate.chain.command.ChannelStorage;
 import org.apache.commons.chain.CatalogFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class ChannelStorageImpl extends CommandStorage implements ChannelStorage {
 
 
-    protected ChannelStorageImpl(CatalogFactory factory,ChannelCatalog catalog) {
+    @Inject
+    public ChannelStorageImpl(CatalogFactory factory) {
         super(factory, ChannelCatalog.CONTEXT_KEY);
-        factory.addCatalog(ChannelCatalog.CONTEXT_KEY,catalog);
-
     }
 
     @Override

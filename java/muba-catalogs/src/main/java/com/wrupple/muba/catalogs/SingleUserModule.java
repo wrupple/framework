@@ -12,10 +12,8 @@ import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogResultCacheImpl;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Person;
-import com.wrupple.muba.event.domain.Session;
-import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.HostImpl;
 import com.wrupple.muba.event.domain.impl.PersonImpl;
 import com.wrupple.muba.event.domain.impl.SessionImpl;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
@@ -64,7 +62,6 @@ public class SingleUserModule extends AbstractModule {
     @Named(SessionContext.SYSTEM)
     public SessionContext sessionContext(@Named(SessionContext.SYSTEM) Session stakeHolderValue) {
 
-
         return new SessionContextImpl(stakeHolderValue);
     }
 
@@ -73,12 +70,14 @@ public class SingleUserModule extends AbstractModule {
 	@javax.inject.Singleton
     @Named(SessionContext.SYSTEM)
     public Session session(@Named(SessionContext.SYSTEM) Person stakeHolderValue) {
+		//http://stackoverflow.com/questions/4796172/is-there-a-way-to-get-users-uid-on-linux-machine-using-java
         SessionImpl sessionValue = new SessionImpl();
         sessionValue.setDomain(CatalogEntry.PUBLIC_ID);
 		sessionValue.setId(CatalogEntry.PUBLIC_ID);
 		sessionValue.setStakeHolderValue(stakeHolderValue);
 		return sessionValue;
 	}
+
 
 	@Provides
 	@Inject
@@ -91,5 +90,14 @@ public class SingleUserModule extends AbstractModule {
 		return sessionValue;
 	}
 
-
+    @Provides
+    @Inject
+    @javax.inject.Singleton
+    @Named(SessionContext.SYSTEM)
+    public Host session() {
+        HostImpl host = new HostImpl();
+        host.setDomain(CatalogEntry.PUBLIC_ID);
+        host.setId(CatalogEntry.PUBLIC_ID);
+        return host;
+    }
 }
