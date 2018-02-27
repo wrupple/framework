@@ -21,11 +21,13 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
         */
         WorkerState worker = context.getWorkerState();
         worker.setRunner(context.getRequest().getRunner());
+        ApplicationState state=  worker.getStateValue();
+        state.setWorkerStateValue(worker);
 
         IntentImpl intent = new IntentImpl();
-        intent.setStateValue(worker.getStateValue());
+        intent.setStateValue(state);
         intent.setDomain(worker.getDomain());
-        ApplicationState state = context.getRuntimeContext().getServiceBus().fireEvent(intent, context.getRuntimeContext(), null);
+        state= context.getRuntimeContext().getServiceBus().fireEvent(intent, context.getRuntimeContext(), null);
         if(state==null){
             throw new NullPointerException("Business intent resulted in no application state");
         }
@@ -36,8 +38,6 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
 
 
         //launch worker
-        state.setWorkerStateValue(worker);
-        worker.setStateValue(state);
         context.getRuntimeContext().getServiceBus().fireEvent(worker, context.getRuntimeContext(), null);
 
         return CONTINUE_PROCESSING;

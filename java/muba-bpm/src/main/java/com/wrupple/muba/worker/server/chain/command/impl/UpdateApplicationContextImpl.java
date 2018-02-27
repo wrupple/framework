@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.worker.domain.ApplicationContext;
@@ -33,6 +34,12 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
 
         applicationState = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
         context.setStateValue(applicationState);
+
+        WorkerState container = applicationState.getWorkerStateValue();
+        if (container == null) {
+            throw new IllegalStateException("No application container");
+        }
+
         context.getRuntimeContext().setResult(applicationState);
 
         return CONTINUE_PROCESSING;

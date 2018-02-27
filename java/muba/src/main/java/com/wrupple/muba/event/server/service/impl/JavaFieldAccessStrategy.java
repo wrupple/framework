@@ -60,12 +60,8 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
         Object value;
         for (FieldDescriptor field : fields) {
-            if (field.isKey() && field.getFieldId().equals(catalog.getKeyField())) {
-
-            } else {
-                value = getPropertyValue(field, entry, null, instrospection);
-                setPropertyValue(field, copy, value, instrospection);
-            }
+            value = getPropertyValue(field, entry, null, instrospection);
+            setPropertyValue(field, copy, value, instrospection);
         }
 
     }

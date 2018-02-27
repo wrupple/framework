@@ -21,6 +21,12 @@
 			<version>${muba.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.wrupple.muba</groupId>
+			<artifactId>muba-bpm</artifactId>
+			<version>${muba.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -80,6 +86,7 @@
             <version>${muba.version}</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 	<build>
 		<resources>

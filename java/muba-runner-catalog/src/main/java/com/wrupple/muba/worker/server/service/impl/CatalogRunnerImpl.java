@@ -5,6 +5,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
+import com.wrupple.muba.worker.domain.impl.IntentImpl;
 import com.wrupple.muba.worker.server.service.CatalogRunner;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
@@ -114,7 +115,29 @@ public class CatalogRunnerImpl implements CatalogRunner {
         CatalogEntry result =  context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
 
         context.getStateValue().setEntryValue(result);
+
         callback.execute(context);
+
+        /*
+        FIXME copied from DesktopWriterCommandImpl
+         */
+
+
+        IntentImpl intent = new IntentImpl();
+        intent.setStateValue(context.getStateValue());
+        WorkerState worker = context.getStateValue().getWorkerStateValue();
+        intent.setDomain(worker.getDomain());
+        ApplicationState state = context.getRuntimeContext().getServiceBus().fireEvent(intent, context.getRuntimeContext(), null);
+        if(state==null){
+            throw new NullPointerException("Business intent resulted in no application state");
+        }
+        if(state.getStakeHolder()==null){
+            throw new NullPointerException("No one owns this application");
+        }
+        // TODO a trigger for application state creation handles launching the worker or broadcasting worker?
+
+
+
         if(result==null){
             return Command.PROCESSING_COMPLETE;
         }

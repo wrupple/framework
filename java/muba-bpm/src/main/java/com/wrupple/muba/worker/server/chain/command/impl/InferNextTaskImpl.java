@@ -67,7 +67,7 @@ public class InferNextTaskImpl implements InferNextTask {
             outputHandler.execute(context);
             state = context.getStateValue();
             Application newItem =  state.getApplicationValue();
-            if(newItem.getKeepOutput()){
+            if(newItem.getKeepOutput()==null || !newItem.getKeepOutput() ){
                 state.setEntryValue(null);
             }
             if(newItem.getProcessValues()==null|| newItem.getProcessValues().isEmpty()){

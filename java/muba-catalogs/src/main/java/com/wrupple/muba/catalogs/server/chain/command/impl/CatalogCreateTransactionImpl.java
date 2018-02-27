@@ -116,7 +116,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		
 		CatalogResultCache cache = context.getCache(catalog, context);
 		if (cache != null) {
-			if(createDao.isSequential()){
+			if(!createDao.isSequential()){
                 cache.clearLists(context,catalog.getDistinguishedName());
             }
 		}
@@ -126,7 +126,10 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         postProcess(context,catalog.getDistinguishedName(),CREATE_ACTION,regreso);
         log.debug("</CatalogActionEvent-Broadcast>");
 
-        access.copy(regreso,result,catalog);
+        if(regreso!=result){
+        	//units are not guaranteed to keep the same instance
+			access.copy(regreso,result,catalog);
+		}
 
         context.setResults(Collections.singletonList(regreso));
 

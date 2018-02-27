@@ -1,13 +1,10 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
-import com.wrupple.muba.event.domain.CatalogActionRequest;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
-import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.chain.command.CommitSubmission;
 import org.apache.commons.chain.Context;
 
@@ -20,10 +17,12 @@ import java.util.List;
 public class CommitSubmissionImpl implements CommitSubmission {
 
     private final FieldAccessStrategy aceess;
+    private final CatalogKeyServices keyServices;
 
     @Inject
-    public CommitSubmissionImpl(FieldAccessStrategy aceess) {
+    public CommitSubmissionImpl(FieldAccessStrategy aceess, CatalogKeyServices keyServices) {
         this.aceess = aceess;
+        this.keyServices = keyServices;
     }
 
 
@@ -145,10 +144,21 @@ public class CommitSubmissionImpl implements CommitSubmission {
                 }
             }
             //no commit required for select
-            entryCommit.setFollowReferences(true);
+            if(entryCommit!=null){
+                entryCommit.setFollowReferences(true);
+                List results = context.getRuntimeContext().getServiceBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
+                userOutput = (CatalogEntry) results.get(0);
+            }
+            CatalogDescriptor catalogDescriptor = applicationState.getCatalogValue();
+            String keyfield = catalogDescriptor.getKeyField();
+            applicationState.setEntry(
+                    keyServices.encodeClientPrimaryKeyFieldValue(
+                            userOutput.getId(),
+                            catalogDescriptor.getFieldDescriptor(keyfield),
+                            catalogDescriptor
 
-            List results = context.getRuntimeContext().getServiceBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
-            userOutput = (CatalogEntry) results.get(0);
+                    )
+            );
             applicationState.setEntryValue(userOutput);
         }
 
