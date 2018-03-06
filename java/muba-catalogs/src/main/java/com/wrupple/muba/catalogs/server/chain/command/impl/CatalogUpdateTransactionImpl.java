@@ -46,6 +46,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 	public boolean execute(Context c) throws Exception {
 
 		CatalogActionContext context = (CatalogActionContext) c;
+		//FIXME not necessary to read expandd graph
 		dictionary.getRead().execute(context);
 
 		CatalogEntry originalEntry = context.getResult();

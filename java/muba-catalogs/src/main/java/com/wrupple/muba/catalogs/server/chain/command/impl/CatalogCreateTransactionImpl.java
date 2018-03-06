@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -33,15 +34,17 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 	private final FieldAccessStrategy access;
 	private final EntryCreators creators;
 	private final boolean follow;
-    private final EntrySynthesizer delegate;
+	private final CompleteCatalogGraph graphJoin;
+	private final EntrySynthesizer delegate;
 
     @Inject
-	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, EntrySynthesizer delegate) {
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, CompleteCatalogGraph graphJoin, EntrySynthesizer delegate) {
         super(catalogActionCommitProvider);
         this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();
 		this.access = access;
-        this.delegate = delegate;
+		this.graphJoin = graphJoin;
+		this.delegate = delegate;
     }
 
 	
@@ -104,6 +107,13 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		}
 		
 		createDao.execute(context);
+
+		if (follow||context.getRequest().getFollowReferences()) {// interceptor
+			context.setCatalogDescriptor(catalog);
+			context.getRequest().setFilter(null);
+			context.getRequest().setEntry(context.getEntryResult().getId());
+			graphJoin.execute(context);
+		}
 		
 		CatalogEntry regreso = context.getEntryResult();
 		
@@ -209,7 +219,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             CatalogEntry entry = (CatalogEntry) foreignValue;
             if (entry.getId() == null&&!beeingCreated(context,entry)) {
 
-                willBeCreated(context,entry);
+                //willBeCreated(context,entry);
 
                 entry =  context.triggerCreate(field.getCatalog(), entry);
                 reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;

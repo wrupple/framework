@@ -84,10 +84,9 @@ public class CatalogModule extends AbstractModule {
 		bind(String.class).annotatedWith(Names.named("catalog.domainField")).toInstance(CatalogEntry.DOMAIN_FIELD);
 		bind(Boolean.class).annotatedWith(Names.named("catalog.createablePrimaryKeys")).toInstance(false);
 		bind(Boolean.class).annotatedWith(Names.named("catalog.followGraph")).toInstance(true);
-		bind(Integer.class).annotatedWith(Names.named("catalog.read.preloadCatalogGraph")).toInstance(0);
 
 
-		bind(String.class).annotatedWith(Names.named("catalog.ancestorKeyField")).toInstance("superAncestorHIdentity");
+		bind(String.class).annotatedWith(Names.named("catalog.ancestorKeyField")).toInstance("parentHID");
 		bind(String.class).annotatedWith(Names.named("catalog.timeline.entryDiscriminator"))
 				.toInstance("childHIdentity");
 		bind(String.class).annotatedWith(Names.named("catalog.timeline.typeDiscriminator")).toInstance("childHType");

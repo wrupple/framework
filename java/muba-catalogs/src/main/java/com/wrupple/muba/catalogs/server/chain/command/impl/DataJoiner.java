@@ -102,7 +102,7 @@ public abstract class DataJoiner implements Command {
 			String[][] joins, CatalogActionContext context, Map<JoinQueryKey, Set<Object>> filterMap, Instrospection instrospection)
 			throws Exception {
 
-		if (log.isInfoEnabled()) {
+		if (log.isTraceEnabled()) {
 			log.trace("[BUILD RESULT SET] {} {} ", mainCatalog.getDistinguishedName(), Arrays.deepToString(joins));
 		}
 		// for each join a separate result set is added to the response
@@ -119,7 +119,7 @@ public abstract class DataJoiner implements Command {
 			catalogId = joinSentence[0];
 			foreignField = joinSentence[1];
 			localField = grabLocalJoinField(joinSentence, foreignField);
-			key = new JoinQueryKey(catalogId, foreignField);
+				key = new JoinQueryKey(catalogId, foreignField);
 			fieldValues = filterMap.get(key);
 
 			log.trace("[GATHERING VALUES FOR JOIN] {}/{}", key, localField);

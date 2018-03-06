@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Singleton
 public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
@@ -44,8 +42,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     // DataQueryCommandImpl
     private final QueryReaders queryers;
 
-    private int MIN_TREE_LEVELS;
-
     @Inject
     public CatalogReadTransactionImpl(CatalogPluginQueryCommand pluginStorage,
                                       TriggerPluginQueryCommand triggerStorage,
@@ -53,7 +49,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                                       @Named("catalog.storage.metadata") String catalogPluginStorage,
                                       CatalogKeyServices keyDelegate, FieldAccessStrategy access,
                                       EntrySynthesizer synthesizer,
-                                      @Named("catalog.read.preloadCatalogGraph") Integer minLevelsDeepOfhierarchy,
                                       QueryReaders queryers, PrimaryKeyReaders primaryKeyers,
                                       CompleteCatalogGraph graphJoin,
                                       ExplicitDataJoin join,
@@ -65,7 +60,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
         this.graphJoin = graphJoin;
         this.join = join;
-        this.MIN_TREE_LEVELS = minLevelsDeepOfhierarchy;
         this.queryers = queryers;
         this.primaryKeyers = primaryKeyers;
         this.queryRewriter = queryRewriter;
@@ -156,7 +150,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             String[][] joins = filter.getJoins();
             if (joins != null && joins.length > 0) {
                 join.execute(context);
-            } else if (MIN_TREE_LEVELS > 0 || context.getRequest().getFollowReferences()) {// interceptor
+            } else if (context.getRequest().getFollowReferences()) {// interceptor
                 // decides
                 // to
                 // read

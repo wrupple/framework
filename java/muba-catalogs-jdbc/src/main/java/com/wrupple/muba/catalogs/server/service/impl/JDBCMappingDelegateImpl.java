@@ -26,6 +26,8 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.PersistentCatalogEntity;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 
+import static com.wrupple.muba.event.domain.CatalogEntry.PUBLIC_ID;
+
 /**
  * 
  * @author japi
@@ -68,7 +70,12 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 
 	@Override
 	public void getTableNameForCatalog(CatalogDescriptor catalog, CatalogActionContext context, StringBuilder builder) {
-		if (catalog.getClazz() == null || PersistentCatalogEntity.class.equals(catalog.getClazz())) {
+		if(catalog.getDomain()==null||catalog.getDomain().longValue()==PUBLIC_ID){
+		    //FIXME null is a security flaw surely?
+			builder.append(catalog.getDistinguishedName());
+		}
+		else
+			if (catalog.getClazz() == null || PersistentCatalogEntity.class.equals(catalog.getClazz())) {
 			builder.append(context.getRequest().getDomain());
 			builder.append('_');
 			builder.append(catalog.getDistinguishedName());

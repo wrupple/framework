@@ -29,8 +29,10 @@ lazy val container = project
       dependencies.worker,
       dependencies.hsql,
       dependencies.launcher,
-      /*dependencies.choco,*/
-      dependencies.lambda
+      dependencies.choco,
+      dependencies.lambda,
+      dependencies.remoteCatalogs,
+      dependencies.dumbRunner
     )
   )
   .dependsOn(
@@ -45,7 +47,8 @@ lazy val spark = project
     libraryDependencies ++= commonDependencies ++ Seq(
       dependencies.spark,
       dependencies.sql,
-      dependencies.hive
+      dependencies.hive,
+      dependencies.remoteCatalogs
     )
   )
   .dependsOn(
@@ -69,6 +72,9 @@ lazy val dependencies =
     val choco = wrupple % "muba-runner-choco" % wruppleVersion
     val bval = wrupple % "validation-bval" % wruppleVersion
     val lambda = wrupple % "muba-lambda" % wruppleVersion
+    val dumbRunner = wrupple % "muba-runner-catalog" % wruppleVersion
+    val remoteCatalogs = wrupple % "vegetate-catalogs" % wruppleVersion
+
     val spark = "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope
     val launcher = "org.apache.spark" %% "spark-launcher" % "2.2.1"
     //val actor = "com.typesafe.akka" %% "akka-actor" % "2.5.9"

@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
@@ -42,13 +43,13 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 	private final int missingTableErrorCode;
 
-	private final CatalogReadTransaction read;
+	private final JDBCDataReadCommand read;
 	private final char DELIMITER;
 
 	private final JDBCSingleLongKeyResultHandler keyHandler;
 
 	@Inject
-	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, FieldAccessStrategy access, CatalogKeyServices keyDelegate, CatalogReadTransaction read,
+	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, FieldAccessStrategy access, CatalogKeyServices keyDelegate, JDBCDataReadCommand read,
 									   JDBCMappingDelegate tableNames, SQLCompatibilityDelegate compatibility,
 									   @Named("catalog.missingTableErrorCode") Integer missingTableErrorCode /*
 																					 * 1146
@@ -180,7 +181,6 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 			}
 		}
 		log.debug("[CREATE DONE] {}/{} ",catalogDescriptor.getDistinguishedName(),id);
-		
 		context.setCatalogDescriptor(catalogDescriptor);
 		context.getRequest().setFilter(null);
 		context.getRequest().setEntry(id);
