@@ -13,8 +13,8 @@ import org.apache.commons.chain.Context;
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.apache.commons.dbutils.QueryRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,7 +27,7 @@ import java.util.*;
 @Singleton
 public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 
-	protected static final Logger log = LoggerFactory.getLogger(JDBCDataQueryCommandImpl.class);
+	protected static final Logger log = LogManager.getLogger(JDBCDataQueryCommandImpl.class);
     private final SQLDelegate delegate;
 
 	@Inject

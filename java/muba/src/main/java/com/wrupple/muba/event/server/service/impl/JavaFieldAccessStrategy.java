@@ -9,8 +9,8 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.PersistentCatalogEntity;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.inject.Inject;
@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 @Singleton
 public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
-    protected static final Logger log = LoggerFactory.getLogger(JavaFieldAccessStrategy.class);
+    protected static final Logger log = LogManager.getLogger(JavaFieldAccessStrategy.class);
 
     private final Provider<PersistentCatalogEntity> factory;
 

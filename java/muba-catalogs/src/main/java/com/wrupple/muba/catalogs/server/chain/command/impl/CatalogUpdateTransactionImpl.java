@@ -14,8 +14,8 @@ import com.wrupple.muba.catalogs.server.service.Writers;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,7 +25,7 @@ import static com.wrupple.muba.catalogs.domain.CatalogContract.WRITE_ACTION;
 @Singleton
 public class CatalogUpdateTransactionImpl extends CatalogTransaction implements CatalogUpdateTransaction {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogUpdateTransactionImpl.class);
+	protected static final Logger log = LogManager.getLogger(CatalogUpdateTransactionImpl.class);
 
 	private final Writers writers;
 	private final ActionsDictionary dictionary;

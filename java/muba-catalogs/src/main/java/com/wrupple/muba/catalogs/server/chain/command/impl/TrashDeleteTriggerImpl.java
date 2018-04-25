@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -18,7 +18,7 @@ import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 
 @Singleton
 public class TrashDeleteTriggerImpl implements TrashDeleteTrigger {
-	private static final Logger log = LoggerFactory.getLogger(TrashDeleteTriggerImpl.class);
+	private static final Logger log = LogManager.getLogger(TrashDeleteTriggerImpl.class);
 
 
 	@Inject

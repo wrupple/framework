@@ -5,8 +5,8 @@ import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.chain.command.SynthesizeSolutionEntry;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Singleton
 public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
-    protected Logger log = LoggerFactory.getLogger(SynthesizeSolutionEntryImpl.class);
+    protected Logger log = LogManager.getLogger(SynthesizeSolutionEntryImpl.class);
 
     private final FieldAccessStrategy plugin;
 

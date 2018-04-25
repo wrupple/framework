@@ -24,8 +24,8 @@ import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
 import org.easymock.EasyMockSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +37,7 @@ import java.io.OutputStream;
 import static org.junit.Assert.assertTrue;
 
 public class JavaFieldAccessStrategyTest extends EasyMockSupport {
-    protected Logger log = LoggerFactory.getLogger(JavaFieldAccessStrategyTest.class);
+    protected Logger log = LogManager.getLogger(JavaFieldAccessStrategyTest.class);
 
     private final Injector injector;
     private EventSuscriptionMapper mockSuscriptor;

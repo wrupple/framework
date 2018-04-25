@@ -10,8 +10,8 @@ import com.wrupple.muba.worker.server.service.VariableEligibility;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class FutureChocoVariable implements VariableEligibility {
-    protected Logger log = LoggerFactory.getLogger(FutureChocoVariable.class);
+    protected Logger log = LogManager.getLogger(FutureChocoVariable.class);
     private final ChocoModelResolver delegate;
     private final Long chocoRunnerId;
 

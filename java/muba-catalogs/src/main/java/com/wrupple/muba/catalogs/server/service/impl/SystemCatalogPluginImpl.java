@@ -8,8 +8,8 @@ import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.catalogs.server.service.TriggerCreationScope;
 import com.wrupple.muba.event.domain.*;
 import org.apache.commons.chain.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 @Singleton
 public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  implements SystemCatalogPlugin {
 
-	protected static final Logger log = LoggerFactory.getLogger(SystemCatalogPluginImpl.class);
+	protected static final Logger log = LogManager.getLogger(SystemCatalogPluginImpl.class);
 
     @Inject
 	public SystemCatalogPluginImpl(

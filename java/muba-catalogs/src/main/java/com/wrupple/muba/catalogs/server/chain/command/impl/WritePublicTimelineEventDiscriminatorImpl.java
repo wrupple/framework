@@ -7,8 +7,8 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,7 +17,7 @@ import javax.inject.Singleton;
 @Singleton
 public class WritePublicTimelineEventDiscriminatorImpl implements WritePublicTimelineEventDiscriminator {
 
-    protected static final Logger log = LoggerFactory.getLogger(WritePublicTimelineEventDiscriminatorImpl.class);
+    protected static final Logger log = LogManager.getLogger(WritePublicTimelineEventDiscriminatorImpl.class);
     private final String discriminatorField, catalogField;
 	private final FieldAccessStrategy access;
 

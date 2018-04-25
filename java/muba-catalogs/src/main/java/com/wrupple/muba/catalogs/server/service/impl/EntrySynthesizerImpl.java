@@ -7,8 +7,8 @@ import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 @Singleton
 public class EntrySynthesizerImpl implements EntrySynthesizer {
-    protected static final Logger log = LoggerFactory.getLogger(EntrySynthesizerImpl.class);
+    protected static final Logger log = LogManager.getLogger(EntrySynthesizerImpl.class);
 
     private final Pattern pattern;
 

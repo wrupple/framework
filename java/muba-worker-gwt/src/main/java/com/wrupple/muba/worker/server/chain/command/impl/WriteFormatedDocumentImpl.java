@@ -5,8 +5,8 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.WriteFormatedDocument;
 import com.wrupple.muba.catalogs.server.service.CatalogEvaluationDelegate;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Singleton
 public class WriteFormatedDocumentImpl implements WriteFormatedDocument {
-    protected static final Logger log = LoggerFactory.getLogger(WriteFormatedDocumentImpl.class);
+    protected static final Logger log = LogManager.getLogger(WriteFormatedDocumentImpl.class);
     private final CatalogEvaluationDelegate accessor;
 
     @Inject

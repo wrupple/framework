@@ -3,8 +3,8 @@ package com.wrupple.muba.event.chain.impl;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import static com.wrupple.muba.BootstrapTest.FIRST_OPERAND_NAME;
 import static com.wrupple.muba.BootstrapTest.SECOND_OPERAND_NAME;
@@ -13,7 +13,7 @@ import static com.wrupple.muba.BootstrapTest.SECOND_OPERAND_NAME;
  * Created by japi on 21/08/17.
  */
 public abstract class OldVesionService implements Command {
-    protected Logger log = LoggerFactory.getLogger(UpdatedVersionService.class);
+    protected Logger log = LogManager.getLogger(UpdatedVersionService.class);
 
     @SuppressWarnings("unchecked")
     @Override

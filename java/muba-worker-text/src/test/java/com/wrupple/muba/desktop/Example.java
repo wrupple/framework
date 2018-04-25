@@ -58,8 +58,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.easymock.EasyMockRule;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -112,7 +112,6 @@ public class Example {
         //container.registerRunner(ChocoRunner.class);
         container.registerRunner(HumanRunner.class);
 
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
         CatalogDescriptorBuilder builder = container.getInstance(CatalogDescriptorBuilder.class);
 
         log.trace("[-create tasks (problem definition)-]");
@@ -172,7 +171,7 @@ public static void main(String... args) throws Exception {
 
     @Rule
     public EasyMockRule rule = new EasyMockRule(this);
-    protected Logger log = LoggerFactory.getLogger(Example.class);
+    protected Logger log = LogManager.getLogger(Example.class);
 
 
     static class IntegralTestModule extends AbstractModule {

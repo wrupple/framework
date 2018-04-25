@@ -8,8 +8,8 @@ import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.TriggerCreationScope;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,7 +23,7 @@ import static com.wrupple.muba.catalogs.server.chain.command.PluginConsensus.OVE
 @Singleton
 public class TriggerPluginQueryCommandImpl implements TriggerPluginQueryCommand {
 
-    protected static final Logger log = LoggerFactory.getLogger(CatalogPluginQueryCommandImpl.class);
+    protected static final Logger log = LogManager.getLogger(CatalogPluginQueryCommandImpl.class);
 
     private final PluginConsensus plugins;
 

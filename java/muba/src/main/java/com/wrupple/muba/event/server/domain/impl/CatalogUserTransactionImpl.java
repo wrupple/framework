@@ -6,8 +6,8 @@ import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.event.domain.TransactionHistory;
 import com.wrupple.muba.event.server.chain.command.UserCommand;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.transaction.*;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CatalogUserTransactionImpl implements TransactionHistory {
 
-	protected Logger log = LoggerFactory.getLogger(CatalogUserTransactionImpl.class);
+	protected Logger log = LogManager.getLogger(CatalogUserTransactionImpl.class);
 
 	private int status ;
 	private final UndoBasedTransactionDelegate history;
@@ -114,7 +114,7 @@ public class CatalogUserTransactionImpl implements TransactionHistory {
 	}
 
 	static class UndoBasedTransactionDelegate {
-        private static final Logger log = LoggerFactory.getLogger(UndoBasedTransactionDelegate.class);
+        private static final Logger log = LogManager.getLogger(UndoBasedTransactionDelegate.class);
 
         public static class UndoToken
 		{

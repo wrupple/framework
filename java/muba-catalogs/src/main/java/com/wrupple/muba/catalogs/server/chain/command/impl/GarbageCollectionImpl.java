@@ -8,8 +8,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterCriteria;
@@ -25,7 +25,7 @@ import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 
 @Singleton
 public class GarbageCollectionImpl implements GarbageCollection {
-	private static final Logger log = LoggerFactory.getLogger(GarbageCollectionImpl.class);
+	private static final Logger log = LogManager.getLogger(GarbageCollectionImpl.class);
 
 
 	@Inject

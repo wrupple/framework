@@ -66,7 +66,8 @@ public class ApplicationModule extends AbstractModule {
 		bind(CatalogFactory.class).toInstance(CatalogFactory.getInstance());
 		bind(ParentServiceManifest.class).to(ParentServiceManifestImpl.class);
 		bind(SentenceValidator.class).to(SentenceValidatorImpl.class);
-		/*
+        bind(CatalogNormalizationConstraintValidator.class).to(CatalogNormalizationConstraintValidatorImpl.class);
+        /*
 		 * Native Services
 		 */
         bind(ObjectNativeInterface.class).to(JavaObjectNativeInterface.class);

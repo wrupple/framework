@@ -7,19 +7,15 @@ import com.wrupple.muba.event.ServiceBus;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public abstract class AbstractTest extends EasyMockSupport {
 
 
-    static {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
-    }
-
     @Rule
     public EasyMockRule rule = new EasyMockRule(this);
-    protected Logger log = LoggerFactory.getLogger(AbstractTest.class);
+    protected Logger log = LogManager.getLogger(AbstractTest.class);
     protected Injector injector;
 
 

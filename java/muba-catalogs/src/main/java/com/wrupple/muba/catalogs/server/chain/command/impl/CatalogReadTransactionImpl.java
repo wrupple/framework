@@ -9,8 +9,8 @@ import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,7 +20,7 @@ import java.util.*;
 @Singleton
 public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
-    protected static final Logger log = LoggerFactory.getLogger(CatalogReadTransactionImpl.class);
+    protected static final Logger log = LogManager.getLogger(CatalogReadTransactionImpl.class);
 
     public interface JoinCondition {
         boolean match(CatalogEntry o);

@@ -6,8 +6,8 @@ import com.wrupple.muba.event.domain.BroadcastEvent;
 import com.wrupple.muba.event.domain.RemoteBroadcast;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.server.chain.command.impl.PublishEventsImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 @Singleton
 public class StreamingDelegateImpl implements PublishEventsImpl.StreamingDelegate {
-    protected static final Logger log = LoggerFactory.getLogger(StreamingDelegateImpl.class);
+    protected static final Logger log = LogManager.getLogger(StreamingDelegateImpl.class);
 
     private final boolean parallel;
 

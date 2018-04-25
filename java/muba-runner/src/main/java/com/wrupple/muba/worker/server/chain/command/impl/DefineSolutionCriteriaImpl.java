@@ -5,8 +5,8 @@ import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.chain.command.DefineSolutionCriteria;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import java.util.ListIterator;
@@ -19,7 +19,7 @@ import java.util.ListIterator;
 public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
 
-    protected Logger log = LoggerFactory.getLogger(DefineSolutionCriteriaImpl.class);
+    protected Logger log = LogManager.getLogger(DefineSolutionCriteriaImpl.class);
 
     @Inject
     public DefineSolutionCriteriaImpl() {

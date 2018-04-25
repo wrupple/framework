@@ -12,10 +12,8 @@ class ConsumeBatchJobsTest
 
   //FIXME translate BPMTest, then SubmitToApplicationTest
 
-  System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
   /*
-  // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
-  libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.21" % "test"
+
 
   // this works
   val objects = Array("a", 1)

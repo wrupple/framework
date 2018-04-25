@@ -63,7 +63,6 @@ lazy val dependencies =
     val wruppleVersion = "1.0"
     val sparkVersion = "1.6.0"
     val sparkDependencyScope = "provided"
-    val slf4j = "org.slf4j" % "slf4j-simple" % "1.7.21"
     val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
     val mockito = "org.mockito" % "mockito-core" % "2.10.0"
     val mockitoInline = "org.mockito" % "mockito-inline" % "2.10.0"
@@ -76,6 +75,7 @@ lazy val dependencies =
     val remoteCatalogs = wrupple % "vegetate-catalogs" % wruppleVersion
 
     val spark = "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope
+    //https://spark.apache.org/docs/2.3.0/api/java/index.html?org/apache/spark/launcher/package-summary.html
     val launcher = "org.apache.spark" %% "spark-launcher" % "2.2.1"
     //val actor = "com.typesafe.akka" %% "akka-actor" % "2.5.9"
     val sql = "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope
@@ -87,7 +87,6 @@ lazy val commonDependencies = Seq(
   dependencies.bval,
   dependencies.config,
   dependencies.mockitoInline % "test",
-  dependencies.slf4j % "test",
   dependencies.scalaTest % "test",
   "org.apache.logging.log4j" %% "log4j-api-scala" % "11.0",
   "org.apache.logging.log4j" % "log4j-api" % "2.8.2",

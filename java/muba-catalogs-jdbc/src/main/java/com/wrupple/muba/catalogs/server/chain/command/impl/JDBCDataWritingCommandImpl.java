@@ -13,8 +13,8 @@ import javax.inject.Singleton;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.reserved.Versioned;
@@ -29,7 +29,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 
 @Singleton
 public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implements JDBCDataWritingCommand{
-	protected static final Logger log = LoggerFactory.getLogger(JDBCDataWritingCommandImpl.class);
+	protected static final Logger log = LogManager.getLogger(JDBCDataWritingCommandImpl.class);
 
 	private final FieldAccessStrategy access;
 	private final JDBCMappingDelegate tableNames;

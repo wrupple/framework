@@ -18,8 +18,8 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
@@ -36,7 +36,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
         this.cms = cms;
     }
 
-    protected static final Logger log = LoggerFactory.getLogger(CatalogDescriptorBuilderImpl.class);
+    protected static final Logger log = LogManager.getLogger(CatalogDescriptorBuilderImpl.class);
 
 
 	private JSRAnnotationsDictionary cms;

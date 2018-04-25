@@ -13,8 +13,8 @@ import com.wrupple.muba.event.domain.reserved.HasConstrains;
 import com.wrupple.muba.event.server.service.ContextAwareValidator;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.event.server.service.PropertyValidationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class CatalogActionRequestValidatorImpl implements CatalogActionRequestValidator {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogActionRequestValidatorImpl.class);
+	protected static final Logger log = LogManager.getLogger(CatalogActionRequestValidatorImpl.class);
 
 	private final JSRAnnotationsDictionary dictionary;
 	private final CatalogKeyServices keyDelegate;
@@ -260,7 +260,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 				throw new RuntimeException(e);
 			}
 			if(descriptor==null){
-				throw new IllegalArgumentException(catalogId);
+				throw new IllegalArgumentException("no such catalog "+catalogId);
 			}
 
 		}

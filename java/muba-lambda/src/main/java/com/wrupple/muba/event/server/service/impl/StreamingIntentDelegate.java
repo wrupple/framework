@@ -3,8 +3,8 @@ package com.wrupple.muba.event.server.service.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.FilterNativeInterface;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class StreamingIntentDelegate implements ServiceBusImpl.IntentDelegate {
 
-    protected static final Logger log = LoggerFactory.getLogger(ServiceBusImpl.class);
+    protected static final Logger log = LogManager.getLogger(ServiceBusImpl.class);
 
     private final CatalogDescriptor handleField;
 

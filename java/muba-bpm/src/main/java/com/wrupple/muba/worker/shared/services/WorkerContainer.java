@@ -12,6 +12,7 @@ import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.Contract;
+import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.domain.SessionContext;
 import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
@@ -110,5 +111,13 @@ public class WorkerContainer {
 
     public Injector getInjector() {
         return injector;
+    }
+
+    public ServiceBus getBus(){
+        return processSwitches;
+    }
+
+    public SessionContext getSession(){
+        return session;
     }
 }

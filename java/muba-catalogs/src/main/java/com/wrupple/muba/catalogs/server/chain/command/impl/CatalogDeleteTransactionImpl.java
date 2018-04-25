@@ -14,8 +14,8 @@ import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,7 +26,7 @@ import static com.wrupple.muba.catalogs.domain.CatalogContract.DELETE_ACTION;
 @Singleton
 public class CatalogDeleteTransactionImpl extends CatalogTransaction implements CatalogDeleteTransaction {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogDeleteTransactionImpl.class);
+	protected static final Logger log = LogManager.getLogger(CatalogDeleteTransactionImpl.class);
 
 
 

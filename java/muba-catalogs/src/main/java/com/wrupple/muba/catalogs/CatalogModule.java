@@ -191,7 +191,6 @@ public class CatalogModule extends AbstractModule {
 		bind(SystemCatalogPlugin.class).to(SystemCatalogPluginImpl.class);
 		bind(CatalogDescriptorBuilder.class).to(CatalogDescriptorBuilderImpl.class);
 
-		bind(CatalogNormalizationConstraintValidator.class).to(CatalogNormalizationConstraintValidatorImpl.class);
 		bind(CatalogActionRequestValidator.class).to(CatalogActionRequestValidatorImpl.class);
 
 

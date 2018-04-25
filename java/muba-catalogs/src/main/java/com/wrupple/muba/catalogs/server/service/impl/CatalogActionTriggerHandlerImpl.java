@@ -9,8 +9,8 @@ import javax.inject.Inject;
 
 import com.wrupple.muba.catalogs.domain.Trigger;
 import org.apache.commons.chain.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -19,7 +19,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 @Singleton
 public class CatalogActionTriggerHandlerImpl  {
 
-	protected static final Logger log = LoggerFactory.getLogger(CatalogActionTriggerHandlerImpl.class);
+	protected static final Logger log = LogManager.getLogger(CatalogActionTriggerHandlerImpl.class);
 
 	private CatalogTriggerInterpret interpret;
 

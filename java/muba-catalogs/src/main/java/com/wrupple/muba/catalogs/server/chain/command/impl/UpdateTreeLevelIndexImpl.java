@@ -6,8 +6,8 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasChildren;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,7 +16,7 @@ import java.util.List;
 @Singleton
 public class UpdateTreeLevelIndexImpl implements UpdateTreeLevelIndex {
 
-    protected static final Logger log = LoggerFactory.getLogger(UpdateTreeLevelIndexImpl.class);
+    protected static final Logger log = LogManager.getLogger(UpdateTreeLevelIndexImpl.class);
     private final FieldAccessStrategy access;
 
 	@Inject

@@ -14,8 +14,8 @@ import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -32,7 +32,7 @@ import com.wrupple.muba.catalogs.server.service.impl.JDBCSingleLongKeyResultHand
 @Singleton
 public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand implements JDBCDataCreationCommand {
 
-	protected static final Logger log = LoggerFactory.getLogger(JDBCDataCreationCommandImpl.class);
+	protected static final Logger log = LogManager.getLogger(JDBCDataCreationCommandImpl.class);
 
 	private final FieldAccessStrategy access;
 	private final CatalogKeyServices keyDelegate;

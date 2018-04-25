@@ -6,8 +6,8 @@ import com.wrupple.muba.event.domain.ServiceManifest;
 import com.wrupple.muba.event.domain.YieldContext;
 import com.wrupple.muba.event.server.chain.command.BindService;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Singleton;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 @Singleton
 public class BindServiceImpl implements BindService {
 
-    private static final Logger log = LoggerFactory.getLogger(BindServiceImpl.class);
+    private static final Logger log = LogManager.getLogger(BindServiceImpl.class);
 
 
     @Override

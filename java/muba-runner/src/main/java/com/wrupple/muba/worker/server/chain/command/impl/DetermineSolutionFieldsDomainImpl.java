@@ -10,8 +10,8 @@ import com.wrupple.muba.worker.server.chain.command.DetermineSolutionFieldsDomai
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import com.wrupple.muba.worker.server.service.Solver;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionFieldsDomain {
 
-    protected Logger log = LoggerFactory.getLogger(DetermineSolutionFieldsDomainImpl.class);
+    protected Logger log = LogManager.getLogger(DetermineSolutionFieldsDomainImpl.class);
 
     private final ProcessManager bpm;
 

@@ -6,8 +6,8 @@ import com.wrupple.muba.event.domain.BroadcastEvent;
 import com.wrupple.muba.event.domain.Host;
 import com.wrupple.muba.event.server.chain.PublishEvents;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,7 +18,7 @@ public class PublishEventsImpl    implements PublishEvents {
 
 
     private final StreamingDelegate delegate;
-    protected static final Logger log = LoggerFactory.getLogger(PublishEventsImpl.class);
+    protected static final Logger log = LogManager.getLogger(PublishEventsImpl.class);
 
     @Inject
     public PublishEventsImpl(StreamingDelegate delegate) {

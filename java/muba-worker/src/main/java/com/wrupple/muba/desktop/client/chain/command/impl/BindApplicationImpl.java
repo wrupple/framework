@@ -7,8 +7,8 @@ import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.impl.ApplicationStateImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,7 +17,7 @@ import java.util.List;
 @Singleton
 public class BindApplicationImpl implements BindApplication {
 
-    protected static final Logger log = LoggerFactory.getLogger(BindApplicationImpl.class);
+    protected static final Logger log = LogManager.getLogger(BindApplicationImpl.class);
 
     private final FieldAccessStrategy plugin;
 

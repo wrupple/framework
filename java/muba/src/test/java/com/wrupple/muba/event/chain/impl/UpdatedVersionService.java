@@ -5,15 +5,15 @@ import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Created by japi on 21/08/17.
  */
 public abstract class UpdatedVersionService implements Command {
 
-    protected Logger log = LoggerFactory.getLogger(UpdatedVersionService.class);
+    protected Logger log = LogManager.getLogger(UpdatedVersionService.class);
 
     public UpdatedVersionService() {
     }

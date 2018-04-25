@@ -15,8 +15,8 @@ import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,7 +28,7 @@ import static com.wrupple.muba.catalogs.domain.CatalogContract.CREATE_ACTION;
 
 @Singleton
 public class CatalogCreateTransactionImpl extends CatalogTransaction implements CatalogCreateTransaction {
-	protected static final Logger log = LoggerFactory.getLogger(CatalogCreateTransactionImpl.class);
+	protected static final Logger log = LogManager.getLogger(CatalogCreateTransactionImpl.class);
 
 	//private final CatalogActionTriggerHandler trigerer;
 	private final FieldAccessStrategy access;
@@ -75,22 +75,12 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 			for(FieldDescriptor field: fields){
 				if (field.isKey()) {
                     foreignValue=null;
-				    /*if(field.isMultiple()){
-                        localvalue= access.getPropertyValue(field, result, null, instrospection);
-                        if(localvalue==null||((Collection)localvalue).isEmpty()){
-                            foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
-                        }
-                    }else{
-				        if(access.getPropertyValue(field, result, null, instrospection) == null){
-                            foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
-                        }
-                    }*/
+
                     if(access.getPropertyValue(field, result, null, instrospection) == null){
                         foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
                     }
                     if(foreignValue!=null){
                         //if we got to this point, force the context to follow the reference graph
-
 
                         createRefereces(context,catalog,field,foreignValue,result, instrospection);
                     }
@@ -191,7 +181,6 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             boolean alterationsMade = false;
 			for (CatalogEntry entry : entries) {
 				if (entry.getId() == null&&!beeingCreated(context,entry)) {
-				    //willBeCreated(context,entry);
                     created= context.triggerCreate(field.getCatalog(), entry);
 
 					createdValues.add(created);
@@ -218,8 +207,6 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		} else {
             CatalogEntry entry = (CatalogEntry) foreignValue;
             if (entry.getId() == null&&!beeingCreated(context,entry)) {
-
-                //willBeCreated(context,entry);
 
                 entry =  context.triggerCreate(field.getCatalog(), entry);
                 reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;

@@ -16,9 +16,9 @@ public class ForkCallback<T extends Context> extends Callback<T> {
     }
 
     public synchronized StateTransition<T> fork() {
-        return synchronizedFork(new Callback() {
+        return synchronizedFork(new Callback<T>() {
             @Override
-            public boolean execute(Context context) throws Exception {
+            public boolean execute(T context) throws Exception {
                 boolean retorno = super.execute(context);
                 if (isFinished()) {
                     return doexecute(context);
@@ -28,7 +28,7 @@ public class ForkCallback<T extends Context> extends Callback<T> {
         });
     }
 
-    private boolean doexecute(Context context) throws Exception {
+    private boolean doexecute(T context) throws Exception {
         return super.execute(context);
     }
 

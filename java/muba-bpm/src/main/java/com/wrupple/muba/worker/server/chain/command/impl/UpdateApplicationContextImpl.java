@@ -8,14 +8,14 @@ import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.chain.command.UpdateApplicationContext;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Created by japi on 18/08/17.
  */
 public class UpdateApplicationContextImpl implements UpdateApplicationContext {
-    protected static final Logger log = LoggerFactory.getLogger(UpdateApplicationContextImpl.class);
+    protected static final Logger log = LogManager.getLogger(UpdateApplicationContextImpl.class);
 
     @Override
     public boolean execute(Context  ctx) throws Exception {
@@ -46,21 +46,26 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
         }
 
         /*
+
         change application state
         request= new CatalogActionRequestImpl();
         request.setCatalog(applicationState.getCatalogType());
         request.setEntryValue(applicationState);
         request.setFollowReferences(true);
 
+
         if(applicationState.getId()==null){
             log.debug("New application state will be created");
             request.setName(CatalogActionRequest.CREATE_ACTION);
+
         }else{
             log.debug("current application {} will be updated",applicationState.getId());
-
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setEntry(applicationState.getId());
-        }*/
+
+        }
+
+        */
 
 
 

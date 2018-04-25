@@ -10,8 +10,8 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class CatalogPluginQueryCommandImpl implements CatalogPluginQueryCommand {
 
-    protected static final Logger log = LoggerFactory.getLogger(CatalogPluginQueryCommandImpl.class);
+    protected static final Logger log = LogManager.getLogger(CatalogPluginQueryCommandImpl.class);
 
     private final CatalogPlugin[] plugins;
 

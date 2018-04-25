@@ -9,8 +9,8 @@ import com.wrupple.muba.worker.server.chain.WorkflowEngine;
 import com.wrupple.muba.worker.server.chain.command.ExplicitOutputPlace;
 import com.wrupple.muba.worker.server.chain.command.InferNextTask;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Singleton
 public class InferNextTaskImpl implements InferNextTask {
-    protected static final Logger log = LoggerFactory.getLogger(InferNextTaskImpl.class);
+    protected static final Logger log = LogManager.getLogger(InferNextTaskImpl.class);
 
     private final WorkflowEngine outputHandler;
 

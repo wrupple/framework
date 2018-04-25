@@ -6,8 +6,8 @@ import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.chain.command.SolveTask;
 import com.wrupple.muba.worker.server.service.ProcessManager;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,7 +20,7 @@ import java.util.ListIterator;
  */
 @Singleton
 public class SolveTaskImpl implements SolveTask {
-    protected Logger log = LoggerFactory.getLogger(SolveTaskImpl.class);
+    protected Logger log = LogManager.getLogger(SolveTaskImpl.class);
 
     private final ProcessManager plugin;
     private final Callback callback;

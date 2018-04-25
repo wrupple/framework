@@ -11,8 +11,8 @@ import com.wrupple.muba.catalogs.server.service.impl.StorageTriggerScope;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.*;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,7 +23,7 @@ import java.util.List;
 
 @Singleton
 public class PluginConsensusImpl implements PluginConsensus {
-    protected static final Logger log = LoggerFactory.getLogger(PluginConsensusImpl.class);
+    protected static final Logger log = LogManager.getLogger(PluginConsensusImpl.class);
     private final Provider<Object> pluginProvider;
     private final String host;
 

@@ -3,15 +3,15 @@ package com.wrupple.muba.desktop.client.chain.command.impl;
 import com.wrupple.muba.desktop.client.chain.command.SwitchWorkerContext;
 import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.desktop.domain.ContextSwitch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Singleton;
 
 @Singleton
 public class SwitchWorkerContextImpl implements SwitchWorkerContext {
 
-    protected Logger log = LoggerFactory.getLogger(SwitchWorkerContextImpl.class);
+    protected Logger log = LogManager.getLogger(SwitchWorkerContextImpl.class);
 
     @Override
     public boolean execute(ContainerContext context ) throws Exception {

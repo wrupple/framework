@@ -8,8 +8,8 @@ import com.wrupple.muba.worker.server.service.ChocoRunner;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
 import org.chocosolver.solver.Model;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -17,7 +17,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class ChocoRunnerImpl implements ChocoRunner {
-    protected Logger log = LoggerFactory.getLogger(ChocoRunnerImpl.class);
+    protected Logger log = LogManager.getLogger(ChocoRunnerImpl.class);
 
     private final Provider<FutureChocoVariable> future;
     private final ChocoModelResolver delegate;

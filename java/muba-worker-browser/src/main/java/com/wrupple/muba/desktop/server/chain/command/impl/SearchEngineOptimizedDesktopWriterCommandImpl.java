@@ -22,8 +22,8 @@ import com.wrupple.vegetate.server.services.ObjectMapper;
 import com.wrupple.vegetate.server.services.impl.VegetateUrlServiceBuilder;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,7 +36,7 @@ import java.util.List;
 @Singleton
 public class SearchEngineOptimizedDesktopWriterCommandImpl implements SearchEngineOptimizedDesktopWriterCommand {
 
-    private static final Logger log = LoggerFactory.getLogger(SearchEngineOptimizedDesktopWriterCommandImpl.class);
+    private static final Logger log = LogManager.getLogger(SearchEngineOptimizedDesktopWriterCommandImpl.class);
 
     private final CatalogServiceManifest manifest;
     private final ObjectMapper mapper;

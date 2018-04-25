@@ -4,8 +4,8 @@ import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.chain.command.ValidateContract;
 import com.wrupple.muba.event.server.service.ValidationGroupProvider;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Singleton
 public class ValidateContractImpl implements ValidateContract {
-    private static final Logger log = LoggerFactory.getLogger(ValidateContractImpl.class);
+    private static final Logger log = LogManager.getLogger(ValidateContractImpl.class);
 
 
     private final Validator validator;

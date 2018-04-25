@@ -9,8 +9,8 @@ import org.apache.commons.chain.Catalog;
 import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.impl.CatalogBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,7 +25,7 @@ import java.util.*;
 @Singleton
 public class EventRegistryImpl implements EventRegistry {
 
-    protected static final Logger log = LoggerFactory.getLogger(EventRegistryImpl.class);
+    protected static final Logger log = LogManager.getLogger(EventRegistryImpl.class);
 
     private final String DICTIONARY = ParentServiceManifest.NAME + "-interpret";
     private final ParentServiceManifest root;

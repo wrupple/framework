@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.google.inject.Inject;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
@@ -16,7 +16,7 @@ import com.wrupple.muba.catalogs.domain.FilterData;
 import com.wrupple.muba.event.domain.impl.FilterDataImpl;
 
 public class OldCatalogResultCacheImpl implements CatalogResultCache {
-	private static final Logger log = LoggerFactory.getLogger(OldCatalogResultCacheImpl.class);
+	private static final Logger log = LogManager.getLogger(OldCatalogResultCacheImpl.class);
 	private long domain;
 	private String catalog;
 

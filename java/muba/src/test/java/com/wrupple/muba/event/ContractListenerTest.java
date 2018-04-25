@@ -41,7 +41,6 @@ public class ContractListenerTest extends BootstrapTest {
 
 		LargeStringFieldDataAccessObject largeStringDelegate= new LargeStringFieldDataAccessObjectImpl();
 		ObjectNativeInterface oni= new JavaObjectNativeInterface(largeStringDelegate);
-		FilterNativeInterface filterer=new JavaFilterNativeInterfaceImpl(oni);
 		FieldAccessStrategy instrospector=new JavaFieldAccessStrategy(null,oni);
 
 

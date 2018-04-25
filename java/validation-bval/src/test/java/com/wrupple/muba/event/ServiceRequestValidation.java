@@ -19,8 +19,8 @@ import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -168,7 +168,7 @@ public class ServiceRequestValidation extends MubaTest {
 
     private abstract static class UpdatedVersionService implements Command {
 
-        protected Logger log = LoggerFactory.getLogger(UpdatedVersionService.class);
+        protected Logger log = LogManager.getLogger(UpdatedVersionService.class);
 
 
 		@SuppressWarnings("unchecked")
@@ -208,7 +208,7 @@ public class ServiceRequestValidation extends MubaTest {
 
     private abstract static class OldVesionService implements Command {
 
-        protected Logger log = LoggerFactory.getLogger(UpdatedVersionService.class);
+        protected Logger log = LogManager.getLogger(UpdatedVersionService.class);
 
 
         @SuppressWarnings("unchecked")

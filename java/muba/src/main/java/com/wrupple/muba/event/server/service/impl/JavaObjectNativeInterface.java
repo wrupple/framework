@@ -6,8 +6,8 @@ import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,7 +27,7 @@ import java.util.Collection;
 public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
 
-    protected static final Logger log = LoggerFactory.getLogger(JavaObjectNativeInterface.class);
+    protected static final Logger log = LogManager.getLogger(JavaObjectNativeInterface.class);
     private final LargeStringFieldDataAccessObject delegate;
 
         //TODO use common instance (dfined in application module)

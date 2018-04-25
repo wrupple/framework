@@ -3,15 +3,15 @@ package com.wrupple.muba.event.server.service.impl;
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.server.chain.command.EventDispatcher;
 import com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Named;
 import javax.transaction.*;
 import javax.validation.ConstraintViolation;
 
 public class ServiceInvocationThread extends Thread {
-	private static final Logger log = LoggerFactory.getLogger(EventDispatcherImpl.class);
+	private static final Logger log = LogManager.getLogger(EventDispatcherImpl.class);
 
 	private final RuntimeContext requestContext;
 	private final EventDispatcher command;

@@ -4,8 +4,8 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.PersistentImageMetadata;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Singleton
 public class CatalogKeyServicesImpl implements CatalogKeyServices {
-    protected static final Logger log = LoggerFactory.getLogger(CatalogKeyServicesImpl.class);
+    protected static final Logger log = LogManager.getLogger(CatalogKeyServicesImpl.class);
 
 
     @Inject

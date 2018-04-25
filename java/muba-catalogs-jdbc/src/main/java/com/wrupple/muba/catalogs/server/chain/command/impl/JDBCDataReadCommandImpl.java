@@ -17,8 +17,8 @@ import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -32,7 +32,7 @@ import com.wrupple.muba.event.domain.Instrospection;
 @Singleton
 public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 
-	protected static final Logger log = LoggerFactory.getLogger(JDBCDataReadCommandImpl.class);
+	protected static final Logger log = LogManager.getLogger(JDBCDataReadCommandImpl.class);
 	private final Integer missingTableErrorCode;
 
 	static class MultipleFieldResultsHandler extends AbstractListHandler<Object> {

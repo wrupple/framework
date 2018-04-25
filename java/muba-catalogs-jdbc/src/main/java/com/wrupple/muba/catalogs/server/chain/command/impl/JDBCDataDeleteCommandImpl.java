@@ -8,8 +8,8 @@ import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -22,7 +22,7 @@ import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 
 @Singleton
 public class JDBCDataDeleteCommandImpl extends AbstractDataDeleteCommand implements JDBCDataDeleteCommand {
-	protected static final Logger log = LoggerFactory.getLogger(JDBCDataDeleteCommandImpl.class);
+	protected static final Logger log = LogManager.getLogger(JDBCDataDeleteCommandImpl.class);
 
 	private final JDBCMappingDelegate tableNames;
 	private final QueryRunner runner;

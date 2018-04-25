@@ -9,8 +9,8 @@ import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.SelectSolution;
 import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,7 +23,7 @@ import java.util.List;
 @Singleton
 public class SelectSolutionImpl implements SelectSolution {
 
-    protected Logger log = LoggerFactory.getLogger(SelectSolutionImpl.class);
+    protected Logger log = LogManager.getLogger(SelectSolutionImpl.class);
 
 
     @Override

@@ -3,8 +3,8 @@ package com.wrupple.muba.worker.server.service.impl;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.service.ChocoModelResolver;
 import org.chocosolver.solver.Model;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class ChocoModelResolverImpl implements ChocoModelResolver {
-    protected Logger log = LoggerFactory.getLogger(ChocoModelResolverImpl.class);
+    protected Logger log = LogManager.getLogger(ChocoModelResolverImpl.class);
 
     private final String modelKey;
 

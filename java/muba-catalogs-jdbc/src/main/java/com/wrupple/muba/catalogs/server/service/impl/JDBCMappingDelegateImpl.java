@@ -17,7 +17,7 @@ import javax.inject.Singleton;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.SQLCompatibilityDelegate;
 import org.apache.commons.dbutils.QueryRunner;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;

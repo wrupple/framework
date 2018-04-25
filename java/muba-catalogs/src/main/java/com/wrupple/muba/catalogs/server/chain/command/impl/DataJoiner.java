@@ -10,8 +10,8 @@ import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -21,7 +21,7 @@ import static com.wrupple.muba.event.server.service.impl.FilterDataUtils.*;
 
 public abstract class DataJoiner implements Command {
 
-	protected static final Logger log = LoggerFactory.getLogger(DataJoiner.class);
+	protected static final Logger log = LogManager.getLogger(DataJoiner.class);
 
 
 	static class JoinQueryKey {
@@ -315,7 +315,7 @@ public abstract class DataJoiner implements Command {
 	 * catalog =
 	 * context.getDescriptorForName(currentCatalogId,
 	 * context); }
-	 * 
+	 *
 	 * Collection<FieldDescriptor> rawFields = catalog.getFieldsValues(); if
 	 * (list == null || list.isEmpty() || rawFields == null ||
 	 * rawFields.isEmpty()) { log.debug("[NO DATA]"); return ; } else {
@@ -329,30 +329,30 @@ public abstract class DataJoiner implements Command {
 	 * List<Object>[] collectedValues = new List[fields.size()]; String fieldId;
 	 * List<Object> fieldContents; log.trace("[RESULT SET CREATED] {}",
 	 * catalog.getDistinguishedName()); // System.err.println(list);
-	 * 
+	 *
 	 * Instrospection session = context.getCatalogManager().newSession(list.get(0)); int j = 0; for
 	 * (FieldDescriptor field : fields) { fieldId = field.getFieldId();
 	 * fieldContents = new ArrayList<Object>(list.size()); collectedValues[j] =
 	 * fieldContents; log.trace("[ALLOCATED SPACE FOR FIELD] {}", fieldId);
 	 * contents.put(fieldId, fieldContents); j++; } if (contents.isEmpty()) {
 	 * return ; }
-	 * 
+	 *
 	 * Object fieldValue;
-	 * 
+	 *
 	 * CatalogEntry object; DistributiedLocalizedEntry localizedObject;
-	 * 
+	 *
 	 * for (int i = 0; i < list.size(); i++) { object = list.get(i); if
 	 * (localizedEntries == null) { localizedObject = null; } else {
 	 * localizedObject = localizedEntries.get(i); }
-	 * 
+	 *
 	 * for (FieldDescriptor field : fields) { fieldContents =
 	 * collectedValues[j]; if (field.isMasked()) { log.debug(
 	 * "[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId()); fieldValue =
 	 * null; } else { fieldValue = context.getCatalogManager().getPropertyValue(catalog, field, object,
 	 * localizedObject, session); } fieldContents.add(fieldValue); }
-	 * 
+	 *
 	 * } regreso.setIdAsString(catalog.getDistinguishedName()); return ; }
-	 * 
+	 *
 	 * }
 	 */
 

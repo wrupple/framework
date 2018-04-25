@@ -6,8 +6,8 @@ import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.event.domain.Intent;
 import com.wrupple.muba.worker.server.chain.command.BusinessRequestInterpret;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -20,7 +20,7 @@ import java.util.List;
 @Singleton
 public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
 
-    protected Logger log = LoggerFactory.getLogger(BusinessRequestInterpretImpl.class);
+    protected Logger log = LogManager.getLogger(BusinessRequestInterpretImpl.class);
 
 
     private final Provider<ApplicationContext> proveedor;

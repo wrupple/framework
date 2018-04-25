@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.server.service.impl;
+package com.wrupple.muba.event.server.service.impl;
 
 import javax.validation.ConstraintValidatorContext;
 

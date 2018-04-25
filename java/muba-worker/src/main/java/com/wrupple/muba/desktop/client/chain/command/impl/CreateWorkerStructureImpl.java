@@ -5,8 +5,8 @@ import com.wrupple.muba.desktop.client.widgets.ProcessWindow;
 import com.wrupple.muba.desktop.domain.ContainerContext;
 import com.wrupple.muba.event.domain.Application;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -17,7 +17,7 @@ public class CreateWorkerStructureImpl implements CreateWorkerStructure {
             main.setStyleName("desktop");
      */
     private final Provider<ProcessWindow> presenterProvider;
-    protected Logger log = LoggerFactory.getLogger(CreateWorkerStructureImpl.class);
+    protected Logger log = LogManager.getLogger(CreateWorkerStructureImpl.class);
 
     @Inject
     public CreateWorkerStructureImpl(Provider<ProcessWindow> presenterProvider) {

@@ -9,8 +9,8 @@ import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.IntrospectionStrategy;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import org.apache.commons.chain.impl.ContextBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,7 +30,7 @@ public class ServiceBusImpl extends ContextBase implements ServiceBus {
     private final IntentDelegate delegate;
 
 
-    protected static final Logger log = LoggerFactory.getLogger(ServiceBusImpl.class);
+    protected static final Logger log = LogManager.getLogger(ServiceBusImpl.class);
 
 	private static final long serialVersionUID = -7144539787781019055L;
 

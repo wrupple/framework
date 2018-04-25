@@ -7,8 +7,8 @@ import com.wrupple.muba.event.domain.ServiceContext;
 import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -17,7 +17,7 @@ import javax.inject.Provider;
  * Created by japi on 30/09/17.
  */
 public class BroadcastInterpretImpl implements BroadcastInterpret {
-    protected static final Logger log = LoggerFactory.getLogger(BroadcastInterpretImpl.class);
+    protected static final Logger log = LogManager.getLogger(BroadcastInterpretImpl.class);
 
     private final Provider<BroadcastContext> contextProvider;
     private final EventSuscriptionMapper concernedInterests;

@@ -2,8 +2,8 @@ package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Singleton
 public class IntentDelegateImpl implements ServiceBusImpl.IntentDelegate {
-    protected static final Logger log = LoggerFactory.getLogger(ServiceBusImpl.class);
+    protected static final Logger log = LogManager.getLogger(ServiceBusImpl.class);
 
     @Override
     public List<Object> handleExplicitIntent(SessionContext session, RuntimeContext parentTimeline, List<Invocation> handlers, ServiceBusImpl eventBus) throws Exception {

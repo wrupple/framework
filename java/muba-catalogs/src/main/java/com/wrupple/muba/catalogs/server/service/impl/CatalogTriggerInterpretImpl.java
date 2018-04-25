@@ -12,8 +12,8 @@ import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import org.apache.commons.chain.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -23,7 +23,7 @@ import java.util.*;
 
 @Singleton
 public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
-	private static final Logger log = LoggerFactory.getLogger(CatalogTriggerInterpretImpl.class);
+	private static final Logger log = LogManager.getLogger(CatalogTriggerInterpretImpl.class);
 
 	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;

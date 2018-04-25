@@ -11,8 +11,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -40,7 +40,7 @@ import com.wrupple.vegetate.server.service.SystemRealm;
  *
  */
 public class ShiroSessionContext extends ContextBase implements SessionContext {
-	private static final Logger log = LoggerFactory.getLogger(ShiroSessionContext.class);
+	private static final Logger log = LogManager.getLogger(ShiroSessionContext.class);
 	private static final long serialVersionUID = 8347036393166555684L;
 
 	private final String catalogMasterRole;

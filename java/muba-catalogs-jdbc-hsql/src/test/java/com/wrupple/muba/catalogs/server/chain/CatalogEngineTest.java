@@ -50,16 +50,31 @@ public class CatalogEngineTest extends IntegralTest {
         assertTrue( solutionFieldDescriptor!= null);
         assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
 
+        CatalogDescriptor argumentContract = builder.fromClass(
+                Argument.class,
+                Argument.class.getSimpleName(),
+                "Argument",
+                null);
+
 		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
-		action.setEntryValue(problemContract);
+		action.setEntryValue(argumentContract);
         action.setFollowReferences(true);
 		runtimeContext.setServiceContract(action);
 		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
 				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
 		// locale is set in catalog
 		runtimeContext.process();
+        runtimeContext.reset();
 
-		CatalogActionContext catalogContext = runtimeContext.getServiceContext();
+        action = new CatalogActionRequestImpl();
+        action.setEntryValue(problemContract);
+        action.setFollowReferences(true);
+        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
+                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
+        runtimeContext.setServiceContract(action);
+        runtimeContext.process();
+
+        CatalogActionContext catalogContext = runtimeContext.getServiceContext();
 
 		problemContract = catalogContext.getEntryResult();
 		assertTrue(problemContract.getId() != null);
@@ -133,20 +148,28 @@ public class CatalogEngineTest extends IntegralTest {
 		runtimeContext.reset();
 		MathProblem problem = new MathProblem();
 		problem.setName(MathProblem.class.getSimpleName());
-		problem.setSolution(7l);
+		problem.setSolution(4l);
+		Argument argument = new Argument();
+		argument.setProblemValue(problem);
+        problem.setArgumentsValues(Arrays.asList(argument));
+
 		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
 		runtimeContext.setServiceContract(contract);
 		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
 				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(),
 				CatalogActionRequest.CREATE_ACTION);
-
+		contract.setFollowReferences(true);
 		runtimeContext.process();
 
 		problem = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
 		assertTrue(problem.getId() != null);
 		assertTrue(problem.getSolution() != null);
 		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
+		assertTrue("are foreign keys registered",	problem.getArguments()!=null);
+		assertTrue("is data graph complete",	problem.getArgumentsValues()!=null);
+		argument = problem.getArgumentsValues().get(0);
+		assertTrue("Is circular data dependency resolved?",argument.getProblemValue()==problem);
 
 		log.debug("-check if problem was created-");
 		runtimeContext.reset();
@@ -187,8 +210,13 @@ public class CatalogEngineTest extends IntegralTest {
 
 		log.trace("[-create elements-]");
 
-		List<Argument> argumentsToDeclare = Arrays.asList(new Argument(TRES, 3l), new Argument(FIVE, 5l),
-				new Argument("one", 1l), new Argument("uno", 1l), new Argument("four", 4l));
+		List<Argument> argumentsToDeclare = Arrays.asList(
+				new Argument(TRES, 3l),
+				new Argument(FIVE, 5l),
+				new Argument("one", 1l),
+				new Argument("uno", 1l),
+				new Argument("four", 4l)
+		);
 
 		for (Argument arg : argumentsToDeclare) {
 			request.setEntryValue(arg);

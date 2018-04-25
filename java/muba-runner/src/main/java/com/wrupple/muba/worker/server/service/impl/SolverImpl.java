@@ -5,8 +5,8 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.service.*;
 import org.apache.commons.chain.Command;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,7 +24,7 @@ public class SolverImpl implements Solver {
 
     private final List<Runner> runners;
     private final VariableConsensus reducer;
-    protected Logger log = LoggerFactory.getLogger(SolverImpl.class);
+    protected Logger log = LogManager.getLogger(SolverImpl.class);
 
     @Inject
     public SolverImpl(VariableConsensus reducer) {

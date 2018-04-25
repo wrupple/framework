@@ -14,8 +14,8 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.impl.ContextBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,7 +30,7 @@ import java.util.List;
 /*Set defaults, (like domain language and stuff)*/
 @Singleton
 public final class CatalogRequestInterpretImpl implements CatalogRequestInterpret {
-    protected static final Logger log = LoggerFactory.getLogger(CatalogRequestInterpretImpl.class);
+    protected static final Logger log = LogManager.getLogger(CatalogRequestInterpretImpl.class);
 
 
     private final CatalogKeyServices keydelegate;

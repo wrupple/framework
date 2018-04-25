@@ -6,15 +6,15 @@ import com.wrupple.muba.event.server.chain.command.Incorporate;
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Singleton;
 import java.util.List;
 
 @Singleton
 public class IncorporateImpl implements Incorporate {
-    private static final Logger log = LoggerFactory.getLogger(IncorporateImpl.class);
+    private static final Logger log = LogManager.getLogger(IncorporateImpl.class);
 
     /**
      * set context writing precedence of the value of a property in favor of

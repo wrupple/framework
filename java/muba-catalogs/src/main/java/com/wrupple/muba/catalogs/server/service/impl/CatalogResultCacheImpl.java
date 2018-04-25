@@ -9,8 +9,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.google.inject.Inject;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -22,7 +22,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 @Singleton
 public class CatalogResultCacheImpl implements CatalogResultCache {
 
-	private static Logger log = LoggerFactory.getLogger(CatalogResultCacheImpl.class);
+	private static Logger log = LogManager.getLogger(CatalogResultCacheImpl.class);
 
 	private final Context cachem;
 

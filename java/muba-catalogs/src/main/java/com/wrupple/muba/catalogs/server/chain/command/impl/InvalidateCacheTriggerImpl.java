@@ -12,12 +12,12 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTrigger;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @Singleton
 public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigger {
-    protected static final Logger log = LoggerFactory.getLogger(DataJoiner.class);
+    protected static final Logger log = LogManager.getLogger(DataJoiner.class);
 
     private final CatalogResultCache cache;
 	

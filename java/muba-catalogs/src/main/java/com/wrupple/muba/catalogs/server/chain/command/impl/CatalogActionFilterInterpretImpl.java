@@ -6,13 +6,13 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogActionFilterInterpr
 import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.ServiceContext;
 import org.apache.commons.chain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Provider;
 
 public class CatalogActionFilterInterpretImpl implements CatalogActionFilterInterpret {
-    protected static final Logger log = LoggerFactory.getLogger(CatalogActionFilterInterpretImpl.class);
+    protected static final Logger log = LogManager.getLogger(CatalogActionFilterInterpretImpl.class);
 
     @Override
     public boolean execute(RuntimeContext requestContext) throws Exception {

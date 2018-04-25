@@ -36,8 +36,8 @@ import com.wrupple.vegetate.service.RemoteBroadcastHandler;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -92,15 +92,9 @@ public abstract class WorkerTest extends EasyMockSupport {
 
     }
 
-
-
-    static {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
-    }
-
     @Rule
     public EasyMockRule rule = new EasyMockRule(this);
-    protected Logger log = LoggerFactory.getLogger(WorkerTest.class);
+    protected Logger log = LogManager.getLogger(WorkerTest.class);
 
 
 
