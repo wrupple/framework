@@ -10,19 +10,21 @@ public abstract class AbstractContractDescriptor extends CatalogEntryImpl implem
 
 
 	private List<String> contextExpressions, properties;
+	private String keyField;
+	public String descriptiveField;
 
 	public void setKeyField(String idField) {
-
+		this.keyField = idField;
 	}
 
 	@Override
 	public final String getKeyField() {
-		return CatalogEntry.ID_FIELD;
+		return keyField;
 	}
 
 	@Override
 	public final String getDescriptiveField() {
-		return CatalogEntry.NAME_FIELD;
+		return descriptiveField;
 	}
 
 	

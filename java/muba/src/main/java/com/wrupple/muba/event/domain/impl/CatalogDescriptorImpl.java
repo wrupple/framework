@@ -279,7 +279,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	@Override
 	public void setDescriptiveField(String nameField) {
-
+		this.descriptiveField=nameField;
 	}
 
 	/*

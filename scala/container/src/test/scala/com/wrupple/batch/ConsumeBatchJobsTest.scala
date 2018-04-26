@@ -1,14 +1,12 @@
 package com.wrupple.batch
 
-import org.apache.logging.log4j.scala.Logging
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FunSuite}
 
 class ConsumeBatchJobsTest
     extends FunSuite
     with BeforeAndAfter
-    with MockitoSugar
-    with Logging {
+    with MockitoSugar {
 
   //FIXME translate BPMTest, then SubmitToApplicationTest
 

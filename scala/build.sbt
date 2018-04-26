@@ -80,17 +80,12 @@ lazy val dependencies =
     //val actor = "com.typesafe.akka" %% "akka-actor" % "2.5.9"
     val sql = "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope
     val hive = "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope
-    val config = "com.typesafe" % "config" % "1.3.1"
   }
 
 lazy val commonDependencies = Seq(
   dependencies.bval,
-  dependencies.config,
   dependencies.mockitoInline % "test",
-  dependencies.scalaTest % "test",
-  "org.apache.logging.log4j" %% "log4j-api-scala" % "11.0",
-  "org.apache.logging.log4j" % "log4j-api" % "2.8.2",
-  "org.apache.logging.log4j" % "log4j-core" % "2.8.2" /* % Runtime,*/
+  dependencies.scalaTest % "test"
 )
 
 // SETTINGS

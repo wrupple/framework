@@ -1,16 +1,12 @@
 package com.wrupple.batch
 
-import org.apache.logging.log4j.scala.Logging
 import org.scalatest.FunSpec
 import org.scalatest.mockito.MockitoSugar
 
 /**
   *
   */
-class HiveTableDescriptorBuilderTest
-    extends FunSpec
-    with MockitoSugar
-    with Logging {
+class HiveTableDescriptorBuilderTest extends FunSpec with MockitoSugar {
   /*
     // (1) init
     val service = mock[DataTypeMapper]
