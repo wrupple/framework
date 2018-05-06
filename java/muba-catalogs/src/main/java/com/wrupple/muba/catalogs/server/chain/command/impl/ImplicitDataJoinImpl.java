@@ -1,11 +1,11 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.command.BuildResult;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
-import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
+import com.wrupple.muba.catalogs.server.service.ResultSetService;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
@@ -20,12 +20,22 @@ import java.util.Map;
 import java.util.Set;
 
 @Singleton
-public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin {
+public class ImplicitDataJoinImpl  implements ImplicitDataJoin {
+
+    private final ResultSetService delegate;
+	private final FieldAccessStrategy access;
+    private final CatalogKeyServices keydelegate;
+
+    private final BuildResult build;
 
 	@Inject
-	public ImplicitDataJoinImpl(EntrySynthesizer entrySynthesizer, CatalogKeyServices keydelegateValue, FieldAccessStrategy accessStrategy) {
-		super(entrySynthesizer, keydelegateValue, accessStrategy);
+	public ImplicitDataJoinImpl(ResultSetService delegate, FieldAccessStrategy access, CatalogKeyServices keydelegate, BuildResult build) {
+        this.delegate = delegate;
+        this.access = access;
+        this.keydelegate = keydelegate;
+        this.build = build;
 	}
+
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
@@ -36,30 +46,23 @@ public class ImplicitDataJoinImpl extends DataJoiner implements ImplicitDataJoin
 
 		List<CatalogEntry> result = context.getResults();
         Instrospection instrospection = access.newSession(result.get(0));
-        CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
+        CatalogColumnResultSet resultSet = delegate.createResultSet(result, context.getCatalogDescriptor(),
 				(String) context.getRequest().getCatalog(), context, instrospection);
 
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		String[][] joins = super.keydelegate.getJoins(context, null, descriptor, null,
-				context, null);
-		Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);
+        List<CatalogRelation> joins = keydelegate.getJoins(context, null, descriptor, null,
+                context, null);
+        DataJoinContext childContext = new DataJoinContext(context,access.newSession(null));
+        childContext.setJoins(joins);
+        childContext.setBuildResultSet(true);
+		Map<FieldFromCatalog, Set<Object>> filterMap = childContext.getFieldValueMap();
 
 		ArrayList<CatalogColumnResultSet> regreso = new ArrayList<CatalogColumnResultSet>(filterMap.size() + 1);
 		regreso.add(resultSet);
-		context.put(CompleteCatalogGraph.JOINED_DATA, regreso);
+		context.setResultSet(regreso);
 
-		joinWithGivenJoinData(context.getResults(), context.getCatalogDescriptor(), joins, context, filterMap, instrospection);
-		return CONTINUE_PROCESSING;
+		return build.execute(childContext);
 	}
 
-	@Override
-	protected void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog, List<CatalogEntry> joins,
-			CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospection instrospection) throws Exception {
-		CatalogColumnResultSet resultSet = super.createResultSet(joins, joinCatalog, joinCatalog.getDistinguishedName(), context,
-                instrospection);
-		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
-				.get(CompleteCatalogGraph.JOINED_DATA);
-		joinsThusFar.add(resultSet);
-	}
 
 }

@@ -1,6 +1,7 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogRelation;
 import com.wrupple.muba.event.domain.PersistentImageMetadata;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
@@ -155,8 +156,8 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
         return true;
     }
 
-    public String[][] getJoins(CatalogActionContext contexto, Object clientSide, CatalogDescriptor descriptor,
-                               String[][] customJoins, Object domain, String host) throws Exception {
+    public List<CatalogRelation> getJoins(CatalogActionContext contexto, Object clientSide, CatalogDescriptor descriptor,
+                                          String[][] customJoins, Object domain, String host) throws Exception {
         // joinable fields
 
         Collection<FieldDescriptor> thisCatalogFields = descriptor.getFieldsValues();
@@ -175,7 +176,7 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
         int size = thisCatalogJoinableFields.size();
         int customJoinsSize = customJoins == null ? 0 : customJoins.length;
         // Generate join sentence
-        String[][] allJoinSentences = new String[size + customJoinsSize][];
+        List<CatalogRelation> allJoinSentences = new ArrayList<>(size + customJoinsSize);
         FieldDescriptor currentJoinableField;
         int i;
         CatalogDescriptor foreign;
@@ -216,15 +217,28 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
             if (localField == null) {
                 localField = CatalogKey.ID_FIELD;
             }
-            allJoinSentences[i] = new String[] { foreignCatalogId, foreignField, localField };
+            allJoinSentences.add(new CatalogRelation (foreignCatalogId, foreignField, localField ));
         }
         if (customJoins != null) {
             for (String[] customJoinStatement : customJoins) {
-                allJoinSentences[i] = customJoinStatement;
+                allJoinSentences.add(i,(new CatalogRelation (customJoinStatement[0], customJoinStatement[1], grabLocalJoinField(customJoinStatement,customJoinStatement[2]))));
                 i++;
             }
         }
         return allJoinSentences;
+    }
+
+
+    private String grabLocalJoinField(String[] join, String foreignField) {
+        String localField;
+        if (join.length<2) {
+            // natural join (Using field)
+            localField = foreignField;
+        } else {
+            // standard join (On field==foreignField)
+            localField = join[2];
+        }
+        return localField;
     }
 
     public String getFieldWithForeignType(CatalogDescriptor foreignDescriptor, String foreignType) {

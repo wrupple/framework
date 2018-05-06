@@ -1,14 +1,11 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
-import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
+import com.wrupple.muba.catalogs.domain.*;
+import com.wrupple.muba.catalogs.server.chain.command.BuildResult;
+import com.wrupple.muba.catalogs.server.service.ResultSetService;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ExplicitDataJoin;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
@@ -21,12 +18,19 @@ import java.util.Map;
 import java.util.Set;
 
 @Singleton
-public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin {
+public class ExplicitDataJoinImpl implements ExplicitDataJoin {
+
+	private final FieldAccessStrategy access;
+	private final BuildResult build;
+	private final ResultSetService delegate;
 
 	@Inject
-	public ExplicitDataJoinImpl(EntrySynthesizer inheritanceDelegate, CatalogKeyServices keydelegateValue, FieldAccessStrategy accessStrategy) {
-		super(inheritanceDelegate, keydelegateValue, accessStrategy);
-	}
+	public ExplicitDataJoinImpl(FieldAccessStrategy access, BuildResult build, ResultSetService delegate) {
+		this.access = access;
+		this.build = build;
+        this.delegate = delegate;
+    }
+
 
 	@Override
 	public boolean execute(Context ctx) throws Exception {
@@ -36,31 +40,34 @@ public class ExplicitDataJoinImpl extends DataJoiner implements ExplicitDataJoin
 		}
 		List<CatalogEntry> result = context.getResults();
         Instrospection instrospection = access.newSession(result.get(0));
-        CatalogColumnResultSet resultSet = super.createResultSet(result, context.getCatalogDescriptor(),
+        CatalogColumnResultSet resultSet = delegate.createResultSet(result, context.getCatalogDescriptor(),
 				(String) context.getRequest().getCatalog(), context, instrospection);
 		FilterData filter = context.getRequest().getFilter();
 		if (filter != null) {
 			resultSet.setCursor(filter.getCursor());
 		}
-		String[][] joins = filter.getJoins();
-		Map<JoinQueryKey, Set<Object>> filterMap = createFilterMap(joins, context);
+		String[][] rawjoins = filter.getJoins();
+		if(rawjoins==null){
+		    return CONTINUE_PROCESSING;
+        }
+		List<CatalogRelation> joins = new ArrayList<>(rawjoins.length);
+		for(String[] rawjoin:rawjoins){
+		    joins.add(new CatalogRelation(rawjoin[0],rawjoin[1],2<rawjoin.length?rawjoin[2]:rawjoin[1]));
+        }
+
+
+        DataJoinContext childContext = new DataJoinContext(context,access.newSession(null));
+        childContext.setJoins(joins);
+        childContext.setBuildResultSet(true);
+
+		Map<FieldFromCatalog, Set<Object>> filterMap = childContext.getFieldValueMap();
 		ArrayList<CatalogColumnResultSet> regreso = new ArrayList<CatalogColumnResultSet>(filterMap.size() + 1);
 		regreso.add(resultSet);
-		context.put(CompleteCatalogGraph.JOINED_DATA, regreso);
+		context.setResultSet(regreso);
 
-		joinWithGivenJoinData(result, context.getCatalogDescriptor(), joins, context, filterMap, instrospection);
-		return CONTINUE_PROCESSING;
+		return build.execute(childContext);
 	}
 
-	@Override
-	protected void workJoinData(List<CatalogEntry> mainResults, CatalogDescriptor mainCatalog, List<CatalogEntry> joins,
-			CatalogDescriptor joinCatalog, CatalogActionContext context, Instrospection instrospection) throws Exception {
-		CatalogColumnResultSet resultSet = super.createResultSet(joins, joinCatalog, joinCatalog.getDistinguishedName(),
-				context, instrospection);
-		List<CatalogColumnResultSet> joinsThusFar = (List<CatalogColumnResultSet>) context
-				.get(CompleteCatalogGraph.JOINED_DATA);
-		joinsThusFar.add(resultSet);
 
-	}
 
 }

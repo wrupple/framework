@@ -167,7 +167,7 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue(problem.getSolution() != null);
 		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
 		assertTrue("are foreign keys registered",	problem.getArguments()!=null);
-		assertTrue("is data graph complete",	problem.getArgumentsValues()!=null);
+		assertTrue("data graph is incomplete",	problem.getArgumentsValues()!=null);
 		argument = problem.getArgumentsValues().get(0);
 		assertTrue("Is circular data dependency resolved?",argument.getProblemValue()==problem);
 

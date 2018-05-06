@@ -46,15 +46,13 @@ public class FormatResultSetImpl implements FormatResultSet {
 
 		List<String> warnings = context.getRuntimeContext().resetWarnings();
 		Set<ConstraintViolation<?>> constraintViolations = context.getRuntimeContext().getConstraintViolations();
-		List<CatalogColumnResultSet> responseList = (List<CatalogColumnResultSet>) context
-				.get(CompleteCatalogGraph.JOINED_DATA);
-
+		List<CatalogColumnResultSet> responseList = context.getResultSet();
 		if (constraintViolations == null || constraintViolations.isEmpty()) {
 
 			if (responseList == null) {
 				if (!CatalogActionRequest.DELETE_ACTION.equals(action)) {
 					resultService.execute(context);
-					responseList = (List<CatalogColumnResultSet>) context.get(CompleteCatalogGraph.JOINED_DATA);
+					responseList = context.getResultSet();
 				}
 			}
 		} else {

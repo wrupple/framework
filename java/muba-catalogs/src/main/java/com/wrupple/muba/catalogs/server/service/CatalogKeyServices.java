@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.server.service;
 import java.util.List;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogRelation;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
@@ -47,9 +48,9 @@ public interface CatalogKeyServices {
 
 	boolean isPrimaryKey(String vanityId);
 	
-	public  String[][] getJoins(CatalogActionContext serverSide, Object clientSide, CatalogDescriptor descriptor, String[][] customJoins, Object domain, String host) throws Exception;
+	  List<CatalogRelation> getJoins(CatalogActionContext serverSide, Object clientSide, CatalogDescriptor descriptor, String[][] customJoins, Object domain, String host) throws Exception;
 
-	public  String getFieldWithForeignType(CatalogDescriptor foreignDescriptor, String foreignType);
+	  String getFieldWithForeignType(CatalogDescriptor foreignDescriptor, String foreignType);
 
     boolean isFieldOwnedBy(FieldDescriptor fieldDescriptor, CatalogDescriptor catalogDescriptor);
 }

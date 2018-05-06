@@ -17,7 +17,7 @@ import org.apache.logging.log4j.LogManager;
 
 @Singleton
 public class InvalidateCacheTriggerImpl implements CatalogDescriptorUpdateTrigger {
-    protected static final Logger log = LogManager.getLogger(DataJoiner.class);
+    protected static final Logger log = LogManager.getLogger(InvalidateCacheTriggerImpl.class);
 
     private final CatalogResultCache cache;
 	

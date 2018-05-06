@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
@@ -73,4 +74,8 @@ public interface CatalogActionContext
     boolean isMetadataReady();
 
     void switchContract(CatalogActionRequest childContext);
+
+    List<CatalogColumnResultSet> getResultSet();
+
+    void setResultSet(ArrayList<CatalogColumnResultSet> regreso);
 }

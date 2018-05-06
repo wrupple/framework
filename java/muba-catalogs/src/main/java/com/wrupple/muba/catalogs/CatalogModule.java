@@ -171,21 +171,22 @@ public class CatalogModule extends AbstractModule {
         //used by BroadcastInterpretImpl
         bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
 
+		bind(CompleteCatalogGraph.class).to(CompleteCatalogGraphImpl.class);
+		bind(ExplicitDataJoin.class).to(ExplicitDataJoinImpl.class);
+		bind(ImplicitDataJoin.class).to(ImplicitDataJoinImpl.class);
+		bind(TriggerPluginQueryCommand.class).to(TriggerPluginQueryCommandImpl.class);
+        bind(BuildResult.class).to(BuildResultImpl.class);
 		/*
 		 * Services
 		 */
-		bind(TriggerPluginQueryCommand.class).to(TriggerPluginQueryCommandImpl.class);
         bind(CatalogDeserializationService.class).to(CatalogDeserializationServiceImpl.class);
         bind(CatalogKeyServices.class).to(CatalogKeyServicesImpl.class);
 		bind(EntrySynthesizer.class).to(EntrySynthesizerImpl.class);
 		bind(JSRAnnotationsDictionary.class).to(JSRAnnotationsDictionaryImpl.class);
 		bind(ActionsDictionary.class).to(ActionsDictionaryImpl.class);
-		bind(CompleteCatalogGraph.class).to(CompleteCatalogGraphImpl.class);
-		bind(ExplicitDataJoin.class).to(ExplicitDataJoinImpl.class);
-		bind(ImplicitDataJoin.class).to(ImplicitDataJoinImpl.class);
 
 		bind(CatalogTriggerInterpret.class).to(CatalogTriggerInterpretImpl.class);
-
+        bind(ResultSetService.class).to(ResultSetServiceImpl.class);
 		bind(KeyDomainValidator.class).to(KeyDomainValidatorImpl.class);
 
 		bind(SystemCatalogPlugin.class).to(SystemCatalogPluginImpl.class);

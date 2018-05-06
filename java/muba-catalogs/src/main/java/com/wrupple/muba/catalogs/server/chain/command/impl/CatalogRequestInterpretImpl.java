@@ -1,6 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
@@ -245,7 +246,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         private List<CatalogEntry> oldValues;
 
         private List<CatalogEntry> results;
-        private CatalogResultSet resultSet;
+        private List<CatalogColumnResultSet> resultSet;
 
         private CatalogDescriptor catalogDescriptor;
 
@@ -325,12 +326,13 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         }
 
 
-        public CatalogResultSet getResultSet() {
+        public List<CatalogColumnResultSet> getResultSet() {
             return resultSet;
         }
 
-        public void setResultSet(CatalogResultSet mainResultSet) {
-            this.resultSet = mainResultSet;
+        @Override
+        public void setResultSet(ArrayList<CatalogColumnResultSet> regreso) {
+
         }
 
 
