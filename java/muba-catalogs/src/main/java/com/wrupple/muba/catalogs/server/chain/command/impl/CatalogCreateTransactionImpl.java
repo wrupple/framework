@@ -14,6 +14,7 @@ import com.wrupple.muba.catalogs.server.service.EntryCreators;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.CatalogFactory;
+import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -53,7 +54,6 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 
 		CatalogActionContext context = (CatalogActionContext) cxt;
 
-		// must have been deserialized by this point
 		CatalogEntry result = (CatalogEntry) context.getRequest().getEntryValue();
 		willBeCreated(context,  result);
 		if(result ==null){
@@ -64,14 +64,15 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         log.debug("</CatalogActionFilter>");
 
         CatalogDescriptor catalog=context.getCatalogDescriptor();
+
 		DataCreationCommand createDao = (DataCreationCommand) creators.getCommand(String.valueOf(catalog.getStorage()));
 
 		Instrospection instrospection = access.newSession(result);
-		
+
 		log.trace("[catalog/storage] {}/{}",catalog.getDistinguishedName(),createDao.getClass());
 		if(follow||context.getRequest().getFollowReferences()){
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
-			Object foreignValue,localvalue;
+			Object foreignValue;
 			for(FieldDescriptor field: fields){
 				if (field.isKey()) {
                     foreignValue=null;
@@ -88,14 +89,16 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 			}
 		}
 
-		
+
 		CatalogEntry parentEntry = null;
 		String greatAncestor = delegate.evaluateGreatAncestor(context,catalog,null);
 		if (  greatAncestor!= null && !catalog.getConsolidated()) {
 
 			parentEntry= create( result, instrospection, catalog, context,context);
 		}
-		
+        if(catalog.getDistinguishedName().equals("MathProblem")){
+            log.trace("case");
+        }
 		createDao.execute(context);
 
 		if (follow||context.getRequest().getFollowReferences()) {// interceptor
@@ -106,7 +109,9 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		}
 		
 		CatalogEntry regreso = context.getEntryResult();
-		
+        if(catalog.getDistinguishedName().equals("MathProblem")){
+            log.trace("case");
+        }
 		if(regreso!=null){
 			if (parentEntry!=null &&greatAncestor != null && !catalog.getConsolidated() ) {
                 delegate.addInheritedValuesToChild(parentEntry,  regreso, instrospection,catalog);
@@ -121,7 +126,6 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             }
 		}
 
-
         log.debug("<CatalogActionEvent-Broadcast>");
         postProcess(context,catalog.getDistinguishedName(),CREATE_ACTION,regreso);
         log.debug("</CatalogActionEvent-Broadcast>");
@@ -130,6 +134,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         	//units are not guaranteed to keep the same instance
 			access.copy(regreso,result,catalog);
 		}
+        wasCreated(context,result);
 
         context.setResults(Collections.singletonList(regreso));
 
@@ -180,11 +185,16 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             CatalogEntry created;
             boolean alterationsMade = false;
 			for (CatalogEntry entry : entries) {
-				if (entry.getId() == null&&!beeingCreated(context,entry)) {
-                    created= context.triggerCreate(field.getCatalog(), entry);
+				if (entry.getId() == null) {
+                    if(beeingCreated(context,entry)){
+                        queueCreationCallback(context,entry,new MultipleBackReferencePropagation(field,owner,instrospection,catalog));
+                    }else{
+                        created= context.triggerCreate(field.getCatalog(), entry);
 
-					createdValues.add(created);
-                    alterationsMade=true;
+                        createdValues.add(created);
+                        alterationsMade=true;
+                    }
+
 				} else {
 					createdValues.add(entry);
 				}
@@ -206,39 +216,126 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             }
 		} else {
             CatalogEntry entry = (CatalogEntry) foreignValue;
-            if (entry.getId() == null&&!beeingCreated(context,entry)) {
-
-                entry =  context.triggerCreate(field.getCatalog(), entry);
-                reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
-                if (access.isWriteableProperty(reservedField, owner, instrospection)) {
-                    access.setPropertyValue(reservedField, owner, entry, instrospection);
+            if (entry.getId() == null) {
+                if(beeingCreated(context,entry)){
+                    queueCreationCallback(context,entry,new SingleBackReferencePropagation(field,owner,instrospection));
+                }else{
+                    entry =  context.triggerCreate(field.getCatalog(), entry);
+                    reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                    if (access.isWriteableProperty(reservedField, owner, instrospection)) {
+                        access.setPropertyValue(reservedField, owner, entry, instrospection);
+                    }
                 }
+
             }
             access.setPropertyValue(field, owner, entry.getId(), instrospection);
 
 		}
 	}
 
+
+    private class MultipleBackReferencePropagation implements Command<CatalogActionContext>{
+
+        final FieldDescriptor field;
+        final CatalogEntry owner;
+        final Instrospection instrospection;
+        final CatalogDescriptor catalog;
+
+        private MultipleBackReferencePropagation(FieldDescriptor field, CatalogEntry owner, Instrospection instrospection, CatalogDescriptor catalog) {
+            this.field = field;
+            this.owner = owner;
+            this.instrospection = instrospection;
+            this.catalog = catalog;
+        }
+
+        @Override
+        public synchronized boolean  execute(CatalogActionContext context) throws Exception {
+
+            Collection<CatalogEntry> createdValues = (Collection) delegate.getPropertyForeignKeyValue(catalog, field, owner, instrospection);
+
+            createdValues.add(context.getResult());
+            String reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+            if (access.isWriteableProperty(reservedField, owner, instrospection)) {
+                access.setPropertyValue(reservedField, owner, createdValues, instrospection);
+            }
+            List<Object> keys = createdValues.stream().map(v -> v.getId()).filter(v -> v!=null).collect(Collectors.toList());
+
+            if(keys.isEmpty()){
+                access.setPropertyValue(field, owner, null, instrospection);
+
+            }else{
+                access.setPropertyValue(field, owner, keys, instrospection);
+            }
+            return CONTINUE_PROCESSING;
+        }
+    }
+
+
+    private class SingleBackReferencePropagation implements Command<CatalogActionContext>{
+
+        final FieldDescriptor field;
+        final CatalogEntry owner;
+        final Instrospection instrospection;
+
+        private SingleBackReferencePropagation(FieldDescriptor field, CatalogEntry owner, Instrospection instrospection) {
+            this.field = field;
+            this.owner = owner;
+            this.instrospection = instrospection;
+        }
+
+        @Override
+        public boolean execute(CatalogActionContext context) throws Exception {
+            CatalogEntry entry = context.getResult();
+            String reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+            if (access.isWriteableProperty(reservedField, owner, instrospection)) {
+                access.setPropertyValue(reservedField, owner, entry, instrospection);
+            }
+            access.setPropertyValue(field, owner, entry.getId(), instrospection);
+
+            return CONTINUE_PROCESSING;
+        }
+    }
+
     private void willBeCreated(CatalogActionContext context, CatalogEntry entry) {
-        Set<CatalogEntry> set = assertSet(context);
-        set.add(entry);
+        IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>>  set = assertSet(context);
+        set.put(entry,new ArrayList<>(2));
     }
 
     private static final String PROPERTY = "com.wrupple.catalog.creationGraph";
 
-    private Set<CatalogEntry> assertSet(CatalogActionContext c) {
+    private IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>> assertSet(CatalogActionContext c) {
         RuntimeContext context = c.getRuntimeContext().getRootAncestor();
-        Set<CatalogEntry> set = (Set<CatalogEntry>) context.get(PROPERTY);
+        IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>> set = (IdentityHashMap) context.get(PROPERTY);
         if(set==null){
-            set = new HashSet<>();
+            set = new IdentityHashMap<>();
             context.put(PROPERTY,set);
         }
         return  set;
     }
 
     private boolean beeingCreated(CatalogActionContext context, CatalogEntry entry) {
-        Set<CatalogEntry> set = assertSet(context);
-        return set.contains(entry);
+        IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>> set = assertSet(context);
+        return set.containsKey(entry);
+    }
+
+
+    private void queueCreationCallback(
+            CatalogActionContext context,
+            CatalogEntry entry,
+            Command<CatalogActionContext> callback) {
+        IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>> set = assertSet(context);
+        List<Command<CatalogActionContext>> callbacks = set.get(entry);
+        callbacks.add(callback);
+        
+    }
+
+    private void wasCreated(CatalogActionContext context, CatalogEntry entry) throws Exception {
+        IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>> set = assertSet(context);
+
+        List<Command<CatalogActionContext>> callbacks =set.remove(entry);
+        for(Command<CatalogActionContext> callback:  callbacks){
+            callback.execute(context);
+        }
     }
 
 }
