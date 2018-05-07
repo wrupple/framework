@@ -94,31 +94,31 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		String greatAncestor = delegate.evaluateGreatAncestor(context,catalog,null);
 		if (  greatAncestor!= null && !catalog.getConsolidated()) {
 
-			parentEntry= create( result, instrospection, catalog, context,context);
+			parentEntry= create( result, instrospection, catalog, context);
 		}
-        if(catalog.getDistinguishedName().equals("MathProblem")){
-            log.trace("case");
-        }
+
 		createDao.execute(context);
 
-		if (follow||context.getRequest().getFollowReferences()) {// interceptor
-			context.setCatalogDescriptor(catalog);
-			context.getRequest().setFilter(null);
-			context.getRequest().setEntry(context.getEntryResult().getId());
-			graphJoin.execute(context);
-		}
-		
+
 		CatalogEntry regreso = context.getEntryResult();
-        if(catalog.getDistinguishedName().equals("MathProblem")){
-            log.trace("case");
+
+        wasCreated(context,result);
+
+        if (follow||context.getRequest().getFollowReferences()) {// interceptor
+            context.setCatalogDescriptor(catalog);
+            context.getRequest().setFilter(null);
+            context.getRequest().setEntry(context.getEntryResult().getId());
+            graphJoin.execute(context);
         }
-		if(regreso!=null){
+
+
+        if(regreso!=null){
 			if (parentEntry!=null &&greatAncestor != null && !catalog.getConsolidated() ) {
                 delegate.addInheritedValuesToChild(parentEntry,  regreso, instrospection,catalog);
 			}
 			context.getRuntimeContext().getTransactionHistory().didCreate(context, regreso, createDao);
 		}
-		
+
 		CatalogResultCache cache = context.getCache(catalog, context);
 		if (cache != null) {
 			if(!createDao.isSequential()){
@@ -130,27 +130,20 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         postProcess(context,catalog.getDistinguishedName(),CREATE_ACTION,regreso);
         log.debug("</CatalogActionEvent-Broadcast>");
 
-        if(regreso!=result){
-        	//units are not guaranteed to keep the same instance
-			access.copy(regreso,result,catalog);
-		}
-        wasCreated(context,result);
-
         context.setResults(Collections.singletonList(regreso));
 
 		return CONTINUE_PROCESSING;
 	}
 
 	
-	private CatalogEntry create(CatalogEntry result, Instrospection instrospection, CatalogDescriptor catalog, CatalogActionContext childContext, CatalogActionContext parentContext) throws Exception {
+	private CatalogEntry create(CatalogEntry result, Instrospection instrospection, CatalogDescriptor catalog, CatalogActionContext parentContext) throws Exception {
 		Long parentCatalogId = catalog.getParent();
 		Object allegedParentId = delegate.getAllegedParentId(result, instrospection,access);
-		CatalogDescriptor parentCatalog = childContext.getDescriptorForKey(parentCatalogId);
-		CatalogEntry parentEntity = createAncestorsRecursively(result, parentCatalog, allegedParentId, instrospection,childContext);
-		Object parentEntityId = parentEntity.getId();
-		CatalogEntry childEntity = delegate.synthesizeChildEntity(parentEntityId, result, instrospection, catalog,childContext);
+		CatalogDescriptor parentCatalog = parentContext.getDescriptorForKey(parentCatalogId);
+		CatalogEntry parentEntity = createAncestorsRecursively(result, parentCatalog, allegedParentId, instrospection,parentContext);
+
+        delegate.addInheritedValuesToChild(parentEntity,result,instrospection,catalog);
 		
-		parentContext.getRequest().setEntryValue(childEntity);
 		return parentEntity;
 	}
 	
@@ -218,7 +211,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             CatalogEntry entry = (CatalogEntry) foreignValue;
             if (entry.getId() == null) {
                 if(beeingCreated(context,entry)){
-                    queueCreationCallback(context,entry,new SingleBackReferencePropagation(field,owner,instrospection));
+                    queueCreationCallback(context,entry,new SingleBackReferencePropagation(field,owner,catalog,instrospection));
                 }else{
                     entry =  context.triggerCreate(field.getCatalog(), entry);
                     reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
@@ -266,6 +259,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             }else{
                 access.setPropertyValue(field, owner, keys, instrospection);
             }
+            context.triggerWrite(catalog.getDistinguishedName(),owner.getId(),owner);
             return CONTINUE_PROCESSING;
         }
     }
@@ -276,10 +270,12 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         final FieldDescriptor field;
         final CatalogEntry owner;
         final Instrospection instrospection;
+        private final CatalogDescriptor owenerCatalog;
 
-        private SingleBackReferencePropagation(FieldDescriptor field, CatalogEntry owner, Instrospection instrospection) {
+        private SingleBackReferencePropagation(FieldDescriptor field, CatalogEntry owner,CatalogDescriptor owenerCatalog, Instrospection instrospection) {
             this.field = field;
             this.owner = owner;
+            this.owenerCatalog=owenerCatalog;
             this.instrospection = instrospection;
         }
 
@@ -291,6 +287,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
                 access.setPropertyValue(reservedField, owner, entry, instrospection);
             }
             access.setPropertyValue(field, owner, entry.getId(), instrospection);
+            context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
 
             return CONTINUE_PROCESSING;
         }

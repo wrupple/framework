@@ -318,7 +318,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         List<String> storageUnits = catalog.getStorage();
 
         Command storageUnit;
-        if (storageUnits == null || storageUnits.size() == 1) {
+        if (storageUnits == null|| storageUnits.isEmpty() || storageUnits.size() == 1) {
             if (storageUnits == null || storageUnits.isEmpty()) {
                 //default?
                 storageUnit = queryers.getDefault();

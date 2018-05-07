@@ -561,8 +561,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setEntryValue(updatedEntry);
             event.setName(DataContract.WRITE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            List<T> results = runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
-            return results == null ? null : results.isEmpty() ? null : results.get(0);
+            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
         }
 
 

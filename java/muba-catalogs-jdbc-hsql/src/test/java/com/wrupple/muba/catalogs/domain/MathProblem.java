@@ -29,6 +29,10 @@ public class MathProblem extends ContentNodeImpl implements CatalogEntry {
 
 	private Long parentHID;
 
+	public MathProblem(){
+		super();
+	}
+
 
 	public Long getSolution() {
 		return solution;

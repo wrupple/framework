@@ -24,10 +24,6 @@ public interface EntrySynthesizer {
 
     void addInheritedValuesToChild(CatalogEntry parentEntity, CatalogEntry regreso, Instrospection instrospection,
                                    CatalogDescriptor catalog) throws Exception;
-
-    CatalogEntry synthesizeChildEntity(Object parentEntityId, CatalogEntry result, Instrospection instrospection,
-                                       CatalogDescriptor catalog, CatalogActionContext context) throws Exception;
-
     void processChildInheritance(CatalogEntry childEntity, CatalogDescriptor parentCatalogId, Object parentEntityId,
                                  CatalogActionContext readContext, CatalogDescriptor catalog, Instrospection instrospection) throws Exception;
 

@@ -169,7 +169,8 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue("are foreign keys registered",	problem.getArguments()!=null);
 		assertTrue("data graph is incomplete",	problem.getArgumentsValues()!=null);
 		argument = problem.getArgumentsValues().get(0);
-		assertTrue("Is circular data dependency resolved?",argument.getProblemValue()==problem);
+		assertTrue("circular data dependency not resolved",argument.getProblemValue()!=null);
+		assertTrue("Is circular data dependency identity lost",argument.getProblemValue()==problem);
 
 		log.debug("-check if problem was created-");
 		runtimeContext.reset();

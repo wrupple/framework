@@ -133,6 +133,9 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
             addPropertyValues(parentEntity, childEntity, childCatalog, false, instrospection, null);
         }
 
+        access.setPropertyValue(this.ancestorIdField, childEntity, parentEntity.getId(), instrospection);
+
+
     }
 
 
@@ -165,14 +168,6 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
         }
     }
 
-
-    @Override
-    public CatalogEntry synthesizeChildEntity(Object parentEntityId, CatalogEntry o, Instrospection instrospection,
-                                              CatalogDescriptor catalog, CatalogActionContext context) throws Exception {
-        CatalogEntry childEntity = synthesizeCatalogObject(o, catalog, true, instrospection, context);
-        access.setPropertyValue(this.ancestorIdField, childEntity, parentEntityId, instrospection);
-        return childEntity;
-    }
 
     @Override
     public Object getPropertyForeignKeyValue(CatalogDescriptor catalogDescriptor, FieldDescriptor field, CatalogEntry e,

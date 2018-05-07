@@ -43,13 +43,12 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 
 	private final int missingTableErrorCode;
 
-	private final JDBCDataReadCommand read;
 	private final char DELIMITER;
 
 	private final JDBCSingleLongKeyResultHandler keyHandler;
 
 	@Inject
-	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, FieldAccessStrategy access, CatalogKeyServices keyDelegate, JDBCDataReadCommand read,
+	public JDBCDataCreationCommandImpl(QueryRunner runner, CatalogDeleteTransaction delete, FieldAccessStrategy access, CatalogKeyServices keyDelegate,
 									   JDBCMappingDelegate tableNames, SQLCompatibilityDelegate compatibility,
 									   @Named("catalog.missingTableErrorCode") Integer missingTableErrorCode /*
 																					 * 1146
@@ -63,7 +62,6 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		this.compatibility = compatibility;
 		DELIMITER = delimiter;
 		keyHandler = new JDBCSingleLongKeyResultHandler();
-		this.read = read;
 		this.missingTableErrorCode = missingTableErrorCode;
 		this.runner = runner;
 		this.tableNames = tableNames;
@@ -184,7 +182,8 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		context.setCatalogDescriptor(catalogDescriptor);
 		context.getRequest().setFilter(null);
 		context.getRequest().setEntry(id);
-		read.execute(context);
+		access.setPropertyValue(catalogDescriptor.getKeyField(),e,id,instrospection);
+		context.setResult(e);
 		return CONTINUE_PROCESSING;
 	}
 
