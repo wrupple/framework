@@ -9,6 +9,8 @@ import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.annotations.AvailableCommand;
 
+import java.util.List;
+
 @ValidCatalogActionRequest
 public class CatalogActionRequestImpl  implements CatalogActionRequest {
 
@@ -32,6 +34,7 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	private String  name;
 	private boolean anonymouslyVisible;
 	private boolean followReferences;
+	private List<CatalogEntry> results;
 	
 
     public void setParentValue(CatalogActionRequest parentValue) {
@@ -222,4 +225,13 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	public CatalogActionRequest getRootAncestor() {
 		return CatalogEntryImpl.getRootAncestor(this);
 	}
+
+	public List<CatalogEntry> getResults() {
+		return results;
+	}
+
+	public void setResults(List<CatalogEntry> results) {
+		this.results = results;
+	}
+
 }

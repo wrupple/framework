@@ -245,7 +245,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
          */
         private List<CatalogEntry> oldValues;
 
-        private List<CatalogEntry> results;
         private List<CatalogColumnResultSet> resultSet;
 
         private CatalogDescriptor catalogDescriptor;
@@ -280,8 +279,10 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             if (entry == null) {
                 return;
             }
-            if (results == null) {
+            List<CatalogEntry> results=request.getResults();
+            if ( results== null) {
                 results = new ArrayList<CatalogEntry>();
+                request.setResults(results);
             }
             results.add(entry);
         }
@@ -290,19 +291,22 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             if (entries == null || entries.isEmpty()) {
                 return;
             }
+            List<CatalogEntry> results=request.getResults();
             if (results == null) {
                 results = new ArrayList<CatalogEntry>();
+                request.setResults(results);
             }
             results.addAll(entries);
         }
 
+
         public List<CatalogEntry> getResults() {
-            return results;
+            return request.getResults();
         }
 
         @Override
         public <T extends CatalogEntry> void setResults(List<T> discriminated) {
-            this.results = (List) discriminated;
+            request.setResults((List) discriminated);
         }
 
         public CatalogDescriptor getCatalogDescriptor() throws CatalogException {
@@ -382,7 +386,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public <T extends CatalogEntry> T getEntryResult() {
-            return (T) (results == null ? null : results.get(0));
+            return (T) (request.getResults() == null ? null : request.getResults().get(0));
         }
 
         public CatalogEntry getOldValue() {
@@ -514,7 +518,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setFollowReferences(assemble);
             event.setName(DataContract.READ_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            return (T) event.getResults().get(0);
         }
 
 
@@ -534,7 +539,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setFollowReferences(assemble);
             event.setName(DataContract.READ_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            return (List)event.getResults();
 
         }
 
@@ -547,7 +553,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setEntry(id);
             event.setName(DataContract.DELETE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            return (List)event.getResults();
         }
 
 
@@ -561,7 +568,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setEntryValue(updatedEntry);
             event.setName(DataContract.WRITE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
-            return runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            return (T) event.getResults().get(0);
         }
 
 
@@ -574,8 +582,8 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             event.setName(DataContract.CREATE_ACTION);
             event.setDomain((Long) getNamespaceContext().getId());
             event.setFollowReferences(true);
-
-            return  runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            runtimeContext.getServiceBus().fireEvent(event, runtimeContext, null);
+            return (T) event.getResults().get(0);
         }
 
 
