@@ -3,10 +3,9 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogRelation;
 import com.wrupple.muba.catalogs.domain.DataJoinContext;
-import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FilterCriteria;
-import com.wrupple.muba.event.domain.FilterData;
+import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import org.apache.commons.chain.Command;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,7 +69,11 @@ public class ProcessJoinsImpl implements Command<DataJoinContext> {
         if (currentQueryFilter == null) {
             currentMatchingEntries = Collections.EMPTY_LIST;
         } else {
-            currentMatchingEntries = context.triggerRead(catalog.getDistinguishedName(),currentQueryFilter);
+            CatalogResultCache cache = context.getCache(catalog, context);
+            currentMatchingEntries = cache.satisfy(context,catalog,currentQueryFilter);
+            if (currentMatchingEntries == null) {
+                currentMatchingEntries = context.triggerRead(catalog.getDistinguishedName(),currentQueryFilter);
+            }
         }
         return currentMatchingEntries;
     }

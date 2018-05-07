@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.service;
 
 import java.util.List;
 
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -32,13 +33,11 @@ public interface CatalogResultCache {
 	 * 
 	 * Register an entry with an explicit key 
 	 * @param context
-	 * @param domainMetadata
-	 * @param specifiedKey
 	 * @param regreso
 	 */
 	void put(CatalogActionContext context, String catalogId, Object explicitKey, CatalogEntry regreso);
 	
-	<T extends CatalogEntry> List<T>  satisfy(CatalogActionContext context, String catalog, FilterData filterData);
+	<T extends CatalogEntry> List<T>  satisfy(CatalogActionContext context, CatalogDescriptor catalog, FilterData filterData);
 
 	void put(CatalogActionContext context, String catalog, List<CatalogEntry> regreso, FilterData filterData);
 	

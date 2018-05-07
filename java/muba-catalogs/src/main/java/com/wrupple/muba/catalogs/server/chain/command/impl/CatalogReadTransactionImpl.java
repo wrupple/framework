@@ -106,11 +106,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                     throw new IllegalArgumentException("malformed criteria");
                 }
                 if( keyCriteria != null&& filter.getFilters().size()==1 && keys.size()==1){
-                    if(catalog.getDistinguishedName().equals("MathProblem")||catalog.getDistinguishedName().equals("Argument")){
-                        log.trace("case");
-                    }
                     result=Collections.singletonList(readTargetEntryId(instrospection,cache,catalog,keys.get(0),context));
-
                 }else{
                     if (filter.getCursor() == null) {
                         int ammountOfKeys = keys.size();
@@ -209,7 +205,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         if (cache == null) {
             regreso = queryUnits(filterData, catalog, context, instrospection);
         } else {
-            regreso = cache.satisfy(context, catalog.getDistinguishedName(), filterData);
+            regreso = cache.satisfy(context, catalog, filterData);
             if (regreso == null) {
                 regreso = queryUnits(filterData, catalog, context, instrospection);
                 if (regreso != null) {

@@ -170,7 +170,7 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue("data graph is incomplete",	problem.getArgumentsValues()!=null);
 		argument = problem.getArgumentsValues().get(0);
 		assertTrue("circular data dependency not resolved",argument.getProblemValue()!=null);
-		assertTrue("Is circular data dependency identity lost",argument.getProblemValue()==problem);
+		assertTrue("Is circular data dependency identity lost",argument.getProblemValue().getId().equals(problem.getId()));
 
 		log.debug("-check if problem was created-");
 		runtimeContext.reset();

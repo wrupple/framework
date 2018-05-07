@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -68,10 +70,11 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 	}
 
 	@Override
-	public <T extends CatalogEntry> List<T> satisfy(CatalogActionContext context, String catalogId,
+	public <T extends CatalogEntry> List<T> satisfy(CatalogActionContext context, CatalogDescriptor catalog,
 			FilterData filterData) {
+		String catalogId = catalog.getDistinguishedName();
 		FilterDataImpl filter = (FilterDataImpl /* hashcode implementation */) filterData;
-		long domain = ((Long)context.getRequest().getDomain()).longValue();
+		long domain = ((Long)context.getNamespaceContext().getId()).longValue();
 		Map<Object, Object> cache = assertListcache(domain, catalogId);
 
 		// TODO is a larger range satisfied that could be cut to satisfy this
@@ -81,20 +84,37 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 		List<T> results;
 		if (ids.isEmpty()) {
 			results = null;
-		} else {
-			results = new ArrayList<T>(ids.size());
-			T result;
-			for (Object id : ids) {
-				result = get(context, catalogId, id);
-				if (result == null) {
-					cache.remove(filter);
-					return null;
+
+			if(filter.getFilters().size()==1){
+				FilterCriteriaImpl keyCriteria = filter.fetchCriteria(catalog.getKeyField());
+				if(keyCriteria!=null){
+					ids = keyCriteria.getValues();
+					results=satisfyIds(ids,cache,context,catalogId);
+
 				}
-				results.add(result);
 			}
-			log.trace("[CACHE SATISFIED QUERY]");
+
+		} else {
+			results=satisfyIds(ids,cache,context,catalogId);
+			if (results == null) {
+				cache.remove(filter);
+			}
 		}
 
+		return results;
+	}
+
+	private <T extends CatalogEntry> List<T> satisfyIds(List<Object> ids, Map<Object, Object> cache, CatalogActionContext context, String catalogId) {
+		List<T> results = new ArrayList<T>(ids.size());
+		T result;
+		for (Object id : ids) {
+			result = get(context, catalogId, id);
+			if (result == null) {
+				return null;
+			}
+			results.add(result);
+		}
+		log.trace("[CACHE SATISFIED QUERY]");
 		return results;
 	}
 
