@@ -33,13 +33,13 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
         request.setFollowReferences(true);
 
         if(container.getId()==null){
-            log.debug("New worker will be created");
+            log.info("New worker will be created");
 
             request.setName(CatalogActionRequest.CREATE_ACTION);
 
 
         }else{
-            log.debug("Worker state will be updated");
+            log.info("Worker state will be updated");
 
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setEntry(container.getId());

@@ -259,7 +259,10 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             }else{
                 access.setPropertyValue(field, owner, keys, instrospection);
             }
-            context.triggerWrite(catalog.getDistinguishedName(),owner.getId(),owner);
+            FieldDescriptor reservedDescriptor = catalog.getFieldDescriptor(reservedField);
+            if(reservedDescriptor!=null && reservedDescriptor.isWriteable() &&!reservedDescriptor.isEphemeral()){
+                context.triggerWrite(catalog.getDistinguishedName(),owner.getId(),owner);
+            }
             return CONTINUE_PROCESSING;
         }
     }
@@ -287,7 +290,11 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
                 access.setPropertyValue(reservedField, owner, entry, instrospection);
             }
             access.setPropertyValue(field, owner, entry.getId(), instrospection);
-            context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
+            FieldDescriptor reservedDescriptor = owenerCatalog.getFieldDescriptor(reservedField);
+            if(reservedDescriptor!=null && reservedDescriptor.isWriteable() &&!reservedDescriptor.isEphemeral()){
+                context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
+
+            }
 
             return CONTINUE_PROCESSING;
         }

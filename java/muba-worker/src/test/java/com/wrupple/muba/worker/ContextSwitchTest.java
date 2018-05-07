@@ -32,7 +32,7 @@ public class ContextSwitchTest extends WorkerTest {
         replayAll();
 
         CatalogDescriptorBuilder builder = container.getInstance(CatalogDescriptorBuilder.class);
-        log.trace("[-register catalogs-]");
+        log.info("         [-register catalogs-]");
 
 
 
@@ -69,16 +69,16 @@ public class ContextSwitchTest extends WorkerTest {
 
         container.fireEvent(action);
 
-        log.trace("[-create application tree-]");
+        log.info("         [-create application tree-]");
         ApplicationImpl root = createApplication(container,HOME);
 
         assertTrue("Application tree not created",!root.getChildrenValues().get(0).getChildrenValues().isEmpty());
 
-        log.trace("[-create a pool of drivers to resolve the riderBooking-]");
+        log.info("         [-create a pool of drivers to resolve the riderBooking-]");
 
         super.createMockDrivers();
 
-        log.trace("[-Create a DriverBooking-]");
+        log.info("         [-Create a DriverBooking-]");
 
         RiderBooking riderBooking = new RiderBooking();
         riderBooking.setLocation(7l);
@@ -97,8 +97,9 @@ public class ContextSwitchTest extends WorkerTest {
         Host hostValue = container.getInjector().getInstance(Key.get(Host.class,Names.named(SessionContext.SYSTEM)));
 
         Long mainRunner = container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco")));
-
-        log.trace("[-use riderBooking id to launch container with previously created riderBooking -]");
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        log.info("         [-use riderBooking id to launch container with previously created riderBooking -]");
         container.fireEvent(new WorkerContractImpl(
                 Arrays.asList(":"+riderBooking.getId().toString()),
                 mainRunner,

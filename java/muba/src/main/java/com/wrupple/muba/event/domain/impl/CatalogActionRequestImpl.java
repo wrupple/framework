@@ -161,23 +161,18 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		this.catalog = catalog;
 	}
 
-
-	@Override
-	public String toString() {
-		return "\n\nCatalogActionRequestImpl{" +
-
+    @Override
+    public String toString() {
+        return "CatalogActionRequest{" +
                 "catalog='" + catalog + '\'' +
-				",entry=" + entry +
-				", name='" + name + '\'' +
-				", entryValue=" + entryValue +
-				", filter=" + filter +
-				", format='" + format + '\'' +
-				", locale='" + locale + '\'' +
-				", domain=" + domain +
-				'}';
-	}
 
-	@Override
+                ", name='" + name + '\'' +
+                ",entry=" + entry +
+
+                '}';
+    }
+
+    @Override
 	public void setEntry(Object id) {
 		this.entry=id;
 	}

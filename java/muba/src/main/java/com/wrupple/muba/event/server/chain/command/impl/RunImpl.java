@@ -36,7 +36,22 @@ public class RunImpl implements Run {
                 Command serviceHandler = requestContext.getServiceBus().getIntentInterpret().getDictionaryFactory()
                         .getCatalog(ParentServiceManifest.NAME)
                         .getCommand(requestContext.getServiceManifest().getServiceId());
-                log.debug("delegating to service handler {}", serviceHandler);
+                if(log.isDebugEnabled()){
+                    StringBuilder builder = new StringBuilder(250);
+                    Object contract = requestContext.getServiceContract();
+                    RuntimeContext parent = requestContext.getParentValue();
+                    while(parent!=null){
+                        parent = parent.getParentValue();
+                        builder.append('\t');
+                    }
+                    builder.append(contract);
+                    builder.append("->");
+                    builder.append(requestContext.getServiceManifest().getServiceId());
+                    builder.append("->");
+                    builder.append(serviceHandler);
+                    log.debug(builder.toString());
+                }
+                log.trace("delegating to service handler {}", serviceHandler);
                 boolean r = serviceHandler.execute(requestContext.getServiceContext());
 
                 return r;
@@ -100,7 +115,7 @@ public class RunImpl implements Run {
 
 
         } else {
-            log.debug("delegating to explicit contract interpret {}", explicitInterpret);
+            log.trace("delegating to explicit contract interpret {}", explicitInterpret);
             return explicitInterpret.execute(requestContext);
 
         }

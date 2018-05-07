@@ -22,9 +22,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
     protected static final Logger log = LogManager.getLogger(CatalogReadTransactionImpl.class);
 
-    public interface JoinCondition {
-        boolean match(CatalogEntry o);
-    }
     private final CatalogKeyServices keyDelegate;
 
     private final FieldAccessStrategy access;

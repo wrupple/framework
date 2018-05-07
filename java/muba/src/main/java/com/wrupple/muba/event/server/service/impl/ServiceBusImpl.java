@@ -29,7 +29,6 @@ public class ServiceBusImpl extends ContextBase implements ServiceBus {
 
     private final IntentDelegate delegate;
 
-
     protected static final Logger log = LogManager.getLogger(ServiceBusImpl.class);
 
 	private static final long serialVersionUID = -7144539787781019055L;
@@ -132,12 +131,12 @@ queued.setCatalogDescriptor(catalogDescriptor);
                 log.error("No known handlers for event {}",implicitRequestContract);
                 throw new IllegalArgumentException("no handlers for event "+implicitRequestContract.getCatalogType());
             } else if(handlers.size()==1){
-                log.info("[single handler invocation]");
+                log.trace("[single handler invocation]");
                 Invocation call = handlers.get(0);
                 return fireHandler(call,session,parentTimeline);
             } else {
 
-                log.info("[parallel invocation of handlers]");
+                log.trace("[parallel invocation of handlers]");
                 List<Object> results = delegate.handleExplicitIntent(session, parentTimeline, handlers, this);
                 return (T) results;
 

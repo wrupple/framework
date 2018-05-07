@@ -63,7 +63,6 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 	@Override
 	public boolean isValid(CatalogActionRequest req, final ConstraintValidatorContext validationContext) {
 
-        log.info("[ValidateContract] {}", req);
 		// had to be done this way because security violations occur when
 		// using reflection on the apache chain context map
 		boolean report = true;

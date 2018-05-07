@@ -33,6 +33,7 @@ import com.wrupple.vegetate.VegetateCatalogsModule;
 import com.wrupple.vegetate.VegetateModule;
 import com.wrupple.vegetate.server.service.VegetateCatalogPlugin;
 import com.wrupple.vegetate.service.RemoteBroadcastHandler;
+import org.apache.commons.chain.impl.ChainBase;
 import org.easymock.EasyMockRule;
 import org.easymock.EasyMockSupport;
 import org.junit.Rule;
@@ -88,7 +89,6 @@ public abstract class WorkerTest extends EasyMockSupport {
 
         container.registerRunner(ChocoRunner.class);
         container.registerRunner(CatalogRunner.class);
-
 
     }
 
