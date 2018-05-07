@@ -98,14 +98,20 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                 throw new IllegalArgumentException("No entry or filters provided");
             }
             FilterCriteria keyCriteria = filter.fetchCriteria(catalog.getKeyField());
-            if (!filter.isConstrained() || keyCriteria == null) {
+            if ( keyCriteria == null) {
                 result = read(filter, catalog, context, cache, instrospection);
             } else {
                 List<Object> keys = keyCriteria.getValues();
                 if (keys == null) {
-                    context.getRuntimeContext().addWarning("malformed criteria");
-                } else {
+                    throw new IllegalArgumentException("malformed criteria");
+                }
+                if( keyCriteria != null&& filter.getFilters().size()==1 && keys.size()==1){
+                    if(catalog.getDistinguishedName().equals("MathProblem")||catalog.getDistinguishedName().equals("Argument")){
+                        log.trace("case");
+                    }
+                    result=Collections.singletonList(readTargetEntryId(instrospection,cache,catalog,keys.get(0),context));
 
+                }else{
                     if (filter.getCursor() == null) {
                         int ammountOfKeys = keys.size();
                         // only if theres still some unsatisfied idś in criteria
