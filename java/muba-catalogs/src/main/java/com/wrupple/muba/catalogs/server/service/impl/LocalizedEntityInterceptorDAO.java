@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogCreateTransaction;
@@ -26,11 +27,13 @@ import java.util.List;
 public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 
 	private final FieldAccessStrategy access;
+	private final CatalogDescriptorService catalogService;
 
 	@Inject
-	public LocalizedEntityInterceptorDAO(FieldAccessStrategy access) {
+	public LocalizedEntityInterceptorDAO(FieldAccessStrategy access, CatalogDescriptorService catalogService) {
 		super();
 		this.access = access;
+		this.catalogService = catalogService;
 	}
 
 	@Override
@@ -66,7 +69,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 			List<String> values = (List<String>) o.getProperties();
 
 			// read localizable entity
-			CatalogDescriptor localizedCatalog = context.getDescriptorForName(catalogId);
+			CatalogDescriptor localizedCatalog = catalogService.getDescriptorForName(catalogId,context);
 			PersistentCatalogEntity targetEntity = context.triggerGet(catalogId,entryId);
 
 			// write localized values

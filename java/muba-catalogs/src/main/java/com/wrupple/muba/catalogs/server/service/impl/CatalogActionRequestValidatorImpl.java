@@ -1,11 +1,15 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
+import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.CatalogActionRequestValidator;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.JSRAnnotationsDictionary;
-import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.CatalogFieldValues;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -21,7 +25,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Date;
@@ -33,10 +36,11 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 	private final JSRAnnotationsDictionary dictionary;
 	private final CatalogKeyServices keyDelegate;
-	//FIXME this session object should base universal privileges as it is isolated from the to-be excecuted runtime context
     private final Provider<SessionContext> exp;
-    private final Provider<ServiceBus> bus;
+    private final Provider<ServiceBus> applicationProvider;
 	private final ContextAwareValidator delegate;
+	private final CatalogDescriptorService descriptorService;
+	private final CatalogRequestInterpret requestInterpret;
 	/*
 	 * secondary services
 	 */
@@ -45,9 +49,11 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 	@Inject
     public CatalogActionRequestValidatorImpl(ContextAwareValidator delegate, @Named(SessionContext.SYSTEM) Provider<SessionContext> exp,
-											 JSRAnnotationsDictionary cms, CatalogKeyServices keyDelegate, Provider<ServiceBus> bus, LargeStringFieldDataAccessObject lsdao) {
+                                             JSRAnnotationsDictionary cms, CatalogKeyServices keyDelegate, Provider<ServiceBus> applicationProvider, CatalogDescriptorService descriptorService, CatalogRequestInterpret requestInterpret, LargeStringFieldDataAccessObject lsdao) {
         this.keyDelegate = keyDelegate;
-        this.bus = bus;
+        this.applicationProvider = applicationProvider;
+        this.requestInterpret = requestInterpret;
+		this.descriptorService = descriptorService;
 		this.lsdao = lsdao;
 		this.exp = exp;
 
@@ -130,12 +136,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 					if (criteria.getValue() == null) {
 						throw new IllegalArgumentException("Invalid filter criteira (no comparable value)");
 					}
-					try {
-						descriptor = assertDescriptor(descriptor, catalog, domain,req);
-					} catch (InvocationTargetException e) {
-						throw new RuntimeException(e);
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);					}
+					descriptor = assertDescriptor(descriptor, catalog, domain,req);
 					local = descriptor.getFieldDescriptor(criteria.getPath(0));
 					if (local == null || !local.isFilterable()) {
                         if(local==null){
@@ -156,14 +157,9 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		
 		if (report && entryValue != null) {
 			log.trace("validate entry Value");
-			try {
 				descriptor = assertDescriptor(descriptor, catalog, domain, req);
-			} catch (InvocationTargetException e) {
-				throw new RuntimeException(e);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
-			// otherwise the validator will descend to java beans
+
+			// otherwise the validator will (should) descend to java beans
 			if (HasAccesablePropertyValues.class.equals(descriptor.getClazz())) {
 				log.debug("Dynamic validation of non-java-bean entry Value");
 				Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
@@ -240,21 +236,22 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		return report;
 	}
 
-	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, Long domain, CatalogActionRequest req) throws InvocationTargetException, IllegalAccessException {
+	private CatalogDescriptor assertDescriptor(CatalogDescriptor descriptor, String catalogId, Long domain, CatalogActionRequest parentRequest)  {
 		if (descriptor == null) {
 //at this point this very validator should allow this as a valid  request no more questions asked
-            SessionContext system = this.exp.get();
-            CatalogActionRequestImpl context = new CatalogActionRequestImpl();
-				context.setDomain(domain);
-				context.setParentValue(req);
-				context.setCatalog(CatalogDescriptor.CATALOG_ID);
-				context.setEntry(catalogId);
-            context.setName(DataContract.READ_ACTION);
-            context.setFollowReferences(true);
+            CatalogActionRequestImpl internalRequest = new CatalogActionRequestImpl();
+            internalRequest.setDomain(domain);
+            internalRequest.setParentValue(parentRequest);
+            internalRequest.setCatalog(CatalogDescriptor.CATALOG_ID);
+            internalRequest.setEntry(catalogId);
+            internalRequest.setName(DataContract.READ_ACTION);
+            internalRequest.setFollowReferences(true);
 
-			try {
-				//TODO event always returns fill result list, can we make it so it doesnt have to wrap single results?ss
-				descriptor = bus.get().fireEvent(context, system, null);
+            CatalogActionContext context = (CatalogActionContext) requestInterpret.getProvider(null/* :S */).get();
+            context.switchContract(internalRequest);
+            context.setRuntimeContext(assertSystemRuntime());
+            try {
+			    descriptor = descriptorService.getDescriptorForName(catalogId,context);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -266,7 +263,16 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		return descriptor;
 	}
 
-	private PropertyValidationContext buildFieldAccessStrategy(final FieldDescriptor field,
+	private RuntimeContext systemRuntime;
+
+    private RuntimeContext assertSystemRuntime() {
+        if(systemRuntime==null){
+            systemRuntime = new RuntimeContextImpl(applicationProvider.get(),exp.get());
+        }
+        return systemRuntime;
+    }
+
+    private PropertyValidationContext buildFieldAccessStrategy(final FieldDescriptor field,
 			final ConstraintValidatorContext validationContext, final HasAccesablePropertyValues entryValue) {
 		final Type javaType;
 		if (field.isMultiple()) {

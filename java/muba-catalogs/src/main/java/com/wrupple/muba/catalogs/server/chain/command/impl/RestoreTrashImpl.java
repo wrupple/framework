@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.Instrospection;
@@ -24,11 +25,13 @@ import java.util.List;
 public class RestoreTrashImpl implements RestoreTrash {
 	private static Logger log = LogManager.getLogger(RestoreTrashImpl.class);
     private final FieldAccessStrategy access;
+	private final CatalogDescriptorService catalogService;
 
 	@Inject
-	public RestoreTrashImpl(FieldAccessStrategy access) {
+	public RestoreTrashImpl(FieldAccessStrategy access, CatalogDescriptorService catalogService) {
 		super();
 		this.access = access;
+		this.catalogService = catalogService;
 	}
 
 	@Override
@@ -57,7 +60,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 					// OPTIMIZING THE PROCESS SINCE TRASH ITEMS ARE READ ORDERED
 					// BY TYPE
 					catalogId = entry.getCatalog();
-					descriptor = context.getDescriptorForName(catalogId);
+					descriptor = catalogService.getDescriptorForName(catalogId,context);
 					trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
 				}
 				undelete(e, context, descriptor, trashField, instrospection);
@@ -69,7 +72,7 @@ public class RestoreTrashImpl implements RestoreTrash {
 			log.trace("[RESTORE TRASH ITEM] {}", e);
 
 			String catalogId = e.getCatalog();
-			CatalogDescriptor descriptor = context.getDescriptorForName(catalogId);
+			CatalogDescriptor descriptor = catalogService.getDescriptorForName(catalogId,context);
 			FieldDescriptor trashField = descriptor.getFieldDescriptor(Trash.TRASH_FIELD);
             Instrospection instrospection = access.newSession(null);
             context.getRequest().setFilter(null);

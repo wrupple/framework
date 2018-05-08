@@ -1,6 +1,7 @@
 package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
@@ -32,17 +33,20 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     private final CatalogKeyServices keyDelgeate;
     private final Provider<ActionsDictionary> dictionaryProvider;
     private final CatalogDescriptor metadataDescriptor;
+    private final CatalogDescriptorService catalogService;
+
 
 
 
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider, @Named(CatalogDescriptor.CATALOG_ID) CatalogDescriptor metadataDescriptor) {
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider, @Named(CatalogDescriptor.CATALOG_ID) CatalogDescriptor metadataDescriptor, CatalogDescriptorService catalogService) {
         this.pattern = pattern;
         this.ancestorIdField=ancestorIdField;
         this.access = access;
         this.keyDelgeate = keyDelgeate;
         this.dictionaryProvider = dictionaryProvider;
         this.metadataDescriptor = metadataDescriptor;
+        this.catalogService = catalogService;
     }
 	/*
 	 * INHERITANCE
@@ -191,7 +195,7 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     public String getDenormalizedFieldValue(CatalogEntry client, String fieldId, Instrospection instrospection,
                                             CatalogActionContext context) throws Exception {
         String catalogid = client.getCatalogType();
-        CatalogDescriptor type = context.getDescriptorForName(catalogid);
+        CatalogDescriptor type = catalogService.getDescriptorForName(catalogid,context);
         FieldDescriptor field = type.getFieldDescriptor(fieldId);
         if (field == null) {
             throw new IllegalArgumentException("unknown field :" + fieldId);

@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -37,15 +38,18 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 	private final boolean follow;
 	private final CompleteCatalogGraph graphJoin;
 	private final EntrySynthesizer delegate;
+    private final CatalogDescriptorService catalogService;
+
 
     @Inject
-	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, CompleteCatalogGraph graphJoin, EntrySynthesizer delegate) {
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, CompleteCatalogGraph graphJoin, EntrySynthesizer delegate, CatalogDescriptorService catalogService) {
         super(catalogActionCommitProvider);
         this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();
 		this.access = access;
 		this.graphJoin = graphJoin;
 		this.delegate = delegate;
+        this.catalogService = catalogService;
     }
 
 	
@@ -139,7 +143,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 	private CatalogEntry create(CatalogEntry result, Instrospection instrospection, CatalogDescriptor catalog, CatalogActionContext parentContext) throws Exception {
 		Long parentCatalogId = catalog.getParent();
 		Object allegedParentId = delegate.getAllegedParentId(result, instrospection,access);
-		CatalogDescriptor parentCatalog = parentContext.getDescriptorForKey(parentCatalogId);
+		CatalogDescriptor parentCatalog = catalogService.getDescriptorForKey(parentCatalogId,parentContext);
 		CatalogEntry parentEntity = createAncestorsRecursively(result, parentCatalog, allegedParentId, instrospection,parentContext);
 
         delegate.addInheritedValuesToChild(parentEntity,result,instrospection,catalog);
@@ -247,22 +251,25 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
             Collection<CatalogEntry> createdValues = (Collection) delegate.getPropertyForeignKeyValue(catalog, field, owner, instrospection);
 
             createdValues.add(context.getResult());
+
+            List<Object> keys = createdValues.stream().map(v -> v.getId()).filter(v -> v!=null).collect(Collectors.toList());
+
+            Object previousValue = access.getPropertyValue(field, owner, null, instrospection);
+            if(keys.isEmpty()){
+                if(previousValue==null){
+                }else{
+                    access.setPropertyValue(field, owner, null, instrospection);
+                }
+            }else{
+                access.setPropertyValue(field, owner, keys, instrospection);
+            }
+            context.triggerWrite(catalog.getDistinguishedName(),owner.getId(),owner);
+
             String reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
             if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                 access.setPropertyValue(reservedField, owner, createdValues, instrospection);
             }
-            List<Object> keys = createdValues.stream().map(v -> v.getId()).filter(v -> v!=null).collect(Collectors.toList());
 
-            if(keys.isEmpty()){
-                access.setPropertyValue(field, owner, null, instrospection);
-
-            }else{
-                access.setPropertyValue(field, owner, keys, instrospection);
-            }
-            FieldDescriptor reservedDescriptor = catalog.getFieldDescriptor(reservedField);
-            if(reservedDescriptor!=null && reservedDescriptor.isWriteable() &&!reservedDescriptor.isEphemeral()){
-                context.triggerWrite(catalog.getDistinguishedName(),owner.getId(),owner);
-            }
             return CONTINUE_PROCESSING;
         }
     }
@@ -285,15 +292,17 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         @Override
         public boolean execute(CatalogActionContext context) throws Exception {
             CatalogEntry entry = context.getResult();
+
+            Object previousValue = access.getPropertyValue(field, owner, null, instrospection);
+
+            if(!entry.getId().equals(previousValue)){
+                access.setPropertyValue(field, owner, entry.getId(), instrospection);
+                context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
+            }
+
             String reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
             if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                 access.setPropertyValue(reservedField, owner, entry, instrospection);
-            }
-            access.setPropertyValue(field, owner, entry.getId(), instrospection);
-            FieldDescriptor reservedDescriptor = owenerCatalog.getFieldDescriptor(reservedField);
-            if(reservedDescriptor!=null && reservedDescriptor.isWriteable() &&!reservedDescriptor.isEphemeral()){
-                context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
-
             }
 
             return CONTINUE_PROCESSING;

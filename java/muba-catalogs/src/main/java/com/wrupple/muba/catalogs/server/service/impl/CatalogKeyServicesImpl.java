@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogRelation;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.event.domain.PersistentImageMetadata;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
@@ -17,11 +18,13 @@ import java.util.List;
 @Singleton
 public class CatalogKeyServicesImpl implements CatalogKeyServices {
     protected static final Logger log = LogManager.getLogger(CatalogKeyServicesImpl.class);
+    private final CatalogDescriptorService catalogService;
 
 
     @Inject
-    public CatalogKeyServicesImpl(){
+    public CatalogKeyServicesImpl(CatalogDescriptorService catalogService){
 
+        this.catalogService = catalogService;
     }
 
 
@@ -202,7 +205,7 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
 
                 }
                 if(foreign==null) {
-                    foreign = contexto.getDescriptorForName(foreignCatalogId);
+                    foreign = catalogService.getDescriptorForName(foreignCatalogId,contexto);
                 }
 
             }

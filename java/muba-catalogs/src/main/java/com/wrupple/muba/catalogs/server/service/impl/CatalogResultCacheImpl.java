@@ -43,18 +43,63 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 		return r;
 	}
 
-	@Override
+    @Override
+    public <T extends CatalogEntry> T get(CatalogActionContext context, String catalogId, String explicitField, Object targetEntryId) {
+        long domain = ((Long)context.getNamespaceContext().getId()).longValue();
+        T r = (T) assertFieldCache(domain, catalogId,explicitField).get(targetEntryId);
+        if (r != null) {
+            log.trace("[CACHE SATISFIED ENTRY {}]", targetEntryId);
+        }
+        return r;
+    }
+
+
+    @Override
+    public <T extends CatalogEntry> List<T> satisfy(CatalogActionContext context, CatalogDescriptor catalog,
+                                                    FilterData filterData) {
+        String catalogId = catalog.getDistinguishedName();
+        FilterDataImpl filter = (FilterDataImpl /* hashcode implementation */) filterData;
+        long domain = ((Long)context.getNamespaceContext().getId()).longValue();
+        Map<Object, Object> cache = assertListcache(domain, catalogId);
+
+        List<Object> ids = assertList(cache, filter);
+        List<T> results;
+        if (ids.isEmpty()) {
+            results = null;
+
+            if(filter.getFilters().size()==1){
+                FilterCriteriaImpl keyCriteria = filter.fetchCriteria(catalog.getKeyField());
+                if(keyCriteria!=null){
+                    ids = keyCriteria.getValues();
+                    results=satisfyIds(ids,cache,context,catalogId);
+                }
+            }
+
+        } else {
+            results=satisfyIds(ids,cache,context,catalogId);
+            if (results == null) {
+                cache.remove(filter);
+            }
+        }
+        if(results!=null){
+            log.trace("[CACHE SATISFIED QUERY]");
+        }
+        return results;
+    }
+
+
+    @Override
 	public void put(CatalogActionContext context, String catalogId, CatalogEntry entry) {
-		if (entry != null) {
-			put(context, catalogId, entry.getId(), entry);
-		}
+        long domain = ((Long)context.getNamespaceContext().getId()).longValue();
+        assertEntrycache(domain, catalogId).put(entry.getId(), entry);
+        log.trace("[NEW CACHE ENTRY {}]", entry.getId());
 	}
 
 	@Override
-	public void put(CatalogActionContext context, String catalogId, Object explicitKey, CatalogEntry entry) {
+	public void put(CatalogActionContext context, String catalogId, Object explicitKey, String explicitField, CatalogEntry regreso) {
 		long domain = ((Long)context.getNamespaceContext().getId()).longValue();
-		assertEntrycache(domain, catalogId).put(explicitKey, entry);
-		log.trace("[NEW CACHE ENTRY {}]", entry.getId());
+		assertFieldCache(domain, catalogId,explicitField).put(explicitKey, regreso);
+		log.trace("[NEW CACHE ENTRY {}]", explicitKey);
 	}
 
 	@Override
@@ -69,41 +114,6 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 		assertListcache(domain, catalogId).put(filterData, ids);
 	}
 
-	@Override
-	public <T extends CatalogEntry> List<T> satisfy(CatalogActionContext context, CatalogDescriptor catalog,
-			FilterData filterData) {
-		String catalogId = catalog.getDistinguishedName();
-		FilterDataImpl filter = (FilterDataImpl /* hashcode implementation */) filterData;
-		long domain = ((Long)context.getNamespaceContext().getId()).longValue();
-		Map<Object, Object> cache = assertListcache(domain, catalogId);
-
-		// TODO is a larger range satisfied that could be cut to satisfy this
-		// one? i personally don't think it's a good idea to implement that, but
-		// hey! maybe?
-		List<Object> ids = assertList(cache, filter);
-		List<T> results;
-		if (ids.isEmpty()) {
-			results = null;
-
-			if(filter.getFilters().size()==1){
-				FilterCriteriaImpl keyCriteria = filter.fetchCriteria(catalog.getKeyField());
-				if(keyCriteria!=null){
-					ids = keyCriteria.getValues();
-					results=satisfyIds(ids,cache,context,catalogId);
-
-				}
-			}
-
-		} else {
-			results=satisfyIds(ids,cache,context,catalogId);
-			if (results == null) {
-				cache.remove(filter);
-			}
-		}
-
-		return results;
-	}
-
 	private <T extends CatalogEntry> List<T> satisfyIds(List<Object> ids, Map<Object, Object> cache, CatalogActionContext context, String catalogId) {
 		List<T> results = new ArrayList<T>(ids.size());
 		T result;
@@ -114,7 +124,6 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 			}
 			results.add(result);
 		}
-		log.trace("[CACHE SATISFIED QUERY]");
 		return results;
 	}
 
@@ -150,12 +159,22 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 
 	private Map<Object, Object> assertListcache(long domain, String catalog) {
 		Map<Object, Object> listCache;
-		listCache = (Map<Object, Object>) cachem.get(domain + "_" + catalog + "_Lists");
+		listCache = (Map<Object, Object>) cachem.get(domain + "_" + catalog + "__Lists");
 		if (listCache == null) {
 			listCache = new HashMap<Object, Object>();
-			cachem.put(domain + "_" + catalog + "_Lists", listCache);
+			cachem.put(domain + "_" + catalog + "__Lists", listCache);
 		}
 		return listCache;
+	}
+
+	private Map<Object, Object> assertFieldCache(long domain, String catalog,String field) {
+		Map<Object, Object> fieldCache;
+		fieldCache = (Map<Object, Object>) cachem.get(domain + "_" + catalog + "_"+field);
+		if (fieldCache == null) {
+			fieldCache = new HashMap<Object, Object>();
+			cachem.put(domain + "_" + catalog + "_"+field, fieldCache);
+		}
+		return fieldCache;
 	}
 
 	private List<Object> assertList(Map<Object, Object> cache, FilterData filter) {

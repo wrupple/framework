@@ -118,8 +118,9 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue(contained);
 		log.trace("[-see registered catalog Descriptor-]");
 		runtimeContext.reset();
-
-        runtimeContext.setServiceContract(new CatalogActionRequestImpl());
+		action = new CatalogActionRequestImpl();
+		action.setFollowReferences(true);
+        runtimeContext.setServiceContract(action);
         runtimeContext.setSentence(
                 CatalogServiceManifest.SERVICE_NAME,
                 CatalogDescriptor.DOMAIN_FIELD,
@@ -155,11 +156,11 @@ public class CatalogEngineTest extends IntegralTest {
 
 		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
+		contract.setFollowReferences(true);
 		runtimeContext.setServiceContract(contract);
 		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
 				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(),
 				CatalogActionRequest.CREATE_ACTION);
-		contract.setFollowReferences(true);
 		runtimeContext.process();
 
 		problem = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();

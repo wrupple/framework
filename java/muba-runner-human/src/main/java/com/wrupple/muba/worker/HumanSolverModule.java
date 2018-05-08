@@ -25,4 +25,18 @@ public class HumanSolverModule extends AbstractModule {
         bind(DefineSolutionCriteria.class).to(DefineSolutionCriteriaImpl.class);
 
     }
+
+    /*
+     * FIXME public static String buildVanityToken(HasDistinguishedName task) {
+     *
+     * String name = task.getDistinguishedName(); if (name == null) { name =
+     * task.getName(); if (name == null) { name = task.getIdAsString(); } else {
+     * //[^a-zA-Z0-9/] replace all except / name =
+     * name.replaceAll("[^a-zA-Z0-9]", "-"); } }
+     *
+     * return name; }
+     *
+     * public static String getNameFromVanityToken(String vanityToken){ return
+     * vanityToken.replace('-',' '); }
+     */
 }

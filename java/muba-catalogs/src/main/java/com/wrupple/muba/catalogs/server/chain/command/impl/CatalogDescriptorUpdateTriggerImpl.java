@@ -20,8 +20,8 @@ public class CatalogDescriptorUpdateTriggerImpl implements CatalogDescriptorUpda
 	@Override
 	public boolean execute(Context ctx) throws Exception {
 		CatalogActionContext context = (CatalogActionContext) ctx;
-		
-		cache.put(context, SystemCatalogPlugin.DOMAIN_METADATA, null);
+
+		//FIXME clear lists?
 		
 		return CONTINUE_PROCESSING;
 	}

@@ -2,10 +2,9 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
-import com.wrupple.muba.catalogs.domain.CatalogResultSet;
 import com.wrupple.muba.catalogs.domain.NamespaceContext;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogRequestInterpret;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
@@ -19,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.transaction.NotSupportedException;
@@ -35,25 +33,24 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
 
     private final CatalogKeyServices keydelegate;
+    private final CatalogDescriptorService catalogService;
     private final FieldAccessStrategy access;
     private final Provider<CatalogActionRequest> contractProvider;
     private final Provider<NamespaceContext> namespaceProvider;
 
-    private final Provider<CatalogDescriptor> metadataDescriptorProvider;
-    private final Provider<CatalogReadTransaction> readerProvider;
+
     private final CatalogResultCache cache;
     private final ActionsDictionary dictionary;
 
     @Inject
-    public CatalogRequestInterpretImpl(CatalogKeyServices keydelegate, FieldAccessStrategy access,  CatalogResultCache cache,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, @Named(CatalogDescriptor.CATALOG_ID) Provider<CatalogDescriptor> metadataDescriptorProvider, Provider<CatalogReadTransaction> readerProvider, ActionsDictionary dictionary) {
+    public CatalogRequestInterpretImpl(CatalogKeyServices keydelegate, CatalogDescriptorService catalogService, FieldAccessStrategy access, CatalogResultCache cache,/* , ObjectMapper mapper */Provider<CatalogActionRequest> contractProvider, Provider<NamespaceContext> namespaceProvider, ActionsDictionary dictionary) {
         super();
         this.keydelegate = keydelegate;
+        this.catalogService = catalogService;
         this.access = access;
         this.cache=cache;
         this.contractProvider = contractProvider;
         this.namespaceProvider = namespaceProvider;
-        this.metadataDescriptorProvider = metadataDescriptorProvider;
-        this.readerProvider = readerProvider;
         this.dictionary = dictionary;
     }
 
@@ -89,8 +86,9 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         request.setCatalog(pressumedCatalogId);
 
-
-        context.setCatalogDescriptor(getCatalogDescriptor(context,pressumedCatalogId));
+        if(!context.isMetadataReady()){
+            context.setCatalogDescriptor(catalogService.getDescriptorForName(pressumedCatalogId,context));
+        }
 			/*
 			 * decode incomming primary key
 			 */
@@ -113,10 +111,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             if (catalogEntry instanceof CatalogEntry) {
                 // do nothing
             } else {
-                catalogDescriptor = context.getCatalogDescriptor();
-                access.synthesize(catalogDescriptor);
-                //request.setEntryValue((CatalogEntry) catalogEntry);
-                throw new NotSupportedException("implementar deserialización ya estaa hecha en algun lado");
+                throw new IllegalArgumentException("action value is not a catalogEntry :"+catalogEntry);
             }
         }
 
@@ -147,67 +142,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         return CONTINUE_PROCESSING;
     }
 
-
-    private CatalogDescriptor getCatalogDescriptor(CatalogActionContext context,String catalogid) throws Exception {
-
-        if(context.isMetadataReady()){
-            return context.getCatalogDescriptor();
-        }else{
-
-            CatalogDescriptor metadataDescriptor = metadataDescriptorProvider.get();
-
-            CatalogDescriptor result;
-            if (CatalogDescriptor.CATALOG_ID.equals(catalogid)) {
-
-                CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
-
-                result = metadataCache.get(context, metadataDescriptor.getDistinguishedName(), metadataDescriptor.getId());
-                if (result == null) {
-                    //no post processing for metadata catalog
-
-                    //FIXME cache with explicit id
-                    //metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor.getDistinguishedName(),metadataDescriptor);
-                    metadataCache.put(context, CatalogDescriptor.CATALOG_ID, metadataDescriptor);
-                }
-
-                context.getRuntimeContext().getRootAncestor().put(catalogid,metadataCache);
-
-                if(CatalogDescriptor.CATALOG_ID.equals(context.getRequest().getEntry())){
-                    context.setResult(metadataDescriptor);
-                }
-
-                result = metadataDescriptor;
-            }else{
-
-                CatalogActionRequest parentContext = context.getRequest();
-                CatalogActionRequest childContext = new CatalogActionRequestImpl();
-
-                childContext.setName(DataContract.READ_ACTION);
-                childContext.setEntry(catalogid);
-                childContext.setCatalog(CatalogDescriptor.CATALOG_ID);
-
-                context.switchContract(childContext);
-                context.setCatalogDescriptor(metadataDescriptor);
-
-
-                readerProvider.get().execute(context);
-                result = context.getConvertedResult();
-                log.warn("[full metadata] {}",result);
-
-                context.getRuntimeContext().getRootAncestor().put(catalogid+CatalogActionContext.INCOMPLETO,result);
-
-                if(result==null){
-                    throw new CatalogException("No such catalog "+catalogid);
-                }
-                context.switchContract(parentContext);
-
-            }
-
-            context.setCatalogDescriptor(result);
-
-            return result;
-        }
-    }
 
     @Override
     public Provider<CatalogActionContext> getProvider(RuntimeContext runtime) {
@@ -246,8 +180,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
         private List<CatalogEntry> oldValues;
 
         private List<CatalogColumnResultSet> resultSet;
-
-        private CatalogDescriptor catalogDescriptor;
 
         // not injectable, always construct with an event
         protected CatalogActionContextImpl(Provider<CatalogActionRequest> contractProvider, ActionsDictionary dictionary, CatalogResultCache cache, NamespaceContext domainContext) {
@@ -313,7 +245,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             if(!isMetadataReady()){
                 throw new CatalogException("Context is not ready");
             }
-            return catalogDescriptor;
+            return getRequest().getCatalogValue();
         }
 
         @Override
@@ -409,7 +341,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public void setCatalogDescriptor(CatalogDescriptor catalog) {
-            this.catalogDescriptor = catalog;
+            getRequest().setCatalogValue(catalog);
             getRequest().setCatalog(catalog.getDistinguishedName());
         }
 
@@ -476,19 +408,6 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
             return triggerGet(catalogId, entryId, true);
         }
 
-        @Override
-        public CatalogDescriptor getDescriptorForKey(Long numericId) throws Exception {
-           return triggerGet(CatalogDescriptor.CATALOG_ID,numericId);
-        }
-
-        @Override
-        public CatalogDescriptor getDescriptorForName(String catalogId) throws Exception {
-            CatalogDescriptor foreign = (CatalogDescriptor) getRuntimeContext().getRootAncestor().get(catalogId + CatalogActionContext.INCOMPLETO);
-            if(foreign==null){
-                foreign=triggerGet(CatalogDescriptor.CATALOG_ID,catalogId);
-            }
-            return foreign;
-        }
 
         @Override
         public List<CatalogEntry> getAvailableCatalogs() throws Exception {
@@ -499,7 +418,7 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public boolean isMetadataReady() {
-            return catalogDescriptor!=null;
+            return getRequest().getCatalogValue()!=null;
         }
 
         @Override

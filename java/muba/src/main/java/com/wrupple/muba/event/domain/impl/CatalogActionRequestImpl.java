@@ -3,7 +3,9 @@ package com.wrupple.muba.event.domain.impl;
 import javax.validation.constraints.NotNull;
 
 import com.wrupple.muba.event.domain.CatalogActionRequest;
+import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.ValidCatalogActionRequest;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.FilterData;
@@ -34,7 +36,10 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 	private String  name;
 	private boolean anonymouslyVisible;
 	private boolean followReferences;
+	@CatalogField(ignore = true)
 	private List<CatalogEntry> results;
+	@CatalogField(ignore = true)
+	private CatalogDescriptor catalogValue;
 	
 
     public void setParentValue(CatalogActionRequest parentValue) {
@@ -229,4 +234,11 @@ public class CatalogActionRequestImpl  implements CatalogActionRequest {
 		this.results = results;
 	}
 
+	public CatalogDescriptor getCatalogValue() {
+		return catalogValue;
+	}
+
+	public void setCatalogValue(CatalogDescriptor catalogValue) {
+		this.catalogValue = catalogValue;
+	}
 }

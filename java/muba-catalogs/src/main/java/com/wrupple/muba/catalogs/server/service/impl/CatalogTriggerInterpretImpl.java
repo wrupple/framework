@@ -110,7 +110,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 						if (context.getRuntimeContext().getSession().hasPermissionsToProcessContext(context,
 								manifestP.get())) {
 
-							log.debug("[EXCECUTING TRIGGER {}] CONTEXT= {} ", command, context);
+							log.debug("[EXCECUTING TRIGGER {}] ", command);
 							command.execute(context);
 							Set<ConstraintViolation<?>> aggregate = context.getRuntimeContext().getConstraintViolations();
 							if (aggregate != null && !aggregate.isEmpty()) {
@@ -129,7 +129,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 						}
 					}
 				} else {
-					log.debug("[EXCECUTING TRIGGER {}] CONTEXT= {} ", command, context);
+					log.debug("[EXCECUTING TRIGGER {}]  ", command);
 					command.execute(context);
 				}
 

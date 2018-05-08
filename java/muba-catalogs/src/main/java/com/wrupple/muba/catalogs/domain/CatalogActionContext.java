@@ -15,7 +15,6 @@ public interface CatalogActionContext
         extends ServiceContext, HasResult<CatalogEntry>, HasResults<CatalogEntry> {
 
     String CATALOG = "CatalogActionContext";
-    String INCOMPLETO = "_incompleto";
 
     CatalogActionRequest getRequest();
 
@@ -62,10 +61,6 @@ public interface CatalogActionContext
     <T extends CatalogEntry> T triggerCreate(String catalogId, CatalogEntry createdEntry) throws Exception;
 
     <T extends CatalogEntry> List<T> triggerRead(String catalogId, FilterData filter, boolean assemble) throws Exception;
-
-    CatalogDescriptor getDescriptorForKey(Long numericId) throws Exception;
-
-    CatalogDescriptor getDescriptorForName(String catalogId) throws Exception;
 
     <T extends CatalogEntry> T triggerGet(String catalogId, Object key, boolean assemble) throws Exception;
 

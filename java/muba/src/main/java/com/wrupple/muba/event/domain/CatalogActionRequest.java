@@ -27,4 +27,8 @@ public interface CatalogActionRequest extends HasLocale,DataContract,HasParentVa
 	 List<CatalogEntry> getResults();
 
 	void setResults(List<CatalogEntry> discriminated);
+
+	void setCatalogValue(CatalogDescriptor catalog);
+
+	CatalogDescriptor getCatalogValue();
 }

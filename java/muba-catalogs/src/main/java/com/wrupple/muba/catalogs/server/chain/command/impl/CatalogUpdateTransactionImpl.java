@@ -2,6 +2,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
@@ -31,16 +32,18 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 	private final ActionsDictionary dictionary;
 	private final EntrySynthesizer snth;
 	private final FieldAccessStrategy access;
+	private final CatalogDescriptorService catalogService;
 
 	@Inject
 	public CatalogUpdateTransactionImpl(ActionsDictionary dictionary, Provider<CatalogActionCommit> catalogActionCommitProvider,
-                                        Writers writers, EntrySynthesizer snth, FieldAccessStrategy access) {
+										Writers writers, EntrySynthesizer snth, FieldAccessStrategy access, CatalogDescriptorService catalogService) {
 		super(catalogActionCommitProvider);
 		this.writers = writers;
 		this.dictionary=dictionary;
         this.snth = snth;
         this.access = access;
-    }
+		this.catalogService = catalogService;
+	}
 
 	@Override
 	public boolean execute(Context c) throws Exception {
@@ -71,7 +74,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 			// would
 			// not be called
 			CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
-			parentCatalog = context.getDescriptorForKey(catalog.getParent());
+			parentCatalog = catalogService.getDescriptorForKey(catalog.getParent(),context);
 			parentEntityId = snth.getAllegedParentId(originalEntry, instrospection,access);
 
 			// synthesize parent entity from all non-inherited, passing all

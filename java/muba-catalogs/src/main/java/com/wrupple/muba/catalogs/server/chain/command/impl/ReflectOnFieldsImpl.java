@@ -116,8 +116,7 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                         }
                     } else {
 
-                        // FIXME evaluation? or is evaluation at result set
-                        // construction a better deal?
+                        // FIXME evaluation?
                     }
 
                 }

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +28,12 @@ import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 public class GarbageCollectionImpl implements GarbageCollection {
 	private static final Logger log = LogManager.getLogger(GarbageCollectionImpl.class);
 
+	private final CatalogDescriptorService catalogService;
 
 	@Inject
-	public GarbageCollectionImpl() {
+	public GarbageCollectionImpl(CatalogDescriptorService catalogService) {
 		super();
+		this.catalogService = catalogService;
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 				for (CatalogEntry idem : names) {
 
 					garbageFilter = null;
-					temp = context.getDescriptorForName((String) idem.getId());
+					temp = catalogService.getDescriptorForName((String) idem.getId(),context);
 					tempFields = temp.getFieldsValues();
 
 					log.trace("[PROCESSING {}]", idem.getId());

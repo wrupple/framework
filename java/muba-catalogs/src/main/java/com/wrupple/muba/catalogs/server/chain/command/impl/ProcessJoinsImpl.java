@@ -3,13 +3,15 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogRelation;
 import com.wrupple.muba.catalogs.domain.DataJoinContext;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import org.apache.commons.chain.Command;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,8 +23,17 @@ import static com.wrupple.muba.event.server.service.impl.FilterDataUtils.newFilt
 /**
  * Created by japi on 5/05/18.
  */
+@Singleton
 public class ProcessJoinsImpl implements Command<DataJoinContext> {
     protected static final Logger log = LogManager.getLogger(ProcessJoinsImpl.class);
+
+    private final CatalogDescriptorService catalogService;
+
+    @Inject
+    public ProcessJoinsImpl(CatalogDescriptorService catalogService) {
+        this.catalogService = catalogService;
+    }
+
 
     @Override
     public boolean execute(DataJoinContext context) throws Exception {
@@ -31,7 +42,7 @@ public class ProcessJoinsImpl implements Command<DataJoinContext> {
 		 */
         CatalogRelation relation = context.getWorkingRelation();
         String catalogId = relation.getForeignCatalog();
-        CatalogDescriptor catalog = context.getMain().getDescriptorForName(catalogId);
+        CatalogDescriptor catalog = catalogService.getDescriptorForName(catalogId,context.getMain());
         relation.setForeignCatalogValue(catalog);
         if(catalog==null){
             throw new NullPointerException("No such catalog "+catalogId);

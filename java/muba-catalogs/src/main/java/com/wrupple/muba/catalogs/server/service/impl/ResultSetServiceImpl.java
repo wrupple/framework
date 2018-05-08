@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.server.service.impl;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.catalogs.server.chain.command.impl.BuildColumnResultSetImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.ResultSetService;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -28,17 +29,19 @@ public class ResultSetServiceImpl implements ResultSetService {
     protected static final Logger log = LogManager.getLogger(BuildColumnResultSetImpl.class);
 
     private final FieldAccessStrategy access;
+    private final CatalogDescriptorService catalogService;
 
     @Inject
-    public ResultSetServiceImpl(FieldAccessStrategy access) {
+    public ResultSetServiceImpl(FieldAccessStrategy access, CatalogDescriptorService catalogService) {
         this.access = access;
+        this.catalogService = catalogService;
     }
 
     public CatalogColumnResultSet createResultSet(List<CatalogEntry> foreignResults, CatalogDescriptor foreignCatalog,
                                                      String foreignCatalogId, CatalogActionContext context, Instrospection instrospection) throws Exception {
         log.trace("[CREATE RESULT SET]");
         if (foreignCatalog == null) {
-            foreignCatalog = context.getDescriptorForName(foreignCatalogId);
+            foreignCatalog = catalogService.getDescriptorForName(foreignCatalogId,context);
         }
 
         Collection<FieldDescriptor> rawFields = foreignCatalog.getFieldsValues();
