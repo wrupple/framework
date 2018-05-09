@@ -41,7 +41,7 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
         log.trace("Working Catalog Graph of {} and {}", mainCatalog.getDistinguishedName(),
                 joinCatalog.getDistinguishedName());
         Collection<FieldDescriptor> fields = mainCatalog.getFieldsValues();
-        List<CatalogEntry> mainResults = context.getMain().getResults();
+        List<CatalogEntry> mainResults = context.getResults();
         CatalogEntry sample = mainResults.get(0);
 
         Collection<Object> needs;

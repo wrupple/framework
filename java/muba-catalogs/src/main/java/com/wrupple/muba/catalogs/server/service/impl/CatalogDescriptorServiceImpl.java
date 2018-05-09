@@ -10,6 +10,8 @@ import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.DataContract;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogQueryRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,11 +91,8 @@ public class CatalogDescriptorServiceImpl implements CatalogDescriptorService {
     private CatalogDescriptor readDescriptor(CatalogActionContext context, Object catalogid, CatalogDescriptor metadataDescriptor) throws Exception {
         CatalogActionRequest parentContext = context.getRequest();
         CatalogDescriptor result;
-        CatalogActionRequest childContext = new CatalogActionRequestImpl();
+        CatalogActionRequest childContext = new CatalogReadRequestImpl(catalogid,CatalogDescriptor.CATALOG_ID);
 
-        childContext.setName(DataContract.READ_ACTION);
-        childContext.setEntry(catalogid);
-        childContext.setCatalog(CatalogDescriptor.CATALOG_ID);
 
         context.switchContract(childContext);
         context.setCatalogDescriptor(metadataDescriptor);

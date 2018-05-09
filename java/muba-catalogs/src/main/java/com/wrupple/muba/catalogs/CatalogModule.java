@@ -171,7 +171,7 @@ public class CatalogModule extends AbstractModule {
         //used by BroadcastInterpretImpl
         bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
 
-		bind(CompleteCatalogGraph.class).to(CompleteCatalogGraphImpl.class);
+		bind(CompleteCatalogGraph.class).to(EventuallyCompleteCatalogGraphImpl.class);
 		bind(ExplicitDataJoin.class).to(ExplicitDataJoinImpl.class);
 		bind(ImplicitDataJoin.class).to(ImplicitDataJoinImpl.class);
 		bind(TriggerPluginQueryCommand.class).to(TriggerPluginQueryCommandImpl.class);

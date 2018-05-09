@@ -7,7 +7,6 @@ import com.wrupple.muba.catalogs.server.service.ResultSetService;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
@@ -43,16 +42,14 @@ public class ImplicitDataJoinImpl  implements ImplicitDataJoin {
 		if (context.getResults() == null || context.getResults().isEmpty()) {
 			return CONTINUE_PROCESSING;
 		}
-
+		DataJoinContext childContext = new DataJoinContext(context.getResults(),context,access.newSession(null));
 		List<CatalogEntry> result = context.getResults();
-        Instrospection instrospection = access.newSession(result.get(0));
         CatalogColumnResultSet resultSet = delegate.createResultSet(result, context.getCatalogDescriptor(),
-				(String) context.getRequest().getCatalog(), context, instrospection);
+				(String) context.getRequest().getCatalog(), context, childContext.getIntrospectionSession());
 
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
         List<CatalogRelation> joins = keydelegate.getJoins(context, null, descriptor, null,
                 context, null);
-        DataJoinContext childContext = new DataJoinContext(context,access.newSession(null));
         childContext.setJoins(joins);
         childContext.setBuildResultSet(true);
 		Map<FieldFromCatalog, Set<Object>> filterMap = childContext.getFieldValueMap();

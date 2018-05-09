@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.domain;
 
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.reserved.HasResults;
 import org.apache.commons.chain.impl.ContextBase;
@@ -11,14 +12,16 @@ import java.util.*;
  */
 public class DataJoinContext extends ContextBase {
     private final CatalogActionContext main;
+    private final List<CatalogEntry> results;
     private List<CatalogRelation> joins;
     private Map<FieldFromCatalog,Set<Object>> fieldValueMap;
     private final Instrospection introspectionSession;
     private CatalogRelation workingRelation;
     private boolean buildResultSet;
 
-    public DataJoinContext(CatalogActionContext main,Instrospection introspectionSession) {
+    public DataJoinContext(List<CatalogEntry> results,CatalogActionContext main, Instrospection introspectionSession) {
         this.main = main;
+        this.results = results;
         this.introspectionSession=introspectionSession;
     }
 
@@ -75,5 +78,9 @@ public class DataJoinContext extends ContextBase {
 
     public void setBuildResultSet(boolean buildResultSet) {
         this.buildResultSet = buildResultSet;
+    }
+
+    public List<CatalogEntry> getResults() {
+        return results;
     }
 }

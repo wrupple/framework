@@ -1,20 +1,16 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogRelation;
 import com.wrupple.muba.catalogs.domain.DataJoinContext;
-import com.wrupple.muba.catalogs.domain.FieldFromCatalog;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Command;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +31,8 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
 
     @Override
     public boolean execute(DataJoinContext context) throws Exception {
+        List<CatalogEntry> results = context.getResults();
+
         if (context.getMain().getResults() == null || context.getMain().getResults().isEmpty()) {
             throw new RuntimeException("no results to join");
         } else {
@@ -46,7 +44,6 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
                 throw new IllegalArgumentException("No such field "+fieldId+" in "+catalog.getDistinguishedName());
             } else {
                 // this filter building method is built expressly for joining key (unique) values
-                List<CatalogEntry> results = context.getMain().getResults();
                 Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
 
                 if (field.isMultiple()) {

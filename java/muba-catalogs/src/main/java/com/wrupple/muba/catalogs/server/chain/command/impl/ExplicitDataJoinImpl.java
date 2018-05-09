@@ -56,7 +56,7 @@ public class ExplicitDataJoinImpl implements ExplicitDataJoin {
         }
 
 
-        DataJoinContext childContext = new DataJoinContext(context,access.newSession(null));
+        DataJoinContext childContext = new DataJoinContext(context.getResults(),context,access.newSession(null));
         childContext.setJoins(joins);
         childContext.setBuildResultSet(true);
 

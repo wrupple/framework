@@ -47,7 +47,7 @@ public class ProcessJoinsImpl implements Command<DataJoinContext> {
         if(catalog==null){
             throw new NullPointerException("No such catalog "+catalogId);
         }
-        List<CatalogEntry> mainResults = context.getMain().getResults();
+        List<CatalogEntry> mainResults = context.getResults();
         String foreignField = context.getWorkingRelation().getForeignField();
         Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
         List<CatalogEntry> currentMatchingEntries = getjoinCandidates(mainResults, context.getMain(), catalog, foreignField,
@@ -74,7 +74,7 @@ public class ProcessJoinsImpl implements Command<DataJoinContext> {
         }
 
         // Find values to join
-        FilterData currentQueryFilter = createJoinSubquery(context, foreignField, fieldValues);
+        FilterData currentQueryFilter = createJoinSubquery(foreignField, fieldValues);
 
         List<CatalogEntry> currentMatchingEntries;
         if (currentQueryFilter == null) {
@@ -91,7 +91,7 @@ public class ProcessJoinsImpl implements Command<DataJoinContext> {
 
 
 
-    private FilterData createJoinSubquery(CatalogActionContext context, String foreignField, Set<Object> fieldValues)
+    private FilterData createJoinSubquery(String foreignField, Set<Object> fieldValues)
             throws Exception {
 
         if (fieldValues == null || fieldValues.isEmpty()) {

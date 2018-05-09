@@ -4,7 +4,6 @@ import com.wrupple.muba.catalogs.domain.DataJoinContext;
 import org.apache.commons.chain.impl.ChainBase;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Arrays;
 
 /**
