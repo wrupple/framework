@@ -2,6 +2,7 @@ package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.CatalogQueryRequestImpl;
 import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
@@ -42,20 +43,15 @@ public class ValueChangeListenerImpl extends AbstractComparationCommand implemen
 		if ((initialValue == null && finalValue != null)
 				|| (initialValue != null && !initialValue.equals(finalValue))) {
 
-			// TODO this means mny unecesary  searches when no triggers are provided
-			List<ValueChangeTrigger> changeTriggers = (List<ValueChangeTrigger>) context
-					.get(ValueChangeListener.CONTEXT_TRIGGERS_KEY);
-			if (changeTriggers == null) {
-				CatalogActionRequestImpl spawned = new CatalogActionRequestImpl();
-				FilterData filterData = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,
+		    FilterData filterData = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,
 						(String)context.getRequest().getCatalog());
-				filterData.setConstrained(false);
-				filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getFieldId()));
-				spawned.setFilter(filterData);
+		    filterData.setConstrained(false);
+		    filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getFieldId()));
 
-				changeTriggers = context.getRuntimeContext().getServiceBus().fireEvent(spawned,context.getRuntimeContext(),null);
-				context.put(CONTEXT_TRIGGERS_KEY, changeTriggers);
-			}
+            CatalogActionRequestImpl spawned = new CatalogQueryRequestImpl(filterData,ValueChangeTrigger.CATALOG);
+            spawned.setParentValue(context.getRequest());
+		    List<ValueChangeTrigger> changeTriggers = context.getRuntimeContext().getServiceBus().fireEvent(spawned,context.getRuntimeContext(),null);
+
 			if (changeTriggers != null) {
 				changeTriggers = filterByValue(codedInitialValue, codedFinalValue, changeTriggers);
 				if (changeTriggers != null) {

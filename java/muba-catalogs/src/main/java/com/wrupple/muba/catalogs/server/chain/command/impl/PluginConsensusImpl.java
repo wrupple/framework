@@ -53,21 +53,21 @@ public class PluginConsensusImpl implements PluginConsensus {
         this.host=host;
         this.pluginProvider=pluginProvider;
         this.inheritanceHandler = inheritanceHandler;
-        treeIndex = new TriggerImpl(0, UpdateTreeLevelIndex.class.getSimpleName(), true, null, null, null);
+        treeIndex = new TriggerImpl(-10l,0, UpdateTreeLevelIndex.class.getSimpleName(), true, null, null, null);
         treeIndex.setFailSilence(true);
         treeIndex.setStopOnFail(true);
 
-        timelineDiscriminator = new TriggerImpl(0,
+        timelineDiscriminator = new TriggerImpl(-11l,0,
                 WritePublicTimelineEventDiscriminator.class.getSimpleName(), false, null, null, null);
         timelineDiscriminator.setFailSilence(true);
         timelineDiscriminator.setStopOnFail(true);
 
-        timestamp = new TriggerImpl(0, Timestamper.class.getSimpleName(), true, null, null, null);
+        timestamp = new TriggerImpl(-12l,0, Timestamper.class.getSimpleName(), true, null, null, null);
         timestamp.setFailSilence(false);
         timestamp.setStopOnFail(true);
 
 
-        versionTrigger = new TriggerImpl(1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
+        versionTrigger = new TriggerImpl(-13l,1, IncreaseVersionNumber.class.getSimpleName(), true, null, null,
                 null);
         versionTrigger.setFailSilence(true);
         versionTrigger.setStopOnFail(true);
@@ -179,7 +179,7 @@ public class PluginConsensusImpl implements PluginConsensus {
 
         properties.add("name=" + SystemCatalogPlugin.SOURCE_OLD + "." + c.getDescriptiveField());
 
-        TriggerImpl trigger = new TriggerImpl(1, CatalogActionRequest.CREATE_ACTION, true,
+        TriggerImpl trigger = new TriggerImpl(-14l,1, CatalogActionRequest.CREATE_ACTION, true,
                 ContentRevision.CATALOG, properties, null);
         trigger.setFailSilence(true);
         trigger.setStopOnFail(true);

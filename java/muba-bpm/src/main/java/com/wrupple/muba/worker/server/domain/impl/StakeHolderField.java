@@ -1,4 +1,4 @@
-package com.wrupple.muba.worker.server.domain;
+package com.wrupple.muba.worker.server.domain.impl;
 
 import com.wrupple.muba.event.domain.Person;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;

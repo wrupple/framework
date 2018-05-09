@@ -12,6 +12,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.worker.domain.Request;
 import com.wrupple.muba.worker.server.chain.command.*;
+import com.wrupple.muba.worker.server.domain.ValueChangeTrigger;
 import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import org.apache.commons.chain.Command;
 
@@ -58,12 +59,13 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 							  ValueChangeAudit validationTrigger, StakeHolderTrigger stakeHolderTrigger,
 							  @Named(Person.CATALOG) CatalogDescriptor person,
 							  // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
-							  @Named(Request.CATALOG) CatalogDescriptor notificationProvider
-							  // @Named(Host.CATALOG_TIMELINE) Provider<CatalogDescriptor> clientProvider
+							  @Named(Request.CATALOG) CatalogDescriptor notificationProvider,
+							   @Named(ValueChangeTrigger.CATALOG) CatalogDescriptor audits
 							  ) {
 
         super.put(person);
 		super.put(notificationProvider);
+		super.put(audits);
 		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
 		queryers.addCommand(catalogPluginStorage,peopleStorage);
 		primaryKeyers.addCommand(catalogPluginStorage,peopleStorage);
@@ -80,7 +82,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 ;
 			if (catalog.getStorage()!=null&&catalog.getStorage().contains("secure")) {
 				// FIXME writing (or reading require signed private key authentication)
-				e = new TriggerImpl();
+				e = new TriggerImpl(-1l);
 				e.setAction(0l);
 				e.setAdvice(true);
 				e.setName(CheckSecureConditions.class.getSimpleName());
@@ -88,7 +90,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 				e.setStopOnFail(true);
 				scope.add(e, catalog,context);
 
-				e = new TriggerImpl();
+				e = new TriggerImpl(-2l);
 				e.setAction(1l);
 				e.setAdvice(true);
 				e.setName(CheckSecureConditions.class.getSimpleName());
@@ -96,7 +98,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 				e.setStopOnFail(true);
 				scope.add(e, catalog,context);
 
-				e = new TriggerImpl();
+				e = new TriggerImpl(-3l);
 				e.setAction(2l);
 				e.setAdvice(true);
 				e.setName(CheckSecureConditions.class.getSimpleName());
@@ -105,7 +107,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 				scope.add(e, catalog,context);
 			}
 
-			e = new TriggerImpl();
+			e = new TriggerImpl(-4l);
 			e.setAction(0l);
 			e.setAdvice(true);
 			e.setName(StakeHolderTrigger.class.getSimpleName());
@@ -113,7 +115,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 			e.setStopOnFail(true);
 			scope.add(e, catalog,context);
 
-			e = new TriggerImpl();
+			e = new TriggerImpl(-5l);
 			e.setAction(1l);
 			e.setAdvice(true);
 			e.setName(ValueChangeAudit.class.getSimpleName());
@@ -121,7 +123,7 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 			e.setStopOnFail(true);
 			scope.add(e, catalog,context);
 
-			e = new TriggerImpl();
+			e = new TriggerImpl(-6l);
 			e.setAction(1l);
 			e.setAdvice(false);
 			e.setName(ValueChangeListener.class.getSimpleName());

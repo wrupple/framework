@@ -89,7 +89,9 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 		CatalogEntry entryValue = (CatalogEntry) req.getEntryValue();
 		String catalog = (String) req.getCatalog();
 		if(catalog==null){
-			throw new NullPointerException("catalogId");
+			report=false;
+            validationContext.buildConstraintViolationWithTemplate("{catalog.request.withoutCatalog}");
+            return report;
 		}
 		//after request interpret we expect contract domain to be a Long
 		Long domain =  req.getDomain();

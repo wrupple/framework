@@ -18,17 +18,23 @@ public class TriggerImpl extends CatalogActionConstraintImpl implements Trigger 
 	private Boolean advice,runAsStakeHolder,failSilence,stopOnFail;
 
 
-	public TriggerImpl(){
+	public TriggerImpl(Long id){
+		this();
+		setId(id);
 	}
 	
-	public TriggerImpl(int action, String handler, boolean before, String targetCatalogId, List<String> properties, String seed) {
-		super();
+	public TriggerImpl(Long id,int action, String handler, boolean before, String targetCatalogId, List<String> properties, String seed) {
+		this();
 		this.action=Long.valueOf(action);
 		super.setSeed(seed);
 		setName(handler);
 		this.advice = before;
 		super.setCatalog(targetCatalogId);
 		super.setProperties(properties);
+	}
+
+	public TriggerImpl() {
+		super();
 	}
 
 	public Long getAction() {

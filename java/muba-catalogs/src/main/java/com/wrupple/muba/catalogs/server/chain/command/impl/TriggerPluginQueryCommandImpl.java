@@ -4,7 +4,7 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.Trigger;
 import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
 import com.wrupple.muba.catalogs.server.chain.command.TriggerPluginQueryCommand;
-import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.TriggerCreationScope;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +25,7 @@ public class TriggerPluginQueryCommandImpl implements TriggerPluginQueryCommand 
     protected static final Logger log = LogManager.getLogger(CatalogPluginQueryCommandImpl.class);
 
     private final PluginConsensus plugins;
+    private final CatalogDescriptorService metadataService;
 
     static class PluginTriggerCrationScope implements TriggerCreationScope{
         private final List<Trigger> triggers;
@@ -46,9 +46,9 @@ public class TriggerPluginQueryCommandImpl implements TriggerPluginQueryCommand 
     }
 
     @Inject
-    public TriggerPluginQueryCommandImpl(PluginConsensus plugins) {
+    public TriggerPluginQueryCommandImpl(PluginConsensus plugins, CatalogDescriptorService metadataService) {
         this.plugins = plugins;
-
+        this.metadataService = metadataService;
     }
 
 
@@ -69,7 +69,7 @@ public class TriggerPluginQueryCommandImpl implements TriggerPluginQueryCommand 
 
                     CatalogDescriptor catalog;
                     for(String catalogId : catalogs){
-                        catalog = assertDescriptor(catalogId,context);
+                        catalog = metadataService.getDescriptorForName(catalogId,context);
                         context.getRequest().setEntryValue(catalog);
                         plugins.execute(context);
 
@@ -78,7 +78,9 @@ public class TriggerPluginQueryCommandImpl implements TriggerPluginQueryCommand 
 
 
                     List<Trigger> results = scope.triggers;
-
+                    if(results==null || results.isEmpty()){
+                        results = null;
+                    }
                     context.setResults(results);
                 }
 
@@ -90,24 +92,5 @@ public class TriggerPluginQueryCommandImpl implements TriggerPluginQueryCommand 
     }
 
 
-    private CatalogDescriptor assertDescriptor(String catalogId, CatalogActionContext context) throws InvocationTargetException, IllegalAccessException {
-//at this point this very validator should allow this as a valid  request no more questions asked
-            CatalogActionRequestImpl request = new CatalogActionRequestImpl();
-            request.setParentValue(context.getRequest());
-            request.setCatalog(CatalogDescriptor.CATALOG_ID);
-            request.setEntry(catalogId);
-            request.setName(DataContract.READ_ACTION);
-            request.setFollowReferences(true);
-
-            try {
-                //TODO event always returns fill result list, can we make it so it doesnt have to wrap single results?ss
-                return context.getRuntimeContext().getServiceBus().fireEvent(request, context.getRuntimeContext(), null);
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-
-    }
 
 }

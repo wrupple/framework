@@ -21,7 +21,9 @@ import com.wrupple.muba.worker.server.chain.command.*;
 import com.wrupple.muba.worker.server.chain.command.impl.*;
 import com.wrupple.muba.worker.server.chain.impl.BusinessEngineImpl;
 import com.wrupple.muba.worker.server.chain.impl.WorkflowEngineImpl;
-import com.wrupple.muba.worker.server.domain.IntentResolverContextImpl;
+import com.wrupple.muba.worker.server.domain.impl.IntentResolverContextImpl;
+import com.wrupple.muba.worker.server.domain.ValueChangeTrigger;
+import com.wrupple.muba.worker.server.domain.impl.ValueChangeTriggerImpl;
 import com.wrupple.muba.worker.server.service.BusinessPlugin;
 import com.wrupple.muba.worker.server.service.impl.BusinessPluginImpl;
 
@@ -111,6 +113,16 @@ public class BusinessModule  extends AbstractModule {
         CatalogDescriptor r = builder.fromClass(PersonImpl.class, Person.CATALOG,  Person.CATALOG,
                 -13344556, null);
         r.setStorage(Arrays.asList(defaultStorage, catalogPluginStorage));
+
+        return r;
+    }
+    @Provides
+    @Singleton
+    @Inject
+    @Named(ValueChangeTrigger.CATALOG)
+    public CatalogDescriptor audit(CatalogDescriptorBuilder builder) {
+        CatalogDescriptor r = builder.fromClass(ValueChangeTriggerImpl.class, ValueChangeTrigger.CATALOG,  ValueChangeTrigger.CATALOG,
+                -13344555, null);
 
         return r;
     }

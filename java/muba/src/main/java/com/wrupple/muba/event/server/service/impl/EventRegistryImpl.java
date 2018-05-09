@@ -164,7 +164,7 @@ public class EventRegistryImpl implements EventRegistry {
     }
 
     private ServiceManifest serviceDictionaryget(String catalogType) {
-        List<ServiceManifest> list = serviceDictionary.get(catalogType);
+        List<ServiceManifest> list = resolveHandlers(catalogType);
         if(list==null){
             return null;
         }else{

@@ -90,6 +90,9 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 
     @Override
 	public void put(CatalogActionContext context, String catalogId, CatalogEntry entry) {
+	    if(entry.getId()==null){
+	        throw new IllegalArgumentException("unidentified entries may not be cached");
+        }
         long domain = ((Long)context.getNamespaceContext().getId()).longValue();
         assertEntrycache(domain, catalogId).put(entry.getId(), entry);
         log.trace("[NEW CACHE ENTRY {}]", entry.getId());

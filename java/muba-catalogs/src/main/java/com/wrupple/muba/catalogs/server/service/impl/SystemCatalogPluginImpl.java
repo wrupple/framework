@@ -61,23 +61,23 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
         String catalogId = regreso.getDistinguishedName();
         TriggerImpl trigger;
         if (FieldDescriptor.CATALOG_ID.equals(catalogId)) {
-            trigger = new TriggerImpl(1,
+            trigger = new TriggerImpl(-15l,1,
                     FieldDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
             triggerInterpret.add(trigger, regreso,context);
-            trigger = new TriggerImpl(2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
+            trigger = new TriggerImpl(-16l,2, FieldDescriptorUpdateTrigger.class.getSimpleName(), false,
                     null, null, null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
             triggerInterpret.add(trigger, regreso,context);
         }  else if (Trash.CATALOG.equals(catalogId)) {
-            trigger = new TriggerImpl(1, RestoreTrash.class.getSimpleName(),
+            trigger = new TriggerImpl(-17l,1, RestoreTrash.class.getSimpleName(),
                     true, null, null, null);
             trigger.setFailSilence(false);
             trigger.setStopOnFail(false);
             triggerInterpret.add(trigger, regreso,context);
-            trigger = new TriggerImpl(2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
+            trigger = new TriggerImpl(-18l,2, TrashDeleteTrigger.class.getSimpleName(), false, null, null,
                     null);
             trigger.setFailSilence(true);
             trigger.setStopOnFail(true);
@@ -85,7 +85,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
         }
 
 
-		trigger = new TriggerImpl(2, GarbageCollection.class.getSimpleName(), false, null, null, null);
+		trigger = new TriggerImpl(-19l,2, GarbageCollection.class.getSimpleName(), false, null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
 
@@ -94,7 +94,7 @@ public class SystemCatalogPluginImpl extends StaticCatalogDescriptorProvider  im
 		FieldDescriptor field = regreso.getFieldDescriptor(Trash.TRASH_FIELD);
 		if (field != null && field.getDataType() == CatalogEntry.BOOLEAN_DATA_TYPE) {
 
-			trigger = new TriggerImpl(1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
+			trigger = new TriggerImpl(-20l,1, EntryDeleteTrigger.class.getSimpleName(), false, null, null,
 					null);
 			trigger.setFailSilence(true);
 			trigger.setStopOnFail(true);

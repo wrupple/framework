@@ -43,18 +43,18 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
         this.synthetizationDelegate = synthetizationDelegate;
         //FIXME this may be an indication that a static storage unit for triggers is necessary
         TriggerImpl[] triggg = new TriggerImpl[3];
-		TriggerImpl trigger = new TriggerImpl(1,
+		TriggerImpl trigger = new TriggerImpl(-7l,1,
 				CatalogDescriptorUpdateTrigger.class.getSimpleName(), false, null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
         triggg[0]= (trigger);
-		trigger = new TriggerImpl(2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
+		trigger = new TriggerImpl(-8l,2, CatalogDescriptorUpdateTrigger.class.getSimpleName(), false,
 				null, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
         triggg[1]=(trigger);
 
-		trigger = new TriggerImpl(0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
+		trigger = new TriggerImpl(-9l,0, PluginConsensus.class.getSimpleName(), true, CatalogDescriptor.CATALOG_ID, null, null);
 		trigger.setFailSilence(true);
 		trigger.setStopOnFail(true);
         triggg[2]=(trigger);
