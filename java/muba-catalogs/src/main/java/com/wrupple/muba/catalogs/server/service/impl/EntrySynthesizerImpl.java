@@ -31,21 +31,17 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     private final String ancestorIdField;
     private final FieldAccessStrategy access;
     private final CatalogKeyServices keyDelgeate;
-    private final Provider<ActionsDictionary> dictionaryProvider;
-    private final CatalogDescriptor metadataDescriptor;
     private final CatalogDescriptorService catalogService;
 
 
 
 
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate, Provider<ActionsDictionary> dictionaryProvider, @Named(CatalogDescriptor.CATALOG_ID) CatalogDescriptor metadataDescriptor, CatalogDescriptorService catalogService) {
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate,  CatalogDescriptorService catalogService) {
         this.pattern = pattern;
         this.ancestorIdField=ancestorIdField;
         this.access = access;
         this.keyDelgeate = keyDelgeate;
-        this.dictionaryProvider = dictionaryProvider;
-        this.metadataDescriptor = metadataDescriptor;
         this.catalogService = catalogService;
     }
 	/*
@@ -58,41 +54,34 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
             return null;
         }else{
             // find great ancestor
-            if(result.getRootAncestor()!=null&&result.getRootAncestor()!=result){
-                return result.getRootAncestor().getDistinguishedName();
+            if(result.getRootAncestor()!=null){
+                if(result.getRootAncestor()==result){
+                    return null;
+                }else{
+                    return result.getRootAncestor().getDistinguishedName();
+                }
             }else{
-                List<CatalogEntry> originalResults = realContext.getResults();
-                CatalogActionRequest parentContext = realContext.getRequest();
-                CatalogDescriptor orinalMetadata = realContext.getCatalogDescriptor();
-                if(tempNotRealContract==null){
-                    tempNotRealContract = new CatalogActionRequestImpl();
 
-                    tempNotRealContract.setName(DataContract.READ_ACTION);
-                    tempNotRealContract.setCatalog(CatalogDescriptor.CATALOG_ID);
+                CatalogDescriptor parentValue = result.getParentValue();
+                if(parentValue==null){
+                    catalogService.getDescriptorForKey(result.getParent(),realContext);
+                    result.setParentValue(parentValue);
                 }
-                tempNotRealContract.setEntry(result.getParent());
-                realContext.switchContract(tempNotRealContract);
-                realContext.setCatalogDescriptor(metadataDescriptor);
-
-                dictionaryProvider.get().getRead().execute(realContext);
-                CatalogDescriptor parent = realContext.getConvertedResult();
-                result.setParentValue(parent);
-                String greatAncestor = parent.getDistinguishedName();
-                while (parent != null) {
-                     greatAncestor = parent.getDistinguishedName();
-                     if(parent.getParent()==null){
-                         parent = null;
-                     }else{
-                         tempNotRealContract.setEntry(parent.getParent());
-                         dictionaryProvider.get().getRead().execute(realContext);
-                         parent.setParentValue(realContext.getConvertedResult());
-                         parent= parent.getParentValue();
+                String greatAncestor = parentValue.getDistinguishedName();
+                while (parentValue != null) {
+                     greatAncestor = parentValue.getDistinguishedName();
+                     if(parentValue.getParentValue()==null){
+                        if(parentValue.getId()!=null){
+                            parentValue.setParentValue(catalogService.getDescriptorForKey(result.getParent(),realContext));
+                            if(parentValue.getParentValue()==null){
+                                throw new IllegalStateException("unknown catalog key "+result.getParent());
+                            }
+                        }
+                     }else {
+                         parentValue.setParent(parentValue.getParentValue().getId());
                      }
-
+                    parentValue = parentValue.getParentValue();
                 }
-                realContext.setCatalogDescriptor(orinalMetadata);
-                realContext.switchContract(parentContext);
-                realContext.setResults(originalResults);
                 return greatAncestor;
             }
         }
