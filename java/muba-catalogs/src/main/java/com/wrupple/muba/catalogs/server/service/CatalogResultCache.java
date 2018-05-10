@@ -41,9 +41,6 @@ public interface CatalogResultCache {
 
     <T extends CatalogEntry> List<T>  satisfy(CatalogActionContext context, CatalogDescriptor catalog, FilterData filterData);
 
-
-	void update(CatalogActionContext context, String catalog, CatalogEntry oldValue, CatalogEntry result);
-
 	void delete(CatalogActionContext context, String catalog, Object targetEntryId);
 	
 	void clearLists(CatalogActionContext context, String catalog);

@@ -46,7 +46,11 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
     @Override
     public <T extends CatalogEntry> T get(CatalogActionContext context, String catalogId, String explicitField, Object targetEntryId) {
         long domain = ((Long)context.getNamespaceContext().getId()).longValue();
-        T r = (T) assertFieldCache(domain, catalogId,explicitField).get(targetEntryId);
+		Object key = assertFieldCache(domain, catalogId, explicitField).get(targetEntryId);
+		if(key==null){
+			return null;
+		}
+        T r = (T) get(context,catalogId,key);
         if (r != null) {
             log.trace("[CACHE SATISFIED ENTRY {}]", targetEntryId);
         }
@@ -101,7 +105,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 	@Override
 	public void put(CatalogActionContext context, String catalogId, Object explicitKey, String explicitField, CatalogEntry regreso) {
 		long domain = ((Long)context.getNamespaceContext().getId()).longValue();
-		assertFieldCache(domain, catalogId,explicitField).put(explicitKey, regreso);
+		assertFieldCache(domain, catalogId,explicitField).put(explicitKey, regreso.getId());
 		log.trace("[NEW CACHE ENTRY {}]", explicitKey);
 	}
 
@@ -130,7 +134,6 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 		return results;
 	}
 
-	@Override
 	public void update(CatalogActionContext context, String catalog, CatalogEntry oldValue, CatalogEntry result) {
 		put(context, catalog, result);
 	}
