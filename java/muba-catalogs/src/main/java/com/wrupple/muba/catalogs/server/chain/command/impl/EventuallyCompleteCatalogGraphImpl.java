@@ -45,7 +45,12 @@ public class EventuallyCompleteCatalogGraphImpl implements CompleteCatalogGraph 
             List<CatalogEntry> results =
                     workingSet.isEmpty() ? context.getResults():
                     context.getResults().stream().
-                    filter(e -> !workingSet.contains(e)).
+                    filter(e -> {
+                        if(e==null){
+                            throw new IllegalArgumentException("graph assembly candidates may not be null");
+                        }
+                        return !workingSet.contains(e);
+                    }).
                     collect(Collectors.toList());
             if(results.isEmpty()){
                 return CONTINUE_PROCESSING;

@@ -105,7 +105,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 
 		CatalogResultCache cache = context.getCache(context.getCatalogDescriptor(), context);
 		if (cache != null) {
-			cache.update(context, catalog.getDistinguishedName(), context.getOldValue(), ress);
+			cache.delete(context,catalog.getDistinguishedName(),originalEntry.getId());
 		}
 		ress = context.getEntryResult();
 		log.debug("<CatalogActionEvent-Broadcast>");

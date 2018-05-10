@@ -522,7 +522,11 @@ public final class CatalogRequestInterpretImpl implements CatalogRequestInterpre
 
         @Override
         public void setResult(CatalogEntry catalogEntry) {
-            setResults(Collections.singletonList(catalogEntry));
+            if(catalogEntry==null){
+                setResults(null);
+            }else{
+                setResults(Collections.singletonList(catalogEntry));
+            }
         }
 
         @Override

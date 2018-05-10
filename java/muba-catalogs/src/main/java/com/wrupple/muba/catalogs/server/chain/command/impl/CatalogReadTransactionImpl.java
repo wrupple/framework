@@ -81,13 +81,13 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         CatalogDescriptor catalog = context.getCatalogDescriptor();
 
         Instrospection instrospection = access.newSession(null);
-
-        CatalogResultCache cache = context.getCache(context.getCatalogDescriptor(), context);
+        CatalogResultCache cache = context.getCache(catalog,context);
+        boolean cachedResults = false;
 
         if (targetEntryId == null) {
             applySorts(filter, catalog.getAppliedSorts());
             applyCriteria(filter, catalog, catalog.getAppliedCriteria(), context, instrospection);
-            List<CatalogEntry> result = null;
+
             if(filter==null && CatalogDescriptor.CATALOG_ID.equals(catalog.getDistinguishedName())){
                 log.warn("Non filtered read of catalog list will result in all catalogs");
                 filter = FilterDataUtils.newFilterData();
@@ -99,31 +99,27 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             }
             FilterCriteria keyCriteria = filter.fetchCriteria(catalog.getKeyField());
             if ( keyCriteria == null) {
-                result = query(filter, catalog, context, cache, instrospection);
+                cachedResults = query(filter, catalog, context, instrospection,cache);
             } else {
                 List<Object> keys = keyCriteria.getValues();
                 if (keys == null) {
                     throw new IllegalArgumentException("malformed criteria");
                 }
                 if( keyCriteria != null&& filter.getFilters().size()==1 && keys.size()==1){
-                    CatalogEntry originalEntry = readTargetEntryId(instrospection, cache, catalog, keys.get(0), context);
-                    if(originalEntry==null){
-                        result = null;
-                    }else{
-                        result=Collections.singletonList(originalEntry);
-                    }
+                    cachedResults = readTargetEntryId(instrospection, cache,catalog, keys.get(0), context);
                 }else{
                     if (filter.getCursor() == null) {
                         int ammountOfKeys = keys.size();
                         // only if theres still some unsatisfied idś in criteria
                         if (filter.getStart() < ammountOfKeys) {
-                            result = query(filter, catalog, context, cache, instrospection);
+                            cachedResults = query(filter, catalog, context, instrospection,cache);
                         }
                     } else {
-                        result = query(filter, catalog, context, cache, instrospection);
+                        cachedResults = query(filter, catalog, context, instrospection,cache);
                     }
                 }
             }
+            List<CatalogEntry> result = context.getResults();
             if(result==null){
                 log.trace("[RESULT ] null");
             }else {
@@ -137,40 +133,37 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                     queryRewriter.interceptResult(dafsgf, context, catalog);
                 }
                 if(result.isEmpty()){
-                    result = null;
+                    result=null;
                 }
             }
-
 
             context.setResults(result);
-            if(result!=null&&catalog.getDistinguishedName().equals(CatalogDescriptor.CATALOG_ID)){
-                List<CatalogDescriptor> descriptors= (List)result;
-                for(CatalogDescriptor armado: descriptors){
-                    cache.put(context,catalog.getDistinguishedName(),armado.getDistinguishedName(),HasDistinguishedName.FIELD,armado);
+
+            if(result!=null){
+                String[][] joins = filter.getJoins();
+                if (joins != null && joins.length > 0) {
+                    join.execute(context);
+                } else if (!cachedResults&&context.getRequest().getFollowReferences()) {
+                    graphJoin.execute(context);
+                    cache.put(context,catalog.getDistinguishedName(),result,filter);
                 }
-              }
-
-            String[][] joins = filter.getJoins();
-            if (joins != null && joins.length > 0) {
-                join.execute(context);
-            } else if (context.getRequest().getFollowReferences()) {
-                graphJoin.execute(context);
             }
+
         } else {
-            CatalogEntry originalEntry=readTargetEntryId(instrospection,cache,catalog,targetEntryId,context);
 
-            if(originalEntry==null){
+            cachedResults = readTargetEntryId(instrospection,cache,catalog,targetEntryId,context);
 
-                context.setResults(null);
+            CatalogEntry originalEntry = context.getResult();
 
-            }else{
                 queryRewriter.interceptResult(originalEntry, context, catalog);
                 context.setResults(Collections.singletonList(originalEntry));
 
-                if (context.getRequest().getFollowReferences()) {
+                if (originalEntry!=null&&!cachedResults&&context.getRequest().getFollowReferences()) {
                     graphJoin.execute(context);
+                    cache.put(context,catalog.getDistinguishedName(),originalEntry);
+
                 }
-            }
+
             log.trace("[RESULT ] {}", originalEntry);
         }
 
@@ -178,26 +171,37 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         return CONTINUE_PROCESSING;
     }
 
-    private CatalogEntry readTargetEntryId(Instrospection instrospection,CatalogResultCache cache,CatalogDescriptor catalog,Object targetEntryId, CatalogActionContext context) throws Exception {
-        if (targetEntryId instanceof String) {
-            return readVanityId((String) targetEntryId, catalog, context, cache, instrospection);
-
-        } else {
-            return read(targetEntryId, catalog, context, cache, instrospection);
+    private boolean readTargetEntryId(Instrospection instrospection,CatalogResultCache cache,CatalogDescriptor catalog,Object targetEntryId, CatalogActionContext context) throws Exception {
+        CatalogEntry result = cache.get(context, catalog.getDistinguishedName(), targetEntryId);
+        boolean cachedResults=false;
+        if(result==null){
+            FieldDescriptor dn = catalog.getFieldDescriptor(HasDistinguishedName.FIELD);
+            if (targetEntryId instanceof String&&dn!=null && dn.isFilterable()) {
+                result = cache.get(context, catalog.getDistinguishedName(), targetEntryId);
+                if(result==null){
+                    result=readVanityId((String) targetEntryId, catalog, context,  instrospection);
+                }else{
+                    cachedResults=true;
+                }
+            } else {
+                read(targetEntryId, catalog, context, instrospection);
+            }
+        }else{
+            cachedResults=true;
         }
+        context.setResult(result);
+        return cachedResults;
     }
 
-
     public CatalogEntry readVanityId(String vanityId, CatalogDescriptor catalog, CatalogActionContext context,
-                                     CatalogResultCache cache, Instrospection instrospection) throws Exception {
+                                     Instrospection instrospection) throws Exception {
         CatalogEntry regreso = null;
         if (keyDelegate.isPrimaryKey(vanityId)) {
             // almost certainly an Id
             try {
                 Object primaryId = keyDelegate.decodePrimaryKeyToken(vanityId);
                 if(primaryId!=vanityId || catalog.getFieldDescriptor(catalog.getKeyField()).getDataType()==CatalogEntry.STRING_DATA_TYPE){
-                    //FIXME in vanity id cases this read is repeated each call before querying distinguished name. Results should be cached at a higher level to catch vanityId results
-                    regreso = read(primaryId, catalog, context, cache, instrospection);
+                    regreso = read(primaryId, catalog, context, instrospection);
                 }
 
             } catch (NumberFormatException e) {
@@ -210,8 +214,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             log.debug("token {} returned no results as primery key, attempting to use it as vanity id", vanityId);
             FieldDescriptor dn = catalog.getFieldDescriptor(HasDistinguishedName.FIELD);
             if (dn != null) {
-                regreso = cache.get(context,catalog.getDistinguishedName(),HasDistinguishedName.FIELD,vanityId);
-                if(regreso==null){
                     if(dn.isFilterable()){
                         FilterData filter = FilterDataUtils.createSingleFieldFilter(HasDistinguishedName.FIELD, vanityId);
                         List<CatalogEntry> results = resolveQueryUnits(filter, catalog, context, instrospection);
@@ -219,13 +221,11 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                             log.error("attempt to use {} as discriminator returned no results", vanityId);
                         } else {
                             regreso = results.get(0);
-                            cache.put(context,catalog.getDistinguishedName(),vanityId,HasDistinguishedName.FIELD,regreso);
-
                         }
                     }else{
                         log.error("{} is not a filterable field",HasDistinguishedName.FIELD);
                     }
-                }
+
             }
 
         }
@@ -233,46 +233,41 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     }
 
 
-    private List<CatalogEntry> query(FilterData filterData, CatalogDescriptor catalog, CatalogActionContext context,
-                                   CatalogResultCache cache, Instrospection instrospection) throws Exception {
+    /**
+     *
+     * @param filterData
+     * @param catalog
+     * @param context
+     * @param instrospection
+     * @param cache
+     * @return are results cached?
+     * @throws Exception
+     */
+    private boolean query(FilterData filterData, CatalogDescriptor catalog, CatalogActionContext context,
+                                   Instrospection instrospection,CatalogResultCache cache) throws Exception {
         List<CatalogEntry> regreso;
         filterData = queryRewriter.interceptQuery(filterData, context, catalog);
-
+        boolean cached = false;
         if (cache == null) {
             regreso = resolveQueryUnits(filterData, catalog, context, instrospection);
         } else {
             regreso = cache.satisfy(context, catalog, filterData);
             if (regreso == null) {
                 regreso = resolveQueryUnits(filterData, catalog, context, instrospection);
-                if (regreso != null) {
-                    if (log.isInfoEnabled()) {
-                        log.trace("Saving {} read result(s) in cache {} list {}", regreso.size(),
-                                catalog.getDistinguishedName(), filterData);
-                    }
-                    cache.put(context, catalog.getDistinguishedName(), regreso, filterData);
-                }
+            }else{
+                cached=true;
             }
         }
-
         context.getRuntimeContext().getTransactionHistory().didRead(context, regreso,
                 null/* no undo */);
 
-        return regreso;
+        context.setResults( regreso);
+        return cached;
     }
 
-    public CatalogEntry read(Object targetEntryId, CatalogDescriptor catalog, CatalogActionContext context, CatalogResultCache cache, Instrospection instrospection) throws Exception {
-        CatalogEntry regreso;
-        if (cache == null) {
-            regreso = readUnits(targetEntryId, catalog, context, instrospection);
-        } else {
-            regreso = cache.get(context, catalog.getDistinguishedName(), targetEntryId);
-            if (regreso == null) {
-                regreso = readUnits(targetEntryId, catalog, context, instrospection);
-                if (regreso != null) {
-                    cache.put(context, catalog.getDistinguishedName(), regreso);
-                }
-            }
-        }
+    public CatalogEntry read(Object targetEntryId, CatalogDescriptor catalog, CatalogActionContext context, Instrospection instrospection) throws Exception {
+        CatalogEntry regreso = readUnits(targetEntryId, catalog, context, instrospection);
+
         context.getRuntimeContext().getTransactionHistory().didRead(context, regreso,
                 null/* no undo */);
         return regreso;
