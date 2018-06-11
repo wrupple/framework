@@ -61,6 +61,15 @@ public class RuntimeContextImpl extends AbstractYieldContext implements RuntimeC
 	public boolean process() throws Exception {
 		return getServiceBus().resume(this);
 	}
+
+
+	@Override
+	public void forward() throws Exception {
+		setServiceContract(null);
+		setServiceContext(null);
+		process();
+	}
+
 	@Override
 	public void reset() {
 super.reset();

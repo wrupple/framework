@@ -83,6 +83,7 @@ public interface RuntimeContext extends YieldContext, HasValidations, HasLocale,
 
     boolean process() throws Exception;
 
+	public void forward() throws Exception;
 
 
 	RuntimeContext spawnChild();
