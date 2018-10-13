@@ -167,7 +167,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             log.trace("[RESULT ] {}", originalEntry);
         }
 
-
         return CONTINUE_PROCESSING;
     }
 
@@ -184,7 +183,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                     cachedResults=true;
                 }
             } else {
-                read(targetEntryId, catalog, context, instrospection);
+                result = read(targetEntryId, catalog, context, instrospection);
             }
         }else{
             cachedResults=true;
