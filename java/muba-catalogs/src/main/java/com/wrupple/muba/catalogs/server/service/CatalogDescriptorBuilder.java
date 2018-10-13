@@ -7,4 +7,7 @@ public interface CatalogDescriptorBuilder {
 	public <T extends CatalogEntry>  CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String catalogName,  CatalogDescriptor parent) throws RuntimeException;
 
 	public <T extends CatalogEntry>  CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String catalogName, long numericId, CatalogDescriptor parent) throws RuntimeException;
+
+	public <T extends CatalogEntry>  CatalogDescriptor in(CatalogDescriptor self, Class<T> clazz, String catalogId, String catalogName, long numericId, CatalogDescriptor parent) throws RuntimeException;
+
 }
