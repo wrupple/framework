@@ -65,9 +65,8 @@ public class SubmitToApplicationTest extends BPMTest {
         assertTrue("An application is not bound",newState.getApplicationValue()!=null);
         CatalogCreateRequestImpl createRequest = new CatalogCreateRequestImpl(newState, ApplicationState.CATALOG);
 
-        List results = wrupple.fireEvent(createRequest, thread, null);
+         newState=  wrupple.fireEvent(createRequest, thread, null);
 
-         newState= (ApplicationState) results.get(0);//si comento esto, funciona... se crea correctamente (se llam el setter)?
          assertTrue("An application is not bound",newState.getApplicationValue()!=null);
          return newState;
 
@@ -143,8 +142,7 @@ public class SubmitToApplicationTest extends BPMTest {
         workflow.setExplicitSuccessorValue(count);
         CatalogCreateRequestImpl catalogActionRequest = new CatalogCreateRequestImpl(workflow, Application.CATALOG);
 
-        List resultss = wrupple.fireEvent(catalogActionRequest, session, null);
-        workflow = (ApplicationImpl) resultss.get(0);
+        workflow =wrupple.fireEvent(catalogActionRequest, session, null);
 
         assertTrue("workflow must have an explicit successor",workflow.getExplicitSuccessorValue()!=null);
 
