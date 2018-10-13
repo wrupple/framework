@@ -38,7 +38,6 @@ public class HSQLDBModule extends AbstractModule {
 
 		}else{
 			bind(String.class).annotatedWith(Names.named("catalog.hsqldb.path")).toInstance(location);
-
 		}
 
 		bind(SQLCompatibilityDelegate.class).to(HSQLDBCompatibilityDelegate.class);

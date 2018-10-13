@@ -115,7 +115,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 			results = runner.query(builder.toString(), rsh, id);
 		} catch (SQLException e) {
 		if (e.getErrorCode() == missingTableErrorCode) {
-			log.warn("[DB table does not exist] will return empty result set");
+			log.debug("[DB table does not exist] will return empty result set");
 			results = Collections.EMPTY_LIST;
 		} else {
 			throw new CatalogException(e);
