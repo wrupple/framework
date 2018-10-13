@@ -43,10 +43,10 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
     public <T extends CatalogEntry> CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String cataogName, long numericId,
                                                                 CatalogDescriptor parent) throws  RuntimeException {
-        return work(clazz,catalogId,cataogName,numericId,parent);
+        return work(null,clazz,catalogId,cataogName,numericId,parent);
     }
 
-	public <T extends CatalogEntry> CatalogDescriptor work(Class<T> clazz, String catalogId, String cataogName, Long numericId,
+	public <T extends CatalogEntry> CatalogDescriptor work(CatalogDescriptorImpl regreso,Class<T> clazz, String catalogId, String cataogName, Long numericId,
 			CatalogDescriptor parent) throws  RuntimeException {
 
 		List<Field> cll = new ArrayList<Field>();
@@ -321,9 +321,20 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 			}
 
 		}
-		CatalogDescriptorImpl regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName,parent==null?null: parent.getId(),
-				descriptors);
-		log.trace("[PARSED JAVA DESCRIPTOR] {}", clazz);
+		if(regreso ==null){
+			regreso = new CatalogDescriptorImpl(catalogId, clazz, numericId, cataogName,parent==null?null: parent.getId(),
+					descriptors);
+		}else{
+			regreso.setDistinguishedName(catalogId);
+			regreso.setClazz(clazz);
+			regreso.setId(numericId);
+			regreso.setName(cataogName);
+			regreso.setParent(parent==null?null: parent.getId());
+			regreso.setDescriptors(descriptors);
+		}
+		regreso.setParentValue(parent);
+
+		log.debug("[PARSED JAVA DESCRIPTOR] {}", clazz);
 
 		if(!regreso.getClazz().equals(HasAccesablePropertyValues.class)){
 			regreso.setConsolidated(true);
@@ -354,7 +365,13 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
     @Override
     public <T extends CatalogEntry> CatalogDescriptor fromClass(Class<T> clazz, String catalogId, String catalogName, CatalogDescriptor parent) throws RuntimeException {
-        return work(clazz,catalogId,catalogName,null,parent);
+        return work(null,clazz,catalogId,catalogName,null,parent);
     }
+
+
+	@Override
+	public <T extends CatalogEntry> CatalogDescriptor in(CatalogDescriptor self, Class<T> clazz, String catalogId, String catalogName, long numericId, CatalogDescriptor parent) throws RuntimeException {
+		return null;
+	}
 
 }
