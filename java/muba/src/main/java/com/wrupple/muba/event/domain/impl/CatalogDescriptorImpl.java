@@ -85,14 +85,7 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 
 	public CatalogDescriptorImpl(String catalogId, Class<? extends CatalogEntry> clazz, Long numericId, String catalogName, Long parentId,
 			FieldDescriptor... descriptors) {
-		this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>();
-		if (descriptors != null) {
-			for (FieldDescriptor field : descriptors) {
-				if (field != null) {
-					fieldsValues.put(field.getFieldId(), field);
-				}
-			}
-		}
+		setDescriptors(descriptors);
 		setParent(parentId);
 		setConsolidated(parentId == null);
 		setDescriptiveField(CatalogEntry.NAME_FIELD);
@@ -104,6 +97,17 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		setClazz(clazz);
 		if (clazz != null)
 			this.setTyped(PersistentCatalogEntity.class.equals(clazz));
+	}
+
+	public void setDescriptors(FieldDescriptor... descriptors){
+		this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>();
+		if (descriptors != null) {
+			for (FieldDescriptor field : descriptors) {
+				if (field != null) {
+					fieldsValues.put(field.getFieldId(), field);
+				}
+			}
+		}
 	}
 
 	public List<Long> getConstraints() {
