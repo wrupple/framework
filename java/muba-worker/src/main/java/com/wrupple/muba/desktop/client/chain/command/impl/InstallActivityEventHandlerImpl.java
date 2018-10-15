@@ -40,7 +40,7 @@ public class InstallActivityEventHandlerImpl implements InstallActivityEventHand
 
     private Trigger getStateTrigger() {
 
-        TriggerImpl trigger = new TriggerImpl(-21l,1, ApplicationStateListener.class.getSimpleName(), false,
+        TriggerImpl trigger = new TriggerImpl(null,1, ApplicationStateListener.class.getSimpleName(), false,
                 ApplicationState.CATALOG, null, null);
         trigger.setFailSilence(false);
         trigger.setStopOnFail(true);
