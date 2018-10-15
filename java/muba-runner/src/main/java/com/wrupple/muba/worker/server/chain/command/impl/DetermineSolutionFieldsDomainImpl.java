@@ -44,6 +44,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         solutionTypeInquiry.setEntry(solutionType);
         solutionTypeInquiry.setCatalog(CatalogDescriptor.CATALOG_ID);
         solutionTypeInquiry.setName(DataContract.READ_ACTION);
+        solutionTypeInquiry.setFollowReferences(true);
 
         CatalogDescriptor solutionDescriptor = context.getRuntimeContext().getServiceBus().fireEvent(solutionTypeInquiry,context.getRuntimeContext(),null);
 

@@ -105,14 +105,17 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                             for (CatalogEntry i : joins) {
                                 temp = access.getPropertyValue(foreignField, i, null, instrospection);
                                 if (need.equals(temp)) {
-                                    if (matches == null) {
-                                        matches = new ArrayList<CatalogEntry>();
+                                    if(field.isMultiple()){
+                                        if (matches == null) {
+                                            matches = new ArrayList<CatalogEntry>();
+                                        }
+                                        matches.add(i);
+                                    }else{
+                                        access.setPropertyValue(field.getFieldId(), e, i, instrospection);
                                     }
-                                    matches.add(i);
                                 }
                             }
-
-                            access.setPropertyValue(reservedField, e, matches, instrospection);
+                            access.setPropertyValue(field.getFieldId(), e, matches, instrospection);
                         }
                     } else {
 
