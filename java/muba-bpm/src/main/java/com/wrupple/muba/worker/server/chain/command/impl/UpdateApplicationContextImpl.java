@@ -40,35 +40,21 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
 
         }else{
             log.info("Worker state will be updated");
+            CatalogActionRequestImpl secondary= new CatalogActionRequestImpl();
+            secondary.setCatalog(container.getStateValue().getCatalogType());
+            secondary.setEntryValue(container.getStateValue());
+            secondary.setFollowReferences(true);
+            secondary.setName(CatalogActionRequest.WRITE_ACTION);
+            secondary.setEntry(container.getStateValue().getId());
+            ApplicationState state = context.getRuntimeContext().getServiceBus().fireEvent(secondary, context.getRuntimeContext(), null);
+            container.setStateValue(state);
 
+            //com.wrupple.muba.desktop.client.chain.command.InstallActivityEventHandler
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setEntry(container.getId());
         }
 
-        /*
-
-        change application state
-        request= new CatalogActionRequestImpl();
-        request.setCatalog(applicationState.getCatalogType());
-        request.setEntryValue(applicationState);
-        request.setFollowReferences(true);
-
-
-        if(applicationState.getId()==null){
-            log.debug("New application state will be created");
-            request.setName(CatalogActionRequest.CREATE_ACTION);
-
-        }else{
-            log.debug("current application {} will be updated",applicationState.getId());
-            request.setName(CatalogActionRequest.WRITE_ACTION);
-            request.setEntry(applicationState.getId());
-
-        }
-
-        */
-
-
-
+        //com.wrupple.muba.event.server.chain.Public
         container = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
         context.setStateValue(container.getStateValue());
 

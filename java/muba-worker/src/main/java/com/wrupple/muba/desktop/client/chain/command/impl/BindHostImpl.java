@@ -17,7 +17,7 @@ public class BindHostImpl implements BindHost {
         WorkerState container = context.getWorkerState();
 
         container.setHostValue(request.getHostValue());
-
+        container.setHost((Long) request.getHostValue().getId());
 
         return CONTINUE_PROCESSING;
     }

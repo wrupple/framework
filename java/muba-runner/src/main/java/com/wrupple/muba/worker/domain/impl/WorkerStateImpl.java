@@ -31,6 +31,7 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
     private Long state;
 
     @NotNull
+    //this causes UpdateApplicationContextImpl to explicitly update state
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = ApplicationState.CATALOG)
     private ApplicationState stateValue;
@@ -40,7 +41,7 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Host.CATALOG)
     private Host hostValue;
-    @ForeignKey(foreignCatalog = Host.CATALOG)
+    //avoid validation for now @ForeignKey(foreignCatalog = Host.CATALOG)
     private Long host;
 
 

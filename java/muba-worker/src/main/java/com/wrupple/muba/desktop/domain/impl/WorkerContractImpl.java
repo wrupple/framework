@@ -20,6 +20,7 @@ public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContra
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Host.CATALOG)
     private Host hostValue;
+    @CatalogField(ignore = true)
     @ForeignKey(foreignCatalog = Host.CATALOG)
     private Long host;
 

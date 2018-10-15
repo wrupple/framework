@@ -14,7 +14,7 @@ public class HandleContainerStateImpl implements HandleContainerState {
 
         WorkerState worker = context.getContextSwitch().getWorkerStateValue();
         ApplicationState state = worker.getStateValue();
-
+        state.setWorkerStateValue(worker);
         //subsequent updates are handled via Catalog Events
         context.
                 getRuntimeContext().

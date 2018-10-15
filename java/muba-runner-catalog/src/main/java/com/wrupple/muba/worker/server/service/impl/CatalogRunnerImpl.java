@@ -127,16 +127,7 @@ public class CatalogRunnerImpl implements CatalogRunner {
         intent.setStateValue(context.getStateValue());
         WorkerState worker = context.getStateValue().getWorkerStateValue();
         intent.setDomain(worker.getDomain());
-        ApplicationState state = context.getRuntimeContext().getServiceBus().fireEvent(intent, context.getRuntimeContext(), null);
-        if(state==null){
-            throw new NullPointerException("Business intent resulted in no application state");
-        }
-        if(state.getStakeHolder()==null){
-            throw new NullPointerException("No one owns this application");
-        }
-        // TODO a trigger for application state creation handles launching the worker or broadcasting worker?
-
-
+        context.getRuntimeContext().getServiceBus().fireEvent(intent, context.getRuntimeContext(), null);
 
         if(result==null){
             return Command.PROCESSING_COMPLETE;

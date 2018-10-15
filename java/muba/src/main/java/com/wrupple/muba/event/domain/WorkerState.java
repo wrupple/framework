@@ -42,4 +42,6 @@ public interface WorkerState extends Contract, HasRunner, HasSentence ,HasHostVa
     HasAccesablePropertyValues getParametersValue();
 
     void setHostValue(Host hostValue);
+
+    void setHost(Long host);
 }
