@@ -3,10 +3,7 @@ package com.wrupple.muba.catalogs.server.chain;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
-import com.wrupple.muba.catalogs.domain.Argument;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.domain.MathProblem;
+import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
 import com.wrupple.muba.event.domain.impl.FilterDataOrderingImpl;
@@ -17,6 +14,7 @@ import com.wrupple.muba.event.domain.*;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -142,8 +140,58 @@ public class CatalogEngineTest extends IntegralTest {
         assertTrue("does metadata describe problem as inherited?",problemContract.getParentValue()!=null);
 		assertTrue("does metadata include it's ancestry?",problemContract.getRootAncestor()!=null);
 		assertTrue("does metadata describe problem as a timeline?",ContentNode.CATALOG_TIMELINE.equals(problemContract.getRootAncestor().getDistinguishedName()));
+		runtimeContext.reset();
+		log.debug("-create test catalogs-");
 
+		argumentContract = builder.fromClass(
+				Credit.class,
+				Credit.CATALOG,
+				"Credit",
+				null);
 
+		action = new CatalogActionRequestImpl();
+		action.setEntryValue(argumentContract);
+		action.setFollowReferences(true);
+		runtimeContext.setServiceContract(action);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
+				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
+		runtimeContext.process();
+		runtimeContext.reset();
+		argumentContract = builder.fromClass(
+				Endorser.class,
+				Endorser.CATALOG,
+				"Endorser",
+				null);
+
+		action = new CatalogActionRequestImpl();
+		action.setEntryValue(argumentContract);
+		action.setFollowReferences(true);
+		runtimeContext.setServiceContract(action);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
+				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
+		runtimeContext.process();
+		runtimeContext.reset();
+
+		log.debug("-many to one circular dependency-");
+
+		Credit credit = new Credit();
+		credit.setName("new credit");
+		Endorser endorser = new Endorser();
+		credit.setEndorserValue(endorser);
+		endorser.setCreditsValues(Collections.singletonList(credit));
+
+		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, Credit.CATALOG, CatalogActionRequest.CREATE_ACTION, null, null, credit, null);
+		contract.setFollowReferences(true);
+		runtimeContext.setServiceContract(contract);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,CatalogActionRequest.LOCALE_FIELD, Credit.CATALOG, CatalogActionRequest.CREATE_ACTION);
+		runtimeContext.process();
+
+		credit = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
+		assertTrue(credit.getId() != null);
+		assertTrue(credit.getEndorserValue() != null);
+		assertTrue("memory identity is not preserved",credit.getEndorserValue()==endorser);
+		assertTrue("circular data dependency not resolved",endorser.getCreditsValues().get(0)!=null);
+		assertTrue("circular data dependency lost",endorser.getCreditsValues().get(0).getId().equals(credit.getId()));
 
 		log.debug("-create math problem entry-");
 		runtimeContext.reset();
@@ -152,9 +200,9 @@ public class CatalogEngineTest extends IntegralTest {
 		problem.setSolution(4l);
 		Argument argument = new Argument();
 		argument.setProblemValue(problem);
-        problem.setArgumentsValues(Arrays.asList(argument));
+		problem.setArgumentsValues(Arrays.asList(argument));
 
-		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
+		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
 		contract.setFollowReferences(true);
 		runtimeContext.setServiceContract(contract);
@@ -172,6 +220,7 @@ public class CatalogEngineTest extends IntegralTest {
 		argument = problem.getArgumentsValues().get(0);
 		assertTrue("circular data dependency not resolved",argument.getProblemValue()!=null);
 		assertTrue("Is circular data dependency identity lost",argument.getProblemValue().getId().equals(problem.getId()));
+
 
 		log.debug("-check if problem was created-");
 		runtimeContext.reset();

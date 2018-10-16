@@ -161,7 +161,6 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                 if (originalEntry!=null&&!cachedResults&&context.getRequest().getFollowReferences()) {
                     graphJoin.execute(context);
                     cache.put(context,catalog.getDistinguishedName(),originalEntry);
-
                 }
 
             log.trace("[RESULT ] {}", originalEntry);
