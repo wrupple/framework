@@ -211,13 +211,14 @@ public class CatalogEngineTest extends IntegralTest {
 				CatalogActionRequest.CREATE_ACTION);
 		runtimeContext.process();
 
-		problem = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
+		((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
 		assertTrue(problem.getId() != null);
 		assertTrue(problem.getSolution() != null);
 		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
 		assertTrue("are foreign keys registered",	problem.getArguments()!=null);
 		assertTrue("data graph is incomplete",	problem.getArgumentsValues()!=null);
 		argument = problem.getArgumentsValues().get(0);
+		assertTrue("circular data dependency not created",argument.getId()!=null);
 		assertTrue("circular data dependency not resolved",argument.getProblemValue()!=null);
 		assertTrue("Is circular data dependency identity lost",argument.getProblemValue().getId().equals(problem.getId()));
 

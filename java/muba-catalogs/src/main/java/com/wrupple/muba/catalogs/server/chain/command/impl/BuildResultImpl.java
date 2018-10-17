@@ -25,7 +25,6 @@ public class BuildResultImpl implements BuildResult {
         this.chain = chain;
     }
 
-
     @Override
     public boolean execute(DataJoinContext context) throws Exception {
 
@@ -38,7 +37,7 @@ public class BuildResultImpl implements BuildResult {
             chain.execute(context);
         }
 
-         return CONTINUE_PROCESSING;
+        return CONTINUE_PROCESSING;
     }
 
 

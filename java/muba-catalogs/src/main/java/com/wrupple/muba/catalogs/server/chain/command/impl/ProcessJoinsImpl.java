@@ -47,19 +47,23 @@ public class ProcessJoinsImpl implements Command<DataJoinContext> {
         if(catalog==null){
             throw new NullPointerException("No such catalog "+catalogId);
         }
-        List<CatalogEntry> mainResults = context.getResults();
         String foreignField = context.getWorkingRelation().getForeignField();
-        Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
-        List<CatalogEntry> currentMatchingEntries = getjoinCandidates(mainResults, context.getMain(), catalog, foreignField,
-                fieldValues);
+        FieldDescriptor foreignFieldDescriptor = catalog.getFieldDescriptor(foreignField);
 
-        context.getWorkingRelation().setResults(currentMatchingEntries);
-        if (currentMatchingEntries == null || currentMatchingEntries.isEmpty()) {
-            return PROCESSING_COMPLETE;
-        } else {
-            //workJoinData(mainResults, mainCatalog, currentMatchingEntries, catalog, context, instrospection);
-            return CONTINUE_PROCESSING;
+        if(!foreignFieldDescriptor.isEphemeral()){
+            List<CatalogEntry> mainResults = context.getResults();
+            Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
+            List<CatalogEntry> currentMatchingEntries = getjoinCandidates(mainResults, context.getMain(), catalog, foreignField,
+                    fieldValues);
+
+            context.getWorkingRelation().setResults(currentMatchingEntries);
+            if (currentMatchingEntries == null || currentMatchingEntries.isEmpty()) {
+                return PROCESSING_COMPLETE;
+            }
         }
+        //workJoinData(mainResults, mainCatalog, currentMatchingEntries, catalog, context, instrospection);
+        return CONTINUE_PROCESSING;
+
 
     }
 

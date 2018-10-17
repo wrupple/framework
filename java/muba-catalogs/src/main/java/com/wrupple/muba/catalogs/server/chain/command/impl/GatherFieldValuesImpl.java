@@ -39,6 +39,7 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
             CatalogDescriptor catalog = context.getMain().getCatalogDescriptor();
             CatalogRelation relation = context.getWorkingRelation();
             String fieldId = relation.getLocalField();
+            String reservedField;
             FieldDescriptor field = catalog.getFieldDescriptor(fieldId);
             if (field == null) {
                 throw new IllegalArgumentException("No such field "+fieldId+" in "+catalog.getDistinguishedName());
@@ -47,30 +48,52 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
                 Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
 
                 if (field.isMultiple()) {
+                    reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
                     Collection<?> temp;
+                    Collection<CatalogEntry> matches;
+
                     for (CatalogEntry e : results) {
-                        temp = (Collection<?>) access.getPropertyValue(field, e, null, context.getIntrospectionSession());
-                        if (temp != null) {
-                            for (Object o : temp) {
-                                if (o != null) {
-                                    fieldValues.add(o);
+                        if(access.isWriteableProperty(reservedField,e,context.getIntrospectionSession())) {
+                            matches = (Collection<CatalogEntry>) access.getPropertyValue(reservedField,e,null,context.getIntrospectionSession());
+                            if(matches!=null&&matches.isEmpty()){
+                                matches=null;
+                                access.setPropertyValue(reservedField,e,matches,context.getIntrospectionSession());
+                            }
+                        }else{
+                            matches=null;
+                        }
+                        if(matches==null||context.isBuildResultSet()){
+                            temp = (Collection<?>) access.getPropertyValue(field, e, null, context.getIntrospectionSession());
+                            if (temp != null) {
+                                for (Object o : temp) {
+                                    if (o != null) {
+                                        fieldValues.add(o);
+                                    }
                                 }
                             }
                         }
-
                     }
                 } else {
-
                     Object value;
+                    CatalogEntry result;
+                    reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
                     for (CatalogEntry e : results) {
-                        value = access.getPropertyValue(field, e, null, context.getIntrospectionSession());
-                        if (value != null) {
-                            fieldValues.add(value);
+                        if(access.isWriteableProperty(reservedField,e,context.getIntrospectionSession())){
+                            result = (CatalogEntry) access.getPropertyValue(reservedField,e,null,context.getIntrospectionSession());
+                        }else{
+                            result = null;
+                        }
+
+                        if(result==null||context.isBuildResultSet()){
+                            value = access.getPropertyValue(field, e, null, context.getIntrospectionSession());
+
+                            if (value != null) {
+                                fieldValues.add(value);
+                            }
                         }
                     }
                 }
             }
-
         }
         return CONTINUE_PROCESSING;
     }

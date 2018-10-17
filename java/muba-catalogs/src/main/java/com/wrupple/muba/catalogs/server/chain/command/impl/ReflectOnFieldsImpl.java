@@ -46,85 +46,98 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
 
         Collection<Object> needs;
         Object need;
-        List<CatalogEntry> matches;
+        Collection<CatalogEntry> matches;
         CatalogEntry match;
         String reservedField;
         Instrospection instrospection = context.getIntrospectionSession();
         List<CatalogEntry> joins = relation.getResults();
-        for (FieldDescriptor field : fields) {
-            if ( keydelegate.isJoinableValueField(field)
-                    && field.getCatalog().equals(joinCatalog.getDistinguishedName())) {
-                if (field.isKey()) {
-                    Map<Object, CatalogEntry> key = null;
-                    if (field.isMultiple()) {
-                        reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
-                        if (access.isWriteableProperty(reservedField, sample, instrospection)) {
-                            log.trace("Working field {}", field.getFieldId());
-                            for (CatalogEntry e : mainResults) {
-                                needs = (Collection<Object>) access.getPropertyValue(field, e, null, instrospection);
-                                if (needs != null) {
-                                    if (key == null) {
-                                        key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
-                                    }
-                                    matches = new ArrayList<CatalogEntry>(needs.size());
-                                    for (Object required : needs) {
-                                        match = key.get(required);
-                                        matches.add(match);
-                                    }
-                                    access.setPropertyValue(reservedField, e, matches, instrospection);
-                                }
-
-                            }
-
-                        }
-                    } else {
-                        reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
-                        if (access.isWriteableProperty(reservedField, sample, instrospection)) {
-                            log.trace("Working one to many relationship {}", field.getFieldId());
-                            if (key == null) {
-                                key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
-                            }
-                            for (CatalogEntry e : mainResults) {
-                                need = access.getPropertyValue(field, e, null, instrospection);
-                                match = key.get(need);
-                                access.setPropertyValue(reservedField, e, match, instrospection);
-                            }
-
-                        }
-                    }
-
-                } else if (field.isEphemeral()) {
-                    if (field.getSentence() == null) {
-                        log.trace("Working many to one relationship {}", field.getFieldId());
-                        reservedField =  keydelegate.getFieldWithForeignType(joinCatalog,mainCatalog.getDistinguishedName());
-                        FieldDescriptor foreignField = joinCatalog.getFieldDescriptor(reservedField);
-                        Object temp;
-                        for (CatalogEntry e : mainResults) {
-                            matches = null;
-                            need = e.getId();
-                            for (CatalogEntry i : joins) {
-                                temp = access.getPropertyValue(foreignField, i, null, instrospection);
-                                if (need.equals(temp)) {
-                                    if(field.isMultiple()){
-                                        if (matches == null) {
-                                            matches = new ArrayList<CatalogEntry>();
+        if(joins!=null&&!joins.isEmpty()){
+            Map<Object, CatalogEntry> key = null;
+            for (FieldDescriptor field : fields) {
+                if ( keydelegate.isJoinableValueField(field)
+                        && field.getCatalog().equals(joinCatalog.getDistinguishedName())) {
+                    if (field.isKey()) {
+                        if (field.isMultiple()) {
+                            reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+                            if (access.isWriteableProperty(reservedField, sample, instrospection)) {
+                                log.trace("Working field {}", field.getFieldId());
+                                for (CatalogEntry e : mainResults) {
+                                    matches = (Collection<CatalogEntry>) access.getPropertyValue(reservedField, e, null, instrospection);
+                                    if(matches==null){
+                                        needs = (Collection<Object>) access.getPropertyValue(field, e, null, instrospection);
+                                        if (needs != null) {
+                                            if (key == null) {
+                                                key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
+                                            }
+                                            matches = new ArrayList<CatalogEntry>(needs.size());
+                                            for (Object required : needs) {
+                                                match = key.get(required);
+                                                matches.add(match);
+                                            }
+                                            access.setPropertyValue(reservedField, e, matches, instrospection);
                                         }
-                                        matches.add(i);
-                                    }else{
-                                        access.setPropertyValue(field.getFieldId(), e, i, instrospection);
                                     }
                                 }
+
                             }
-                            access.setPropertyValue(field.getFieldId(), e, matches, instrospection);
+                        } else {
+                            reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                            if (access.isWriteableProperty(reservedField, sample, instrospection)) {
+                                log.trace("Working one to many relationship {}", field.getFieldId());
+                                if (key == null) {
+                                    key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
+                                }
+                                for (CatalogEntry e : mainResults) {
+                                    match = (CatalogEntry) access.getPropertyValue(reservedField, e, null, instrospection);
+                                    if(match==null){
+                                        need = access.getPropertyValue(field, e, null, instrospection);
+                                        match = key.get(need);
+                                        access.setPropertyValue(reservedField, e, match, instrospection);
+                                    }
+                                }
+
+                            }
                         }
-                    } else {
 
-                        // FIXME evaluation?
+                    } else if (field.isEphemeral()) {
+                        if (field.getSentence() == null||field.getSentence().isEmpty()) {
+                            log.trace("Working many to one relationship {}", field.getFieldId());
+                            reservedField =  keydelegate.getFieldWithForeignType(joinCatalog,mainCatalog.getDistinguishedName());
+                            FieldDescriptor foreignField = joinCatalog.getFieldDescriptor(reservedField);
+                            Object temp;
+                            Object contents;
+                            for (CatalogEntry e : mainResults) {
+                                contents = access.getPropertyValue(field,e, null, instrospection);
+                                if(contents==null){
+                                    matches=null;
+                                    need = e.getId();
+                                    for (CatalogEntry i : joins) {
+                                        temp = access.getPropertyValue(foreignField, i, null, instrospection);
+                                        if (need.equals(temp)) {
+                                            if(field.isMultiple()){
+                                                if (matches == null) {
+                                                    matches = new ArrayList<CatalogEntry>();
+                                                }
+                                                matches.add(i);
+                                            }else{
+                                                access.setPropertyValue(field.getFieldId(), e, i, instrospection);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    access.setPropertyValue(field.getFieldId(), e, matches, instrospection);
+                                }
+                            }
+                        } else {
+
+                            // FIXME evaluation? (is the only instance of ephemeral that re-processes
+                        }
+
                     }
-
                 }
             }
         }
+
 
         return CONTINUE_PROCESSING;
     }
