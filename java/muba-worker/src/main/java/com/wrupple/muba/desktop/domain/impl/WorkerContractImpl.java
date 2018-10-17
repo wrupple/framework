@@ -17,10 +17,8 @@ public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContra
     private Long runner;
     private String rootActivity;
 
-    @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Host.CATALOG)
     private Host hostValue;
-    @CatalogField(ignore = true)
     @ForeignKey(foreignCatalog = Host.CATALOG)
     private Long host;
 

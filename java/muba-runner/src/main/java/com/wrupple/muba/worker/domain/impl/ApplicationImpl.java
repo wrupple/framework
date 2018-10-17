@@ -33,9 +33,6 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
     @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Application.CATALOG)
     private Application explicitSuccessorValue;
-
-
-
     private String outputField;
     private Boolean keepOutput;
 

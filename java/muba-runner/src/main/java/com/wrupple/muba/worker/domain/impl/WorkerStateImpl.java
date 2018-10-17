@@ -31,8 +31,6 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
     private Long state;
 
     @NotNull
-    //this causes UpdateApplicationContextImpl to explicitly update state
-    @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = ApplicationState.CATALOG)
     private ApplicationState stateValue;
 
