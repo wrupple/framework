@@ -23,13 +23,13 @@ public interface FieldAccessStrategy extends IntrospectionStrategy {
     Object getPropertyValue(String field, CatalogEntry entry,
                             DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException;
 
-    void setPropertyValue(FieldDescriptor field, CatalogEntry entry, Object value,
-                          Instrospection instrospection) throws ReflectiveOperationException;
+    void setPropertyValue(FieldDescriptor field, CatalogEntry entry, Object value,Instrospection instrospection) throws ReflectiveOperationException;
 
-    public CatalogEntry synthesize(CatalogDescriptor catalog) throws ReflectiveOperationException;
+    CatalogEntry synthesize(CatalogDescriptor catalog) throws ReflectiveOperationException;
 
     CatalogEntry catalogCopy(CatalogDescriptor catalog, CatalogEntry entry) throws ReflectiveOperationException;
 
+    boolean catalogEquals(CatalogDescriptor catalog, CatalogEntry one, CatalogEntry other,Instrospection instrospection) throws ReflectiveOperationException ;
 
     boolean isReadableProperty(String foreignKeyValuePropertyName, CatalogEntry e, Instrospection instrospection);
 

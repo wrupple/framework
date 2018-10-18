@@ -11,15 +11,12 @@ import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.regex.Matcher;
 
 /**
  * evaluation
@@ -31,24 +28,34 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     protected static final Logger log = LogManager.getLogger(JavaFieldAccessStrategy.class);
 
     private final Provider<PersistentCatalogEntity> factory;
-
-
+    
     private final ObjectNativeInterface nativeInterface;
-
-
+    
     @Inject
     public JavaFieldAccessStrategy(Provider<PersistentCatalogEntity> factory, ObjectNativeInterface nativeInterface) {
         this.factory = factory;
         this.nativeInterface = nativeInterface;
     }
 
-
     @Override
     public CatalogEntry catalogCopy(CatalogDescriptor catalog, CatalogEntry entry) throws ReflectiveOperationException {
         CatalogEntry copy = synthesize(catalog);
         copy(entry,copy,catalog);
         return copy;
+    }
 
+    @Override
+    public boolean catalogEquals(CatalogDescriptor catalog, CatalogEntry one, CatalogEntry other,Instrospection instrospection) throws ReflectiveOperationException {
+        Collection<FieldDescriptor> fields = catalog.getFieldsValues();
+        if(instrospection==null){
+            instrospection= newSession(one);
+        }
+        for(FieldDescriptor  field : fields){
+            if(!catalogFieldEquals(field,one,other,instrospection)){
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -64,6 +71,16 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             setPropertyValue(field, copy, value, instrospection);
         }
 
+    }
+
+    private boolean catalogFieldEquals(FieldDescriptor field, CatalogEntry one, CatalogEntry other, Instrospection instrospection) throws ReflectiveOperationException {
+        Object oneValue = getPropertyValue(field, one, null, instrospection);
+        Object otherValue = getPropertyValue(field, other, null, instrospection);
+        if(oneValue ==null && otherValue!=null){
+            return false;
+        }else{
+            return oneValue.equals(otherValue);
+        }
     }
 
     @Override
