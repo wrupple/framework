@@ -199,7 +199,6 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
                 if(CatalogDescriptor.CATALOG_ID.equals(descriptor.getDistinguishedName())  ){
                     //si estoy actualmente armando descriptores
                     if(CatalogDescriptor.CATALOG_ID.equals(foreignCatalogId)){
-
                         foreign= descriptor;
                     }
 
@@ -215,12 +214,19 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
                 foreignField = getCatalogKeyFieldId(foreign);
             } else if (currentJoinableField.isEphemeral()) {
                 localField = descriptor.getKeyField();
-                foreignField = getFieldWithForeignType(foreign, descriptor.getDistinguishedName());
+                if(isLocalJoinField(currentJoinableField,descriptor)){
+                    // this field is a value holder field for one to many-local foreign key relationship
+                    foreignField=null;
+                }else{
+                    foreignField = getFieldWithForeignType(foreign, descriptor.getDistinguishedName());
+                }
             }
             if (localField == null) {
                 localField = CatalogKey.ID_FIELD;
             }
-            allJoinSentences.add(new CatalogRelation (foreignCatalogId, foreignField, localField ));
+            if(foreignField!=null){
+                allJoinSentences.add(new CatalogRelation (foreignCatalogId, foreignField, localField ));
+            }
         }
         if (customJoins != null) {
             for (String[] customJoinStatement : customJoins) {
@@ -229,6 +235,30 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
             }
         }
         return allJoinSentences;
+    }
+
+    private boolean isLocalJoinField(FieldDescriptor currentJoinableField, CatalogDescriptor descriptor) {
+        String name = currentJoinableField.getFieldId();
+        if(currentJoinableField.isMultiple()){
+            if (name.endsWith(CatalogEntry.MULTIPLE_FOREIGN_KEY)) {
+                String field = name.substring(0,name.length()-CatalogEntry.MULTIPLE_FOREIGN_KEY.length());
+                return existsForeignKey(field,currentJoinableField.getCatalog(),descriptor);
+            }
+        }else{
+            if (currentJoinableField.getFieldId().endsWith(CatalogEntry.FOREIGN_KEY)) {
+                String field = name.substring(0,name.length()-CatalogEntry.FOREIGN_KEY.length());
+                return existsForeignKey(field,currentJoinableField.getCatalog(),descriptor);
+            }
+        }
+        return false;
+    }
+
+    private boolean existsForeignKey(String fieldId, String catalog, CatalogDescriptor descriptor) {
+        FieldDescriptor field = descriptor.getFieldDescriptor(fieldId);
+        if(field!=null&&field.isKey()){
+            return catalog.equals(field.getCatalog());
+        }
+        return false;
     }
 
 
