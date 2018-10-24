@@ -10,20 +10,18 @@ import com.wrupple.muba.event.domain.FieldDescriptor;
 
 public interface CatalogKeyServices {
 
-
-
-
 	boolean isJoinableValueField(FieldDescriptor field);
 
+	boolean isLocalJoinField(FieldDescriptor currentJoinableField, CatalogDescriptor descriptor) ;
 
-	/**
-	 * encodes outgoing field values
-	 * 
-	 * @param rawValue
-	 * @param field
-	 * @param catalog
-	 * @return
-	 */
+		/**
+         * encodes outgoing field values
+         *
+         * @param rawValue
+         * @param field
+         * @param catalog
+         * @return
+         */
 	Object encodeClientPrimaryKeyFieldValue(Object rawValue, FieldDescriptor field,
 			CatalogDescriptor catalog);
 

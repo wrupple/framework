@@ -22,7 +22,7 @@ import javax.inject.Named;
 public class SolverCatalogPluginImpl extends StaticCatalogDescriptorProvider implements SolverCatalogPlugin {
 
     @Inject
-    public SolverCatalogPluginImpl(KnownHostsProvider mirrors, @Named("catalog.storage.people") String friendsAndFamily, QueryReaders queryers,
+    public SolverCatalogPluginImpl(KnownHostsProvider mirrors, @Named("catalog.storage.peers") String friendsAndFamily, QueryReaders queryers,
                                    PrimaryKeyReaders primaryKeyers,
                                    @Named(ApplicationDependency.CATALOG) CatalogDescriptor dependency,
                                    @Named(Application.CATALOG) CatalogDescriptor appItem,

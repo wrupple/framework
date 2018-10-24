@@ -237,7 +237,8 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
         return allJoinSentences;
     }
 
-    private boolean isLocalJoinField(FieldDescriptor currentJoinableField, CatalogDescriptor descriptor) {
+    @Override
+    public boolean isLocalJoinField(FieldDescriptor currentJoinableField, CatalogDescriptor descriptor) {
         String name = currentJoinableField.getFieldId();
         if(currentJoinableField.isMultiple()){
             if (name.endsWith(CatalogEntry.MULTIPLE_FOREIGN_KEY)) {

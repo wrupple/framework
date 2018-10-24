@@ -99,7 +99,7 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                             }
                         }
 
-                    } else if (field.isEphemeral()) {
+                    } else if (field.isEphemeral()&&!keydelegate.isLocalJoinField(field,mainCatalog)) {
                         if (field.getSentence() == null||field.getSentence().isEmpty()) {
                             log.trace("Working many to one relationship {}", field.getFieldId());
                             reservedField =  keydelegate.getFieldWithForeignType(joinCatalog,mainCatalog.getDistinguishedName());
