@@ -10,19 +10,15 @@ import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
-import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
+import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogContractImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
-import com.wrupple.muba.event.domain.impl.HostImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.TrashDescriptor;
 import com.wrupple.muba.catalogs.server.service.*;
 import com.wrupple.muba.catalogs.server.service.impl.*;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
-import com.wrupple.muba.event.domain.impl.ContentNodeImpl;
-import com.wrupple.muba.event.domain.impl.SessionImpl;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.event.server.service.*;
@@ -46,8 +42,6 @@ public class CatalogModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-//ConvertUtils.register(new LongConverter(null), Long.class);
-		//BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
 		BeanUtilsBean2.getInstance().getConvertUtils().register(new LongConverter(null), Long.class);
 		BeanUtilsBean2.getInstance().getConvertUtils().register(false, true, 0);
 		/*
@@ -225,10 +219,12 @@ public class CatalogModule extends AbstractModule {
 	@Singleton
 	@Inject
 	@Named(Host.CATALOG)
-	public CatalogDescriptor catalogPeer(CatalogDescriptorBuilder builder) {
+	public CatalogDescriptor catalogPeer(CatalogDescriptorBuilder builder,@Named("catalog.storage.peers") String systemPeers, @Named("catalog.storage") String defaultStorage) {
 		CatalogDescriptor r = builder.fromClass(HostImpl.class, Host.CATALOG, "Peers", -1911193, null);
+		r.setStorage(Arrays.asList(defaultStorage, systemPeers));
 		return r;
 	}
+
     @Provides
 	@Singleton
 	@Inject

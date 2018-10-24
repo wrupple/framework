@@ -6,7 +6,9 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import com.wrupple.muba.catalogs.domain.CatalogNamespace;
 import com.wrupple.muba.catalogs.domain.PublicNamespace;
+import com.wrupple.muba.catalogs.server.chain.command.KnownHostsProvider;
 import com.wrupple.muba.catalogs.server.chain.command.SystemPersonalitiesStorage;
+import com.wrupple.muba.catalogs.server.chain.command.impl.MonoliticLocal;
 import com.wrupple.muba.catalogs.server.chain.command.impl.SingleSystemPersonalityStorageImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
@@ -29,8 +31,11 @@ public class SingleUserModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-        bind(SystemPersonalitiesStorage.class).to(SingleSystemPersonalityStorageImpl.class);
+		bind(String.class).annotatedWith(Names.named("catalog.storage.people")).toInstance(Person.CATALOG);
+		bind(String.class).annotatedWith(Names.named("catalog.storage.peers")).toInstance(Host.CATALOG);
 
+		bind(SystemPersonalitiesStorage.class).to(SingleSystemPersonalityStorageImpl.class);
+		bind(KnownHostsProvider.class).to(MonoliticLocal.class);
         /*
 		 * CONFIGURATION
 		 */

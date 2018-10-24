@@ -100,8 +100,6 @@ public class BusinessModule  extends AbstractModule {
         bind(String.class).annotatedWith(Names.named(Application.CATALOG)).toInstance("/static/img/process.png");
 
         bind(String.class).annotatedWith(Names.named(Request.CATALOG)).toInstance("/static/img/notification.png");
-        bind(String.class).annotatedWith(Names.named("catalog.storage.people")).toInstance(Person.CATALOG);
-
     }
 
     @Provides

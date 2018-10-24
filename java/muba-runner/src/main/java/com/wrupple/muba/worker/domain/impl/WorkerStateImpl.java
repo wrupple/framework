@@ -36,16 +36,15 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
 
 
 
-    @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Host.CATALOG)
     private Host hostValue;
-    //avoid validation for now @ForeignKey(foreignCatalog = Host.CATALOG)
+    @ForeignKey(foreignCatalog = Host.CATALOG)
+    @CatalogField(filterable = true)
     private Long host;
 
 
     @ForeignKey(foreignCatalog =  Application.CATALOG)
     private Long homeApplication;
-    @CatalogField(ignore = true)
     @CatalogValue(foreignCatalog = Application.CATALOG)
     private Application homeApplicationValue;
     @CatalogField(ignore = true)
