@@ -54,10 +54,10 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		CatalogEntry originalEntry = access.catalogCopy(descriptor, (CatalogEntry) context.getEntryResult());
+		CatalogEntry originalEntry =context.getEntryResult();
 
 		CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
-		Instrospection instrospection = access.newSession(originalEntry);
+		Instrospection instrospection = access.newSession(updatedEntry);
 
 		updatedEntry.setDomain((Long) originalEntry.getDomain());
 		Object id = context.getRequest().getEntry();
@@ -78,8 +78,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		for (FieldDescriptor field : fields) {
 			if (field.isWriteable() && !field.isEphemeral()) {
 				fieldValue = access.getPropertyValue(field, updatedEntry, null, instrospection);
-				access.setPropertyValue(field, originalEntry, fieldValue, instrospection);
-				if (field.isMultiple() && !field.isEphemeral()) {
+				if (field.isMultiple()) {
 					// also update (delete and create) and create multiple
 					// fields
 					log.debug("[DB UPDATE] deleting {} entries ", field.getFieldId());
@@ -110,7 +109,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 				}
 			}
 		}
-		context.setResults(Collections.singletonList(originalEntry));
+		context.setResults(Collections.singletonList(updatedEntry));
 		if (params.isEmpty()) {
 			return CONTINUE_PROCESSING;
 		}
@@ -134,9 +133,6 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		}
 		log.debug("[DB UPDATE] excecute update {} params:{}",builder.toString(),params);
 		runner.update( builder.toString(), params.toArray());
-		
-		read.execute(context);
-		
 		
 		return CONTINUE_PROCESSING;
 		
