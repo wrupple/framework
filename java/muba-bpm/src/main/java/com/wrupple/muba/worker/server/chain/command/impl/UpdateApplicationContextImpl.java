@@ -1,6 +1,5 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.server.chain.command.impl.CatalogCreateTransactionImpl;
 import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.CatalogActionRequest;
@@ -21,8 +20,8 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
     public boolean execute(Context  ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
 
-
-        WorkerState container = context.getStateValue().getWorkerStateValue();
+        ApplicationState state = context.getStateValue();
+        WorkerState container = state.getWorkerStateValue();
         if (container == null) {
             throw new IllegalStateException("No application container");
         }
@@ -34,23 +33,39 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
 
         if(container.getId()==null){
             log.info("New worker will be created");
-
             request.setName(CatalogActionRequest.CREATE_ACTION);
-
-
+            //com.wrupple.muba.event.server.chain.Publish
+            container = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
         }else{
             //com.wrupple.muba.desktop.client.chain.command.InstallActivityEventHandler
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setEntry(container.getId());
+            container = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
+
+            request= new CatalogActionRequestImpl();
+            request.setName(CatalogActionRequest.WRITE_ACTION);
+            request.setCatalog(ApplicationState.CATALOG);
+            request.setEntry(state.getId());
+            request.setEntryValue(state);
+            state = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
+
         }
 
-        //com.wrupple.muba.event.server.chain.Public
-        container = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
-        context.setStateValue(container.getStateValue());
+        if(state==null){
+            throw new IllegalStateException("No application to run");
+        }else if(state.getWorkerStateValue()==null){
+            throw new IllegalStateException("Application belongs to no container");
+        }
 
+        if(container==null){
+            throw new IllegalStateException("No application container");
+        }else if(container.getStateValue()==null){
+            throw new IllegalStateException("Container has no application assigned");
+        }
 
+        context.setStateValue(state);
 
-        context.getRuntimeContext().setResult(container.getStateValue());
+        context.getRuntimeContext().setResult(state);
 
         return CONTINUE_PROCESSING;
     }

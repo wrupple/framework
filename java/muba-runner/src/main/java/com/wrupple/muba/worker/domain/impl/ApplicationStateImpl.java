@@ -19,7 +19,6 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     @ForeignKey(foreignCatalog = Application.CATALOG)
     private Long application;
     @CatalogValue(foreignCatalog = Application.CATALOG)
-    @CatalogField(ignore = true)
     private Application applicationValue;
 
 
@@ -32,7 +31,6 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     @ForeignKey(foreignCatalog = ApplicationState.CATALOG)
     private Long parent;
     @CatalogValue(foreignCatalog = ApplicationState.CATALOG)
-    @CatalogField(ignore = true)
     private ApplicationState parentValue;
     /*
      * keys must be stored in encoded format
@@ -61,7 +59,6 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
     private CatalogEntry entryValue;
 
     private Boolean canceled,draft;
-    @CatalogField(ephemeral = true)
     @CatalogValue(foreignCatalog = WorkerState.CATALOG)
     private WorkerState workerStateValue;
 
