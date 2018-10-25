@@ -176,7 +176,7 @@ public class JDBCDataQueryCommandImpl implements JDBCDataQueryCommand {
 			}
 		} catch (SQLException e) {
 			if (e.getErrorCode() == missingTableErrorCode) {
-				log.warn("[DB table does not exist] will return empty result set");
+				log.debug("[DB table does not exist] will return empty result set");
 				results = Collections.EMPTY_LIST;
 			} else {
 				log.error("[DB query error]", e);
