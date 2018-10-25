@@ -211,18 +211,6 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
         return bean.isReadable(e,foreignKeyValuePropertyName);
     }
 
-
-    private Object goBeanGet(FieldAccessInstrospection session, CatalogEntry object, String fieldId)
-            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException , IntrospectionException,
-            NoSuchMethodException {
-        return session.getPropertyValue(object, fieldId);
-    }
-
-    private Object doGetAccesibleProperty(CatalogEntry object, String fieldId) {
-        HasAccesablePropertyValues entry = (HasAccesablePropertyValues) object;
-        return entry.getPropertyValue(fieldId);
-    }
-
     @Override
     public Object eval(String v) {
         throw new RuntimeException("safe string evaluation not supported un Java");

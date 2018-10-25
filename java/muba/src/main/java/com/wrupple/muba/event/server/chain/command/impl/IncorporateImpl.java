@@ -61,7 +61,7 @@ public class IncorporateImpl implements Incorporate {
                         BeanUtilsBean2.getInstance().setProperty(contract, key, value);
                     }
                 } else {
-                    log.error("token \"{}\" from service grammar was not recognized by contract and was ignored ", key);
+                    log.info("token \"{}\" from service grammar was not recognized by contract and was ignored ", key);
                     log.trace("stop analizing sentence");
                     requestContext.setNextWordIndex(requestContext.previousIndex());
                     break;
