@@ -62,7 +62,9 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
             } else {
                 possiblemethods = delgeate.findMethod(methods, methodName);
             }
-
+            if(possiblemethods.isEmpty()){
+                throw new IllegalArgumentException("no matches for method "+methodName+" in "+subjectType.getCanonicalName());
+            }
             for(Method method : possiblemethods) {
                 sentenceIterator = parmeters.listIterator();
                 log.info("attempting native method {} ",methodName);
@@ -86,14 +88,7 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
                     break;
                 }
             }
-            if(context.result==null){
-                throw new IllegalArgumentException("no matches for method "+methodName+" in "+subjectType.getCanonicalName());
-            }
-
-
         }
-
-
         return CONTINUE_PROCESSING;
     }
 
@@ -123,7 +118,7 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
                 Object v = parameterValues[i];
                 if(v!=null && (!parameterTypes[i].isAssignableFrom(v.getClass()))){
                     if(!isCompatiblePrimitive(parameterTypes[i],v.getClass())){
-                        log.debug("parameter {} of type {} is expected to be {}",i,v.getClass(),parameterTypes[i]);
+                        log.info("parameter {} of type {} is expected to be {}",i,v.getClass(),parameterTypes[i]);
                         return false;
                     }
                 }
@@ -138,6 +133,8 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
         log.trace("¿ {} == {} ?",parameterType,aClass);
         if(aClass.equals(Integer.class)){
             return parameterType.equals(int.class);
+        }else if(aClass.equals(Boolean.class)){
+            return parameterType.equals(boolean.class);
         }
         return false;
     }
