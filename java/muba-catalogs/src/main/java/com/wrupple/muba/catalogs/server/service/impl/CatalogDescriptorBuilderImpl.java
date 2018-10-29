@@ -177,7 +177,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 					if (ephemeral) {
 						fieldDescriptor = new FieldDescriptorImpl().makeEphemeral(id, name, foreignCatalog, multiple);
-
+						fieldDescriptor.setDataType(dataType);
 						if (defaultValueOptions != null) {
 							fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));
 						}
