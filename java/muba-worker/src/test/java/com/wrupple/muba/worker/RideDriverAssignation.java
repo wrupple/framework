@@ -12,20 +12,24 @@ public class RideDriverAssignation {
 
     public static void main(String[] args) {
         int NUM_DRIVERS = 5;
-        final int TARGET_POSITION = 7;
         int[] POSITIONS = new int[]{20, 2, 7, 20, 30};
 
         Model model = new Model("Driver assignation");
 
+        IntVar[] positions = model.intVarArray("positions",NUM_DRIVERS,POSITIONS);
+        IntVar targetPosition = model.intVar(7);
         IntVar assignation = model.intVar("assignation", 1, NUM_DRIVERS, false);
         IntVar distance = model.intVar("distance", 0, 100, true);
 
+
+        // CONSTRAINTS
         IntVar[] distances = new IntVar[NUM_DRIVERS];
 
         for (int j = 0; j < NUM_DRIVERS; j++) {
-            distances[j]=model.intAbsView(model.intVar(POSITIONS[j]-TARGET_POSITION));
+
+            distances[j]=targetPosition.sub(positions[j]).abs().intVar();
+
         }
-        // CONSTRAINTS
 
         model.element(distance, distances, assignation, 1).post();
         model.setObjective(false/*ResolutionPolicy.MINIMIZE*/, distance);
