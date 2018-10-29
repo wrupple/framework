@@ -22,7 +22,7 @@ public class ChocoModelResolverImpl implements ChocoModelResolver {
     }
 
     private Model createSolverModel(ApplicationContext context) {
-        log.info("Resolving new problem model");
+        log.info("Generating new problem model");
         Model model = new Model(String.valueOf(context.getStateValue().getId()));
         return model;
     }

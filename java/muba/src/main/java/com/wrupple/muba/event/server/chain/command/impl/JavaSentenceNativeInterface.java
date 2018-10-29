@@ -154,7 +154,11 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
             Object r ;
             if(accessor.equals("ctx")){
                 r= context.get(rawValue);
-                log.trace("      Context Value: {}",r);
+                if(r==null){
+                    log.warn("      No Context key {}",rawValue);
+                }else{
+                    log.trace("      Context Value: {}",r);
+                }
             }else if(accessor.equals("int")){
                 r= Integer.parseInt(rawValue);
                 log.trace("      Explicit conversion output: {}",r);
