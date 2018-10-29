@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
 import static junit.framework.TestCase.assertTrue;
 
 public class ContextSwitchTest extends WorkerTest {
@@ -57,6 +58,10 @@ public class ContextSwitchTest extends WorkerTest {
         assertTrue ("Booking inherit ManagedObject",stakeHolderField != null && !stakeHolderField.isMultiple()
                 && stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
                 && Person.CATALOG.equals(stakeHolderField.getCatalog()));
+        FieldDescriptor driverDistanceField = bookingDescriptor.getFieldDescriptor("driverDistance");
+        assertTrue ("driver distance variable definition",driverDistanceField != null && !driverDistanceField.isMultiple()
+                && driverDistanceField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
+                && driverDistanceField.getSentence()!=null);
 
         bookingDescriptor.setConsolidated(true);
 
@@ -107,8 +112,6 @@ public class ContextSwitchTest extends WorkerTest {
                 hostValue));
         //check conditions
         assertTrue(riderBooking.getDriverValue()!=null);
-        //assertTrue(Math.abs(riderBooking.getDriverValue().getLocation()-riderBooking.getLocation())<0);
-
     }
 
     private ApplicationImpl createApplication(WorkerContainer container, String home) throws Exception {
@@ -117,6 +120,7 @@ public class ContextSwitchTest extends WorkerTest {
         resolve.setDistinguishedName("findDriver");
         resolve.setName(DataContract.WRITE_ACTION);
         resolve.setCatalog(RiderBooking.class.getSimpleName());
+        resolve.setSentence(Arrays.asList(EVALUATING_VARIABLE,"setObjective","(","false","ctx:driverDistance",")"));
 
         TaskImpl cargar  = new TaskImpl();
         cargar.setDistinguishedName("loadBooking");

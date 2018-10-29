@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Task;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import com.wrupple.muba.worker.domain.ApplicationContext;
@@ -9,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 /**
  * uses event bus sentence interpret to invoke solvers via unaware apis
@@ -30,10 +33,23 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         final ApplicationContext context = (ApplicationContext) ctx;
         Task request = context.getStateValue().getTaskDescriptorValue();
 
-        ListIterator<String> activitySentence = request.getSentence().listIterator();
+        if(context.getStateValue().getCatalogValue()!=null){
+            for (FieldDescriptor field : context.getStateValue().getCatalogValue().getFieldsValues()) {
+                if (field.getSentence() != null && !field.getSentence().isEmpty()) {
+                    log.debug("posting solution constraints from field {} definition",field.getFieldId());
 
-        log.debug("posting solution constraints from task definition");
-        processNextConstraint(activitySentence, context);
+                    processNextConstraint(field.getSentence().listIterator(), context);
+                }
+            }
+        }
+        ListIterator<String> activitySentence;
+        if(request.getSentence()!=null){
+            activitySentence= request.getSentence().listIterator();
+
+            log.debug("posting solution constraints from task definition");
+            processNextConstraint(activitySentence, context);
+        }
+
         log.debug("posting solution constraints from excecution context");
         activitySentence = context.getRuntimeContext();
         processNextConstraint(activitySentence, context);
@@ -46,11 +62,11 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
             String next = sentence.next();
             if (context.getRuntimeContext().getServiceBus().hasInterpret(next)) {
                 NaturalLanguageInterpret interpret = context.getRuntimeContext().getServiceBus().getInterpret(next);
-                log.trace(" {} token signals usage of interpret {}", next, interpret);
+                log.info(" {} signals usage of {}", next, interpret);
                 interpret.resolve(sentence, context, next);
                 processNextConstraint(sentence, context);
             } else {
-                log.trace(" {} does not seem to be an interpret DN", next);
+                log.debug(" {} does not seem to be an interpret DN", next);
                 sentence.previous();
             }
         } else {

@@ -32,7 +32,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
     public boolean canHandle(FieldDescriptor field, ApplicationContext context) {
         //only integer fields with constraints or defined domains are eligible
         boolean eligibility = field.getDataType()== CatalogEntry.INTEGER_DATA_TYPE && ((field.getDefaultValueOptions()!=null && !field.getDefaultValueOptions().isEmpty())
-                || (field.getConstraintsValues()!=null && !field.getConstraintsValues().isEmpty()));
+                || (field.getConstraintsValues()!=null && !field.getConstraintsValues().isEmpty())||(field.getSentence()!=null && !field.getSentence().isEmpty()));
 
 
         return eligibility;

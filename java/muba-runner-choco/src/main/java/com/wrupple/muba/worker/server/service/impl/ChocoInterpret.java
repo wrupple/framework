@@ -43,11 +43,15 @@ public class ChocoInterpret implements NaturalLanguageInterpret {
 
 
     private void postConstraint(JavaNativeInterfaceContext invokerContext) {
-        log.info("posting new solution constraint");
         Constraint constraint = (Constraint) invokerContext.result;
-        constraint.post();
-        if(log.isDebugEnabled()){
-            log.debug("    "+constraint.toString());
+        if(constraint==null){
+            log.debug("no constraint meant sentence");
+        }else{
+            log.info("posting new solution constraint");
+            constraint.post();
+            if(log.isDebugEnabled()){
+                log.debug("    "+constraint.toString());
+            }
         }
     }
 }

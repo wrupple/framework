@@ -57,10 +57,10 @@ public class FutureChocoVariable implements VariableEligibility {
         IntVar variable;
         //TODO each of this cases should be named and mapped to easily add more variable types
         if(field.getDefaultValueOptions()!=null && !field.getDefaultValueOptions().isEmpty()){
-            log.trace("Enumerated domain");
+            log.info("Enumerated domain {}",fieldId);
             variable = model.intVar(fieldId, resolveEnumeratedDomain(field.getDefaultValueOptions())); // y in {2, 3, 8}
         }else if(field.getConstraintsValues()!=null && !field.getConstraintsValues().isEmpty()){
-            log.trace("Bounded domain");
+            log.info("Bounded domain {}",fieldId);
             List<Constraint> constraints = field.getConstraintsValues();
             variable = model.intVar(fieldId, resolveDomainBound(constraints,fieldId,false),resolveDomainBound(constraints,fieldId,true)); // x in [0,5]
         }else{
@@ -68,6 +68,10 @@ public class FutureChocoVariable implements VariableEligibility {
         }
         return variable;
 
+    }
+
+    private IntVar parseVariableFromSentence(FieldDescriptor field, Model model) {
+        return null;
     }
 
     private int resolveDomainBound(List<Constraint> constraints,String fieldId,boolean upperBound) {
