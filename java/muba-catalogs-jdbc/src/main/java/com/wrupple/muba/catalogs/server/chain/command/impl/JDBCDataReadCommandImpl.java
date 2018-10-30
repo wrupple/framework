@@ -14,7 +14,6 @@ import javax.inject.Singleton;
 
 import com.wrupple.muba.catalogs.server.domain.CatalogException;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import org.apache.commons.chain.Context;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.AbstractListHandler;
 import org.apache.logging.log4j.Logger;

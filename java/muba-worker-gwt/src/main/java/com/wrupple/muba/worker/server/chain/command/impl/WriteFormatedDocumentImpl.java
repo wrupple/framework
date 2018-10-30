@@ -40,6 +40,7 @@ public class WriteFormatedDocumentImpl implements WriteFormatedDocument {
         } else {
             throw new IllegalArgumentException("no html sources collected setRuntimeContext the given Id");
         }
+
         return CONTINUE_PROCESSING;
     }
 

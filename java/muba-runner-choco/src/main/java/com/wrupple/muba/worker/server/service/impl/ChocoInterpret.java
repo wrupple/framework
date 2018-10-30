@@ -30,13 +30,13 @@ public class ChocoInterpret implements NaturalLanguageInterpret {
     }
 
     @Override
-    public void resolve(ListIterator<String> sentence, Context context, String interpretGivenName) throws Exception {
-        Model model = delegate.resolveSolverModel((ApplicationContext) context);
+    public void resolve(ListIterator<String> sentence, Context t, String interpretGivenName) throws Exception {
+        ApplicationContext context = (ApplicationContext) t;
+        Model model = delegate.resolveSolverModel(context);
         JavaNativeInterfaceContext invoker = new JavaNativeInterfaceContext(model,sentence);
         Arrays.stream(model.getVars()).forEach(var -> invoker.put(var.getName(),var));
         invoker.sentenceIterator=sentence;
         nativeInterface.execute(invoker);
-
         postConstraint(invoker);
     }
 

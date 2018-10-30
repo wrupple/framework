@@ -408,10 +408,8 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
     }
 
-    protected void processChildren(List<CatalogEntry> children, CatalogActionContext context,
-                                   CatalogDescriptor catalog, Instrospection instrospection) throws Exception {
-        // we are certain this catalog has a parent, otherwise this DAO would
-        // not be called
+    protected void processChildren(List<CatalogEntry> children, CatalogActionContext context, CatalogDescriptor catalog, Instrospection instrospection) throws Exception {
+        // we are certain this catalog has a parent, otherwise this DAO would not be called
         Long parentCatalogId = catalog.getParent();
         CatalogDescriptor parent = catalogService.getDescriptorForKey(parentCatalogId,context);
         Object parentEntityId;
@@ -422,14 +420,13 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
         }
     }
 
-    private void applyCriteria(FilterData filter, CatalogDescriptor catalog,
-                               List<? extends FilterCriteria> appliedCriteria, CatalogActionContext context, Instrospection instrospection)
-            throws Exception {
+    private void applyCriteria(FilterData filter, CatalogDescriptor catalog, List<? extends FilterCriteria> appliedCriteria, CatalogActionContext context, Instrospection instrospection) throws Exception {
         if (appliedCriteria != null) {
             for (FilterCriteria criteria : appliedCriteria) {
                 if (criteria.getEvaluate()) {
                     String operator = criteria.getOperator();
-                    Object criteriaValue = synthesizer.synthethizeFieldValue(((String) criteria.getValue()).split(" "), context);
+                    ListIterator listIterator = ((List) criteria.getValues()).listIterator();
+                    Object criteriaValue = synthesizer.synthethizeFieldValue(listIterator, context, null, catalog, catalog.getFieldDescriptor(criteria.getPath(0)), instrospection);
                     criteria = FilterDataUtils.createSingleFieldFilter(criteria.getPath(), criteriaValue);
                     criteria.setOperator(operator);
                 }

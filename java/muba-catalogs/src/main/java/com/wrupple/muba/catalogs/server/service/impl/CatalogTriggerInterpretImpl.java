@@ -99,8 +99,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 			if (entryIdPointer != null) {
                 Instrospection instrospection = access.newSession((CatalogEntry) context.getRequest().getEntryValue());
-                entryIdPointer = synthethizeKeyValue(entryIdPointer, context, instrospection,
-						targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()));
+                entryIdPointer = synthethizeKeyValue(entryIdPointer, context, instrospection, targetCatalog.getFieldDescriptor(targetCatalog.getKeyField()), (CatalogEntry) context.getRequest().getEntryValue(), targetCatalog);
 				context.getRequest().setEntry(entryIdPointer);
 			}
 			if (command != null) {
@@ -185,9 +184,9 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 
     private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,
-			FieldDescriptor field) throws Exception {
+									   FieldDescriptor field, CatalogEntry subject, CatalogDescriptor subjectType) throws Exception {
 		if (entryIdPointer instanceof String) {
-			return synthetizationDelegate.synthethizeFieldValue(((String) entryIdPointer).split("\\."), context);
+			return synthetizationDelegate.synthethizeFieldValue(Arrays.asList(((String) entryIdPointer).split("\\.")).listIterator(), context,subject,subjectType,field,instrospection);
 		} else {
 			return entryIdPointer;
 		}
@@ -235,8 +234,8 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isEphemeral()) {
 				token = properties.get(fieldId);
 				if (token != null) {
-					fieldValue = synthetizationDelegate.synthethizeFieldValue(token.split(" "), context);
-                    access.setPropertyValue(field, synthesizedEntry, fieldValue, instrospection);
+					fieldValue = synthetizationDelegate.synthethizeFieldValue(Arrays.asList(token.split(" ")).listIterator(), context,synthesizedEntry,targetCatalog,field,lowInstrospection);
+                    access.setPropertyValue(field.getFieldId(), synthesizedEntry, fieldValue, instrospection);
                 }
 			}
 

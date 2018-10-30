@@ -3,8 +3,10 @@ package com.wrupple.muba.catalogs.server.service;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import org.apache.commons.chain.Context;
 
 import java.io.PrintWriter;
+import java.util.ListIterator;
 
 public interface EntrySynthesizer {
 
@@ -45,7 +47,7 @@ public interface EntrySynthesizer {
 
     void evalTemplate(String value, PrintWriter out, String locale, CatalogActionContext ccontext);
 
-    Object synthethizeFieldValue(String[] split, CatalogActionContext context) throws Exception;
+    Object synthethizeFieldValue(ListIterator<String> split, Context context, CatalogEntry subject, CatalogDescriptor subjectType, FieldDescriptor generated, Instrospection intro) throws Exception;
 
     public Object getAllegedParentId(CatalogEntry result, Instrospection instrospection, FieldAccessStrategy access) throws ReflectiveOperationException;
 

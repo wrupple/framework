@@ -46,9 +46,9 @@ public class RideDriverAssignation {
         StringBuilder st = new StringBuilder();
         st.append("Solution #").append(model.getSolver().getSolutionCount()).append("\n");
         for (int i = 0; i < NUM_DRIVERS; i++) {
-                st.append(String.format("\tDriver %d picks up passenger : ", (i + 1)));
                 for (int j = 0; j < PASSENGERS; j++) {
                     if (assignation[j].getValue() == (i + 1)) {
+                        st.append(String.format("\tDriver %d picks up passenger : ", (i + 1)));
                         st.append(String.format("psngr: %d ", (j + 1)));
                     }
                 }

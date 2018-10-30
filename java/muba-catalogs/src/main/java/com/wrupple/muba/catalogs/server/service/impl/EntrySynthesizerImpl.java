@@ -2,23 +2,20 @@ package com.wrupple.muba.catalogs.server.service.impl;
 
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
-import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -223,7 +220,7 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
                     out.println(template.substring(currentIndex, start));
                     rawToken = matcher.group();
                     try {
-                        out.print(synthethizeFieldValue(rawToken.split(" "), context));
+                        out.print(synthethizeFieldValue(rawToken.split("\\."), context, subject, subjectType, generated, intro));
                     } catch (Exception e) {
                         out.println("Error processing token : " + rawToken);
                     }
@@ -239,13 +236,10 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     }
 
     @Override
-    public Object synthethizeFieldValue(String[] split, CatalogActionContext context) throws Exception {
-        throw new NotImplementedException();
+    public Object synthethizeFieldValue(ListIterator<String> split, Context context, CatalogEntry subject, CatalogDescriptor subjectType, FieldDescriptor generated, Instrospection intro) throws Exception {
 
-        /*RuntimeContext ex = context.getRuntimeContext().spawnChild();
-        ex.setSentence(split);
-        ex.process();
-        return ex.getResult();*/
+
+        return ex.getResult();
     }
 
     @Override

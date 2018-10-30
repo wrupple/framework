@@ -146,7 +146,7 @@ public class WruppleCatalogEvaluationDelegate implements CatalogEvaluationDelega
                     if (expr.startsWith("registerFactory:")) {
                         // FIXME if domain initialization params are hijacked, a sub-api could
                         // be built to send sensible data to another server (by building an
-                        // image or wateva)
+                        // image or something)
                         WruppleJsBridge.registerFromWindow(expr.substring(expr.indexOf(':') + 1), globalScope);
                     } else {
                         delegate.eval(expr, globalScope);
@@ -258,7 +258,9 @@ public class WruppleCatalogEvaluationDelegate implements CatalogEvaluationDelega
 		
 		ParsedExpression parsedFormula = delegate.parse(rawFormula);
 		CompiledExpression formula = parsedFormula.compile(delegate);
-		
+
+		// FIXME interpret ephemeral value formula as constraint (different interpret)
+
 		formula.evalAssign(scope, field.getFieldId(), entry,field.alwaysRecalculate());
 	}
 	

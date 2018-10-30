@@ -179,8 +179,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     }
 
     @Override
-    public void setPropertyValue(FieldDescriptor field, CatalogEntry object, Object value,
-                                 Instrospection instrospection) throws ReflectiveOperationException {
+    public void setPropertyValue(FieldDescriptor field, CatalogEntry object, Object value, Instrospection instrospection) throws ReflectiveOperationException {
         String fieldId = field.getFieldId();
 
         if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {

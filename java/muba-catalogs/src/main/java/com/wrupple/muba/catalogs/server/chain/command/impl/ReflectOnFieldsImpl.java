@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogRelation;
 import com.wrupple.muba.catalogs.domain.DataJoinContext;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
+import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
@@ -23,12 +24,14 @@ import java.util.*;
 public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
 
     protected static final Logger log = LogManager.getLogger(ReflectOnFieldsImpl.class);
+    private final EntrySynthesizer synthesizer;
 
     private final FieldAccessStrategy access;
     private final CatalogKeyServices keydelegate;
 
     @Inject
-    public ReflectOnFieldsImpl(FieldAccessStrategy access, CatalogKeyServices keydelegate) {
+    public ReflectOnFieldsImpl(EntrySynthesizer synthesizer, FieldAccessStrategy access, CatalogKeyServices keydelegate) {
+        this.synthesizer = synthesizer;
         this.access = access;
         this.keydelegate = keydelegate;
     }
@@ -129,24 +132,22 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                                 }
                             }
                         } else {
-
-                            // FIXME evaluation? (is the only instance of ephemeral that re-processes
+                            for (CatalogEntry e : mainResults) {
+                                Object criteriaValue = synthesizer.synthethizeFieldValue(field.getSentence().listIterator(), context, e, mainCatalog, field, instrospection);
+                                access.setPropertyValue(field.getFieldId(), e, criteriaValue, instrospection);
+                            }
                         }
-
                     }
                 }
             }
         }
-
-
         return CONTINUE_PROCESSING;
     }
 
 
 
 
-    private  Map<Object, CatalogEntry> mapJoins(HashMap<Object, CatalogEntry> hashMap,
-                                                List<CatalogEntry> entries) {
+    private  Map<Object, CatalogEntry> mapJoins(HashMap<Object, CatalogEntry> hashMap, List<CatalogEntry> entries) {
         for (CatalogEntry e : entries) {
             hashMap.put(e.getId(), e);
         }

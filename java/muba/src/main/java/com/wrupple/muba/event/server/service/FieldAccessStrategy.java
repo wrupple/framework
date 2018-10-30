@@ -7,7 +7,6 @@ import com.wrupple.muba.event.domain.DistributiedLocalizedEntry;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Instrospection;
-import com.wrupple.muba.event.server.service.IntrospectionStrategy;
 
 /**
  *
@@ -23,7 +22,7 @@ public interface FieldAccessStrategy extends IntrospectionStrategy {
     Object getPropertyValue(String field, CatalogEntry entry,
                             DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException;
 
-    void setPropertyValue(FieldDescriptor field, CatalogEntry entry, Object value,Instrospection instrospection) throws ReflectiveOperationException;
+    void setPropertyValue(FieldDescriptor field, CatalogEntry entry, Object value, Instrospection instrospection) throws ReflectiveOperationException;
 
     CatalogEntry synthesize(CatalogDescriptor catalog) throws ReflectiveOperationException;
 
