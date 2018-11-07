@@ -4,8 +4,12 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
+import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasResult;
+import com.wrupple.muba.event.server.domain.impl.EvaluationContext;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ListIterator;
 import java.util.regex.Matcher;
@@ -23,7 +28,6 @@ import java.util.regex.Pattern;
 public class EntrySynthesizerImpl implements EntrySynthesizer {
     protected static final Logger log = LogManager.getLogger(EntrySynthesizerImpl.class);
 
-    private final Pattern pattern;
 
     private final String ancestorIdField;
     private final FieldAccessStrategy access;
@@ -31,15 +35,14 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     private final CatalogDescriptorService catalogService;
 
 
-
-
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField, @Named("template.pattern") Pattern pattern, /** "\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}" */FieldAccessStrategy access, CatalogKeyServices keyDelgeate,  CatalogDescriptorService catalogService) {
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField,FieldAccessStrategy access, CatalogKeyServices keyDelgeate, CatalogDescriptorService catalogService, ServiceBus serviceBus) {
         this.pattern = pattern;
         this.ancestorIdField=ancestorIdField;
         this.access = access;
         this.keyDelgeate = keyDelgeate;
         this.catalogService = catalogService;
+        this.serviceBus = serviceBus;
     }
 	/*
 	 * INHERITANCE
@@ -201,45 +204,6 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
             }
         }
         return null;
-    }
-
-    @Override
-    public void evalTemplate(String template, PrintWriter out, String language, CatalogActionContext context) {
-        log.trace("[WRITE DOCUMENT]");
-        Matcher matcher = pattern.matcher(template);
-        if (matcher.find()) {
-            matcher.reset();
-            int start;
-            int end;
-            int currentIndex = 0;
-            String rawToken;
-            while (matcher.find()) {
-                start = matcher.start();
-                if (start > 0 && template.charAt(start) != '\\') {
-                    end = matcher.end();
-                    out.println(template.substring(currentIndex, start));
-                    rawToken = matcher.group();
-                    try {
-                        out.print(synthethizeFieldValue(rawToken.split("\\."), context, subject, subjectType, generated, intro));
-                    } catch (Exception e) {
-                        out.println("Error processing token : " + rawToken);
-                    }
-                    currentIndex = end;
-                }
-            }
-            if (currentIndex < template.length()) {
-                out.println(template.substring(currentIndex, template.length()));
-            }
-        } else {
-            out.println(template);
-        }
-    }
-
-    @Override
-    public Object synthethizeFieldValue(ListIterator<String> split, Context context, CatalogEntry subject, CatalogDescriptor subjectType, FieldDescriptor generated, Instrospection intro) throws Exception {
-
-
-        return ex.getResult();
     }
 
     @Override

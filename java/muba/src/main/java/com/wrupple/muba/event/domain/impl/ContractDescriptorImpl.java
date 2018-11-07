@@ -1,17 +1,17 @@
 package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 
 import java.util.Collection;
 
 public class ContractDescriptorImpl extends AbstractContractDescriptor {
 
 	private static final long serialVersionUID = -89125026499165232L;
-	private final Collection<String> fieldsIds;
 	private Class<? extends CatalogEntry> clazz;
 	private String distinguishedName;
 
-	
+
 	public ContractDescriptorImpl(Collection<String> fields, Class<? extends CatalogEntry> clazz) {
 		super();
 		this.fieldsIds = fields;
@@ -36,10 +36,7 @@ public class ContractDescriptorImpl extends AbstractContractDescriptor {
 		this.distinguishedName = catalogId;
 	}
 
-	@Override
-	public Collection<String> getFieldsIds() {
-		return fieldsIds;
-	}
+
 	@Override
 	public String getCatalogType() {
 		return null ;

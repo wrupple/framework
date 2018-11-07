@@ -2,8 +2,12 @@ package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.ContractDescriptor;
+import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.annotations.CatalogField;
+import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractContractDescriptor extends CatalogEntryImpl implements ContractDescriptor {
 	private static final long serialVersionUID = 3661941861991014932L;
@@ -12,6 +16,10 @@ public abstract class AbstractContractDescriptor extends CatalogEntryImpl implem
 	private List<String> contextExpressions, properties;
 	private String keyField;
 	public String descriptiveField;
+
+	@CatalogField(ignore = true)
+	@CatalogValue(foreignCatalog = FieldDescriptor.CATALOG_ID)
+	protected Map<String, FieldDescriptor> fieldsValues;
 
 	public void setKeyField(String idField) {
 		this.keyField = idField;

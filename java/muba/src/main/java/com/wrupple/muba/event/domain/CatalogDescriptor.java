@@ -45,16 +45,7 @@ public interface CatalogDescriptor extends  ContractDescriptor ,HasParentValue<L
 	 * @return strategy to store locale dependent values
 	 */
 	public int getLocalization();
-	
 
-	public Collection<FieldDescriptor> getFieldsValues();
-	
-	/**
-	 * @param id
-	 *            the Machine Readable id for the field
-	 * @return
-	 */
-	public FieldDescriptor getFieldDescriptor(String id);
 
 	public Boolean getRevised();
 	public void setRevised(Boolean b);

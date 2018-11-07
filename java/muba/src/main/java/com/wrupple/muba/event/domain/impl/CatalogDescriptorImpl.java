@@ -66,10 +66,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	@CatalogField(ignore = true)
 	private List<? extends FilterCriteria> appliedCriteria;
 
-	@CatalogField(ignore = true)
-	@CatalogValue(foreignCatalog = FieldDescriptor.CATALOG_ID)
-	protected Map<String, FieldDescriptor> fieldsValues;
-
 	@CatalogField(filterable = true)
 	private String distinguishedName;
 

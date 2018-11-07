@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -32,8 +33,7 @@ public class ContractListenerTest extends BootstrapTest {
 
 	private ServiceBus system;
 
-	protected ContractDescriptor operationContract = new ContractDescriptorImpl(
-            Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), null);
+	protected ContractDescriptor operationContract = new ContractDescriptorImpl(Arrays.asList(FIRST_OPERAND_NAME, SECOND_OPERAND_NAME), null);
 
 
     public ContractListenerTest() {
@@ -43,13 +43,13 @@ public class ContractListenerTest extends BootstrapTest {
 		ObjectNativeInterface oni= new JavaObjectNativeInterface(largeStringDelegate);
 		FieldAccessStrategy instrospector=new JavaFieldAccessStrategy(null,oni);
 
-
-        EventDispatcher dispatcher = new EventDispatcherImpl(new ValidateContext() {
+		FieldSynthesizer synthesizer= new FieldSynthesizerImpl( Pattern.compile("\\$\\{([A-Za-z0-9]+\\.){0,}[A-Za-z0-9]+\\}"),system,instrospector);
+		EventDispatcher dispatcher = new EventDispatcherImpl(new ValidateContext() {
             @Override
             public boolean execute(Context context) throws Exception {
                 return CONTINUE_PROCESSING;
             }
-        }, new BindServiceImpl(), new IncorporateImpl(), new ValidateContract() {
+        }, new BindServiceImpl(), new IncorporateImpl(synthesizer,instrospector), new ValidateContract() {
             @Override
             public boolean execute(Context context) throws Exception {
                 return CONTINUE_PROCESSING;

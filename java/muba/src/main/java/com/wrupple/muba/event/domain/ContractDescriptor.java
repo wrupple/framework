@@ -46,6 +46,15 @@ public interface ContractDescriptor extends HasDistinguishedName,HasProperties, 
 	 */
 	public List<String> getContextExpressions();
 	public Collection<String> getFieldsIds();
-	
 
+
+
+	public Collection<FieldDescriptor> getFieldsValues();
+
+	/**
+	 * @param id
+	 *            the Machine Readable id for the field
+	 * @return
+	 */
+	public FieldDescriptor getFieldDescriptor(String id);
 }
