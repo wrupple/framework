@@ -3,6 +3,7 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.service.*;
+import com.wrupple.muba.event.server.service.FieldSynthesizer;
 import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
@@ -28,6 +29,8 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
 
     private final EntrySynthesizer synthesizer;
 
+    private final FieldSynthesizer fieldSynthesizer;
+
     private final CompleteCatalogGraph graphJoin;
 
     private final CatalogReaderInterceptor queryRewriter;
@@ -48,13 +51,14 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                                       @Named("catalog.storage.metadata") String catalogPluginStorage,
                                       CatalogKeyServices keyDelegate, FieldAccessStrategy access,
                                       EntrySynthesizer synthesizer,
-                                      QueryReaders queryers, PrimaryKeyReaders primaryKeyers,
+                                      FieldSynthesizer fieldSynthesizer, QueryReaders queryers, PrimaryKeyReaders primaryKeyers,
                                       CompleteCatalogGraph graphJoin,
                                       ExplicitDataJoin join,
                                       CatalogReaderInterceptor queryRewriter, CatalogDescriptorService catalogService) {
         this.keyDelegate = keyDelegate;
         this.access = access;
         this.synthesizer = synthesizer;
+        this.fieldSynthesizer = fieldSynthesizer;
 
 
         this.graphJoin = graphJoin;
@@ -426,7 +430,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
                 if (criteria.getEvaluate()) {
                     String operator = criteria.getOperator();
                     ListIterator listIterator = ((List) criteria.getValues()).listIterator();
-                    Object criteriaValue = synthesizer.synthethizeFieldValue(listIterator, context, null, catalog, catalog.getFieldDescriptor(criteria.getPath(0)), instrospection);
+                    Object criteriaValue = fieldSynthesizer.synthethizeFieldValue(listIterator, context, null, catalog, catalog.getFieldDescriptor(criteria.getPath(0)), instrospection,context.getRuntimeContext().getServiceBus());
                     criteria = FilterDataUtils.createSingleFieldFilter(criteria.getPath(), criteriaValue);
                     criteria.setOperator(operator);
                 }

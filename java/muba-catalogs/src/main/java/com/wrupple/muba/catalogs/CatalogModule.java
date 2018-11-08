@@ -24,6 +24,7 @@ import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
+import com.wrupple.muba.event.server.service.impl.FieldSynthesizerImpl;
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.beanutils.converters.LongConverter;
 

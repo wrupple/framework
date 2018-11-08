@@ -9,6 +9,7 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.FieldSynthesizer;
 import org.apache.commons.chain.Command;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,13 +25,13 @@ import java.util.*;
 public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
 
     protected static final Logger log = LogManager.getLogger(ReflectOnFieldsImpl.class);
-    private final EntrySynthesizer synthesizer;
+    private final FieldSynthesizer synthesizer;
 
     private final FieldAccessStrategy access;
     private final CatalogKeyServices keydelegate;
 
     @Inject
-    public ReflectOnFieldsImpl(EntrySynthesizer synthesizer, FieldAccessStrategy access, CatalogKeyServices keydelegate) {
+    public ReflectOnFieldsImpl(FieldSynthesizer synthesizer, FieldAccessStrategy access, CatalogKeyServices keydelegate) {
         this.synthesizer = synthesizer;
         this.access = access;
         this.keydelegate = keydelegate;
@@ -133,7 +134,7 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                             }
                         } else {
                             for (CatalogEntry e : mainResults) {
-                                Object criteriaValue = synthesizer.synthethizeFieldValue(field.getSentence().listIterator(), context, e, mainCatalog, field, instrospection);
+                                Object criteriaValue = synthesizer.synthethizeFieldValue(field.getSentence().listIterator(), context, e, mainCatalog, field, instrospection,context.getMain().getRuntimeContext().getServiceBus());
                                 access.setPropertyValue(field.getFieldId(), e, criteriaValue, instrospection);
                             }
                         }

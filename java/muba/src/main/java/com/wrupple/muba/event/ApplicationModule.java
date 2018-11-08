@@ -41,6 +41,7 @@ public class ApplicationModule extends AbstractModule {
          * Application
          */
 		bind(ServiceBus.class).to(ServiceBusImpl.class);//ServletContext
+        bind(FieldSynthesizer.class).to(FieldSynthesizerImpl.class);
 
         /*
          * model

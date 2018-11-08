@@ -10,6 +10,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.FieldSynthesizer;
 import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import org.apache.commons.chain.Command;
 import org.apache.logging.log4j.Logger;
@@ -28,13 +29,13 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 	private final Provider<CatalogServiceManifest> manifestP;
 	private final CatalogDeserializationService deserializer;
 	private final ActionsDictionary dictionary;
-    private final EntrySynthesizer synthetizationDelegate;
+    private final FieldSynthesizer synthetizationDelegate;
 	private final FieldAccessStrategy access;
 	private final List<Trigger> metadataTriggers;
 
 	@Inject
 	public CatalogTriggerInterpretImpl(FieldAccessStrategy access,ActionsDictionary dictionary, Provider<CatalogServiceManifest> manifestP,
-									   CatalogDeserializationService deserializer, EntrySynthesizer synthetizationDelegate) {
+									   CatalogDeserializationService deserializer, FieldSynthesizer synthetizationDelegate) {
 		super();
 		this.access=access;
 		this.dictionary=dictionary;
@@ -186,7 +187,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
     private Object synthethizeKeyValue(Object entryIdPointer, CatalogActionContext context, Instrospection instrospection,
 									   FieldDescriptor field, CatalogEntry subject, CatalogDescriptor subjectType) throws Exception {
 		if (entryIdPointer instanceof String) {
-			return synthetizationDelegate.synthethizeFieldValue(Arrays.asList(((String) entryIdPointer).split("\\.")).listIterator(), context,subject,subjectType,field,instrospection);
+			return synthetizationDelegate.synthethizeFieldValue(Arrays.asList(((String) entryIdPointer).split("\\.")).listIterator(), context,subject,subjectType,field,instrospection,context.getRuntimeContext().getServiceBus());
 		} else {
 			return entryIdPointer;
 		}
@@ -234,7 +235,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isEphemeral()) {
 				token = properties.get(fieldId);
 				if (token != null) {
-					fieldValue = synthetizationDelegate.synthethizeFieldValue(Arrays.asList(token.split(" ")).listIterator(), context,synthesizedEntry,targetCatalog,field,lowInstrospection);
+					fieldValue = synthetizationDelegate.synthethizeFieldValue(Arrays.asList(token.split(" ")).listIterator(), context,synthesizedEntry,targetCatalog,field,lowInstrospection,context.getRuntimeContext().getServiceBus());
                     access.setPropertyValue(field.getFieldId(), synthesizedEntry, fieldValue, instrospection);
                 }
 			}

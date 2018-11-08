@@ -243,7 +243,7 @@ public class CatalogEngineTest extends IntegralTest {
 	}
 
 
-	//@Test
+	@Test
 	public void filters() throws Exception {
 
 		RuntimeContext excecution = injector.getInstance(RuntimeContext.class);

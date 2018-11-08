@@ -36,13 +36,11 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
 
 
     @Inject
-    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField,FieldAccessStrategy access, CatalogKeyServices keyDelgeate, CatalogDescriptorService catalogService, ServiceBus serviceBus) {
-        this.pattern = pattern;
+    public EntrySynthesizerImpl(@Named("catalog.ancestorKeyField") String ancestorIdField,FieldAccessStrategy access, CatalogKeyServices keyDelgeate, CatalogDescriptorService catalogService) {
         this.ancestorIdField=ancestorIdField;
         this.access = access;
         this.keyDelgeate = keyDelgeate;
         this.catalogService = catalogService;
-        this.serviceBus = serviceBus;
     }
 	/*
 	 * INHERITANCE
