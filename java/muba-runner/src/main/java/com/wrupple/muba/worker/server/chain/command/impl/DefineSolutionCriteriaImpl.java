@@ -2,7 +2,10 @@ package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.Task;
+import com.wrupple.muba.event.server.service.FieldAccessStrategy;
+import com.wrupple.muba.event.server.service.FieldSynthesizer;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.chain.command.DefineSolutionCriteria;
@@ -22,11 +25,13 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
 
     protected Logger log = LogManager.getLogger(DefineSolutionCriteriaImpl.class);
-    private final EntrySynthesizer synthetizationDelegate;
+    private final FieldSynthesizer synthetizationDelegate;
+    private final FieldAccessStrategy access;
 
     @Inject
-    public DefineSolutionCriteriaImpl(EntrySynthesizer synthetizationDelegate) {
+    public DefineSolutionCriteriaImpl(FieldSynthesizer synthetizationDelegate, FieldAccessStrategy access) {
         this.synthetizationDelegate = synthetizationDelegate;
+        this.access = access;
     }
 
     @Override
@@ -35,10 +40,14 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         Task request = context.getStateValue().getTaskDescriptorValue();
 
         if(context.getStateValue().getCatalogValue()!=null){
+            Instrospection intros=null;
             for (FieldDescriptor field : context.getStateValue().getCatalogValue().getFieldsValues()) {
                 if (field.getSentence() != null && !field.getSentence().isEmpty()) {
                     log.debug("posting solution constraints from field {} definition",field.getFieldId());
-                    synthetizationDelegate.synthethizeFieldValue(field.getSentence().listIterator(),context,context.getStateValue().getEntryValue(),context.getStateValue().getCatalogValue(),field, intro);
+                    if(intros==null){
+                        intros = access.newSession(context.getStateValue().getEntryValue());
+                    }
+                    synthetizationDelegate.synthethizeFieldValue(field.getSentence().listIterator(),context,context.getStateValue().getEntryValue(),context.getStateValue().getCatalogValue(),field,intros,context.getRuntimeContext().getServiceBus());
                 }
             }
         }
