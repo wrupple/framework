@@ -43,8 +43,6 @@ public class CatalogModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		BeanUtilsBean2.getInstance().getConvertUtils().register(new LongConverter(null), Long.class);
-		BeanUtilsBean2.getInstance().getConvertUtils().register(false, true, 0);
 		/*
 	     * Contract Handlers
 	     */

@@ -5,18 +5,14 @@ import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.event.server.service.ObjectNativeInterface;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
@@ -30,13 +26,14 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     protected static final Logger log = LogManager.getLogger(JavaObjectNativeInterface.class);
     private final LargeStringFieldDataAccessObject delegate;
 
-        //TODO use common instance (dfined in application module)
-    private final PropertyUtilsBean bean;
+    private final BeanUtilsBean bean;
+    private final PropertyUtilsBean property;
 
     @Inject
     public JavaObjectNativeInterface(LargeStringFieldDataAccessObject delegate) {
         this.delegate = delegate;
-        this.bean  = new PropertyUtilsBean();
+        this.bean  = BeanUtilsBean.getInstance();
+        this.property  = new PropertyUtilsBean();
     }
 
     @Override
@@ -64,52 +61,6 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
             this.accesible=b;
         }
 
-        // use PropertyUtilsBean (bean utils) and dump srping
-        private Object getPropertyValue2(Object bean, String property) throws IntrospectionException,
-                IllegalArgumentException,IllegalAccessException, InvocationTargetException   {
-            Class<?> beanClass = bean.getClass();
-            PropertyDescriptor propertyDescriptor = getPropertyDescriptor(beanClass, property);
-            if (propertyDescriptor == null) {
-                throw new IllegalArgumentException("No such property " + property + " for " + beanClass + " exists");
-            }
-
-            Method readMethod = propertyDescriptor.getReadMethod();
-            if (readMethod == null) {
-                throw new IllegalStateException("No getter available for property " + property + " on " + beanClass);
-            }
-            return readMethod.invoke(bean);
-        }
-
-        private PropertyDescriptor getPropertyDescriptor(Class<?> beanClass, String propertyname)
-                throws IntrospectionException {
-            PropertyDescriptor propertyDescriptor = getDescriptorFromCache(beanClass, propertyname);
-
-            if (propertyDescriptor == null) {
-                BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
-                PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-
-                for (int i = 0; i < propertyDescriptors.length; i++) {
-                    PropertyDescriptor currentPropertyDescriptor = propertyDescriptors[i];
-                    if (currentPropertyDescriptor.getName().equals(propertyname)) {
-                        propertyDescriptor = currentPropertyDescriptor;
-                    }
-
-                }
-            }
-
-            return propertyDescriptor;
-        }
-
-        private PropertyDescriptor getDescriptorFromCache(Class<?> beanClass, String propertyname) {
-            // FIXME cache (in outer class)
-            return null;
-        }
-
-        private Object getPropertyValue(CatalogEntry object, String fieldId)
-                throws  IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-            return bean.getProperty(object, fieldId);
-        }
 
     }
 
@@ -173,7 +124,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
     public Object getWrappedValue(String fieldId, Instrospection instrospection, CatalogEntry object, boolean silentFail) {
 
             try {
-                return ((FieldAccessInstrospection) instrospection).getPropertyValue(object,fieldId);
+                return property.getProperty(object,fieldId);
             } catch (Exception e) {
                 if(silentFail){
                     return null;
@@ -194,7 +145,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
     @Override
     public boolean isWriteable(CatalogEntry entry, String property) {
-        return bean.isWriteable(entry,property);
+        return this.property.isWriteable(entry,property);
     }
 
     @Override
@@ -208,7 +159,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
     @Override
     public boolean isReadable(String foreignKeyValuePropertyName, CatalogEntry e) {
-        return bean.isReadable(e,foreignKeyValuePropertyName);
+        return property.isReadable(e,foreignKeyValuePropertyName);
     }
 
     @Override

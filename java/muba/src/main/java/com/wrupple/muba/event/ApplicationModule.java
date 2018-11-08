@@ -23,6 +23,7 @@ import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.service.impl.*;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.BeanUtilsBean2;
+import org.apache.commons.beanutils.converters.LongConverter;
 import org.apache.commons.chain.CatalogFactory;
 
 import java.util.LinkedHashMap;
@@ -32,8 +33,10 @@ public class ApplicationModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-
-        BeanUtilsBean.setInstance(BeanUtilsBean2.getInstance());
+        BeanUtilsBean bean = BeanUtilsBean2.getInstance();
+        bean.getConvertUtils().register(new LongConverter(null), Long.class);
+        bean.getConvertUtils().register(false, true, 0);
+        BeanUtilsBean.setInstance(bean);
         bind(String.class).annotatedWith(Names.named("chain.unknownService")).toInstance("chain.unknownService");
         bind(FieldDescriptor.class).annotatedWith(Names.named("event.sentence")).to(SentenceField.class);
 

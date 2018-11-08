@@ -81,7 +81,7 @@ public class IncorporateImpl implements Incorporate {
 
                         if(descriptor==null){
                             value = requestContext.next();
-                            BeanUtilsBean2.getInstance().setProperty(contract, key, value);
+                            accessor.setPropertyValue(key,entry,  value ,instrospector);
                         }else{
                             field = descriptor.getFieldDescriptor(key);
                             value = synthesizer.synthethizeFieldValue(requestContext,requestContext,entry,descriptor,field,instrospector,requestContext.getServiceBus());
