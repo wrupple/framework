@@ -22,6 +22,7 @@ import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
 import com.wrupple.muba.event.server.ExplicitIntentInterpret;
+import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.server.service.*;
@@ -86,6 +87,7 @@ public abstract class WorkerTest extends EasyMockSupport {
 
         container.registerInterpret(Constraint.EVALUATING_VARIABLE, ChocoInterpret.class);
         container.registerInterpret(WorkerRequestManifest.NAME, ExplicitIntentInterpret.class);
+        container.registerInterpret(NaturalLanguageInterpret.ASSIGNATION, NaturalLanguageInterpret);
 
         container.registerRunner(ChocoRunner.class);
         container.registerRunner(CatalogRunner.class);

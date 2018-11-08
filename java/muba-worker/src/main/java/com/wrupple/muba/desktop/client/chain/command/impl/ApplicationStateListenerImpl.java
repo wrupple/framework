@@ -21,8 +21,6 @@ public class ApplicationStateListenerImpl implements ApplicationStateListener {
 
         ApplicationState state = (ApplicationState) context.getResult();
 
-        state.getWorkerStateValue().setStateValue(state);
-
         context.
                 getRuntimeContext().
                 getServiceBus().

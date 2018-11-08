@@ -12,7 +12,6 @@ import java.util.List;
 public class Endorser extends CatalogEntryImpl {
     public static final String CATALOG = "Endorser";
 
-    @CatalogField(ephemeral = true)
     @CatalogValue(foreignCatalog = Credit.CATALOG)
     private List<Credit> creditsValues;
 

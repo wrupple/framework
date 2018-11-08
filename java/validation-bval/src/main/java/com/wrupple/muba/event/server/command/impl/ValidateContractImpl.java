@@ -47,7 +47,6 @@ public class ValidateContractImpl implements ValidateContract {
                         log.info("\t{} : {}", v.getPropertyPath(), v.getMessage());
                     }
                 }
-
                 throw new IllegalArgumentException("Contract violates constrains");
             }
 
