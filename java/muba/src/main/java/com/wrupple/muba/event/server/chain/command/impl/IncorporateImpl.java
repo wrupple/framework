@@ -96,7 +96,7 @@ public class IncorporateImpl implements Incorporate {
                         break;
                     }
                 }else{
-                    log.info("reached end of sentence");
+                    log.debug("reached end of sentence");
                     break;
                 }
             }
