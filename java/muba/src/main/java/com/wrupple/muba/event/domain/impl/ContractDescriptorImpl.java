@@ -1,11 +1,12 @@
 package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
-public class ContractDescriptorImpl extends AbstractContractDescriptor {
+public class ContractDescriptorImpl extends Schema {
 
 	private static final long serialVersionUID = -89125026499165232L;
 	private Class<? extends CatalogEntry> clazz;
@@ -14,8 +15,10 @@ public class ContractDescriptorImpl extends AbstractContractDescriptor {
 
 	public ContractDescriptorImpl(Collection<String> fields, Class<? extends CatalogEntry> clazz) {
 		super();
-		this.fieldsIds = fields;
 		this.clazz = clazz;
+		setFieldsValues(fields.stream().
+                map(f-> new FieldDescriptorImpl().makeDefault(f,f,CatalogEntry.STRING_DATA_TYPE)).
+                collect(Collectors.toList()));
 	}
 
 	@Override

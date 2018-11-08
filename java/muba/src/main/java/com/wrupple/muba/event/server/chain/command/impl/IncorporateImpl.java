@@ -70,10 +70,13 @@ public class IncorporateImpl implements Incorporate {
                     if ((descriptor!=null &&
                             accessor.isWriteableProperty(key,entry,instrospector) &&
                             (accessor.getPropertyValue(key,entry,null,instrospector)==null
-                                    || sentenceOverContract))||
+                                    || sentenceOverContract
+                            ))||
                             (PropertyUtils.isWriteable(contract, key) &&
                                     (PropertyUtils.getProperty(contract, key) == null
-                                            || sentenceOverContract)))
+                                            || sentenceOverContract
+                                    )
+                            ))
                     {
 
                         if(descriptor==null){
@@ -81,7 +84,7 @@ public class IncorporateImpl implements Incorporate {
                             BeanUtilsBean2.getInstance().setProperty(contract, key, value);
                         }else{
                             field = descriptor.getFieldDescriptor(key);
-                            value = synthesizer.synthethizeFieldValue(requestContext,requestContext,entry,descriptor,field,instrospector);
+                            value = synthesizer.synthethizeFieldValue(requestContext,requestContext,entry,descriptor,field,instrospector,requestContext.getServiceBus());
                             accessor.setPropertyValue(key,entry,  value ,instrospector);
                         }
                         if(log.isDebugEnabled()){
@@ -92,7 +95,7 @@ public class IncorporateImpl implements Incorporate {
                         log.trace("stoped analizing sentence");
                         break;
                     }
-                } else {
+                }else{
                     log.info("reached end of sentence");
                     break;
                 }

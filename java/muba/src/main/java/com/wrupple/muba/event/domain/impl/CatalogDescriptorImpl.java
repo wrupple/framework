@@ -1,6 +1,5 @@
 package com.wrupple.muba.event.domain.impl;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,7 @@ import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.annotations.*;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 
-public class CatalogDescriptorImpl extends AbstractContractDescriptor implements CatalogDescriptor {
+public class CatalogDescriptorImpl extends Schema implements CatalogDescriptor {
 
 	private static final long serialVersionUID = 7222404658673284250L;
 
@@ -202,39 +201,9 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 		this.fields = formFields;
 	}
 
-	@Override
-	public Collection<FieldDescriptor> getFieldsValues() {
-		if (fieldsValues == null) {
-			return null;
-		}
-		return fieldsValues.values();
-	}
-
-	public void setFieldsValues(Collection<FieldDescriptor> fieldsValues) {
-		if (fieldsValues == null) {
-			this.fieldsValues = null;
-		} else {
-			this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>(fieldsValues.size());
-			for (FieldDescriptor f : fieldsValues) {
-				this.fieldsValues.put(f.getFieldId(), f);
-			}
-
-		}
-	}
-
 	public void setJavaClass(Class<? extends CatalogEntry> javaClass) {
 		this.javaClass = javaClass;
 	}
-
-	@Override
-	public FieldDescriptor getFieldDescriptor(String id) {
-		if (this.fieldsValues == null) {
-			return null;
-		}
-
-		return this.fieldsValues.get(id);
-	}
-
 
 	public void setLocalization(Integer localization) {
 		this.localization = localization;
@@ -325,11 +294,6 @@ public class CatalogDescriptorImpl extends AbstractContractDescriptor implements
 	@Override
 	public String toString() {
 		return "Catalog["+ distinguishedName + "]";
-	}
-
-	@Override
-	public Collection<String> getFieldsIds() {
-		return fieldsValues == null ? null : fieldsValues.keySet();
 	}
 
 	@Override

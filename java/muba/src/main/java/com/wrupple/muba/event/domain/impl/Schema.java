@@ -1,15 +1,16 @@
 package com.wrupple.muba.event.domain.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.ContractDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.annotations.CatalogField;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractContractDescriptor extends CatalogEntryImpl implements ContractDescriptor {
+public abstract class Schema extends CatalogEntryImpl implements ContractDescriptor {
 	private static final long serialVersionUID = 3661941861991014932L;
 
 
@@ -53,5 +54,35 @@ public abstract class AbstractContractDescriptor extends CatalogEntryImpl implem
 		this.properties = properties;
 	}
 
+	public void setFieldsValues(Collection<FieldDescriptor> fieldsValues) {
+		if (fieldsValues == null) {
+			this.fieldsValues = null;
+		} else {
+			this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>(fieldsValues.size());
+			for (FieldDescriptor f : fieldsValues) {
+				this.fieldsValues.put(f.getFieldId(), f);
+			}
+
+		}
+	}
+
+	public Collection<String> getFieldsIds() {
+		return fieldsValues == null ? null : fieldsValues.keySet();
+	}
+
+	public FieldDescriptor getFieldDescriptor(String id) {
+		if (this.fieldsValues == null) {
+			return null;
+		}
+
+		return this.fieldsValues.get(id);
+	}
+
+	public Collection<FieldDescriptor> getFieldsValues() {
+		if (fieldsValues == null) {
+			return null;
+		}
+		return fieldsValues.values();
+	}
 
 }
