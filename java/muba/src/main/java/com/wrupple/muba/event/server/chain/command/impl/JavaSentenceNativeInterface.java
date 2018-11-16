@@ -139,43 +139,5 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
         return false;
     }
 
-    private Object parseParameter(String rawValue, Class<?> parameterType, JavaNativeInterfaceContext context) throws ClassNotFoundException {
-        if(log.isDebugEnabled()){
-            log.debug("   parameter: "+rawValue);
-        }
-        int endTokenIndex = rawValue.indexOf(':');
-        if(endTokenIndex>0){
-            String accessor = rawValue.substring(0,endTokenIndex);
-            rawValue = rawValue.substring(endTokenIndex+1);
-            log.trace("      parsing parameter {} with accesor {}",rawValue,accessor);
-            Object r ;
-            if(accessor.equals("ctx")){
-                r= context.get(rawValue);
-                if(r==null){
-                    log.warn("      No Context key {}",rawValue);
-                }else{
-                    log.trace("      Context Value: {}",r);
-                }
-            }else if(accessor.equals("int")){
-                r= Integer.parseInt(rawValue);
-                log.trace("      Explicit conversion output: {}",r);
-            }else if(accessor.contains(".")){
-                parameterType = Class.forName(accessor);
-                r= ConvertUtils.convert(rawValue,parameterType);
-                log.trace("      Explicit conversion output: {}",r);
-            }else{
-                String cannonicalName = "java.lang."+accessor;
-                parameterType = Class.forName(cannonicalName);
-                r= ConvertUtils.convert(rawValue,parameterType);
-                log.trace("      Implicit conversion output: {}",r);
-            }
-            return r;
-        }else if(rawValue.equals("null")){
-            return null;
-        }else{
-            return ConvertUtils.convert(rawValue,parameterType);
-        }
-    }
-
 
 }

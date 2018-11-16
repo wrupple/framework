@@ -12,101 +12,99 @@ import com.wrupple.muba.event.domain.reserved.*;
  * 
  */
 public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,HasCatalogId ,HasDescription,HasConstrains {
-	public static final String CATALOG_ID = "FieldDescriptor";
+	String CATALOG_ID = "FieldDescriptor";
 
-
-	
-	/**
+	/**static final
 	 * @return the summary
 	 */
-	public boolean isSummary();
+	boolean isSummary();
 
 
 	/**
 	 * @return the type of data that this field holds
 	 */
-	public int getDataType();
+	int getDataType();
 
 	/**
 	 * @return can this field be sorted?
 	 */
-	public boolean isSortable();
+	boolean isSortable();
 
 	/**
 	 * @return the filterable
 	 */
-	public boolean isFilterable();
+	boolean isFilterable();
 
 	/**
 	 * @return the createable
 	 */
-	public boolean isCreateable() ;
+	boolean isCreateable() ;
 
 	/**
 	 * @return the writeable
 	 */
-	public boolean isWriteable() ;
+	boolean isWriteable() ;
 
 
 	/**
 	 * @return the detailable
 	 */
-	public boolean isDetailable() ;
+	boolean isDetailable() ;
 
 
 
 	/**
 	 * @return the value used to fill out this entry 
 	 */
-	public String getDefaultValue() ;
+	String getDefaultValue() ;
 
 	/**
 	 * @return
 	 */
-	public String getCatalog();
+	String getCatalog();
 
 	/**
 	 * @return
 	 */
-	public boolean isKey();
+	boolean isKey();
 
 	
-	public String getHelp() ;
+	String getHelp() ;
 	
 	/**
 	 * @return
 	 */
-	public boolean isEphemeral();
+	boolean isEphemeral();
 
-	public boolean isMultiple();
+	boolean isMultiple();
 	
-	public String getCommand();
+	String getCommand();
 
-	public boolean isLocalized();
+	boolean isLocalized();
 
 
 	/**
 	 * 
 	 * @return
 	 */
-	public List<String> getDefaultValueOptions();
+	List<String> getDefaultValueOptions();
 	
-	public boolean alwaysRecalculate();
+	boolean alwaysRecalculate();
 
-	public void setWriteable(boolean b);
+	void setWriteable(boolean b);
 
 	/**
 	 * @return true if deletion of the foreign entry implies the deletion of all entries referencing it through this field
 	 */
-	public boolean isHardKey();
+	boolean isHardKey();
 	
 	/**
 	 * @return masked fields never leave the server
 	 */
-	public boolean isMasked();
+	boolean isMasked();
 
 
-	public void setDefaultValueOptions(List<String> asList);
+	void setDefaultValueOptions(List<String> asList);
 
 	List<String> getSentence();
 }

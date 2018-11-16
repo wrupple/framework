@@ -3,22 +3,22 @@ package com.wrupple.muba.event.domain;
 
 public interface CatalogEntry extends Entity {
 
-	public static final int NUMERIC_DATA_TYPE = 1;
-	public static final int INTEGER_DATA_TYPE = 2;
-	public static final int DATE_DATA_TYPE = 3;
-	public static final int CATALOG_ENTRY_DATA_TYPE = 4;
-	public static final int BLOB_DATA_TYPE = 5;
-	public static final int OBJECT_DATA_TYPE = 7;
-	public static final int LARGE_STRING_DATA_TYPE = 12;
-	public static final int STRING_DATA_TYPE = 51;
-	public static final int BOOLEAN_DATA_TYPE = 1001001;
+	int NUMERIC_DATA_TYPE = 1;
+	int INTEGER_DATA_TYPE = 2;
+	int DATE_DATA_TYPE = 3;
+	int CATALOG_ENTRY_DATA_TYPE = 4;
+	int BLOB_DATA_TYPE = 5;
+	int OBJECT_DATA_TYPE = 7;
+	int LARGE_STRING_DATA_TYPE = 12;
+	int STRING_DATA_TYPE = 51;
+	int BOOLEAN_DATA_TYPE = 1001001;
 
 
-	public static final long PUBLIC_ID = -1;
-	public static final long CURRENT_NAMESPACE = 0;
-	public static final String PUBLIC = "anonymouslyVisible";
-	public static final String NAME_FIELD = "name";
-	final String DOMAIN_FIELD = "domain";
+	long PUBLIC_ID = -1;
+	long CURRENT_NAMESPACE = 0;
+	String PUBLIC = "anonymouslyVisible";
+	String NAME_FIELD = "name";
+	String DOMAIN_FIELD = "domain";
 
 
 	/**

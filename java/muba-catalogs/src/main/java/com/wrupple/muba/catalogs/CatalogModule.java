@@ -312,9 +312,6 @@ public class CatalogModule extends AbstractModule {
 		return r;
 	}
 
-
-
-
     @Provides
     @Inject
     @Singleton
