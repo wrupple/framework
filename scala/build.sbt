@@ -1,16 +1,16 @@
 name := "batch"
 organization in ThisBuild := "com.wrupple"
-scalaVersion in ThisBuild := "2.10.5"
-
-// PROJECTS
+scalaVersion := "2.10.5"
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
+// PROJECTS /*, "2.12.2"*/
 
 lazy val global = project
   .in(file("."))
   .settings(settings)
   .aggregate(
-    common,
-    container,
-    spark
+    //common,
+    container
+    //spark
   )
 
 lazy val common = project
@@ -111,7 +111,7 @@ lazy val commonSettings = Seq(
   scalacOptions ++= compilerOptions,
   resolvers ++= Seq(
     DefaultMavenRepository,
-    Resolver.mavenCentral,
+    //Resolver.mavenCentral,
     Resolver.defaultLocal,
     Resolver.mavenLocal,
     // Resolver.mavenLocal has issues - hence the duplication
@@ -139,8 +139,8 @@ lazy val wartremoverSettings = Seq(
 
 lazy val scalafmtSettings =
   Seq(
-    scalafmtOnCompile := true,
-    scalafmtTestOnCompile := true,
+    scalafmtOnCompile := false,
+    scalafmtTestOnCompile := false,
     scalafmtVersion := "1.2.0"
   )
 
