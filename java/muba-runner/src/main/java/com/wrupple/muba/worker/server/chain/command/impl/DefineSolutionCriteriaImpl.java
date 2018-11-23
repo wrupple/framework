@@ -41,13 +41,15 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
 
         if(context.getStateValue().getCatalogValue()!=null){
             Instrospection intros=null;
+            Object value;
             for (FieldDescriptor field : context.getStateValue().getCatalogValue().getFieldsValues()) {
                 if (field.getSentence() != null && !field.getSentence().isEmpty()) {
                     log.debug("posting solution constraints from field {} definition",field.getFieldId());
                     if(intros==null){
                         intros = access.newSession(context.getStateValue().getEntryValue());
                     }
-                    synthetizationDelegate.synthethizeFieldValue(field.getSentence().listIterator(),context,context.getStateValue().getEntryValue(),context.getStateValue().getCatalogValue(),field,intros,context.getRuntimeContext().getServiceBus());
+                    value=synthetizationDelegate.synthethizeFieldValue(field.getSentence().listIterator(),context,context.getStateValue().getEntryValue(),context.getStateValue().getCatalogValue(),field,intros,context.getRuntimeContext().getServiceBus());
+                    access.setPropertyValue(field,context.getStateValue().getEntryValue(),value,intros);
                 }
             }
         }
