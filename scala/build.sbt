@@ -8,9 +8,9 @@ lazy val global = project
   .in(file("."))
   .settings(settings)
   .aggregate(
-    //common,
-    container
-    //spark
+    common,
+    container,
+    spark
   )
 
 lazy val common = project

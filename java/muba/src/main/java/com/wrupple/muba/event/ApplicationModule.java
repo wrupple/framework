@@ -79,6 +79,7 @@ public class ApplicationModule extends AbstractModule {
         bind(FilterNativeInterface.class).to(JavaFilterNativeInterfaceImpl.class);
         bind(LargeStringFieldDataAccessObject.class).to(LargeStringFieldDataAccessObjectImpl.class);
         bind(SentenceNativeInterface.class).to(JavaSentenceNativeInterface.class);
+        bind(NaturalLanguageInterpret.class).to(NaturalLanguageInterpretImpl.class);
     }
 
     @Provides

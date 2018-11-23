@@ -5,12 +5,10 @@ import com.wrupple.muba.event.domain.annotations.CatalogFieldSentence;
 import com.wrupple.muba.event.domain.annotations.CatalogValue;
 import com.wrupple.muba.event.domain.annotations.ForeignKey;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
-import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
+import com.wrupple.muba.event.server.service.impl.NaturalLanguageInterpretImpl;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-
-import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
 
 /**
  * Created by japi on 25/07/17.
@@ -23,7 +21,7 @@ public class RiderBooking extends ManagedObjectImpl {
     @CatalogValue(foreignCatalog = Driver.CATALOG)
     private Driver driverValue;
     @CatalogField(ephemeral = true)
-    @CatalogFieldSentence(formula={NaturalLanguageInterpret.ASSIGNATION,"driver","location","-","location"})
+    @CatalogFieldSentence(formula={NaturalLanguageInterpretImpl.ASSIGNATION,"driver","location","-","location"})
     @Min(value = 0)
     @Max(value = 100)
     private Integer driverDistance;

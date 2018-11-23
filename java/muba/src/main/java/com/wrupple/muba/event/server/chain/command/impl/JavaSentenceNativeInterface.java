@@ -2,7 +2,8 @@ package com.wrupple.muba.event.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.impl.JavaNativeInterfaceContext;
 import com.wrupple.muba.event.server.chain.command.SentenceNativeInterface;
-import org.apache.commons.beanutils.ConvertUtils;
+import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
+import com.wrupple.muba.event.server.service.impl.NaturalLanguageInterpretImpl;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -20,11 +21,12 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
     protected Logger log = LogManager.getLogger(JavaSentenceNativeInterface.class);
 
     private final Delegate delgeate;
-
+    private final NaturalLanguageInterpret evaluator;
 
     @Inject
-    public JavaSentenceNativeInterface(Delegate delgeate) {
+    public JavaSentenceNativeInterface(Delegate delgeate, NaturalLanguageInterpret evaluator) {
         this.delgeate = delgeate;
+        this.evaluator = evaluator;
     }
 
     @Override
@@ -73,8 +75,8 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
                 String rawValue;
                 for(int i = 0 ; i < parameterTypes.length; i++){
                     if(sentenceIterator.hasNext()){
-                        rawValue = sentenceIterator.next();
-                        parameterValues[i] =parseParameter(rawValue,parameterTypes[i],context);
+                        evaluator.resolve(sentenceIterator,context, NaturalLanguageInterpretImpl.ASSIGNATION);
+                        parameterValues[i] = context.getResult();
                     }else{
                         log.debug("        not enough tokens in sentence to satisfy method parameter count demand");
                     }
