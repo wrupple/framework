@@ -7,19 +7,19 @@ import org.chocosolver.solver.variables.IntVar;
 
 import java.util.Arrays;
 
-public class RideDriverAssignation {
+public class ForeignKeyAssignation {
 
 
     public static void main(String[] args) {
         int NUM_DRIVERS = 5;
-        int[] POSITIONS = new int[]{20, 2, 7, 20, 30};
+        int[] LOCATIONS = new int[]{20, 2, 7, 20, 30};
 
-        Model model = new Model("Driver assignation");
+        Model model = new Model("Driver key");
 
-        IntVar[] positions = model.intVarArray("positions",NUM_DRIVERS,POSITIONS);
-        IntVar targetPosition = model.intVar(7);
-        IntVar assignation = model.intVar("assignation", 1, NUM_DRIVERS, false);
-        IntVar distance = model.intVar("distance", 0, 100, true);
+        IntVar[] driverLocations = model.intVarArray("driverLocations",NUM_DRIVERS,LOCATIONS);
+        IntVar bookingLocation = model.intVar(7);
+        IntVar foreignKeyAssignation = model.intVar("foreignKeyAssignation", 1, NUM_DRIVERS, false);
+        IntVar bookingDistance = model.intVar("bookingDistance", 0, 100, true);
 
 
         // CONSTRAINTS
@@ -27,18 +27,18 @@ public class RideDriverAssignation {
 
         for (int j = 0; j < NUM_DRIVERS; j++) {
 
-            distances[j]=targetPosition.sub(positions[j]).abs().intVar();
+            distances[j]=bookingLocation.sub(driverLocations[j]).abs().intVar();
 
         }
 
-        model.element(distance, distances, assignation, 1).post();
-        model.setObjective(false/*ResolutionPolicy.MINIMIZE*/, distance);
+        model.element(bookingDistance, distances, foreignKeyAssignation, 1).post();
+        model.setObjective(false/*ResolutionPolicy.MINIMIZE*/, bookingDistance);
 
         Solver solver = model.getSolver();
         solver.showShortStatistics();
 
         while (solver.solve()) {
-            prettyPrint(model, NUM_DRIVERS, new IntVar[]{assignation}, 1, distance);
+            prettyPrint(model, NUM_DRIVERS, new IntVar[]{foreignKeyAssignation}, 1, bookingDistance);
         }
     }
 

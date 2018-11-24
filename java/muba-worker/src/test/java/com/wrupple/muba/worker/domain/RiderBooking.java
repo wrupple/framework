@@ -24,7 +24,7 @@ public class RiderBooking extends ManagedObjectImpl {
     @CatalogFieldSentence(formula={NaturalLanguageInterpretImpl.ASSIGNATION,"driver","location","-","location"})
     @Min(value = 0)
     @Max(value = 100)
-    private Integer driverDistance;
+    private Integer bookingDistance;
 
 
     @Override
@@ -56,11 +56,11 @@ public class RiderBooking extends ManagedObjectImpl {
         this.driverValue = driverValue;
     }
 
-    public Integer getDriverDistance() {
-        return driverDistance;
+    public Integer getBookingDistance() {
+        return bookingDistance;
     }
 
-    public void setDriverDistance(Integer driverDistance) {
-        this.driverDistance = driverDistance;
+    public void setBookingDistance(Integer bookingDistance) {
+        this.bookingDistance = bookingDistance;
     }
 }

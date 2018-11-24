@@ -22,7 +22,7 @@ import java.util.Arrays;
 import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
 import static junit.framework.TestCase.assertTrue;
 
-public class ContextSwitchTest extends WorkerTest {
+public class ForeignKeyAssignationTest extends WorkerTest {
 
     static final String HOME = "resolveBooking";
 
@@ -58,7 +58,7 @@ public class ContextSwitchTest extends WorkerTest {
         assertTrue ("Booking inherit ManagedObject",stakeHolderField != null && !stakeHolderField.isMultiple()
                 && stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
                 && Person.CATALOG.equals(stakeHolderField.getCatalog()));
-        FieldDescriptor driverDistanceField = bookingDescriptor.getFieldDescriptor("driverDistance");
+        FieldDescriptor driverDistanceField = bookingDescriptor.getFieldDescriptor("bookingDistance");
         assertTrue ("driver distance variable definition",driverDistanceField != null && !driverDistanceField.isMultiple()
                 && driverDistanceField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
                 && driverDistanceField.getSentence()!=null);
