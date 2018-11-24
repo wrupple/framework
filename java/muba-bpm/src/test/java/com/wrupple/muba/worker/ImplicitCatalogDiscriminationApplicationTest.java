@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker;
 
 
+import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
@@ -24,10 +25,105 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
     private RuntimeContext runtimeContext;
 
-    @Before
-    public void setUp() throws Exception {
+    DriverBooking booking;
 
-         runtimeContext = injector.getInstance(RuntimeContext.class);
+    @Test
+    public void submitBookingData() throws Exception {
+        setUp();
+        log.trace("[-Ask BPM what application item to use to handle this booking-]");
+
+        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,DriverBooking.class.getSimpleName(),DriverBooking.class.getSimpleName());
+
+        runtimeContext.process();
+
+        //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
+        WorkflowImpl item = runtimeContext.getConvertedResult();
+
+        runtimeContext.reset();
+
+        log.trace("[-Create DriverBooking Handling Application Context-]");
+
+        //item+booking;
+        IntentImpl bookingRequest = new IntentImpl();
+        bookingRequest.setEntry(booking.getId());
+        bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
+
+
+        //BOOKING IS SAVED AS entry value (result) on the initial application state
+        runtimeContext.setServiceContract(bookingRequest);
+        //runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
+
+        //FIXME maybe this is the point we start using event handlers
+        //runtimeContext.setServiceContract(activityState);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
+
+        runtimeContext.process();
+        //a new activity state
+        ApplicationState activityState = runtimeContext.getConvertedResult();
+
+        String applicationId = activityState.getDistinguishedName();
+
+        runtimeContext.reset();
+
+        Long firstTask = activityState.getTaskDescriptor();
+
+        assertTrue("First task has been assigned",firstTask!=null);
+
+
+        log.info("find solution of first task to the runner engine");
+        //the best available driver
+
+        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,applicationId);
+
+        runtimeContext.process();
+
+        Driver driver = runtimeContext.getConvertedResult();
+
+        runtimeContext.reset();
+
+        log.info("post solution of first task to the business engine");
+
+        bookingRequest = new IntentImpl();
+        bookingRequest.setEntryValue(driver);
+        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setStateValue((Long) activityState.getId());
+
+        //BOOKING IS SAVED AS entry value (result) on the initial application state
+        runtimeContext.setServiceContract(bookingRequest);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,applicationId);
+
+        runtimeContext.process();
+
+        activityState = runtimeContext.getConvertedResult();
+
+        assertTrue("Follow task has been assigned",activityState.getTaskDescriptor()!=null&&!firstTask.equals(activityState.getTaskDescriptor()));
+
+        runtimeContext.reset();
+
+        log.info("manually solving the second task");
+        //set solution of second task in activity state
+        booking.setDriverValue(driver);
+        activityState.setEntryValue(booking);
+
+        log.info("post solution of second task to the business engine");
+
+        runtimeContext.setServiceContract(activityState);
+        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,activityState.getDistinguishedName());
+
+        runtimeContext.process();
+
+        activityState = runtimeContext.getConvertedResult();
+        runtimeContext.reset();
+
+        booking = (DriverBooking) activityState.getEntryValue();
+        assertTrue(booking.getStakeHolder()!=null);
+        assertTrue(booking.getDriverValue()!=null);
+        assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);
+    }
+
+
+    public void setUp() throws Exception {
+        super.setUp();
+        runtimeContext = new RuntimeContextImpl( wrupple, session,null);
         CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
         log.trace("[-register catalogs-]");
 
@@ -122,7 +218,7 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
 
             runtimeContext.setServiceContract(action);
             runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                    CatalogActionRequest.LOCALE_FIELD, DriverBooking.class.getSimpleName(), CatalogActionRequest.CREATE_ACTION);
+                    CatalogActionRequest.LOCALE_FIELD,Driver.CATALOG, CatalogActionRequest.CREATE_ACTION);
 
             runtimeContext.process();
 
@@ -148,107 +244,12 @@ public class ImplicitCatalogDiscriminationApplicationTest  extends BPMTest {
         booking = catalogContext.getEntryResult();
 
         runtimeContext.reset();
-        
-      
+
+
 
 
         runtimeContext = injector.getInstance(RuntimeContext.class);
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
-    }
-
-    DriverBooking booking;
-
-    @Test
-    public void submitBookingData() throws Exception {
-        //FIXME rewrite this with events
-        log.trace("[-Ask BPM what application item to use to handle this booking-]");
-
-        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,DriverBooking.class.getSimpleName(),DriverBooking.class.getSimpleName());
-
-        runtimeContext.process();
-
-        //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
-        WorkflowImpl item = runtimeContext.getConvertedResult();
-
-        runtimeContext.reset();
-
-        log.trace("[-Create DriverBooking Handling Application Context-]");
-
-        //item+booking;
-        IntentImpl bookingRequest = new IntentImpl();
-        bookingRequest.setEntry(booking.getId());
-        bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
-
-
-        //BOOKING IS SAVED AS entry value (result) on the initial application state
-        runtimeContext.setServiceContract(bookingRequest);
-        //runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
-
-        //FIXME maybe this is the point we start using event handlers
-        //runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
-
-        runtimeContext.process();
-        //a new activity state
-        ApplicationState activityState = runtimeContext.getConvertedResult();
-
-        String applicationId = activityState.getDistinguishedName();
-
-        runtimeContext.reset();
-
-        Long firstTask = activityState.getTaskDescriptor();
-
-        assertTrue("First task has been assigned",firstTask!=null);
-
-
-        log.info("find solution of first task to the runner engine");
-        //the best available driver
-
-        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,applicationId);
-
-        runtimeContext.process();
-
-        Driver driver = runtimeContext.getConvertedResult();
-
-        runtimeContext.reset();
-
-        log.info("post solution of first task to the business engine");
-
-        bookingRequest = new IntentImpl();
-        bookingRequest.setEntryValue(driver);
-        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setStateValue((Long) activityState.getId());
-
-        //BOOKING IS SAVED AS entry value (result) on the initial application state
-        runtimeContext.setServiceContract(bookingRequest);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,applicationId);
-
-        runtimeContext.process();
-
-        activityState = runtimeContext.getConvertedResult();
-
-        assertTrue("Follow task has been assigned",activityState.getTaskDescriptor()!=null&&!firstTask.equals(activityState.getTaskDescriptor()));
-
-        runtimeContext.reset();
-
-        log.info("manually solving the second task");
-        //set solution of second task in activity state
-        booking.setDriverValue(driver);
-        activityState.setEntryValue(booking);
-
-        log.info("post solution of second task to the business engine");
-
-        runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,activityState.getDistinguishedName());
-
-        runtimeContext.process();
-
-        activityState = runtimeContext.getConvertedResult();
-        runtimeContext.reset();
-
-        booking = (DriverBooking) activityState.getEntryValue();
-        assertTrue(booking.getStakeHolder()!=null);
-        assertTrue(booking.getDriverValue()!=null);
-        assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);
     }
 
 }

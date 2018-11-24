@@ -85,7 +85,6 @@ public class SubmitToApplicationTest extends BPMTest {
         wrupple.fireEvent(intent, session, null);
     }
 
-    //FIXME this tests catching ApplicationUpdateEvent And firing a workflow (History change event?)
 
     private void createApplication() throws Exception {
 
