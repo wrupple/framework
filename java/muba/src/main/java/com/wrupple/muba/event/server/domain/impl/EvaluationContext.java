@@ -1,15 +1,14 @@
 package com.wrupple.muba.event.server.domain.impl;
 
-import com.wrupple.muba.event.domain.CatalogEntry;
-import com.wrupple.muba.event.domain.ContractDescriptor;
-import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import org.apache.commons.chain.Context;
 
 import java.util.ListIterator;
 
-public class EvaluationContext extends AbstractYieldContext implements HasResult<Object>{
+public class EvaluationContext extends AbstractYieldContext implements HasResult<Object>, HasCatalogId, HasCatalogKey,ServiceContext {
     private final String interpreter;
     private final Context context;
     private final CatalogEntry subject;
@@ -17,6 +16,7 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
     private final FieldDescriptor evaluate;
     private final Instrospection intro;
     private Object result;
+    private EvaluationContext parent;
 
     public EvaluationContext(ListIterator<String> sentence,String interpreter, Context context, CatalogEntry subject, ContractDescriptor subjectType, FieldDescriptor evaluate, Instrospection intro) {
         if(sentence==null){
@@ -32,6 +32,19 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
 
     }
 
+    public EvaluationContext(EvaluationContext context, CatalogDescriptor foreignCatalog, FieldDescriptor targetField, CatalogEntry targetEntry) {
+        this(context.wordIterator,context.interpreter,context,targetEntry,foreignCatalog,targetField,context.intro);
+        this.parent=context;
+    }
+
+    public Object getEntry(){
+        return getEntryValue().getId();
+    }
+
+    public void setEntry(Object value){
+
+    }
+
     public String getInterpreter() {
         return interpreter;
     }
@@ -40,11 +53,11 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
         return context;
     }
 
-    public CatalogEntry getSubject() {
+    public CatalogEntry getEntryValue() {
         return subject;
     }
 
-    public ContractDescriptor getSubjectType() {
+    public ContractDescriptor getCatalog() {
         return subjectType;
     }
 
@@ -69,5 +82,21 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
     @Override
     public void setResult(Object result) {
         this.result = result;
+    }
+
+
+    @Override
+    public void setCatalog(String catalog) {
+
+    }
+
+    @Override
+    public RuntimeContext getRuntimeContext() {
+        return ((ServiceContext)context).getRuntimeContext();
+    }
+
+    @Override
+    public void setRuntimeContext(RuntimeContext context) {
+        ((ServiceContext)context).setRuntimeContext(context);
     }
 }
