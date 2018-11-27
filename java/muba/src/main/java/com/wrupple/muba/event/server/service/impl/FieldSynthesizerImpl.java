@@ -77,7 +77,6 @@ public class FieldSynthesizerImpl implements FieldSynthesizer{
                         return contextuallySynthethizeFieldValue(current,split,context,subject,subjectType,generated,intro);
                     }else{
                         //delegate to plugin
-                        log.info("evaluating field {} with {}",generated.getFieldId(),current);
                         EvaluationContext mofo = new EvaluationContext(split, current, context, subject, subjectType, generated, intro);
                         interpret.resolve(split,mofo,current);
                         return mofo.getResult();

@@ -105,7 +105,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
             if(targetField==null){
                 //operator ????
 
-                context.setResult(new BinaryOperation(context.getResult(),rawValue));
+                context.setResult(new BinaryOperation(context.getResult(),targetField,rawValue));
             }else{
                 CatalogEntry targetEntry = context.getEntryValue();
                 if(targetEntry==null){

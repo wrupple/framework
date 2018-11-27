@@ -119,7 +119,7 @@ public class CatalogRunnerImpl implements CatalogRunner {
         callback.execute(context);
 
         /*
-        FIXME copied from DesktopWriterCommandImpl
+         copied from DesktopWriterCommandImpl
          */
 
 
@@ -133,5 +133,10 @@ public class CatalogRunnerImpl implements CatalogRunner {
             return Command.PROCESSING_COMPLETE;
         }
         return Command.CONTINUE_PROCESSING;
+    }
+
+    @Override
+    public void model(Operation result, ApplicationContext context, Instrospection intros) {
+        //TODO
     }
 }

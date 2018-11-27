@@ -1,17 +1,19 @@
 package com.wrupple.muba.event.domain.impl;
 
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Operation;
 
 public class BinaryOperation extends CatalogEntryImpl implements Operation {
     private static final String CATALOG = "BinaryOperation";
-
+    private FieldDescriptor targetField;
     private Object operand_1;
     private Object operand_2;
-    public BinaryOperation(){
-    }
+    private Object operandVariable_2;
+    private Object operandVariable_1;
 
-    public BinaryOperation(Object operand, String operation) {
-        this.operand_1 = operand_1;
+    public BinaryOperation(Object operand, FieldDescriptor targetField, String operation) {
+        this.operand_1 = operand;
+        this.targetField=targetField;
         setName(operation);
     }
 
@@ -36,4 +38,27 @@ public class BinaryOperation extends CatalogEntryImpl implements Operation {
         this.operand_1 = operand_1;
     }
 
+    public Object getOperandVariable_2() {
+        return operandVariable_2;
+    }
+
+    public void setOperandVariable_2(Object operandVariable_2) {
+        this.operandVariable_2 = operandVariable_2;
+    }
+
+    public Object getOperandVariable_1() {
+        return operandVariable_1;
+    }
+
+    public void setOperandVariable_1(Object operandVariable_1) {
+        this.operandVariable_1 = operandVariable_1;
+    }
+
+    public FieldDescriptor getTargetField() {
+        return targetField;
+    }
+
+    public void setTargetField(FieldDescriptor targetField) {
+        this.targetField = targetField;
+    }
 }
