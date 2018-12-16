@@ -4,7 +4,6 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
-import com.wrupple.muba.event.domain.impl.HostImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.domain.impl.WorkerContractImpl;
 import com.wrupple.muba.event.domain.*;
@@ -15,9 +14,14 @@ import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
 import com.wrupple.muba.worker.domain.impl.TaskImpl;
 import com.wrupple.muba.worker.shared.services.WorkerContainer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.Test;
-
 import java.util.Arrays;
+import java.util.Map;
 
 import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
 import static junit.framework.TestCase.assertTrue;
@@ -105,6 +109,15 @@ public class ForeignKeyAssignationTest extends WorkerTest {
         log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         log.info("         [-use riderBooking id to launch container with previously created riderBooking -]");
+
+
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration config = ctx.getConfiguration();
+        Map<String, LoggerConfig> loggers = config.getLoggers();
+        loggers.get("org.apache.commons.chain.impl.ChainBase").setLevel(Level.DEBUG);
+        loggers.get("com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl").setLevel(Level.TRACE);
+        ctx.updateLoggers();
+
         container.fireEvent(new WorkerContractImpl(
                 Arrays.asList(":"+riderBooking.getId().toString()),
                 mainRunner,

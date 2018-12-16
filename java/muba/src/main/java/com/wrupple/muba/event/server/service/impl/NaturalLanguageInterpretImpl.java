@@ -72,6 +72,9 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
             }else if(rawValue.equals("null")){
                 holder.setResult(null);
             }else{
+                if(t instanceof EvaluationContext){
+
+                }
                 catalogEvaluation(sentence, (EvaluationContext) t, rawValue);
 
 

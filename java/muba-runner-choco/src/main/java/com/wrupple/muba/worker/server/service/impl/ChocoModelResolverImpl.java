@@ -1,10 +1,13 @@
 package com.wrupple.muba.worker.server.service.impl;
 
+import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.domain.ApplicationContext;
+import com.wrupple.muba.worker.domain.ChocoVariableDescriptorImpl;
 import com.wrupple.muba.worker.server.service.ChocoModelResolver;
 import org.chocosolver.solver.Model;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.chocosolver.solver.variables.IntVar;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,4 +39,5 @@ public class ChocoModelResolverImpl implements ChocoModelResolver {
         }
         return model;
     }
+
 }

@@ -2,6 +2,8 @@ package com.wrupple.muba.worker.server.service.impl;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.Operation;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.service.*;
 import org.apache.commons.chain.Command;
@@ -38,6 +40,11 @@ public class SolverImpl implements Solver {
     public void register(Runner plugin) {
         log.info("[RUNNER REGISTRATION] {}", plugin);
         runners.add(plugin);
+    }
+
+    @Override
+    public void model(Operation result, ApplicationContext context, Instrospection intros) {
+        runners.stream().forEach(plugin->plugin.model(result,context,intros));
     }
 
     public VariableEligibility isEligible(FieldDescriptor field, ApplicationContext context) {

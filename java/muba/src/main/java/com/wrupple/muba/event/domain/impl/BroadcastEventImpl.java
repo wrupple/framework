@@ -54,4 +54,12 @@ public class BroadcastEventImpl extends CatalogEntryImpl implements BroadcastEve
     public void setCatalogDescriptor(CatalogDescriptor catalogDescriptor) {
         this.catalogDescriptor = catalogDescriptor;
     }
+
+    @Override
+    public String toString() {
+        return "BroadcastEventImpl{" +
+                "eventValue=" + eventValue +
+                ", observers=" + observersValues +
+                '}';
+    }
 }

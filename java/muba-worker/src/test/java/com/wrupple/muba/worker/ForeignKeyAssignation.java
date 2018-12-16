@@ -12,7 +12,7 @@ public class ForeignKeyAssignation {
 
     public static void main(String[] args) {
         int NUM_DRIVERS = 5;
-        int[] LOCATIONS = new int[]{20, 2, 7, 20, 30};
+        int[] LOCATIONS = new int[]{20, 7, 2, 20, 30};
 
         Model model = new Model("Driver key");
 

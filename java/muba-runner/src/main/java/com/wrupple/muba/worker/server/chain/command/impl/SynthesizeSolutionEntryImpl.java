@@ -34,7 +34,6 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
         CatalogDescriptor solutionDescriptor = context.getStateValue().getCatalogValue();
         if(solution==null ){
 
-
             solution = plugin.synthesize(solutionDescriptor);
 
         }else{

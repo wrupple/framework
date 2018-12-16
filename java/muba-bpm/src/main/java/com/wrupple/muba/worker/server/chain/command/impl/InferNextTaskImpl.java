@@ -91,8 +91,10 @@ public class InferNextTaskImpl implements InferNextTask {
         }
         index++;
         if(index<workflow.size()){
+            log.info("proceeding with task index {} @ {}",index,application.getDistinguishedName());
             return application.getProcessValues().get(index);
         }else{
+            log.info("done with {}",index,application.getDistinguishedName());
             return null;
         }
 

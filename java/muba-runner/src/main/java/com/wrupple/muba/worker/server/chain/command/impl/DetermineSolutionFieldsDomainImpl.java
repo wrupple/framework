@@ -37,7 +37,7 @@ public class DetermineSolutionFieldsDomainImpl implements DetermineSolutionField
         Task request = context.getStateValue().getTaskDescriptorValue();
 
         final Solver solver = bpm.getSolver();
-        log.debug("Resolving Solution Type");
+        log.info("Resolving domain of "+request.getDistinguishedName());
         String solutionType =(String) request.getCatalog();
 
         CatalogActionRequestImpl solutionTypeInquiry = new CatalogActionRequestImpl();

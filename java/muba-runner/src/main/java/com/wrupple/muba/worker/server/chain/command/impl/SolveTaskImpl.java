@@ -30,6 +30,7 @@ public class SolveTaskImpl implements SolveTask {
         this.plugin = plugin;
         this.callback = callback;
     }
+    
     @Override
     public boolean execute(Context ctx) throws Exception {
         ApplicationContext context = (ApplicationContext) ctx;
@@ -45,13 +46,9 @@ public class SolveTaskImpl implements SolveTask {
         String saveTo = task.getOutputField();
         List<String> userSelection = null;
 
-
-
         if (saveTo == null) {
             userSelection= findTaskGrammarKey(state, catalog, task);
         }else{
-
-
             Object savedData = context.get(saveTo);
 
             if (savedData == null) {

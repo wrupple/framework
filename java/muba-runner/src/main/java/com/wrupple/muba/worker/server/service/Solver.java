@@ -2,6 +2,8 @@ package com.wrupple.muba.worker.server.service;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
+import com.wrupple.muba.event.domain.Instrospection;
+import com.wrupple.muba.event.domain.Operation;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 
 /**
@@ -19,4 +21,6 @@ public interface Solver {
     <T extends CatalogEntry> boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callcback) throws Exception;
 
     void register(Runner plugin);
+
+    void model(Operation result, ApplicationContext context, Instrospection intros);
 }

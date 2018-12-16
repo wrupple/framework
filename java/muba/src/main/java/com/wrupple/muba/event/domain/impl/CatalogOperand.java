@@ -2,7 +2,7 @@ package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.FieldDescriptor;
 
-public class CatalogOperand extends CatalogEntryImpl {
+public class CatalogOperand extends CatalogEntryImpl implements com.wrupple.muba.event.domain.Operation    {
     private static final String CATALOG = "CatalogOperand";
 
     private CatalogReadRequestImpl request; private  FieldDescriptor targetField;

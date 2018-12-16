@@ -5,10 +5,13 @@ import com.wrupple.muba.desktop.domain.WorkerRequestContext;
 import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.event.domain.WorkerState;
 import com.wrupple.muba.worker.domain.impl.IntentImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class DesktopWriterCommandImpl implements DesktopWriterCommand {
+    protected Logger log = LogManager.getLogger(DesktopWriterCommandImpl.class);
 
     @Override
     public boolean execute(WorkerRequestContext context) throws Exception {
@@ -24,9 +27,11 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
         ApplicationState state=  worker.getStateValue();
         state.setWorkerStateValue(worker);
 
+        log.info("Packing worker state into an intention");
         IntentImpl intent = new IntentImpl();
         intent.setStateValue(state);
         intent.setDomain(worker.getDomain());
+
         state= context.getRuntimeContext().getServiceBus().fireEvent(intent, context.getRuntimeContext(), null);
         if(state==null){
             throw new NullPointerException("Business intent resulted in no application state");

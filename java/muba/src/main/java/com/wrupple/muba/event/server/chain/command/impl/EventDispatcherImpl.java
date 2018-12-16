@@ -24,7 +24,7 @@ public class EventDispatcherImpl extends ChainBase<RuntimeContext> implements Ev
     @Override
     public boolean execute(RuntimeContext context) throws Exception {
         if(log.isTraceEnabled()){
-            StringBuilder builder = new StringBuilder(250);
+            StringBuilder builder = new StringBuilder(500);
             Object contract = context.getServiceContract();
             RuntimeContext parent = context.getParentValue();
             while(parent!=null){

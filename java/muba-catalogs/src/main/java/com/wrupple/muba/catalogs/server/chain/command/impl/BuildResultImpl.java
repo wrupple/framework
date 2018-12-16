@@ -34,6 +34,7 @@ public class BuildResultImpl implements BuildResult {
         for (int i = 0; i < joins.size(); i++) {
             joinSentence = joins.get(i);
             context.setWorkingRelation(joinSentence);
+
             chain.execute(context);
         }
 

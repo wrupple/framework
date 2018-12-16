@@ -165,6 +165,11 @@ public class HelloWorldTest extends IntegralTest {
             return true;
         }
 
+        @Override
+        public void model(Operation result, ApplicationContext context, Instrospection intros) {
+
+        }
+
 
     }
 

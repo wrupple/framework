@@ -37,11 +37,14 @@ public class UpdateApplicationContextImpl implements UpdateApplicationContext {
             //com.wrupple.muba.event.server.chain.Publish
             container = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
         }else{
+            log.info("worker state will be updated");
             //com.wrupple.muba.desktop.client.chain.command.InstallActivityEventHandler
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setEntry(container.getId());
             container = context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
 
+            //TODO updating working should result in underlying application beeing updated too
+            log.info("application state will be updated");
             request= new CatalogActionRequestImpl();
             request.setName(CatalogActionRequest.WRITE_ACTION);
             request.setCatalog(ApplicationState.CATALOG);
