@@ -86,9 +86,12 @@ public class EventuallyCompleteCatalogGraphImpl implements CompleteCatalogGraph 
             }else{
                 addAll(workingSet,keys);
                 List<CatalogEntry> results = keys.stream().map(k -> k.entry).collect(Collectors.toList());
-                DataJoinContext childContext = new DataJoinContext(results,context,access.newSession(null));
                 CatalogDescriptor descriptor = context.getCatalogDescriptor();
                 List<CatalogRelation> joins = keydelegate.getJoins(context, null, descriptor, null, context, null);
+                if(joins.isEmpty()){
+                    return CONTINUE_PROCESSING;
+                }
+                DataJoinContext childContext = new DataJoinContext(results,context,access.newSession(null));
                 childContext.setJoins(joins);
                 boolean regreso = build.execute(childContext);
                 removeAll(workingSet,keys);

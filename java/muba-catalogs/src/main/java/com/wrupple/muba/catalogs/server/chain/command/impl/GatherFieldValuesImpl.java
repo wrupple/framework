@@ -44,6 +44,7 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
             if (field == null) {
                 throw new IllegalArgumentException("No such field "+fieldId+" in "+catalog.getDistinguishedName());
             } else {
+                boolean fruitful = false;
                 // this filter building method is built expressly for joining key (unique) values
                 Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
 
@@ -67,6 +68,7 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
                             if (temp != null) {
                                 for (Object o : temp) {
                                     if (o != null) {
+                                        fruitful=true;
                                         fieldValues.add(o);
                                     }
                                 }
@@ -88,10 +90,14 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
                             value = access.getPropertyValue(field, e, null, context.getIntrospectionSession());
 
                             if (value != null) {
+                                fruitful=true;
                                 fieldValues.add(value);
                             }
                         }
                     }
+                }
+                if(!fruitful){
+                    return PROCESSING_COMPLETE;
                 }
             }
         }
