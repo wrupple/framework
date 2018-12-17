@@ -21,6 +21,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.Test;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
@@ -146,7 +147,7 @@ public class ForeignKeyAssignationTest extends WorkerTest {
 
         ApplicationImpl trabajo = new ApplicationImpl();
         trabajo.setDistinguishedName("findDriver");
-        trabajo.setProcessValues(Arrays.asList(resolve));
+        trabajo.setProcessValues(Collections.unmodifiableList(Arrays.asList(resolve)));
 
         ApplicationImpl terminado = new ApplicationImpl();
         terminado.setDistinguishedName("terminado");

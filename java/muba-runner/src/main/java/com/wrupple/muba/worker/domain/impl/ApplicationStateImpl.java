@@ -240,6 +240,15 @@ public class ApplicationStateImpl extends ManagedObjectImpl implements Applicati
         this.entryValue = entryValue;
     }
 
+    @Override
+    public String toString() {
+        return "ApplicationState{" +
+                "application=" + application +
+                ", applicationValue=" + applicationValue +
+                ", entry='" + entry + '\'' +
+                ", taskDescriptorValue=" + taskDescriptorValue +
+                '}';
+    }
 
     @Override
     public ApplicationState getParentValue() {

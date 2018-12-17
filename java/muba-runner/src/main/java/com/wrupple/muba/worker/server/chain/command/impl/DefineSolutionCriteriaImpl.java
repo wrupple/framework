@@ -52,6 +52,9 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
                     RuntimeContext runtime = context.getRuntimeContext();
                     Object result = synthetizationDelegate.synthethizeFieldValue(field.getSentence().listIterator(), context, subject,descriptor, field, intros, runtime.getServiceBus());
                     if(result instanceof Operation){
+                        if(((Operation) result).getName()==null){
+                            throw new NullPointerException("operation with no name was synthesized with "+field.getFieldId());
+                        }
                         resolveOperation(context,runtime, (Operation) result,intros);
                     }
                 }

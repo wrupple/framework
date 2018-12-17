@@ -9,6 +9,9 @@
         <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
+        <Logger name="com.wrupple.muba.event.server.chain.command.impl.JavaSentenceNativeInterface" level="TRACE"  additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Logger name="org.apache.commons.chain.generic.LookupCommand" level="DEBUG"  additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>

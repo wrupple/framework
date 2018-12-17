@@ -22,6 +22,13 @@ public class TaskImpl extends CatalogActionConstraintImpl implements Task {
     private Boolean keepOutput;
 
     @Override
+    public String toString() {
+        return "TaskImpl{" +
+                "dn='" + distinguishedName + '\'' +
+                '}';
+    }
+
+    @Override
     public Boolean getKeepOutput() {
         return keepOutput;
     }

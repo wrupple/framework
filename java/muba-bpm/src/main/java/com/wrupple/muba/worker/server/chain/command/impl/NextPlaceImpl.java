@@ -8,6 +8,8 @@ import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.ApplicationState;
 import com.wrupple.muba.worker.server.chain.command.NextPlace;
 import org.apache.commons.chain.Context;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ import java.util.List;
  *
  */
 public class NextPlaceImpl implements NextPlace {
+	protected static final Logger log = LogManager.getLogger(NextPlaceImpl.class);
 
 
 	@Inject
@@ -38,6 +41,7 @@ public class NextPlaceImpl implements NextPlace {
 
 		Application currentItem = (Application) state.getApplicationValue();
         currentItem = findNextTreeNode(currentItem);
+		log.info(currentItem.getName()==null?currentItem.getDistinguishedName():currentItem.getName());
 		state.setApplicationValue(currentItem);
 
 

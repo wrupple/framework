@@ -113,11 +113,8 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
             }
 
-
-
-
-
-
+        }else{
+            log.info("no operations matched {}",result.getName());
         }
 
 

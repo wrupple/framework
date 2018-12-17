@@ -44,7 +44,11 @@ public class SolverImpl implements Solver {
 
     @Override
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
-        runners.stream().forEach(plugin->plugin.model(result,context,intros));
+        if(result==null){
+            log.info("no operations to model");
+        }else{
+            runners.stream().forEach(plugin->plugin.model(result,context,intros));
+        }
     }
 
     public VariableEligibility isEligible(FieldDescriptor field, ApplicationContext context) {

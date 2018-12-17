@@ -47,4 +47,12 @@ public class WorkflowImpl extends ServiceManifestImpl implements Workflow {
     public String getCatalogType() {
         return Workflow.class.getSimpleName();
     }
+
+    @Override
+    public String toString() {
+        return "WorkflowImpl{" +
+                "process=" + processValues +
+                ", processIds=" + process +
+                '}';
+    }
 }
