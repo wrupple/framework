@@ -22,8 +22,6 @@ import java.util.stream.Stream;
 @Singleton
 public class EventuallyCompleteCatalogGraphImpl implements CompleteCatalogGraph {
 
-    protected static final Logger log = LogManager.getLogger(EventuallyCompleteCatalogGraphImpl.class);
-
     private static final String PROPERTY = "com.wrupple.catalog.readGraph";
 
     private final FieldAccessStrategy access;

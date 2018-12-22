@@ -16,8 +16,6 @@ import java.util.List;
 @Singleton
 public class BuildResultImpl implements BuildResult {
 
-    protected static final Logger log = LogManager.getLogger(BuildResultImpl.class);
-
     private BuildRelationImpl chain;
 
     @Inject

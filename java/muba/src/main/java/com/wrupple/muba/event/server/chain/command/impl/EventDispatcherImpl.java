@@ -12,7 +12,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class EventDispatcherImpl extends ChainBase<RuntimeContext> implements EventDispatcher {
-    protected static final Logger log = LogManager.getLogger(EventDispatcherImpl.class);
 
 
     @Inject
