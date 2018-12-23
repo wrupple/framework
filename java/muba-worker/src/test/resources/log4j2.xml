@@ -18,7 +18,7 @@
         <Logger name="org.apache.commons.chain.impl.ChainBase" level="INFO"  additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl" level="INFO"  additivity="false">
+        <Logger name="com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl" level="TRACE"  additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
     </Loggers>

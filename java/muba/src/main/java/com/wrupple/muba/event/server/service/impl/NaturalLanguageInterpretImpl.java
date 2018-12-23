@@ -75,7 +75,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 if(t instanceof EvaluationContext){
                     catalogEvaluation(sentence, (EvaluationContext) t, rawValue);
                 }else{
-                    log.info("no interpretarion on current context");
+                    log.info("no interpretarion for token {} on current context",rawValue);
                 }
 
            /* if(t instanceof JavaNativeInterfaceContext){

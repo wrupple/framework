@@ -43,7 +43,7 @@ public class CatalogActionTriggerHandlerImpl  {
 
 					r = excecuteTrigger(trigger, context);
 					if (Command.PROCESSING_COMPLETE == r) {
-						log.warn("[Trigger stops trigger chain]");
+						log.info("[Trigger stops trigger chain]");
 						return Command.CONTINUE_PROCESSING;
 					}
 				}

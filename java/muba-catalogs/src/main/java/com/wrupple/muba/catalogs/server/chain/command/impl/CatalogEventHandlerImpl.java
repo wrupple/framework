@@ -24,7 +24,7 @@ public class CatalogEventHandlerImpl extends CatalogActionTriggerHandlerImpl imp
 
             return r;
         } catch (Exception e) {
-            log.error("[FATAL TRIGGER ERROR]", e);
+            log.error("Unable to interpret catalog event");
             throw new RuntimeException(e);
         }
 

@@ -43,10 +43,10 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
             String firstToken = sentenceIterator.next();
             List<String> parmeters = null;
             if(firstToken.equals("(")){
-                log.trace("gethering all explicitely bound parameters");
-                parmeters= getherParameters(sentenceIterator);
+                log.trace("sentence explicitly binds parameters");
+                parmeters= gatherParameters(sentenceIterator);
                 if(log.isTraceEnabled()){
-                    log.trace(parmeters.toString());
+                    log.trace("\t{}",parmeters);
                 }
             }else{
                 sentenceIterator.previous();
@@ -55,7 +55,7 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
 
             int parameterCount = parmeters ==null ? -1 :parmeters.size();
             if(parameterCount==-1){
-                parmeters=getherParameters(sentenceIterator);
+                parmeters= gatherParameters(sentenceIterator);
             }
 
             Collection<Method> possiblemethods;
@@ -65,26 +65,25 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
                 possiblemethods = delgeate.findMethod(methods, methodName);
             }
             if(possiblemethods.isEmpty()){
-                throw new IllegalArgumentException("no matches for method "+methodName+" in "+subjectType.getCanonicalName());
+                throw new IllegalArgumentException("\tno matches for method "+methodName+" in "+subjectType.getCanonicalName());
             }
             for(Method method : possiblemethods) {
                 sentenceIterator = parmeters.listIterator();
                 log.info("attempting native method {} ",methodName);
                 Class<?>[] parameterTypes = method.getParameterTypes();
                 Object[] parameterValues = new Object[parameterTypes.length];
-                String rawValue;
                 for(int i = 0 ; i < parameterTypes.length; i++){
                     if(sentenceIterator.hasNext()){
                         evaluator.resolve(sentenceIterator,context, NaturalLanguageInterpretImpl.ASSIGNATION);
                         parameterValues[i] = context.getResult();
                     }else{
-                        log.debug("        not enough tokens in sentence to satisfy method parameter count demand");
+                        log.debug("\tnot enough tokens in sentence to satisfy method parameter count demand");
                     }
                 }
                 if(allMatch(parameterTypes,parameterValues)) {
                     if(log.isTraceEnabled()){
-                        log.trace("method    : {} ",method);
-                        log.trace("parameters: {} ",Arrays.toString(parameterValues));
+                        log.trace("\tmethod    : {} ",method);
+                        log.trace("\tparameters: {} ",Arrays.toString(parameterValues));
                     }
                     context.result=method.invoke(context.subject,parameterValues);
                     break;
@@ -100,7 +99,7 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
         Collection<Method> findMethod(Method[] methods, String methodName);
     }
 
-    private List<String> getherParameters(ListIterator<String> sentenceIterator) {
+    private List<String> gatherParameters(ListIterator<String> sentenceIterator) {
         List<String> regreso = new ArrayList<>();
         String token;
         while(sentenceIterator.hasNext()){
