@@ -1,14 +1,9 @@
 package com.wrupple.muba.catalogs.server.chain;
 
-import com.google.inject.Key;
-import com.google.inject.name.Names;
 import com.wrupple.muba.IntegralTest;
 import com.wrupple.muba.catalogs.domain.*;
-import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
-import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
-import com.wrupple.muba.event.domain.impl.FilterDataOrderingImpl;
+import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
-import com.wrupple.muba.catalogs.server.service.SystemCatalogPlugin;
 import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.*;
 import org.junit.Test;
@@ -22,155 +17,8 @@ import static org.junit.Assert.assertTrue;
 public class CatalogEngineTest extends IntegralTest {
 
 
-	/**
-	 * <ol>
-	 * <li>create math problem catalog (with getInheritance)</li>
-	 * <li></li>
-	 * <li></li>
-	 * </ol>
-	 * 
-	 * @throws Exception
-	 */
 	@Test
-	public void engineTest() throws Exception {
-
-		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-		log.info("[-create catalog-]");
-
-		// expectations
-
-		replayAll();
-
-		CatalogDescriptor problemContract = builder.fromClass(MathProblem.class, MathProblem.class.getSimpleName(),
-				"Math Problem",  injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
-        problemContract.setConsolidated(false);
-		FieldDescriptor solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
-        assertTrue( solutionFieldDescriptor!= null);
-        assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
-
-        CatalogDescriptor argumentContract = builder.fromClass(
-                Argument.class,
-                Argument.class.getSimpleName(),
-                "Argument",
-                null);
-
-		CatalogActionRequestImpl action = new CatalogActionRequestImpl();
-		action.setEntryValue(argumentContract);
-        action.setFollowReferences(true);
-		runtimeContext.setServiceContract(action);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-		// locale is set in catalog
-		runtimeContext.process();
-        runtimeContext.reset();
-
-        action = new CatalogActionRequestImpl();
-        action.setEntryValue(problemContract);
-        action.setFollowReferences(true);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-        runtimeContext.setServiceContract(action);
-        runtimeContext.process();
-
-        CatalogActionContext catalogContext = runtimeContext.getServiceContext();
-
-		problemContract = catalogContext.getEntryResult();
-		assertTrue(problemContract.getId() != null);
-        assertTrue(problemContract.getDomain() != null);
-		assertTrue(problemContract.getDomain().longValue() == CatalogEntry.PUBLIC_ID);
-		assertTrue("does metadata describe problem as inherited?",problemContract.getParent()!=null);
-        assertTrue("does metadata provide problem's parent type?",problemContract.getParentValue()!=null);
-
-        assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
-		solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
-		assertTrue( solutionFieldDescriptor!= null);
-        assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
-        assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
-
-		log.info("[-see changes in catalog list-]");
-
-		runtimeContext.reset();
-
-		runtimeContext.setServiceContract(null);
-		runtimeContext.setSentence(
-		        CatalogServiceManifest.SERVICE_NAME,
-                CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD,
-                CatalogDescriptor.CATALOG_ID,
-				CatalogActionRequest.READ_ACTION);
-		runtimeContext.process();
-		catalogContext = runtimeContext.getServiceContext();
-		List<CatalogEntry> catalogList = catalogContext.getResults();
-		assertTrue(catalogList != null);
-		assertTrue(!catalogList.isEmpty());
-		boolean contained = false;
-        log.info("Looking for just created catalog {}={}",problemContract.getId(),problemContract.getName());
-		for (CatalogEntry existingCatalog : catalogList) {
-		    log.info("Existing catalog {}={}",existingCatalog.getId(),existingCatalog.getName());
-			if(existingCatalog.getId().equals(problemContract.getId())){
-				contained = true ;
-				break;
-			}
-		}
-
-		assertTrue(contained);
-		log.info("[-see registered catalog Descriptor-]");
-		runtimeContext.reset();
-		action = new CatalogActionRequestImpl();
-		action.setFollowReferences(true);
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(
-                CatalogServiceManifest.SERVICE_NAME,
-                CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD,
-                CatalogDescriptor.CATALOG_ID,
-                CatalogActionRequest.READ_ACTION,
-                MathProblem.class.getSimpleName());
-        runtimeContext.process();
-        catalogContext = runtimeContext.getServiceContext();
-
-        problemContract = catalogContext.getConvertedResult();
-        log.info("[-verifying catalog graph integrity-]");
-        assertTrue(problemContract.getId() != null);
-        assertTrue(problemContract.getDistinguishedName().equals(MathProblem.class.getSimpleName()));
-        solutionFieldDescriptor = problemContract.getFieldDescriptor("solution");
-        assertTrue(solutionFieldDescriptor!= null);
-        assertTrue(solutionFieldDescriptor.getConstraintsValues()!=null);
-        assertTrue(solutionFieldDescriptor.getConstraintsValues().size()==2);
-        assertTrue("does metadata describe problem as inherited?",problemContract.getParentValue()!=null);
-		assertTrue("does metadata include it's ancestry?",problemContract.getRootAncestor()!=null);
-		assertTrue("does metadata describe problem as a timeline?",ContentNode.CATALOG_TIMELINE.equals(problemContract.getRootAncestor().getDistinguishedName()));
-		runtimeContext.reset();
-		log.debug("-create test catalogs-");
-
-		argumentContract = builder.fromClass(
-				Credit.class,
-				Credit.CATALOG,
-				"Credit",
-				null);
-
-		action = new CatalogActionRequestImpl();
-		action.setEntryValue(argumentContract);
-		action.setFollowReferences(true);
-		runtimeContext.setServiceContract(action);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-		runtimeContext.process();
-		runtimeContext.reset();
-		argumentContract = builder.fromClass(
-				Endorser.class,
-				Endorser.CATALOG,
-				"Endorser",
-				null);
-
-		action = new CatalogActionRequestImpl();
-		action.setEntryValue(argumentContract);
-		action.setFollowReferences(true);
-		runtimeContext.setServiceContract(action);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-				CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-		runtimeContext.process();
-		runtimeContext.reset();
+	public void circularDependency() throws Exception {
 
 		log.debug("-many to one circular dependency-");
 
@@ -193,16 +41,23 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue("circular data dependency not resolved",endorser.getCreditsValues().get(0)!=null);
 		assertTrue("circular data dependency lost",endorser.getCreditsValues().get(0).getId().equals(credit.getId()));
 
+	}
+
+
+	@Test
+	public void engineTest() throws Exception {
+
 		log.debug("-create math problem entry-");
 		runtimeContext.reset();
 		MathProblem problem = new MathProblem();
 		problem.setName(MathProblem.class.getSimpleName());
 		problem.setSolution(4l);
-		Argument argument = new Argument();
-		argument.setProblemValue(problem);
-		problem.setArgumentsValues(Arrays.asList(argument));
+		Argument argument = new Argument("uno",1L);
+        Argument secondArg = new Argument("dos",2L);
+        argument.setProblemValue(problem);
+		problem.setArgumentsValues(Arrays.asList(argument,secondArg));
 
-		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
+		CatalogActionRequestImpl contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
 				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
 		contract.setFollowReferences(true);
 		runtimeContext.setServiceContract(contract);
@@ -217,7 +72,11 @@ public class CatalogEngineTest extends IntegralTest {
 		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
 		assertTrue("are foreign keys registered",	problem.getArguments()!=null);
 		assertTrue("data graph is incomplete",	problem.getArgumentsValues()!=null);
-		argument = problem.getArgumentsValues().get(0);
+		assertTrue("data graph is incomplete",problem.getArgumentsValues().size()==2);
+        assertTrue("data graph is inconsistent",problem.getArgumentsValues().get(0).getValue().equals(1L));
+        assertTrue("data graph is inconsistent",problem.getArgumentsValues().get(1).getValue().equals(2L));
+        argument = problem.getArgumentsValues().get(0);
+
 		assertTrue("circular data dependency not created",argument.getId()!=null);
 		assertTrue("circular data dependency not resolved",argument.getProblemValue()!=null);
 		assertTrue("Is circular data dependency identity lost",argument.getProblemValue().getId().equals(problem.getId()));
@@ -234,7 +93,7 @@ public class CatalogEngineTest extends IntegralTest {
 
 		runtimeContext.process();
 
-		catalogContext = runtimeContext.getServiceContext();
+		CatalogActionContext catalogContext = runtimeContext.getServiceContext();
 
 		assertTrue(catalogContext.getResults() != null);
 		assertTrue(catalogContext.getResults().size() == 1);
@@ -246,15 +105,12 @@ public class CatalogEngineTest extends IntegralTest {
 	@Test
 	public void filters() throws Exception {
 
-		RuntimeContext excecution = injector.getInstance(RuntimeContext.class);
-		SystemCatalogPlugin manager = injector.getInstance(SystemCatalogPlugin.class);
+		String argumentCatalog = Argument.CATALOG;
 		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-		CatalogDescriptor catalog = builder.fromClass(Argument.class, "Argument", "Argument", -49723l, null);
+		CatalogDescriptor catalog = builder.fromClass(Argument.class, argumentCatalog, argumentCatalog, -49723l, null);
 
-		CatalogActionRequestImpl request = new CatalogActionRequestImpl();
-		request.setCatalog(CatalogDescriptor.CATALOG_ID);
-		request.setDomain(CatalogEntry.PUBLIC_ID);
-        request.setName(DataContract.CREATE_ACTION);
+		CatalogActionRequestImpl request = new CatalogCreateRequestImpl(catalog,CatalogDescriptor.CATALOG_ID);
+		runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		log.info("NEW TEST EXCECUTION CONTEXT READY");
 
 		String TRES = "TRES";
@@ -271,14 +127,13 @@ public class CatalogEngineTest extends IntegralTest {
 		);
 
 		for (Argument arg : argumentsToDeclare) {
-			request.setEntryValue(arg);
+			request = new CatalogCreateRequestImpl(arg,argumentCatalog);
 			runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 		}
 		log.info("[-read all-]");
 
-		setUp();
 		FilterData filterData = FilterDataUtils.newFilterData();
-		request.setFilter(filterData);
+		request = new CatalogQueryRequestImpl(filterData,argumentCatalog);
 
         List<CatalogEntry> results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
@@ -286,13 +141,11 @@ public class CatalogEngineTest extends IntegralTest {
 
 
 		log.info("[-read element-]");
-		setUp();
 		Object lodId = results.get(0).getId();
-		request.setEntry(lodId);
-        request.setName(DataContract.READ_ACTION);
-		results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		assertTrue(results.size() == 1);
-		assertTrue(results.get(0).getName().equals(TRES));
+		request = new CatalogReadRequestImpl(lodId,argumentCatalog);
+		Argument result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+		assertTrue(result!=null);
+		assertTrue(result.getName().equals(TRES));
 
 		log.info("[-read all in order-]");
 		// ORDER
@@ -369,6 +222,7 @@ public class CatalogEngineTest extends IntegralTest {
 
         assertTrue(results.size() == 3);
 
+        /*
 		log.debug("testing string filters");
 		// LIKE
 		log.info("[-find element by single LIKE criteria-]");
@@ -434,31 +288,29 @@ public class CatalogEngineTest extends IntegralTest {
 
         assertTrue(results.size() == 2);
 
-		/*
+		*
 		 * FINISHED QUERY TESTS
 		 */
 		log.info("[update element]");
-		//request.setOldValue((CatalogEntry) request.getConvertedResult());
 		request.setEntry(lodId);
 		request.setEntryValue(new Argument("TROI", 3l));
         request.setName(DataContract.WRITE_ACTION);
 
-        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		assertTrue(results.size() == 1);
-		assertTrue(lodId.equals(results.get(0).getId()));
-		assertTrue(results.get(0).getName().equals("TROI"));
+        result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+		assertTrue(result!=null);
+		assertTrue(lodId.equals(result.getId()));
+		assertTrue(result.getName().equals("TROI"));
 
 		log.info("[delete element]");
-		setUp();
 		request.setEntry(lodId);
         request.setName(DataContract.DELETE_ACTION);
 
-        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+		result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
-        assertTrue(results.size() == 1);
-		assertTrue(lodId.equals(results.get(0).getId()));
 
-		setUp();
+		assertTrue(result!=null);
+		assertTrue(lodId.equals(result.getId()));
+
 
 		filterData = FilterDataUtils.newFilterData();
 		request.setFilter(filterData);
