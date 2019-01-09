@@ -17,206 +17,122 @@ import static org.junit.Assert.assertTrue;
 public class CatalogEngineTest extends IntegralTest {
 
 
-	@Test
-	public void circularDependency() throws Exception {
 
-		log.debug("-many to one circular dependency-");
+    @Test
+    public void crud() throws Exception {
 
-		Credit credit = new Credit();
-		credit.setName("new credit");
-		Endorser endorser = new Endorser();
-		credit.setEndorserValue(endorser);
-		endorser.setCreditsValues(Collections.singletonList(credit));
+        String argumentCatalog = Argument.CATALOG;
+        CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
+        CatalogDescriptor catalog = builder.fromClass(Argument.class, argumentCatalog, argumentCatalog, -49723l, null);
 
-		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, Credit.CATALOG, CatalogActionRequest.CREATE_ACTION, null, null, credit, null);
-		contract.setFollowReferences(true);
-		runtimeContext.setServiceContract(contract);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,CatalogActionRequest.LOCALE_FIELD, Credit.CATALOG, CatalogActionRequest.CREATE_ACTION);
-		runtimeContext.process();
+        CatalogActionRequestImpl request = new CatalogCreateRequestImpl(catalog,CatalogDescriptor.CATALOG_ID);
+        runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+        log.info("NEW TEST EXCECUTION CONTEXT READY");
 
-		credit = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
-		assertTrue(credit.getId() != null);
-		assertTrue(credit.getEndorserValue() != null);
-		assertTrue("memory identity is not preserved",credit.getEndorserValue()==endorser);
-		assertTrue("circular data dependency not resolved",endorser.getCreditsValues().get(0)!=null);
-		assertTrue("circular data dependency lost",endorser.getCreditsValues().get(0).getId().equals(credit.getId()));
+        String TRES = "TRES";
+        String FIVE = "five";
 
-	}
+        log.info("[-create elements-]");
 
+        List<Argument> argumentsToDeclare = Arrays.asList(
+                new Argument(TRES, 3l),
+                new Argument(FIVE, 5l),
+                new Argument("one", 1l),
+                new Argument("uno", 1l),
+                new Argument("four", 4l)
+        );
 
-	@Test
-	public void engineTest() throws Exception {
+        for (Argument arg : argumentsToDeclare) {
+            request = new CatalogCreateRequestImpl(arg,argumentCatalog);
+            runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+        }
+        log.info("[-read all-]");
 
-		log.debug("-create math problem entry-");
-		runtimeContext.reset();
-		MathProblem problem = new MathProblem();
-		problem.setName(MathProblem.class.getSimpleName());
-		problem.setSolution(4l);
-		Argument argument = new Argument("uno",1L);
-        Argument secondArg = new Argument("dos",2L);
-        argument.setProblemValue(problem);
-		problem.setArgumentsValues(Arrays.asList(argument,secondArg));
-
-		CatalogActionRequestImpl contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
-				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
-		contract.setFollowReferences(true);
-		runtimeContext.setServiceContract(contract);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(),
-				CatalogActionRequest.CREATE_ACTION);
-		runtimeContext.process();
-
-		((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
-		assertTrue(problem.getId() != null);
-		assertTrue(problem.getSolution() != null);
-		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
-		assertTrue("are foreign keys registered",	problem.getArguments()!=null);
-		assertTrue("data graph is incomplete",	problem.getArgumentsValues()!=null);
-		assertTrue("data graph is incomplete",problem.getArgumentsValues().size()==2);
-        assertTrue("data graph is inconsistent",problem.getArgumentsValues().get(0).getValue().equals(1L));
-        assertTrue("data graph is inconsistent",problem.getArgumentsValues().get(1).getValue().equals(2L));
-        argument = problem.getArgumentsValues().get(0);
-
-		assertTrue("circular data dependency not created",argument.getId()!=null);
-		assertTrue("circular data dependency not resolved",argument.getProblemValue()!=null);
-		assertTrue("Is circular data dependency identity lost",argument.getProblemValue().getId().equals(problem.getId()));
-
-
-		log.debug("-check if problem was created-");
-		runtimeContext.reset();
-
-		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, ContentNode.CATALOG_TIMELINE,
-				CatalogActionRequest.READ_ACTION, null, null, null, FilterDataUtils.newFilterData());
-		runtimeContext.setServiceContract(contract);
-		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-				CatalogActionRequest.LOCALE_FIELD, ContentNode.CATALOG_TIMELINE, CatalogActionRequest.READ_ACTION);
-
-		runtimeContext.process();
-
-		CatalogActionContext catalogContext = runtimeContext.getServiceContext();
-
-		assertTrue(catalogContext.getResults() != null);
-		assertTrue(catalogContext.getResults().size() == 1);
-		assertTrue(catalogContext.getResults().get(0).getName().equals(problem.getName()));
-
-	}
-
-
-	@Test
-	public void filters() throws Exception {
-
-		String argumentCatalog = Argument.CATALOG;
-		CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-		CatalogDescriptor catalog = builder.fromClass(Argument.class, argumentCatalog, argumentCatalog, -49723l, null);
-
-		CatalogActionRequestImpl request = new CatalogCreateRequestImpl(catalog,CatalogDescriptor.CATALOG_ID);
-		runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		log.info("NEW TEST EXCECUTION CONTEXT READY");
-
-		String TRES = "TRES";
-		String FIVE = "five";
-
-		log.info("[-create elements-]");
-
-		List<Argument> argumentsToDeclare = Arrays.asList(
-				new Argument(TRES, 3l),
-				new Argument(FIVE, 5l),
-				new Argument("one", 1l),
-				new Argument("uno", 1l),
-				new Argument("four", 4l)
-		);
-
-		for (Argument arg : argumentsToDeclare) {
-			request = new CatalogCreateRequestImpl(arg,argumentCatalog);
-			runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		}
-		log.info("[-read all-]");
-
-		FilterData filterData = FilterDataUtils.newFilterData();
-		request = new CatalogQueryRequestImpl(filterData,argumentCatalog);
+        FilterData filterData = FilterDataUtils.newFilterData();
+        request = new CatalogQueryRequestImpl(filterData,argumentCatalog);
 
         List<CatalogEntry> results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
-		assertTrue(results.size() == argumentsToDeclare.size());
+        assertTrue(results.size() == argumentsToDeclare.size());
 
 
-		log.info("[-read element-]");
-		Object lodId = results.get(0).getId();
-		request = new CatalogReadRequestImpl(lodId,argumentCatalog);
-		Argument result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		assertTrue(result!=null);
-		assertTrue(result.getName().equals(TRES));
+        log.info("[-read element-]");
+        Object lodId = results.get(0).getId();
+        request = new CatalogReadRequestImpl(lodId,argumentCatalog);
+        Argument result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+        assertTrue(result!=null);
+        assertTrue(result.getName().equals(TRES));
 
-		log.info("[-read all in order-]");
-		// ORDER
-		request.setEntry(null);
-		request.setFilter(filterData);
-		filterData.addOrdering(new FilterDataOrderingImpl(Argument.VALUE, false));
+        log.info("[-read all in order-]");
+        // ORDER
+        request.setEntry(null);
+        request.setFilter(filterData);
+        filterData.addOrdering(new FilterDataOrderingImpl(Argument.VALUE, false));
 
         results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
-		assertTrue(results.size() == argumentsToDeclare.size());
-		assertTrue(((Argument) results.get(0)).getValue() == 5);
+        assertTrue(results.size() == argumentsToDeclare.size());
+        assertTrue(((Argument) results.get(0)).getValue() == 5);
 
-		log.info("[-read a segment-]");
-		// LIMITS log.info("[-read a segment-]");
-		filterData.setConstrained(true);
-		filterData.setStart(2);
-		filterData.setLength(2);
+        log.info("[-read a segment-]");
+        // LIMITS log.info("[-read a segment-]");
+        filterData.setConstrained(true);
+        filterData.setStart(2);
+        filterData.setLength(2);
         results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		assertTrue(results.size() == 2);
+        assertTrue(results.size() == 2);
 
-		// EQUALS = "==";
-		log.info("[-find element by single == criteria-]");
-		filterData = FilterDataUtils.createSingleFieldFilter(CatalogEntry.NAME_FIELD, TRES);
-		request.setFilter(filterData);
-
-
-		results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		assertTrue(results.size() == 1);
-		assertTrue(results.get(0).getName().equals(TRES));
-
-		filterData = FilterDataUtils.newFilterData();
-		FilterCriteriaImpl criteria = new FilterCriteriaImpl(Argument.VALUE, FilterData.DIFFERENT, 1l);
-		filterData.addFilter(criteria);
-		request.setFilter(filterData);
-
-		// DIFFERENT
-		log.info("[-find element by single != criteria-]");
-		criteria.setOperator(FilterData.DIFFERENT);
+        // EQUALS = "==";
+        log.info("[-find element by single == criteria-]");
+        filterData = FilterDataUtils.createSingleFieldFilter(CatalogEntry.NAME_FIELD, TRES);
+        request.setFilter(filterData);
 
 
-		results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		assertTrue(results.size() == 3);
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+        assertTrue(results.size() == 1);
+        assertTrue(results.get(0).getName().equals(TRES));
 
-		// GREATEREQUALS = ">=";
-		log.info("[-find element by single >= criteria-]");
-		criteria.setOperator(FilterData.GREATEREQUALS);
+        filterData = FilterDataUtils.newFilterData();
+        FilterCriteriaImpl criteria = new FilterCriteriaImpl(Argument.VALUE, FilterData.DIFFERENT, 1l);
+        filterData.addFilter(criteria);
+        request.setFilter(filterData);
+
+        // DIFFERENT
+        log.info("[-find element by single != criteria-]");
+        criteria.setOperator(FilterData.DIFFERENT);
+
+
+        results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+        assertTrue(results.size() == 3);
+
+        // GREATEREQUALS = ">=";
+        log.info("[-find element by single >= criteria-]");
+        criteria.setOperator(FilterData.GREATEREQUALS);
 
         results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 5);
 
-		// LESSEQUALS = "<=";
-		log.info("[-find element by single <= criteria-]");
-		criteria.setOperator(FilterData.LESSEQUALS);
+        // LESSEQUALS = "<=";
+        log.info("[-find element by single <= criteria-]");
+        criteria.setOperator(FilterData.LESSEQUALS);
 
         results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 2);
 
-		// LESS = "<"
-		log.info("[-find element by single < criteria-]");
-		criteria.setOperator(FilterData.LESS);
-		criteria.setValue(2l);
+        // LESS = "<"
+        log.info("[-find element by single < criteria-]");
+        criteria.setOperator(FilterData.LESS);
+        criteria.setValue(2l);
 
         results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == 2);
 
-		// GREATER = ">"
-		log.info("[-find element by single > criteria-]");
-		criteria.setOperator(FilterData.GREATER);
+        // GREATER = ">"
+        log.info("[-find element by single > criteria-]");
+        criteria.setOperator(FilterData.GREATER);
 
         results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
@@ -291,36 +207,162 @@ public class CatalogEngineTest extends IntegralTest {
 		*
 		 * FINISHED QUERY TESTS
 		 */
-		log.info("[update element]");
-		request.setEntry(lodId);
-		request.setEntryValue(new Argument("TROI", 3l));
+        log.info("[update element]");
+        request.setEntry(lodId);
+        request.setEntryValue(new Argument("TROI", 3l));
         request.setName(DataContract.WRITE_ACTION);
 
         result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-		assertTrue(result!=null);
-		assertTrue(lodId.equals(result.getId()));
-		assertTrue(result.getName().equals("TROI"));
+        assertTrue(result!=null);
+        assertTrue("Memory identity lost",result == request.getEntryValue());
+		assertTrue("No catalog identity on updated result",result.getId()!=null);
+		assertTrue("Catalog identity lost",lodId.equals(result.getId()));
+        assertTrue(result.getName().equals("TROI"));
 
-		log.info("[delete element]");
-		request.setEntry(lodId);
+        log.info("[delete element]");
+        request.setEntry(lodId);
         request.setName(DataContract.DELETE_ACTION);
 
-		result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+        result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+
+        assertTrue(result!=null);
+        assertTrue(lodId.equals(result.getId()));
 
 
-		assertTrue(result!=null);
-		assertTrue(lodId.equals(result.getId()));
-
-
-		filterData = FilterDataUtils.newFilterData();
-		request.setFilter(filterData);
+        filterData = FilterDataUtils.newFilterData();
+        request.setFilter(filterData);
         request.setEntry(null);
         request.setName(DataContract.READ_ACTION);
         results = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
 
         assertTrue(results.size() == (argumentsToDeclare.size() - 1));
 
-		log.info("[CRUD tests passed]");
+        log.info("[CRUD tests passed]");
+
+    }
+
+
+    @Test
+	public void circularDependency() throws Exception {
+
+		log.debug("-many to one circular dependency-");
+
+		Credit credit = new Credit();
+		Credit credit2 = new Credit();
+		String firstName ="first credit";
+		String secondName = "second credit";
+		credit.setName(firstName);
+		credit2.setName(secondName);
+
+
+		Endorser endorser = new Endorser();
+		credit.setEndorserValue(endorser);
+		endorser.setCreditsValues(Arrays.asList(credit,credit2));
+
+		CatalogActionRequest contract = new CatalogCreateRequestImpl(endorser,Endorser.CATALOG);
+		contract.setFollowReferences(true);
+		runtimeContext.getServiceBus().fireEvent(contract,runtimeContext,null);
+
+		assertTrue("request produced no results",contract.getResults()!=null);
+		assertTrue("request produced empty result set",!contract.getResults().isEmpty());
+		assertTrue("pointer identity is not preserved",contract.getResults().get(0)==endorser);
+		assertTrue("No created object id",endorser.getId() != null);
+		assertTrue("children not preserved",endorser.getCreditsValues().size()==2);
+		assertTrue("children identity scrambled",endorser.getCreditsValues().get(1)!=endorser.getCreditsValues().get(0));
+		assertTrue("created object´s first child is absent",endorser.getCreditsValues().get(0)!=null);
+		assertTrue("first child's pointer identity is not preserved",endorser.getCreditsValues().get(0)==credit);
+		assertTrue("circular data dependency not resolved",credit.getEndorserValue()==endorser);
+		assertTrue("No first child's id",credit.getId() != null);
+		assertTrue("first child's data loss",credit.getName().equals(firstName));
+		assertTrue("created object´s second child is absent",endorser.getCreditsValues().get(1)!=null);
+		assertTrue("second child's pointer identity is not preserved",endorser.getCreditsValues().get(1)==credit2);
+		assertTrue("circular data dependency not resolved",credit2.getEndorserValue()==endorser);
+		assertTrue("No second child's id",credit2.getId() != null);
+		assertTrue("first child's data loss",credit2.getName().equals(secondName));
+	}
+
+
+	@Test
+	public void reverseCircularDependency() throws Exception {
+
+		log.debug("-many to one reverse circular dependency-");
+
+		Credit credit = new Credit();
+		credit.setName("new credit");
+		Endorser endorser = new Endorser();
+		credit.setEndorserValue(endorser);
+		endorser.setCreditsValues(Collections.singletonList(credit));
+
+		CatalogActionRequest contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, Credit.CATALOG, CatalogActionRequest.CREATE_ACTION, null, null, credit, null);
+		contract.setFollowReferences(true);
+		runtimeContext.setServiceContract(contract);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,CatalogActionRequest.LOCALE_FIELD, Credit.CATALOG, CatalogActionRequest.CREATE_ACTION);
+		runtimeContext.process();
+
+		credit = ((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
+		assertTrue(credit.getId() != null);
+		assertTrue(credit.getEndorserValue() != null);
+		assertTrue("memory identity is not preserved",credit.getEndorserValue()==endorser);
+		assertTrue("circular data dependency not resolved",endorser.getCreditsValues().get(0)!=null);
+		assertTrue("circular data dependency lost",endorser.getCreditsValues().get(0).getId().equals(credit.getId()));
+
+	}
+
+
+	@Test
+	public void inheritanceTest() throws Exception {
+
+		log.debug("-create math problem entry-");
+		runtimeContext.reset();
+		MathProblem problem = new MathProblem();
+		problem.setName(MathProblem.class.getSimpleName());
+		problem.setSolution(4l);
+		Argument argument = new Argument("uno",1L);
+        Argument secondArg = new Argument("dos",2L);
+        argument.setProblemValue(problem);
+		problem.setArgumentsValues(Arrays.asList(argument,secondArg));
+
+		CatalogActionRequestImpl contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID,
+				problemContract.getDistinguishedName(), CatalogActionRequest.CREATE_ACTION, null, null, problem, null);
+		contract.setFollowReferences(true);
+		runtimeContext.setServiceContract(contract);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
+				CatalogActionRequest.LOCALE_FIELD, MathProblem.class.getSimpleName(),
+				CatalogActionRequest.CREATE_ACTION);
+		runtimeContext.process();
+
+		((CatalogActionContext) runtimeContext.getServiceContext()).getEntryResult();
+		assertTrue(problem.getId() != null);
+		assertTrue(problem.getSolution() != null);
+		assertTrue("Is Timestamper trigger called?",problem.getTimestamp() != null);
+		assertTrue("are foreign keys registered",	problem.getArguments()!=null);
+		assertTrue("data graph is incomplete",	problem.getArgumentsValues()!=null);
+		assertTrue("data graph is incomplete",problem.getArgumentsValues().size()==2);
+        assertTrue("data graph is inconsistent",problem.getArgumentsValues().get(0).getValue().equals(1L));
+        assertTrue("data graph is inconsistent",problem.getArgumentsValues().get(1).getValue().equals(2L));
+        argument = problem.getArgumentsValues().get(0);
+
+		assertTrue("circular data dependency not created",argument.getId()!=null);
+		assertTrue("circular data dependency not resolved",argument.getProblemValue()!=null);
+		assertTrue("Is circular data dependency identity lost",argument.getProblemValue().getId().equals(problem.getId()));
+
+
+		log.debug("-check if problem was created-");
+		runtimeContext.reset();
+
+		contract = new CatalogActionRequestImpl(CatalogEntry.PUBLIC_ID, ContentNode.CATALOG_TIMELINE,
+				CatalogActionRequest.READ_ACTION, null, null, null, FilterDataUtils.newFilterData());
+		runtimeContext.setServiceContract(contract);
+		runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
+				CatalogActionRequest.LOCALE_FIELD, ContentNode.CATALOG_TIMELINE, CatalogActionRequest.READ_ACTION);
+
+		runtimeContext.process();
+
+		CatalogActionContext catalogContext = runtimeContext.getServiceContext();
+
+		assertTrue(catalogContext.getResults() != null);
+		assertTrue(catalogContext.getResults().size() == 1);
+		assertTrue(catalogContext.getResults().get(0).getName().equals(problem.getName()));
 
 	}
 

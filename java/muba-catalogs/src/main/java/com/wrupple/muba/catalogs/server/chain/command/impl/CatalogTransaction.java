@@ -41,7 +41,6 @@ public class CatalogTransaction {
         if(context.getOldValues()!=null){
             event.setOldValues(context.getOldValues());
         }
-        //cache invalidation trigerer.postprocess(context, context.getRuntimeContext().getCaughtException());
         context.getRuntimeContext().getServiceBus().fireEvent(event,context.getRuntimeContext(),null);
         //pubblishEventsimpl -> AppendImplicityliSuscriptedPeersImpl
         List<FilterCriteria> observers;
