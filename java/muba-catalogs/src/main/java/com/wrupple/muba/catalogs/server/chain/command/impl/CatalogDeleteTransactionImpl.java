@@ -24,7 +24,7 @@ import java.util.List;
 import static com.wrupple.muba.catalogs.domain.CatalogActionBroadcast.DELETE_ACTION;
 
 @Singleton
-public class CatalogDeleteTransactionImpl extends CatalogTransaction implements CatalogDeleteTransaction {
+public class CatalogDeleteTransactionImpl  implements CatalogDeleteTransaction {
 
 	protected static final Logger log = LogManager.getLogger(CatalogDeleteTransactionImpl.class);
 
@@ -36,8 +36,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 	private final ActionsDictionary dictionary;
 
 	@Inject
-	public CatalogDeleteTransactionImpl(Provider<CatalogActionFiltering> catalogActionCommitProvider, FieldAccessStrategy access, Deleters deleters, EntrySynthesizer synthesizer, ActionsDictionary dictionary) {
-		super(catalogActionCommitProvider);
+	public CatalogDeleteTransactionImpl(FieldAccessStrategy access, Deleters deleters, EntrySynthesizer synthesizer, ActionsDictionary dictionary) {
         this.access = access;
         this.synthesizer = synthesizer;
         this.dictionary=dictionary;
@@ -70,9 +69,6 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 			DataDeleteCommand dao = (DataDeleteCommand) deleters.getCommand(String.valueOf(catalog.getStorage()));
 
 			context.setOldValues(originalEntries);
-			log.debug("<CatalogActionFilter>");
-			preprocess(context,DELETE_ACTION);
-			log.debug("</CatalogActionFilter>");
 
 			// single or multiple delete
 
@@ -105,11 +101,6 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 				}
 
 			}
-            // performAfterDelete
-			log.debug("<CatalogActionEvent-Broadcast>");
-			postProcess(context,catalog.getDistinguishedName(),DELETE_ACTION,null);
-			log.debug("</CatalogActionEvent-Broadcast>");
-
 		}
 
 

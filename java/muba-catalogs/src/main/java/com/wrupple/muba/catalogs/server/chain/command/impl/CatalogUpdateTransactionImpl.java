@@ -4,6 +4,7 @@ import com.google.inject.Provider;
 import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
+import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -12,6 +13,7 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogUpdateTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Writers;
+import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
@@ -24,56 +26,50 @@ import javax.inject.Singleton;
 import static com.wrupple.muba.catalogs.domain.CatalogActionBroadcast.WRITE_ACTION;
 
 @Singleton
-public class CatalogUpdateTransactionImpl extends CatalogTransaction implements CatalogUpdateTransaction {
+public class CatalogUpdateTransactionImpl  implements CatalogUpdateTransaction {
 
 	protected static final Logger log = LogManager.getLogger(CatalogUpdateTransactionImpl.class);
 
 	private final Writers writers;
-	private final ActionsDictionary dictionary;
 	private final EntrySynthesizer snth;
 	private final FieldAccessStrategy access;
 	private final CatalogDescriptorService catalogService;
 
 	@Inject
-	public CatalogUpdateTransactionImpl(ActionsDictionary dictionary, Provider<CatalogActionFiltering> catalogActionCommitProvider,
+	public CatalogUpdateTransactionImpl(
 										Writers writers, EntrySynthesizer snth, FieldAccessStrategy access, CatalogDescriptorService catalogService) {
-		super(catalogActionCommitProvider);
 		this.writers = writers;
-		this.dictionary=dictionary;
         this.snth = snth;
         this.access = access;
 		this.catalogService = catalogService;
 	}
 
 	@Override
-	public boolean execute(Context c) throws Exception {
+	public boolean execute(CatalogActionContext context) throws Exception {
+        Object parentEntityId = context.getRequest().getEntry();
+        CatalogDescriptor catalog = context.getCatalogDescriptor();
+        CatalogReadRequestImpl requestOldValue = new CatalogReadRequestImpl(parentEntityId,catalog);
+        requestOldValue.setFollowReferences(false);
+        CatalogEntry originalEntry= context.getRuntimeContext().getServiceBus().fireEvent(requestOldValue,context.getRuntimeContext(),null);
+        Instrospection instrospection = access.newSession(originalEntry);
+        Object originalId = originalEntry.getId();
+        CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
+        String keyField = catalog.getKeyField();
+        access.setPropertyValue(keyField,updatedEntry,originalId,instrospection);
+        updatedEntry.setDomain(originalEntry.getDomain());
 
-		CatalogActionContext context = (CatalogActionContext) c;
-		//FIXME not necessary to read expandd graph
-		dictionary.getRead().execute(context);
+        context.setOldValue(originalEntry);
 
-		CatalogEntry originalEntry = context.getResult();
-
-		context.setOldValue(originalEntry);
-
-		CatalogDescriptor catalog = context.getCatalogDescriptor();
-
-
-		log.debug("<CatalogActionFilter>");
-		preprocess(context,WRITE_ACTION);
-		log.debug("</CatalogActionFilter>");
 
 		DataWritingCommand dao = (DataWritingCommand) writers.getCommand(String.valueOf(catalog.getStorage()));
 		CatalogEntry childEntity = null;
-		Instrospection instrospection = null;
 		CatalogDescriptor parentCatalog = null;
-		Object parentEntityId = null;
+
 		if (snth.evaluateGreatAncestor(context,catalog,null)!= null && !catalog.getConsolidated()) {
-            instrospection = access.newSession(originalEntry);
+
             // we are certain this catalog has a parent, otherwise this DAO
 			// would
 			// not be called
-			CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
 			parentCatalog = catalogService.getDescriptorForKey(catalog.getParent(),context);
 			parentEntityId = snth.getAllegedParentId(originalEntry, instrospection,access);
 
@@ -103,18 +99,10 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 		CatalogEntry ress = context.getEntryResult();
 		context.getRuntimeContext().getTransactionHistory().didUpdate(context,ress , context.getOldValue(), dao);
 
-		CatalogResultCache cache = context.getCache(context.getCatalogDescriptor(), context);
+		CatalogResultCache cache = context.getCache(catalog, context);
 		if (cache != null) {
-			cache.delete(context,catalog.getDistinguishedName(),originalEntry.getId());
+			cache.delete(context,catalog.getDistinguishedName(),originalId);
 		}
-		ress = context.getEntryResult();
-		log.debug("<CatalogActionEvent-Broadcast>");
-		postProcess(context,catalog.getDistinguishedName(),WRITE_ACTION,ress);
-		log.debug("</CatalogActionEvent-Broadcast>");
-
-
-
-
 		return CONTINUE_PROCESSING;
 	}
 

@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import static com.wrupple.muba.catalogs.domain.CatalogActionBroadcast.CREATE_ACTION;
 
 @Singleton
-public class CatalogCreateTransactionImpl extends CatalogTransaction implements CatalogCreateTransaction {
+public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
 	protected static final Logger log = LogManager.getLogger(CatalogCreateTransactionImpl.class);
 
 	//private final CatalogActionTriggerHandler trigerer;
@@ -42,8 +42,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 
 
     @Inject
-	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionFiltering> catalogActionCommitProvider, FieldAccessStrategy access, CompleteCatalogGraph graphJoin, EntrySynthesizer delegate, CatalogDescriptorService catalogService) {
-        super(catalogActionCommitProvider);
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators,  FieldAccessStrategy access, CompleteCatalogGraph graphJoin, EntrySynthesizer delegate, CatalogDescriptorService catalogService) {
         this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();
 		this.access = access;
@@ -59,13 +58,11 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 		CatalogActionContext context = (CatalogActionContext) cxt;
 
 		CatalogEntry result = (CatalogEntry) context.getRequest().getEntryValue();
-		willBeCreated(context,  result);
+        IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>>  set = assertSet(context);
+        set.put(result,new ArrayList<>(2));
 		if(result ==null){
 			throw new NullPointerException("no entry in context");
 		}
-        log.debug("<CatalogActionFilter>");
-        preprocess(context,CREATE_ACTION);
-        log.debug("</CatalogActionFilter>");
 
         CatalogDescriptor catalog=context.getCatalogDescriptor();
 
@@ -129,10 +126,6 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
                 cache.clearLists(context,catalog.getDistinguishedName());
             }
 		}
-
-        log.debug("<CatalogActionEvent-Broadcast>");
-        postProcess(context,catalog.getDistinguishedName(),CREATE_ACTION,regreso);
-        log.debug("</CatalogActionEvent-Broadcast>");
 
         context.setResults(Collections.singletonList(regreso));
 
@@ -309,10 +302,6 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
         }
     }
 
-    private void willBeCreated(CatalogActionContext context, CatalogEntry entry) {
-        IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>>  set = assertSet(context);
-        set.put(entry,new ArrayList<>(2));
-    }
 
     private static final String PROPERTY = "com.wrupple.catalog.creationGraph";
 

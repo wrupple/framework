@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
+import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -51,7 +52,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 				CatalogDescriptor catalog = context.getCatalogDescriptor();
 
 				//TODO descriptor extends identification, if we want the short version we read identifictation
-				List<CatalogEntry> names = context.getAvailableCatalogs();
+				List<HasDistinguishedName> names = (List)context.getAvailableCatalogs();
 
 				log.trace("[SEARCHING {} CATALOGS FOR hard keys referencing {}]", names.size(),
 						catalog.getDistinguishedName());
@@ -68,13 +69,14 @@ public class GarbageCollectionImpl implements GarbageCollection {
 					ids.add(e.getId());
 				}
 
-				for (CatalogEntry idem : names) {
+				for (HasDistinguishedName idem : names) {
 
 					garbageFilter = null;
-					temp = catalogService.getDescriptorForName((String) idem.getId(),context);
+					String distinguishedName = idem.getDistinguishedName();
+					temp = catalogService.getDescriptorForName(distinguishedName,context);
 					tempFields = temp.getFieldsValues();
 
-					log.trace("[PROCESSING {}]", idem.getId());
+					log.trace("[collecting relations of entry type {}]", distinguishedName);
 					// FIND SIMPLE KEYS
 					for (FieldDescriptor linkingField : tempFields) {
 						if (linkingField.isKey() && linkingField.isHardKey() && !linkingField.isMultiple()

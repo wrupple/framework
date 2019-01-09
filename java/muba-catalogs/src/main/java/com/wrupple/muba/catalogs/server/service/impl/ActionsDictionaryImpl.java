@@ -16,23 +16,14 @@ import javax.inject.Singleton;
 @Singleton
 public class ActionsDictionaryImpl extends CatalogBase implements ActionsDictionary{
 
-
-    private final Command create;
-
     private final Command read;
-
-    private final Command write;
-
-    private final Command delete;
-
+    private final CatalogTransactionState transactionState;
 
     @Inject
-    public ActionsDictionaryImpl(CatalogFactory factory, CatalogCreateTransaction create, CatalogReadTransaction read, CatalogUpdateTransaction write, CatalogDeleteTransaction delete
+    public ActionsDictionaryImpl(CatalogFactory factory, CatalogTransactionState transactionState, CatalogReadTransaction read
             , PluginConsensus consensus, GarbageCollection collect, RestoreTrash restore, TrashDeleteTrigger dump, FieldDescriptorUpdateTrigger invalidateAll, CatalogDescriptorUpdateTrigger invalidate, EntryDeleteTrigger trash, UpdateTreeLevelIndex treeIndexHandler, Timestamper timestamper, WritePublicTimelineEventDiscriminator inheritanceHandler, IncreaseVersionNumber increaseVersionNumber, @Named("catalog.plugins") Provider<Object> pluginProvider) {
-        this.create = create;
         this.read = read;
-        this.write = write;
-        this.delete = delete;
+        this.transactionState=transactionState;
 
         factory.addCatalog(CatalogActionRequest.NAME_FIELD, this);
 
@@ -66,10 +57,13 @@ public class ActionsDictionaryImpl extends CatalogBase implements ActionsDiction
         addCommand(Timestamper.class.getSimpleName(), timestamper);
         addCommand(CatalogFileUploadUrlHandlerTransaction.class.getSimpleName(), null/*FIXME*/);
 
-        addCommand(CatalogActionRequest.CREATE_ACTION, create);
+
         addCommand(CatalogActionRequest.READ_ACTION, read);
-        addCommand(CatalogActionRequest.WRITE_ACTION, write);
-        addCommand(CatalogActionRequest.DELETE_ACTION, delete);
+
+
+        addCommand(CatalogActionRequest.CREATE_ACTION, transactionState);
+        addCommand(CatalogActionRequest.WRITE_ACTION, transactionState);
+        addCommand(CatalogActionRequest.DELETE_ACTION, transactionState);
         addCommand(CatalogFileUploadTransaction.class.getSimpleName(), null/*FIXME*/);
 
     }
@@ -83,16 +77,16 @@ public class ActionsDictionaryImpl extends CatalogBase implements ActionsDiction
 
     @Override
     public Command getWrite() {
-        return write;
+        return transactionState;
     }
 
     @Override
     public Command getDelete() {
-        return delete;
+        return transactionState;
     }
 
     @Override
     public Command getNew() {
-        return create;
+        return transactionState;
     }
 }

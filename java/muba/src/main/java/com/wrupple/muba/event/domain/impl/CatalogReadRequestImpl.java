@@ -1,5 +1,7 @@
 package com.wrupple.muba.event.domain.impl;
 
+import com.wrupple.muba.event.domain.CatalogDescriptor;
+
 public class CatalogReadRequestImpl extends CatalogActionRequestImpl{
     public CatalogReadRequestImpl(Object key, String catalog) {
         super();
@@ -8,4 +10,10 @@ public class CatalogReadRequestImpl extends CatalogActionRequestImpl{
         super.setEntry(key);
         super.setCatalog(catalog);
     }
+
+    public CatalogReadRequestImpl(Object key, CatalogDescriptor catalog) {
+            this( key, catalog.getDistinguishedName()) ;
+            super.setCatalogValue(catalog);
+
+        }
 }

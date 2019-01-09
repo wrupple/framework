@@ -1,12 +1,18 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.wrupple.muba.catalogs.domain.CatalogActionBroadcast;
 import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
+import com.wrupple.muba.catalogs.server.chain.command.CatalogTransactionState;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionBroadcastImpl;
+import com.wrupple.muba.catalogs.server.service.TransactionsDictionary;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
+import org.apache.commons.chain.Command;
+import org.apache.commons.chain.generic.LookupCommand;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,20 +20,24 @@ import java.util.List;
 
 import static com.wrupple.muba.event.server.service.impl.FilterDataUtils.newFilterCriteria;
 
-public class CatalogTransaction {
+@Singleton
+public final class CatalogTransactionStateImpl implements CatalogTransactionState {
 
 
     private final Provider<CatalogActionFiltering> catalogActionCommitProvider;
+    private final TransactionsDictionary dictionary;
 
-    public CatalogTransaction(Provider<CatalogActionFiltering> catalogActionCommitProvider) {
+    @Inject
+    public CatalogTransactionStateImpl(TransactionsDictionary dictionary,Provider<CatalogActionFiltering> catalogActionCommitProvider) {
         this.catalogActionCommitProvider = catalogActionCommitProvider;
+        this.dictionary=dictionary;
     }
 
 
-    public void preprocess(CatalogActionContext context, String action) throws Exception {
+    public void preprocess(CatalogActionContext context) throws Exception {
 
         CatalogActionFiltering preprocessEvent=catalogActionCommitProvider.get();//Extends catalog action request
-        preprocessEvent.setName(action);
+        preprocessEvent.setName(context.getRequest().getName());
         preprocessEvent.setStateValue(context);
         preprocessEvent.setRequestValue((CatalogActionRequest) context.getRuntimeContext().getServiceContract());
         preprocessEvent.setDomain((Long) context.getNamespaceContext().getId());
@@ -35,8 +45,8 @@ public class CatalogTransaction {
 
     }
 
-    public void postProcess(CatalogActionContext context,String catalog,String action, CatalogEntry regreso) throws Exception {
-        CatalogActionBroadcast event=new CatalogActionBroadcastImpl((Long) context.getRequest().getDomain(), catalog,action, regreso);
+    public void postProcess(CatalogActionContext context) throws Exception {
+        CatalogActionBroadcast event=new CatalogActionBroadcastImpl((Long) context.getRequest().getDomain(), context.getCatalogDescriptor().getDistinguishedName(),context.getRequest().getName(), context.getResult());
         event.setStateValue(context);
         if(context.getOldValues()!=null){
             event.setOldValues(context.getOldValues());
@@ -61,4 +71,11 @@ public class CatalogTransaction {
     }
 
 
+    @Override
+    public final boolean execute(CatalogActionContext context) throws Exception {
+        preprocess(context);
+        dictionary.getCommand(context.getRequest().getName()).execute(context);
+        postProcess(context);
+        return CONTINUE_PROCESSING;
+    }
 }

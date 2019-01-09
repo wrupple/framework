@@ -25,6 +25,7 @@ import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
+import javax.transaction.Transaction;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -129,6 +130,8 @@ public class CatalogModule extends AbstractModule {
 		/*
 		 * Dictionaries
 		 */
+		bind(ActionsDictionary.class).to(ActionsDictionaryImpl.class);
+		bind(TransactionsDictionary.class).to(TransactionsDictionaryImpl.class);
 		bind(EntryCreators.class).to(EntryCreatorsImpl.class);
 		bind(PrimaryKeyReaders.class).to(PrimaryKeyReadersImpl.class);
 		bind(QueryReaders.class).to(QueryReadersImpl.class);
@@ -140,6 +143,7 @@ public class CatalogModule extends AbstractModule {
 		 */
 
         bind(WriteOutput.class).to(WriteOutputImpl.class);
+        bind(CatalogTransactionState.class).to(CatalogTransactionStateImpl.class);
         bind(CatalogCreateTransaction.class).to(CatalogCreateTransactionImpl.class);
 		bind(CatalogReadTransaction.class).to(CatalogReadTransactionImpl.class);
 		bind(CatalogUpdateTransaction.class).to(CatalogUpdateTransactionImpl.class);
@@ -174,7 +178,6 @@ public class CatalogModule extends AbstractModule {
         bind(CatalogKeyServices.class).to(CatalogKeyServicesImpl.class);
 		bind(EntrySynthesizer.class).to(EntrySynthesizerImpl.class);
 		bind(JSRAnnotationsDictionary.class).to(JSRAnnotationsDictionaryImpl.class);
-		bind(ActionsDictionary.class).to(ActionsDictionaryImpl.class);
 
 		bind(CatalogTriggerInterpret.class).to(CatalogTriggerInterpretImpl.class);
         bind(ResultSetService.class).to(ResultSetServiceImpl.class);
