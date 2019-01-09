@@ -54,12 +54,10 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 
 		CatalogActionContext context = (CatalogActionContext) ctx;
 		CatalogDescriptor descriptor = context.getCatalogDescriptor();
-		CatalogEntry originalEntry =context.getEntryResult();
 
 		CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
 		Instrospection instrospection = access.newSession(updatedEntry);
 
-		updatedEntry.setDomain((Long) originalEntry.getDomain());
 		Object id = context.getRequest().getEntry();
 		Collection<FieldDescriptor> fields = descriptor.getFieldsValues();
 		List<Object> params = new ArrayList<Object>(fields.size());
