@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
-import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wrupple.muba.catalogs.domain.CatalogContract.CREATE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogActionBroadcast.CREATE_ACTION;
 
 @Singleton
 public class CatalogCreateTransactionImpl extends CatalogTransaction implements CatalogCreateTransaction {
@@ -42,7 +42,7 @@ public class CatalogCreateTransactionImpl extends CatalogTransaction implements 
 
 
     @Inject
-	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, CompleteCatalogGraph graphJoin, EntrySynthesizer delegate, CatalogDescriptorService catalogService) {
+	public CatalogCreateTransactionImpl(@Named("catalog.followGraph") Boolean follow, EntryCreators creators, CatalogFactory factory, String creatorsDictionary, Provider<CatalogActionFiltering> catalogActionCommitProvider, FieldAccessStrategy access, CompleteCatalogGraph graphJoin, EntrySynthesizer delegate, CatalogDescriptorService catalogService) {
         super(catalogActionCommitProvider);
         this.creators=creators;
 		this.follow=follow==null?false:follow.booleanValue();

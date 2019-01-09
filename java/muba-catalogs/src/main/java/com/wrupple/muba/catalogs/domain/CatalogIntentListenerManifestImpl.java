@@ -11,7 +11,7 @@ import java.util.Arrays;
 @Singleton
 public class CatalogIntentListenerManifestImpl extends ServiceManifestImpl implements CatalogIntentListenerManifest {
     @Inject
-    public CatalogIntentListenerManifestImpl(@Named(CatalogContract.CATALOG) CatalogDescriptor catalogValue) {
-        super(SERVICE_NAME, "1.0", catalogValue, Arrays.asList(CatalogContract.NAME_FIELD));
+    public CatalogIntentListenerManifestImpl(@Named(CatalogActionBroadcast.CATALOG) CatalogDescriptor catalogValue) {
+        super(SERVICE_NAME, "1.0", catalogValue, Arrays.asList(CatalogActionBroadcast.NAME_FIELD));
     }
 }

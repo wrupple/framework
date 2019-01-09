@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
-import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
-import static com.wrupple.muba.catalogs.domain.CatalogContract.DELETE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogActionBroadcast.DELETE_ACTION;
 
 @Singleton
 public class CatalogDeleteTransactionImpl extends CatalogTransaction implements CatalogDeleteTransaction {
@@ -36,7 +36,7 @@ public class CatalogDeleteTransactionImpl extends CatalogTransaction implements 
 	private final ActionsDictionary dictionary;
 
 	@Inject
-	public CatalogDeleteTransactionImpl(Provider<CatalogActionCommit> catalogActionCommitProvider, FieldAccessStrategy access, Deleters deleters, EntrySynthesizer synthesizer, ActionsDictionary dictionary) {
+	public CatalogDeleteTransactionImpl(Provider<CatalogActionFiltering> catalogActionCommitProvider, FieldAccessStrategy access, Deleters deleters, EntrySynthesizer synthesizer, ActionsDictionary dictionary) {
 		super(catalogActionCommitProvider);
         this.access = access;
         this.synthesizer = synthesizer;

@@ -1,10 +1,10 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
-import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.domain.CatalogActionBroadcast;
+import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogContract;
-import com.wrupple.muba.catalogs.server.domain.CatalogContractImpl;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionBroadcastImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 
@@ -17,16 +17,16 @@ import static com.wrupple.muba.event.server.service.impl.FilterDataUtils.newFilt
 public class CatalogTransaction {
 
 
-    private final Provider<CatalogActionCommit> catalogActionCommitProvider;
+    private final Provider<CatalogActionFiltering> catalogActionCommitProvider;
 
-    public CatalogTransaction(Provider<CatalogActionCommit> catalogActionCommitProvider) {
+    public CatalogTransaction(Provider<CatalogActionFiltering> catalogActionCommitProvider) {
         this.catalogActionCommitProvider = catalogActionCommitProvider;
     }
 
 
     public void preprocess(CatalogActionContext context, String action) throws Exception {
 
-        CatalogActionCommit preprocessEvent=catalogActionCommitProvider.get();//Extends catalog action request
+        CatalogActionFiltering preprocessEvent=catalogActionCommitProvider.get();//Extends catalog action request
         preprocessEvent.setName(action);
         preprocessEvent.setStateValue(context);
         preprocessEvent.setRequestValue((CatalogActionRequest) context.getRuntimeContext().getServiceContract());
@@ -36,7 +36,7 @@ public class CatalogTransaction {
     }
 
     public void postProcess(CatalogActionContext context,String catalog,String action, CatalogEntry regreso) throws Exception {
-        CatalogContract event=new CatalogContractImpl((Long) context.getRequest().getDomain(), catalog,action, regreso);
+        CatalogActionBroadcast event=new CatalogActionBroadcastImpl((Long) context.getRequest().getDomain(), catalog,action, regreso);
         event.setStateValue(context);
         if(context.getOldValues()!=null){
             event.setOldValues(context.getOldValues());

@@ -10,8 +10,8 @@ import com.wrupple.muba.catalogs.domain.*;
 import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
+import com.wrupple.muba.catalogs.server.domain.CatalogActionBroadcastImpl;
 import com.wrupple.muba.event.domain.impl.*;
-import com.wrupple.muba.catalogs.server.domain.CatalogContractImpl;
 import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
 import com.wrupple.muba.catalogs.server.domain.catalogs.LocalizedStringDescriptor;
@@ -24,9 +24,6 @@ import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
-import com.wrupple.muba.event.server.service.impl.FieldSynthesizerImpl;
-import org.apache.commons.beanutils.BeanUtilsBean2;
-import org.apache.commons.beanutils.converters.LongConverter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -110,17 +107,17 @@ public class CatalogModule extends AbstractModule {
 				.toInstance(CatalogDescriptorImpl.class);
         bind(Class.class).annotatedWith(Names.named(CatalogActionRequest.CATALOG))
                 .toInstance(CatalogActionRequestImpl.class);
-        bind(Class.class).annotatedWith(Names.named(CatalogActionCommit.CATALOG))
-                .toInstance(CatalogActionCommitImpl.class);
-        bind(Class.class).annotatedWith(Names.named(CatalogContract.CATALOG))
-                .toInstance(CatalogContractImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogActionFiltering.CATALOG))
+                .toInstance(CatalogActionFilteringImpl.class);
+        bind(Class.class).annotatedWith(Names.named(CatalogActionBroadcast.CATALOG))
+                .toInstance(CatalogActionBroadcastImpl.class);
 
 		/*
 		 * CONFIGURATION
 		 */
 
 		bind(NamespaceContext.class).to(NamespaceContextImpl.class);
-        bind(CatalogActionCommit.class).to(CatalogActionCommitImpl.class);
+        bind(CatalogActionFiltering.class).to(CatalogActionFilteringImpl.class);
         bind(CatalogActionRequest.class).to(CatalogActionRequestImpl.class);
 		bind(CatalogDescriptor.class).annotatedWith(Names.named(DistributiedLocalizedEntry.CATALOG))
 				.to(DistributiedLocalizedEntryDescriptor.class);
@@ -315,10 +312,10 @@ public class CatalogModule extends AbstractModule {
     @Provides
     @Inject
     @Singleton
-    @Named(CatalogContract.CATALOG)
-    public CatalogDescriptor eventCatalog(@Named(CatalogContract.CATALOG) Class clazz,
+    @Named(CatalogActionBroadcast.CATALOG)
+    public CatalogDescriptor eventCatalog(@Named(CatalogActionBroadcast.CATALOG) Class clazz,
                                           CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(clazz, CatalogContract.CATALOG,
+        CatalogDescriptor r = builder.fromClass(clazz, CatalogActionBroadcast.CATALOG,
                 "Catalog Contract", -13939395, null);
         r.setClazz(clazz);
         return r;
@@ -327,10 +324,10 @@ public class CatalogModule extends AbstractModule {
     @Provides
     @Inject
     @Singleton
-    @Named(CatalogActionCommit.CATALOG)
-    public CatalogDescriptor actionCommit(@Named(CatalogActionCommit.CATALOG) Class clazz,
+    @Named(CatalogActionFiltering.CATALOG)
+    public CatalogDescriptor actionCommit(@Named(CatalogActionFiltering.CATALOG) Class clazz,
                                            CatalogDescriptorBuilder builder) {
-        CatalogDescriptor r = builder.fromClass(CatalogActionCommitImpl.class, CatalogActionCommit.CATALOG,
+        CatalogDescriptor r = builder.fromClass(CatalogActionFilteringImpl.class, CatalogActionFiltering.CATALOG,
                 "Catalog Commit", -13939394, null);
         r.setClazz(clazz);
         return r;

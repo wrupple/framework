@@ -4,7 +4,7 @@ import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import org.apache.commons.chain.Context;
 
-public class CatalogActionCommitImpl extends CatalogEntryImpl implements CatalogActionCommit{
+public class CatalogActionFilteringImpl extends CatalogEntryImpl implements CatalogActionFiltering {
     private CatalogActionRequest requestValue;
     private CatalogActionContext stateValue;
     private Object state;

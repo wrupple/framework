@@ -1,11 +1,9 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogActionFilterInterpret;
 import com.wrupple.muba.event.domain.RuntimeContext;
-import com.wrupple.muba.event.domain.ServiceContext;
-import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -29,7 +27,7 @@ public class CatalogActionFilterInterpretImpl implements CatalogActionFilterInte
         return new Provider<CatalogActionContext>() {
             @Override
             public CatalogActionContext get() {
-                CatalogActionCommit event = (CatalogActionCommit) runtime.getServiceContract();
+                CatalogActionFiltering event = (CatalogActionFiltering) runtime.getServiceContract();
                 if (event.getStateValue() == null) {
                     //TODO remote (relative to the event source) listeners should read de actionRequest to create a mirrored action context (?)
                     //re-bind the service contract into a runtime context?

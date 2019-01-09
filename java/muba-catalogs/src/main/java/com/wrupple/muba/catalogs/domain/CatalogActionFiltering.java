@@ -4,9 +4,9 @@ import com.wrupple.muba.event.domain.CatalogActionRequest;
 import com.wrupple.muba.event.domain.DataContract;
 import com.wrupple.muba.event.domain.reserved.HasLiveContext;
 
-public interface CatalogActionCommit extends DataContract,HasLiveContext {
+public interface CatalogActionFiltering extends DataContract,HasLiveContext {
 
-    final String CATALOG = "CatalogActionCommit";
+    final String CATALOG = "CatalogActionFiltering";
 
     CatalogActionRequest getRequestValue();
 

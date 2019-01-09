@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.server.domain;
 
+import com.wrupple.muba.catalogs.domain.CatalogActionBroadcast;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogContract;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
@@ -9,7 +9,7 @@ import org.apache.commons.chain.Context;
 
 import java.util.List;
 
-public class CatalogContractImpl extends CatalogEntryImpl implements CatalogContract {
+public class CatalogActionBroadcastImpl extends CatalogEntryImpl implements CatalogActionBroadcast {
 	private static final long serialVersionUID = -5221787594135912800L;
 	private final String catalog;
 	private final CatalogEntry entry;
@@ -19,7 +19,7 @@ public class CatalogContractImpl extends CatalogEntryImpl implements CatalogCont
 	private Object state;
 
 
-	public CatalogContractImpl(Long domain, String catalogId, String action, CatalogEntry entry){
+	public CatalogActionBroadcastImpl(Long domain, String catalogId, String action, CatalogEntry entry){
 		super();
 		setDomain(domain);
 		this.catalog = catalogId;
@@ -89,7 +89,7 @@ public class CatalogContractImpl extends CatalogEntryImpl implements CatalogCont
 	}
 	@Override
 	public String getCatalogType() {
-		return CatalogContract.CATALOG;
+		return CatalogActionBroadcast.CATALOG;
 	}
 
 	@Override

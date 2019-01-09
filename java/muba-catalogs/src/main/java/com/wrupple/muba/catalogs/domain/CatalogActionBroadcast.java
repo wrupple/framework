@@ -14,9 +14,9 @@ import java.util.List;
  * @author japi
  *
  */
-public interface CatalogContract extends DataContract,HasLiveContext {
+public interface CatalogActionBroadcast extends DataContract,HasLiveContext {
 
-	String CATALOG = "CatalogContract";
+	String CATALOG = "CatalogActionBroadcast";
 
     Object getEntryValue();
 

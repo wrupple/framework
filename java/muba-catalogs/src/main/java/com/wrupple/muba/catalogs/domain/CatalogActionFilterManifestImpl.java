@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class CatalogActionFilterManifestImpl extends ServiceManifestImpl implements CatalogActionFilterManifest {
 
     @Inject
-    public CatalogActionFilterManifestImpl(@Named(CatalogActionCommit.CATALOG) CatalogDescriptor catalogValue) {
-        super(SERVICE_NAME, "1.0", catalogValue, Arrays.asList(CatalogActionCommit.NAME_FIELD));
+    public CatalogActionFilterManifestImpl(@Named(CatalogActionFiltering.CATALOG) CatalogDescriptor catalogValue) {
+        super(SERVICE_NAME, "1.0", catalogValue, Arrays.asList(CatalogActionFiltering.NAME_FIELD));
     }
 }

@@ -1,7 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
 import com.google.inject.Provider;
-import com.wrupple.muba.catalogs.domain.CatalogActionCommit;
+import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.Instrospection;
@@ -21,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.wrupple.muba.catalogs.domain.CatalogContract.WRITE_ACTION;
+import static com.wrupple.muba.catalogs.domain.CatalogActionBroadcast.WRITE_ACTION;
 
 @Singleton
 public class CatalogUpdateTransactionImpl extends CatalogTransaction implements CatalogUpdateTransaction {
@@ -35,7 +35,7 @@ public class CatalogUpdateTransactionImpl extends CatalogTransaction implements 
 	private final CatalogDescriptorService catalogService;
 
 	@Inject
-	public CatalogUpdateTransactionImpl(ActionsDictionary dictionary, Provider<CatalogActionCommit> catalogActionCommitProvider,
+	public CatalogUpdateTransactionImpl(ActionsDictionary dictionary, Provider<CatalogActionFiltering> catalogActionCommitProvider,
 										Writers writers, EntrySynthesizer snth, FieldAccessStrategy access, CatalogDescriptorService catalogService) {
 		super(catalogActionCommitProvider);
 		this.writers = writers;
