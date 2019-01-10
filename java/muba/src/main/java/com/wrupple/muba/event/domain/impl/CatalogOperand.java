@@ -9,11 +9,12 @@ public class CatalogOperand extends CatalogEntryImpl implements com.wrupple.muba
 
     public CatalogOperand(CatalogReadRequestImpl request, FieldDescriptor targetField) {
         this();
-        setName(CATALOG);
+        this.request=request;
+        this.targetField=targetField;
     }
 
     public CatalogOperand() {
-
+        setName(CATALOG);
     }
 
     @Override
