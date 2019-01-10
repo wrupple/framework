@@ -21,5 +21,14 @@
         <Logger name="com.wrupple.muba.event.server.chain.command.impl.EventDispatcherImpl" level="TRACE"  additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="com.wrupple.muba.worker.server.service.impl.FutureChocoVariable" level="TRACE"  additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="com.wrupple.muba.worker.server.service.impl.SolverImpl" level="TRACE"  additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="com.wrupple.muba.worker.server.service.impl.ChocoRunnerImpl" level="TRACE"  additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
     </Loggers>
 </Configuration>

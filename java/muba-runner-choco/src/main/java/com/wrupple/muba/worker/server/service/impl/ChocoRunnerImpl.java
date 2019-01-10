@@ -70,6 +70,9 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
     @Override
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
+        if(log.isDebugEnabled()){
+            log.debug("modeling operation {}",result);
+        }
         if(result.getName().equals("-")){
             Model model = delegate.resolveSolverModel(context);
 
