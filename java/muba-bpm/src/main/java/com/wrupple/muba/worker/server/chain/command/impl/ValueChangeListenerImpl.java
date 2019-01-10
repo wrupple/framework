@@ -6,12 +6,12 @@ import com.wrupple.muba.event.domain.impl.CatalogQueryRequestImpl;
 import com.wrupple.muba.event.domain.impl.FilterCriteriaImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogActionTriggerHandlerImpl;
+import com.wrupple.muba.event.domain.reserved.HasDistinguishedName;
 import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.FilterData;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
-import com.wrupple.muba.event.domain.reserved.HasFieldId;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.server.chain.command.AbstractComparationCommand;
 import com.wrupple.muba.worker.server.chain.command.ValueChangeListener;
@@ -46,7 +46,8 @@ public class ValueChangeListenerImpl extends AbstractComparationCommand implemen
 		    FilterData filterData = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,
 						(String)context.getRequest().getCatalog());
 		    filterData.setConstrained(false);
-		    filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getDistinguishedName()));
+		    filterData.addFilter(new FilterCriteriaImpl(
+		    		HasDistinguishedName.FIELD, field.getDistinguishedName()));
 
             CatalogActionRequestImpl spawned = new CatalogQueryRequestImpl(filterData,ValueChangeTrigger.CATALOG);
             spawned.setParentValue(context.getRequest());

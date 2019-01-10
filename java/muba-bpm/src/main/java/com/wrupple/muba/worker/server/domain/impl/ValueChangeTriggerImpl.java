@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ValueChangeTriggerImpl extends CatalogActionConstraintImpl implements ValueChangeTrigger {
     @CatalogField(filterable = true)
-    private String fieldId;
+    private String distinguishedName;
     private String initialValue;
     private String finalValue;
     private Integer encoding;
@@ -25,11 +25,12 @@ public class ValueChangeTriggerImpl extends CatalogActionConstraintImpl implemen
 
     @Override
     public String getDistinguishedName() {
-        return fieldId;
+        return distinguishedName;
     }
 
-    public void setFieldId(String fieldId) {
-        this.fieldId = fieldId;
+    @Override
+    public void setDistinguishedName(String distinguishedName) {
+        this.distinguishedName = distinguishedName;
     }
 
     @Override
