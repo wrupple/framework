@@ -1,10 +1,7 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.google.inject.Provider;
-import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
-import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
@@ -14,9 +11,7 @@ import com.wrupple.muba.catalogs.server.chain.command.DataWritingCommand;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.Writers;
 import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
-import com.wrupple.muba.event.server.service.ActionsDictionary;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -46,22 +41,13 @@ public class CatalogUpdateTransactionImpl  implements CatalogUpdateTransaction {
 
 	@Override
 	public boolean execute(CatalogActionContext context) throws Exception {
-        Object parentEntityId = context.getRequest().getEntry();
         CatalogDescriptor catalog = context.getCatalogDescriptor();
-        CatalogReadRequestImpl requestOldValue = new CatalogReadRequestImpl(parentEntityId,catalog);
-        requestOldValue.setFollowReferences(false);
-        CatalogEntry originalEntry= context.getRuntimeContext().getServiceBus().fireEvent(requestOldValue,context.getRuntimeContext(),null);
+        Object parentEntityId = context.getRequest().getEntry();
+        CatalogEntry originalEntry= context.getOldValue();
         Instrospection instrospection = access.newSession(originalEntry);
-        Object originalId = originalEntry.getId();
         CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
-        String keyField = catalog.getKeyField();
-        access.setPropertyValue(keyField,updatedEntry,originalId,instrospection);
-        updatedEntry.setDomain(originalEntry.getDomain());
-
-        context.setOldValue(originalEntry);
-
-
-		DataWritingCommand dao = (DataWritingCommand) writers.getCommand(String.valueOf(catalog.getStorage()));
+        Object originalId = originalEntry.getId();
+        DataWritingCommand dao = (DataWritingCommand) writers.getCommand(String.valueOf(catalog.getStorage()));
 		CatalogEntry childEntity = null;
 		CatalogDescriptor parentCatalog = null;
 
@@ -105,5 +91,36 @@ public class CatalogUpdateTransactionImpl  implements CatalogUpdateTransaction {
 		}
 		return CONTINUE_PROCESSING;
 	}
+
+    @Override
+    public boolean postprocess(CatalogActionContext context, Exception exception)  {
+        if(exception==null){
+            //ignores chain convention
+            Object parentEntityId = context.getRequest().getEntry();
+            CatalogDescriptor catalog = context.getCatalogDescriptor();
+            CatalogReadRequestImpl requestOldValue = new CatalogReadRequestImpl(parentEntityId,catalog);
+            requestOldValue.setFollowReferences(false);
+            CatalogEntry originalEntry= null;
+            try {
+                originalEntry = context.getRuntimeContext().getServiceBus().fireEvent(requestOldValue,context.getRuntimeContext(),null);
+            } catch (Exception e) {
+                throw new RuntimeException("Error retriving original entry with given id: "+parentEntityId,e);
+            }
+            Instrospection instrospection = access.newSession(originalEntry);
+            Object originalId = originalEntry.getId();
+            CatalogEntry updatedEntry = (CatalogEntry) context.getRequest().getEntryValue();
+            String keyField = catalog.getKeyField();
+            try {
+                access.setPropertyValue(keyField,updatedEntry,originalId,instrospection);
+            } catch (Exception e) {
+                throw new RuntimeException("Error attempting to transfer catalog id to incoming user entry",e);
+            }
+            updatedEntry.setDomain(originalEntry.getDomain());
+
+            context.setOldValue(originalEntry);
+        }
+
+        return CONTINUE_PROCESSING;
+    }
 
 }

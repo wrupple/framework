@@ -12,7 +12,7 @@ import com.wrupple.muba.catalogs.server.service.TransactionsDictionary;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import org.apache.commons.chain.Command;
-import org.apache.commons.chain.generic.LookupCommand;
+import org.apache.commons.chain.Filter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,8 +73,13 @@ public final class CatalogTransactionStateImpl implements CatalogTransactionStat
 
     @Override
     public final boolean execute(CatalogActionContext context) throws Exception {
+        Command handler = dictionary.getCommand(context.getRequest().getName());
+        if(handler instanceof Filter){
+            //FIXME ignores chain convention
+            ((Filter) handler).postprocess(context,null);
+        }
         preprocess(context);
-        dictionary.getCommand(context.getRequest().getName()).execute(context);
+        handler.execute(context);
         postProcess(context);
         return CONTINUE_PROCESSING;
     }
