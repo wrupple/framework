@@ -47,7 +47,14 @@ public class SolverImpl implements Solver {
         if(result==null){
             log.info("no operations to model");
         }else{
-            runners.stream().forEach(plugin->plugin.model(result,context,intros));
+            runners.stream().forEach(plugin->
+                    {
+                        if(log.isDebugEnabled()){
+                            log.debug("modeling operation {}",result);
+                        }
+                        plugin.model(result,context,intros);
+                    }
+            );
         }
     }
 
