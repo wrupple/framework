@@ -45,7 +45,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
             Instrospection intros=null;
             for (FieldDescriptor field : descriptor.getFieldsValues()) {
                 if (field.getSentence() != null && !field.getSentence().isEmpty()) {
-                    log.info("posting solution constraints from field {} definition",field.getFieldId());
+                    log.info("posting solution constraints from field {} definition",field.getDistinguishedName());
                     if(intros==null){
                         intros = access.newSession(subject);
                     }
@@ -53,7 +53,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
                     Object result = synthetizationDelegate.synthethizeFieldValue(field.getSentence().listIterator(), context, subject,descriptor, field, intros, runtime.getServiceBus());
                     if(result instanceof Operation){
                         if(((Operation) result).getName()==null){
-                            throw new NullPointerException("operation with no name was synthesized with "+field.getFieldId());
+                            throw new NullPointerException("operation with no name was synthesized with "+field.getDistinguishedName());
                         }
                         resolveOperation(context,runtime, (Operation) result,intros);
                     }

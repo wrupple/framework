@@ -11,7 +11,7 @@ import com.wrupple.muba.event.domain.reserved.*;
  * @author japi
  * 
  */
-public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,HasCatalogId ,HasDescription,HasConstrains {
+public interface FieldDescriptor extends CatalogEntry,HasDistinguishedName,HasProperties,HasCatalogId ,HasDescription,HasConstrains {
 	String CATALOG_ID = "FieldDescriptor";
 
 	/**static final

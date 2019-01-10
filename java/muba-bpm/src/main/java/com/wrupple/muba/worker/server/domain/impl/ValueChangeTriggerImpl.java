@@ -24,7 +24,7 @@ public class ValueChangeTriggerImpl extends CatalogActionConstraintImpl implemen
     private Date timestamp;
 
     @Override
-    public String getFieldId() {
+    public String getDistinguishedName() {
         return fieldId;
     }
 

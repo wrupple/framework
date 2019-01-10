@@ -49,7 +49,7 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
                 Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
 
                 if (field.isMultiple()) {
-                    reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+                    reservedField = field.getDistinguishedName() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
                     Collection<?> temp;
                     Collection<CatalogEntry> matches;
 
@@ -78,7 +78,7 @@ public class GatherFieldValuesImpl implements Command<DataJoinContext> {
                 } else {
                     Object value;
                     CatalogEntry result;
-                    reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                    reservedField = field.getDistinguishedName() + CatalogEntry.FOREIGN_KEY;
                     for (CatalogEntry e : results) {
                         if(access.isWriteableProperty(reservedField,e,context.getIntrospectionSession())){
                             result = (CatalogEntry) access.getPropertyValue(reservedField,e,null,context.getIntrospectionSession());

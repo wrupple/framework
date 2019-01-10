@@ -66,11 +66,11 @@ public class SolverImpl implements Solver {
         if (eligible.isPresent()) {
             VariableEligibility eligibility = eligible.get().handleAsVariable(field, context);
             if (log.isDebugEnabled()) {
-                log.debug("[ {} is solvable] future: {}", field.getFieldId(), eligibility.toString());
+                log.debug("[ {} is solvable] future: {}", field.getDistinguishedName(), eligibility.toString());
             }
             return eligibility;
         } else {
-            log.debug("[{} not solvable]", field.getFieldId());
+            log.debug("[{} not solvable]", field.getDistinguishedName());
             return null;
         }
     }

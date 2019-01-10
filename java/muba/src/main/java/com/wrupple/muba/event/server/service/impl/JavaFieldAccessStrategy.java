@@ -117,12 +117,12 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     public Object getPropertyValue(FieldDescriptor field, CatalogEntry object,
                                    DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException {
         // log.trace("[READ PROPERTY] {}.{}", catalog.getDistinguishedName(),
-        // field.getFieldId());
+        // field.getDistinguishedName());
         /*
 		 * if(s==null){ instrospection = new FieldAccessSession(entry instanceof
 		 * HasAccesablePropertyValues); }
 		 */
-        String fieldId = field.getFieldId();
+        String fieldId = field.getDistinguishedName();
         Object value = null;
 
         if (localizedObject != null && field.isLocalized()) {
@@ -180,7 +180,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
 
     @Override
     public void setPropertyValue(FieldDescriptor field, CatalogEntry object, Object value, Instrospection instrospection) throws ReflectiveOperationException {
-        String fieldId = field.getFieldId();
+        String fieldId = field.getDistinguishedName();
 
         if (value != null && field != null && CatalogEntry.LARGE_STRING_DATA_TYPE == field.getDataType()) {
             value = nativeInterface.processRawLongString((String) value);

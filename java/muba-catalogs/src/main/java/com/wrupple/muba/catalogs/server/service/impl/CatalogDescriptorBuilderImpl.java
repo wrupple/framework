@@ -286,7 +286,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 					}
 					/* deduced on demand
 					if (parent != null) {
-						if (parent.getFieldDescriptor(fieldDescriptor.getFieldId())!=null) {
+						if (parent.getFieldDescriptor(fieldDescriptor.getDistinguishedName())!=null) {
 							fieldDescriptor.setInherited(true);
 							fieldDescriptor.setOwnerCatalogId(parent.getDistinguishedName());
 						}

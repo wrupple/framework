@@ -61,9 +61,9 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                         && field.getCatalog().equals(joinCatalog.getDistinguishedName())) {
                     if (field.isKey()) {
                         if (field.isMultiple()) {
-                            reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+                            reservedField = field.getDistinguishedName() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
                             if (access.isWriteableProperty(reservedField, sample, instrospection)) {
-                                log.trace("Working field {}", field.getFieldId());
+                                log.trace("Working field {}", field.getDistinguishedName());
                                 for (CatalogEntry e : mainResults) {
                                     matches = (Collection<CatalogEntry>) access.getPropertyValue(reservedField, e, null, instrospection);
                                     if(matches==null){
@@ -84,9 +84,9 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
 
                             }
                         } else {
-                            reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                            reservedField = field.getDistinguishedName() + CatalogEntry.FOREIGN_KEY;
                             if (access.isWriteableProperty(reservedField, sample, instrospection)) {
-                                log.trace("Working one to many relationship {}", field.getFieldId());
+                                log.trace("Working one to many relationship {}", field.getDistinguishedName());
                                 if (key == null) {
                                     key = mapJoins(new HashMap<Object, CatalogEntry>(joins.size()), joins);
                                 }
@@ -104,7 +104,7 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
 
                     } else if (field.isGenerated()&&!keydelegate.isLocalJoinField(field,mainCatalog)) {
                         if (field.getSentence() == null||field.getSentence().isEmpty()) {
-                            log.trace("Working many to one relationship {}", field.getFieldId());
+                            log.trace("Working many to one relationship {}", field.getDistinguishedName());
                             reservedField =  keydelegate.getFieldWithForeignType(joinCatalog,mainCatalog.getDistinguishedName());
                             FieldDescriptor foreignField = joinCatalog.getFieldDescriptor(reservedField);
                             Object temp;
@@ -123,18 +123,18 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                                                 }
                                                 matches.add(i);
                                             }else{
-                                                access.setPropertyValue(field.getFieldId(), e, i, instrospection);
+                                                access.setPropertyValue(field.getDistinguishedName(), e, i, instrospection);
                                                 break;
                                             }
                                         }
                                     }
-                                    access.setPropertyValue(field.getFieldId(), e, matches, instrospection);
+                                    access.setPropertyValue(field.getDistinguishedName(), e, matches, instrospection);
                                 }
                             }
                         } else {
                             for (CatalogEntry e : mainResults) {
                                 Object criteriaValue = synthesizer.synthethizeFieldValue(field.getSentence().listIterator(), context, e, mainCatalog, field, instrospection,context.getMain().getRuntimeContext().getServiceBus());
-                                access.setPropertyValue(field.getFieldId(), e, criteriaValue, instrospection);
+                                access.setPropertyValue(field.getDistinguishedName(), e, criteriaValue, instrospection);
                             }
                         }
                     }

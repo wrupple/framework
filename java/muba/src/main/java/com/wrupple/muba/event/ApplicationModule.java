@@ -96,7 +96,7 @@ public class ApplicationModule extends AbstractModule {
 
         field = new FieldDescriptorImpl().makeDefault("distinguishedName", "distinguishedName",
                 CatalogEntry.STRING_DATA_TYPE);
-        fields.put(field.getFieldId(), field);
+        fields.put(field.getDistinguishedName(), field);
 
         regreso.setFieldsValues(fields);
         regreso.setDistinguishedName(ServiceManifest.CATALOG);
@@ -123,12 +123,12 @@ public class ApplicationModule extends AbstractModule {
         field = new FieldDescriptorImpl().makeDefault("eventValue", "event Value",
                 CatalogEntry.CATALOG_ENTRY_DATA_TYPE);
         field.setGenerated(true);
-        fields.put(field.getFieldId(), field);
+        fields.put(field.getDistinguishedName(), field);
         field = new FieldDescriptorImpl().makeDefault("observersValues", "observers Value",
                 CatalogEntry.CATALOG_ENTRY_DATA_TYPE);
         field.setMultiple(true);
         field.setGenerated(true);
-        fields.put(field.getFieldId(), field);
+        fields.put(field.getDistinguishedName(), field);
 
         regreso.setFieldsValues(fields);
         regreso.setDistinguishedName(BroadcastEvent.CATALOG);

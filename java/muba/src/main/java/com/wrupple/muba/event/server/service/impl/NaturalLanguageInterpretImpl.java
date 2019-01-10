@@ -115,7 +115,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 CatalogEntry targetEntry = context.getEntryValue();
                 if(targetEntry==null){
                     //resolve posible entries
-                    CatalogReadRequestImpl request = new CatalogReadRequestImpl(null,catalog.getDescriptiveField());
+                    CatalogReadRequestImpl request = new CatalogReadRequestImpl(null,catalog.getDistinguishedName());
                     context.setResult(new CatalogOperand(request,targetField));
                 }else{
                     Object targetFieldValue = access.getPropertyValue(targetField, targetEntry, null, context.getIntro());

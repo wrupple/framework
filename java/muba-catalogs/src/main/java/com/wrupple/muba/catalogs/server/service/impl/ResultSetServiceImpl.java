@@ -64,7 +64,7 @@ public class ResultSetServiceImpl implements ResultSetService {
 
             int j = 0;
             for (FieldDescriptor field : fields) {
-                fieldId = field.getFieldId();
+                fieldId = field.getDistinguishedName();
                 fieldContents = new ArrayList<Object>(foreignResults.size());
                 collectedValues[j] = fieldContents;
                 log.trace("[ALLOCATED SPACE FOR FIELD] {}", fieldId);
@@ -91,7 +91,7 @@ public class ResultSetServiceImpl implements ResultSetService {
                 for (FieldDescriptor field : fields) {
                     fieldContents = collectedValues[j];
                     if (field.isMasked()) {
-                        log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getFieldId());
+                        log.debug("[NULLED VALUE OF MASKED FIELD] {}", field.getDistinguishedName());
                         fieldValue = null;
                     } else {
                         fieldValue = access.getPropertyValue(field, object, localizedObject, instrospection);

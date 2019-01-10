@@ -59,7 +59,7 @@ public class JDBCDataDeleteCommandImpl extends AbstractDataDeleteCommand impleme
 			if (field.isMultiple() && !field.isGenerated()) {
 				foreignTableName = tableNames.getTableNameForCatalogField(context, descriptor, field);
 				if (foreignTableName != null) {
-					log.debug("[DB DELETE] droping records for field {}", field.getFieldId());
+					log.debug("[DB DELETE] droping records for field {}", field.getDistinguishedName());
 					builder.setLength(0);
 					builder.append("DELETE FROM ");
 					builder.append(DELIMITER);

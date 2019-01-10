@@ -46,7 +46,7 @@ public class ValueChangeListenerImpl extends AbstractComparationCommand implemen
 		    FilterData filterData = FilterDataUtils.createSingleFieldFilter(HasCatalogId.CATALOG_FIELD,
 						(String)context.getRequest().getCatalog());
 		    filterData.setConstrained(false);
-		    filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getFieldId()));
+		    filterData.addFilter(new FilterCriteriaImpl(HasFieldId.FIELD, field.getDistinguishedName()));
 
             CatalogActionRequestImpl spawned = new CatalogQueryRequestImpl(filterData,ValueChangeTrigger.CATALOG);
             spawned.setParentValue(context.getRequest());

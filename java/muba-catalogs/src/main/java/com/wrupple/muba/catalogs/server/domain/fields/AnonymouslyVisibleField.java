@@ -15,7 +15,7 @@ public class AnonymouslyVisibleField extends FieldDescriptorImpl {
 		setGenerated(false);
 		setFilterable(true);
 		setKey(false);
-		setFieldId(CatalogEntry.PUBLIC);
+		setDistinguishedName(CatalogEntry.PUBLIC);
 		setMultiple(false);
 		setName("Public");
 		setSortable(false);

@@ -25,7 +25,6 @@ import com.wrupple.muba.event.server.service.*;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.FieldDescriptorImpl;
 
-import javax.transaction.Transaction;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -245,14 +244,14 @@ public class CatalogModule extends AbstractModule {
 		FieldDescriptorImpl field;
 		field = new FieldDescriptorImpl().makeDefault("catalogId", "Catalog",
 				CatalogEntry.STRING_DATA_TYPE);
-		fields.put(field.getFieldId(), field);
+		fields.put(field.getDistinguishedName(), field);
 		field = new FieldDescriptorImpl().makeDefault("catalogEntryId", "Entry",
 				CatalogEntry.INTEGER_DATA_TYPE);
-		fields.put(field.getFieldId(), field);
+		fields.put(field.getDistinguishedName(), field);
 		field = new FieldDescriptorImpl().makeKey(HasStakeHolder.STAKE_HOLDER_FIELD, "By", Person.CATALOG, false);
-		fields.put(field.getFieldId(), field);
+		fields.put(field.getDistinguishedName(), field);
 		field = new FieldDescriptorImpl().makeDefault("value", "Value",  CatalogEntry.LARGE_STRING_DATA_TYPE);
-		fields.put(field.getFieldId(), field);
+		fields.put(field.getDistinguishedName(), field);
 		regreso.setFieldsValues(fields);
 		regreso.setDistinguishedName(ContentRevision.CATALOG);
 		regreso.setId(-178532l);

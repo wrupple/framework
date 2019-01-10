@@ -92,7 +92,7 @@ public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
         if (field.isMultiple()) {
             List<Long> value;
             if (accesable) {
-                value = (List<Long>) ((HasAccesablePropertyValues) entry).getPropertyValue(field.getFieldId());
+                value = (List<Long>) ((HasAccesablePropertyValues) entry).getPropertyValue(field.getDistinguishedName());
             } else {
                 value = (List<Long>) accessor.getPropertyValue(field,entry,null,session);
             }
@@ -102,7 +102,7 @@ public class ImplicitSuscriptionMapper implements EventSuscriptionMapper {
         } else {
             Long value;
             if (accesable) {
-                value = (Long) ((HasAccesablePropertyValues) entry).getPropertyValue(field.getFieldId());
+                value = (Long) ((HasAccesablePropertyValues) entry).getPropertyValue(field.getDistinguishedName());
             } else {
                 value = (Long) accessor.getPropertyValue( field, entry, null, session);
             }

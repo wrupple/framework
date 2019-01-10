@@ -60,7 +60,7 @@ public abstract class Schema extends CatalogEntryImpl implements ContractDescrip
 		} else {
 			this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>(fieldsValues.size());
 			for (FieldDescriptor f : fieldsValues) {
-				this.fieldsValues.put(f.getFieldId(), f);
+				this.fieldsValues.put(f.getDistinguishedName(), f);
 			}
 
 		}

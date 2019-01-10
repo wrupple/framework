@@ -38,7 +38,7 @@ public class ValueChangeAuditImpl extends AbstractComparationCommand implements 
 			//FIXME value of the changed entry
 			fieldValueChange.setDomain((Long) context.getNamespaceContext().getId());
 			fieldValueChange.setCatalog(catalog.getDistinguishedName());
-			fieldValueChange.setName(field.getFieldId());
+			fieldValueChange.setName(field.getDistinguishedName());
 			fieldValueChange.setOldValue(codedInitialValue);
 			fieldValueChange.setValue(codedFinalValue);
 			List<String> sentence = context.getRuntimeContext().getServiceBus().getIntentInterpret().resolveContractSentence(fieldValueChange);

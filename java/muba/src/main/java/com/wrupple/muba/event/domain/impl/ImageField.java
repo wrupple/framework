@@ -19,7 +19,7 @@ public class ImageField extends FieldDescriptorImpl {
 		setFilterable(true);
 		setKey(true);
 		setCatalog(PersistentImageMetadata.CATALOG);
-		setFieldId(IMAGE_FIELD);
+		setDistinguishedName(IMAGE_FIELD);
 		setMultiple(false);
 		setName(IMAGE_FIELD);
 		setSortable(false);

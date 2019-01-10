@@ -82,7 +82,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 						if (linkingField.isKey() && linkingField.isHardKey() && !linkingField.isMultiple()
 								&& parentCatalogId.equals(linkingField.getCatalog())) {
 
-							log.trace("field {}@{} is hard not-multiple key referncing {}  ", linkingField.getFieldId(),
+							log.trace("field {}@{} is hard not-multiple key referncing {}  ", linkingField.getDistinguishedName(),
 									temp.getDistinguishedName(), parentCatalogId);
 
 							if (garbageFilter == null) {
@@ -91,7 +91,7 @@ public class GarbageCollectionImpl implements GarbageCollection {
 							}
 
 							// APPEND-CREATE
-							garbageCriteria = new FilterCriteriaImpl(linkingField.getFieldId(), FilterData.EQUALS, ids);
+							garbageCriteria = new FilterCriteriaImpl(linkingField.getDistinguishedName(), FilterData.EQUALS, ids);
 							garbageFilter.addFilter(garbageCriteria);
 
 							// we found a catalog, with a field that is hard

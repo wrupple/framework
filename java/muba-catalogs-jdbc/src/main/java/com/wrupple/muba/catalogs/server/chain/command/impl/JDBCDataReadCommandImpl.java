@@ -50,7 +50,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		protected Object handleRow(ResultSet rs) throws SQLException {
 			int dataType = field.getDataType();
 			Object r = tableNames.handleColumnField(rs, field,dataType, 3, dateFormat);
-			log.trace("[DB multiple field value read] {}={}", field.getFieldId(), r);
+			log.trace("[DB multiple field value read] {}={}", field.getDistinguishedName(), r);
 			return r;
 		}
 

@@ -56,7 +56,7 @@ public class ExplicitOutputPlaceImpl implements ExplicitOutputPlace {
                         if (field.isKey() && !field.isMultiple() && field.getCatalog() != null
                                 && Workflow.WORKFLOW_CATALOG.equals(field.getCatalog())) {
 
-                            applicationItemId = GWTUtils.getAttribute(output, field.getFieldId());
+                            applicationItemId = GWTUtils.getAttribute(output, field.getDistinguishedName());
                             get valuefrom joined data field
                             break;
                         }

@@ -144,12 +144,12 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
                         if(local==null){
                             throw new IllegalArgumentException("Invalid filter criteira "+criteria+" (unmageable path: "+criteria.getPath(0)+")");
                         }else{
-                            throw new IllegalArgumentException("Invalid filter criteira (unfilterable field: "+local.getFieldId()+"@"+descriptor.getDistinguishedName()+")");
+                            throw new IllegalArgumentException("Invalid filter criteira (unfilterable field: "+local.getDistinguishedName()+"@"+descriptor.getDistinguishedName()+")");
                         }
 					}
 					if (criteria.getPathTokenCount() > 1 && local.getCatalog() == null) {
 						throw new IllegalArgumentException(
-								"Invalid filter criteira (not a foreign key : " + local.getFieldId() + ")");
+								"Invalid filter criteira (not a foreign key : " + local.getDistinguishedName() + ")");
 					}
 
 				}
@@ -177,11 +177,11 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 						try {
 							if (delegate.processAnnotationInContext(annotations, descriptor.getClass(),
 									accessStrategy)) {
-								log.trace("invalid field {}",field.getFieldId());
+								log.trace("invalid field {}",field.getDistinguishedName());
 								report = false;
 							}
 						} catch (ReflectiveOperationException e) {
-							new RuntimeException("While Validating field:" + field.getFieldId(), e);
+							new RuntimeException("While Validating field:" + field.getDistinguishedName(), e);
 						}
 					}
 
@@ -304,7 +304,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 			case CatalogEntry.BLOB_DATA_TYPE:
 			default:
 				throw new IllegalArgumentException(
-						field.getFieldId() + " attempted to validate unsupported field type " + dataType);
+						field.getDistinguishedName() + " attempted to validate unsupported field type " + dataType);
 			}
 		}
 
@@ -312,7 +312,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 			@Override
 			public Object get(Object arg0) {
-				return entryValue.getPropertyValue(field.getFieldId());
+				return entryValue.getPropertyValue(field.getDistinguishedName());
 			}
 
 			@Override
@@ -327,7 +327,7 @@ public class CatalogActionRequestValidatorImpl implements CatalogActionRequestVa
 
 			@Override
 			public String getDistinguishedName() {
-				return field.getFieldId();
+				return field.getDistinguishedName();
 			}
 
 			@Override

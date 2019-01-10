@@ -4,25 +4,15 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
-import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.reserved.HasResult;
-import com.wrupple.muba.event.server.domain.impl.EvaluationContext;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
-import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.ListIterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Singleton
 public class EntrySynthesizerImpl implements EntrySynthesizer {
@@ -140,7 +130,7 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
             if (excludeInherited && keyDelgeate.isInheritedField(field,catalog)) {
                 // ignore
             } else {
-                fieldId = field.getFieldId();
+                fieldId = field.getDistinguishedName();
                 // ignore id fields
                 if (!(CatalogEntry.ID_FIELD.equals(fieldId))) {
                         try{
@@ -163,12 +153,12 @@ public class EntrySynthesizerImpl implements EntrySynthesizer {
     @Override
     public Object getPropertyForeignKeyValue(CatalogDescriptor catalogDescriptor, FieldDescriptor field, CatalogEntry e,
                                              Instrospection instrospection) throws ReflectiveOperationException {
-        String foreignKeyValuePropertyName = field.getFieldId()
+        String foreignKeyValuePropertyName = field.getDistinguishedName()
                 + (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY);
         //check if property exists
         if(access.isReadableProperty(foreignKeyValuePropertyName,e, instrospection)){
            /*return valuedoReadProperty(
-				field.getFieldId()
+				field.getDistinguishedName()
 						+ (field.isMultiple() ? CatalogEntry.MULTIPLE_FOREIGN_KEY : CatalogEntry.FOREIGN_KEY),
 				(FieldAccessSession) instrospection, e, true);*/
             return access.getPropertyValue(foreignKeyValuePropertyName, e, null, instrospection);

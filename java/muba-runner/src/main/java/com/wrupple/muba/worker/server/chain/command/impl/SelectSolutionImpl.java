@@ -7,12 +7,10 @@ import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.SelectSolution;
-import com.wrupple.muba.worker.server.service.SolverCatalogPlugin;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +57,7 @@ public class SelectSolutionImpl implements SelectSolution {
                     if (v.getRunner().equals(runnerId)) {
                         requiredVariables.add(v);
                     } else {
-                        log.info("drop variable {} from unwanted runner {}", v.getField().getFieldId(), v.getRunner());
+                        log.info("drop variable {} from unwanted runner {}", v.getField().getDistinguishedName(), v.getRunner());
                     }
                 }
                 if (requiredVariables.size() == 0) {

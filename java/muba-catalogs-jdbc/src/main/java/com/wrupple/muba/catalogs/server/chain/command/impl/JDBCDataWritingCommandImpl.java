@@ -79,7 +79,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 				if (field.isMultiple()) {
 					// also update (delete and create) and create multiple
 					// fields
-					log.debug("[DB UPDATE] deleting {} entries ", field.getFieldId());
+					log.debug("[DB UPDATE] deleting {} entries ", field.getDistinguishedName());
 					foreignTableName = tableNames.getTableNameForCatalogField(context, descriptor, field);
 					delete=new StringBuilder(300);
 					delete.append("DELETE FROM ");

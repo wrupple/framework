@@ -41,8 +41,8 @@ public abstract class AbstractComparationCommand implements Command {
 		for (FieldDescriptor field : fields) {
 			if (!field.isMultiple() && field.isWriteable()) {
 				if (accesible) {
-					initialValue = ((HasAccesablePropertyValues) old).getPropertyValue(field.getFieldId());
-					finalValue = ((HasAccesablePropertyValues) neew).getPropertyValue(field.getFieldId());
+					initialValue = ((HasAccesablePropertyValues) old).getPropertyValue(field.getDistinguishedName());
+					finalValue = ((HasAccesablePropertyValues) neew).getPropertyValue(field.getDistinguishedName());
 				} else {
 					initialValue = accesor.getPropertyValue(field, old, null, instrospection);
 					finalValue = accesor.getPropertyValue(field, neew, null, instrospection);

@@ -230,12 +230,12 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
         Instrospection lowInstrospection = access.newSession((CatalogEntry) context.getRequest().getEntryValue());
 
 		for (FieldDescriptor field : fields) {
-			fieldId = field.getFieldId();
+			fieldId = field.getDistinguishedName();
 			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isGenerated()) {
 				token = properties.get(fieldId);
 				if (token != null) {
 					fieldValue = synthetizationDelegate.synthethizeFieldValue(Arrays.asList(token.split(" ")).listIterator(), context,synthesizedEntry,targetCatalog,field,lowInstrospection,context.getRuntimeContext().getServiceBus());
-                    access.setPropertyValue(field.getFieldId(), synthesizedEntry, fieldValue, instrospection);
+                    access.setPropertyValue(field.getDistinguishedName(), synthesizedEntry, fieldValue, instrospection);
                 }
 			}
 

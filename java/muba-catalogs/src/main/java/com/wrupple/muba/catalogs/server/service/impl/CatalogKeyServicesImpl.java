@@ -112,11 +112,11 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
     public boolean isInheritedField(FieldDescriptor field, CatalogDescriptor owner) {
         if(owner.getParent()==null){
             return false;
-        }else if(owner.getKeyField().equals(field.getFieldId())){
+        }else if(owner.getKeyField().equals(field.getDistinguishedName())){
             return false;
         }else{
             CatalogDescriptor parent = owner.getParentValue();
-            return parent.getFieldDescriptor(field.getFieldId())!=null;
+            return parent.getFieldDescriptor(field.getDistinguishedName())!=null;
         }
     }
 
@@ -210,7 +210,7 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
             }
 
             if (currentJoinableField.isKey()) {
-                localField = currentJoinableField.getFieldId();
+                localField = currentJoinableField.getDistinguishedName();
                 foreignField = getCatalogKeyFieldId(foreign);
             } else if (currentJoinableField.isGenerated()) {
                 localField = descriptor.getKeyField();
@@ -239,14 +239,14 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
 
     @Override
     public boolean isLocalJoinField(FieldDescriptor currentJoinableField, CatalogDescriptor descriptor) {
-        String name = currentJoinableField.getFieldId();
+        String name = currentJoinableField.getDistinguishedName();
         if(currentJoinableField.isMultiple()){
             if (name.endsWith(CatalogEntry.MULTIPLE_FOREIGN_KEY)) {
                 String field = name.substring(0,name.length()-CatalogEntry.MULTIPLE_FOREIGN_KEY.length());
                 return existsForeignKey(field,currentJoinableField.getCatalog(),descriptor);
             }
         }else{
-            if (currentJoinableField.getFieldId().endsWith(CatalogEntry.FOREIGN_KEY)) {
+            if (currentJoinableField.getDistinguishedName().endsWith(CatalogEntry.FOREIGN_KEY)) {
                 String field = name.substring(0,name.length()-CatalogEntry.FOREIGN_KEY.length());
                 return existsForeignKey(field,currentJoinableField.getCatalog(),descriptor);
             }
@@ -282,7 +282,7 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
         for (FieldDescriptor field : fields) {
             fieldsForeignCatalog = field.getCatalog();
             if (foreignType.equals(fieldsForeignCatalog)) {
-                return field.getFieldId();
+                return field.getDistinguishedName();
             }
         }
         throw new IllegalArgumentException(
@@ -294,7 +294,7 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
     public boolean isFieldOwnedBy(FieldDescriptor fieldDescriptor, CatalogDescriptor catalogDescriptor) {
         //a field is owned by a catalog if it is present in the catalog and not the parent, or is consolidated
 
-        return  catalogDescriptor.getFieldDescriptor(fieldDescriptor.getFieldId())!=null && (catalogDescriptor.getConsolidated() || (catalogDescriptor.getParent()==null||catalogDescriptor.getParentValue().getFieldDescriptor(fieldDescriptor.getFieldId())==null));
+        return  catalogDescriptor.getFieldDescriptor(fieldDescriptor.getDistinguishedName())!=null && (catalogDescriptor.getConsolidated() || (catalogDescriptor.getParent()==null||catalogDescriptor.getParentValue().getFieldDescriptor(fieldDescriptor.getDistinguishedName())==null));
 
     }
 

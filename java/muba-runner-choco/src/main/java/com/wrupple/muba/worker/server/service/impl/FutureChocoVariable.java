@@ -50,7 +50,7 @@ public class FutureChocoVariable implements VariableEligibility {
 
 
     private Variable makeIntegerVariable(FieldDescriptor field, Model model ) {
-        String fieldId = field.getFieldId();
+        String fieldId = field.getDistinguishedName();
         log.debug("Assigning solution domain for {}",fieldId);
 
 

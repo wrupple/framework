@@ -70,9 +70,6 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
     @Override
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
-        if(log.isDebugEnabled()){
-            log.debug("modeling operation {}",result);
-        }
         if(result.getName().equals("-")){
             Model model = delegate.resolveSolverModel(context);
 
@@ -99,7 +96,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
                 }
 
-                IntVar foreignKeyAssignation = model.intVar(operation.getTargetField().getFieldId()+"_fka", 1, difference_vector_length, false);
+                IntVar foreignKeyAssignation = model.intVar(operation.getTargetField().getDistinguishedName()+"_fka", 1, difference_vector_length, false);
 
                 List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariablesValues();
 
@@ -110,7 +107,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
                 if(bookingDistance.isPresent()){
                     model.element((IntVar) ((ChocoVariableDescriptorImpl)bookingDistance.get()).getVariable(), difference, foreignKeyAssignation, 1).post();
                 }else{
-                    throw new IllegalStateException("No variable modeled for field "+operation.getTargetField().getFieldId());
+                    throw new IllegalStateException("No variable modeled for field "+operation.getTargetField().getDistinguishedName());
                 }
 
 
@@ -157,7 +154,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
                 try {
                     return access.getPropertyValue(catalogRequest.getTargetField(), entry, null, intros);
                 } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("Unable to read " + catalogRequest.getTargetField().getFieldId() + " from foreign entry", e);
+                    throw new RuntimeException("Unable to read " + catalogRequest.getTargetField().getDistinguishedName() + " from foreign entry", e);
                 }
             }).map(value -> (Long) value).collect(Collectors.toList());
 
@@ -168,7 +165,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
                 vector[i] = values.get(i).intValue();
             }
 
-            IntVar[] driverLocations = model.intVarArray(catalogRequest.getRequest().getCatalog() + "_" + catalogRequest.getTargetField().getFieldId(), vector.length, vector);
+            IntVar[] driverLocations = model.intVarArray(catalogRequest.getRequest().getCatalog() + "_" + catalogRequest.getTargetField().getDistinguishedName(), vector.length, vector);
             if(operation.getOperand_1()==null){
                 operation.setOperand_1(driverLocations);
             }else{

@@ -18,7 +18,7 @@ public class PrimaryKeyField extends FieldDescriptorImpl {
 		setGenerated(false);
 		setFilterable(true);
 		setKey(true);
-		setFieldId(CatalogEntry.ID_FIELD);
+		setDistinguishedName(CatalogEntry.ID_FIELD);
 		setMultiple(false);
 		setName("Primary Key");
 		setSortable(false);

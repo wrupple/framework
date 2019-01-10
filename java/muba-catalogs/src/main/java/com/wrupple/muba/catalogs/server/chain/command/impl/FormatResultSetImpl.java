@@ -18,7 +18,6 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.domain.CatalogColumnResultSet;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.chain.command.FormatResultSet;
 import com.wrupple.muba.catalogs.server.chain.command.ImplicitDataJoin;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionResultImpl;
@@ -126,7 +125,7 @@ public class FormatResultSetImpl implements FormatResultSet {
 			fields = descriptor.getFieldsValues();
 			for (FieldDescriptor field : fields) {
 				if (pkes.qualifiesForEncoding(field, descriptor)) {
-					fieldId = field.getFieldId();
+					fieldId = field.getDistinguishedName();
 					column = resultSet.getContents().get(fieldId);
 					if (column != null) {
 						for (int i = 0; i < column.size(); i++) {

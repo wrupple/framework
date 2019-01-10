@@ -95,11 +95,11 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 				getTableNameForCatalog(catalogDescriptor, context, builder);
 				builder.append('.');
 				builder.append('_');
-				builder.append(field.getFieldId());
+				builder.append(field.getDistinguishedName());
 				return builder.toString();
 			}else{
-				//return "_"+field.getFieldId();
-				return field.getFieldId();
+				//return "_"+field.getDistinguishedName();
+				return field.getDistinguishedName();
 			}
 			
 		}
@@ -148,7 +148,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		boolean first = true;
 		String mainTable,fieldCOlumn;
 		for (FieldDescriptor field : fields) {
-			if (!field.isGenerated() && (catalog.getConsolidated()||!keyDelegate.isInheritedField(field,catalog)||catalog.getKeyField().equals(field.getFieldId()))) {
+			if (!field.isGenerated() && (catalog.getConsolidated()||!keyDelegate.isInheritedField(field,catalog)||catalog.getKeyField().equals(field.getDistinguishedName()))) {
 
 				dbcDataType = getDataType(field);
 				if (dbcDataType != null) {
@@ -223,7 +223,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 						columnNames.add(fieldCOlumn);
 						mainstmt.append(' ');
 						if (field.isKey()) {
-							if (primaryKey.equals(field.getFieldId())) {
+							if (primaryKey.equals(field.getDistinguishedName())) {
 								mainstmt.append(PRIMARY_KEY_COLUMN_DEFINITION);
 							} else {
 								mainstmt.append(dbcDataType);
@@ -285,7 +285,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		StringBuilder builder = new StringBuilder(70);
 		getTableNameForCatalog(catalogDescriptor, context, builder);
 		builder.append('_');
-		builder.append(field.getFieldId());
+		builder.append(field.getDistinguishedName());
 		return builder.toString();
 	}
 
@@ -420,7 +420,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 			r = LARGE_STRING;
 			break;
 		default:
-			throw new UnsupportedOperationException("this JDBC implementation of catalogs does not support storage of field "+field.getFieldId());
+			throw new UnsupportedOperationException("this JDBC implementation of catalogs does not support storage of field "+field.getDistinguishedName());
 		}
 		return r;
 	}

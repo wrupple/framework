@@ -139,7 +139,7 @@ public class HelloWorldTest extends IntegralTest {
 
         @Override
         public boolean canHandle(FieldDescriptor field, ApplicationContext context) {
-            boolean isWitnessField = field.getFieldId().equals(WITNESS_FIELD);
+            boolean isWitnessField = field.getDistinguishedName().equals(WITNESS_FIELD);
             return isWitnessField;
         }
 
@@ -182,7 +182,7 @@ public class HelloWorldTest extends IntegralTest {
                     (HelloWorldTest.NameVariable)
                             state.getSolutionVariablesValues().stream().
                                     filter(
-                                            v -> v.getField().getFieldId().equals(WITNESS_FIELD)
+                                            v -> v.getField().getDistinguishedName().equals(WITNESS_FIELD)
                                     ).findAny().get()).
                     //this is what makes it purr
                             setName(sentence.next());

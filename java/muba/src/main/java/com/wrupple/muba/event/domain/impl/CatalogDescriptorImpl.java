@@ -99,7 +99,7 @@ public class CatalogDescriptorImpl extends Schema implements CatalogDescriptor {
 		if (descriptors != null) {
 			for (FieldDescriptor field : descriptors) {
 				if (field != null) {
-					fieldsValues.put(field.getFieldId(), field);
+					fieldsValues.put(field.getDistinguishedName(), field);
 				}
 			}
 		}
@@ -243,7 +243,7 @@ public class CatalogDescriptorImpl extends Schema implements CatalogDescriptor {
 		if (this.fieldsValues == null) {
 			this.fieldsValues = new LinkedHashMap<String, FieldDescriptor>();
 		}
-		this.fieldsValues.put(field.getFieldId(), field);
+		this.fieldsValues.put(field.getDistinguishedName(), field);
 	}
 
 	@Override

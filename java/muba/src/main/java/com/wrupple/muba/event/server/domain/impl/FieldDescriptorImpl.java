@@ -27,7 +27,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 			summary = true, localized = false, key = false,hardKey=false;
 
 	private String catalog;
-	private String fieldId,description,help, defaultValue, command;
+	private String distinguishedName,description,help, defaultValue, command;
 	
 
 	private List<String> defaultValueOptions, properties, sentence;
@@ -50,7 +50,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setDetailable(true);
 		setGenerated(false);
 		setFilterable(true);
-		setFieldId(id);
+		setDistinguishedName(id);
 		setMultiple(false);
 		setName(name);
 		setSortable(false);
@@ -69,7 +69,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setFilterable(true);
 		setKey(true);
 		setCatalog(foreign_catalog);
-		setFieldId(id);
+		setDistinguishedName(id);
 		setMultiple(multiple);
 		setName(name);
 		setSortable(false);
@@ -88,7 +88,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setFilterable(false);
 		setKey(false);
 		setCatalog(foreign_catalog);
-		setFieldId(id);
+		setDistinguishedName(id);
 		setMultiple(multiple);
 		setName(name);
 		setSortable(false);
@@ -135,8 +135,8 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 	 *         property name)
 	 */
 	@Override
-	public String getFieldId() {
-		return fieldId;
+	public String getDistinguishedName() {
+		return distinguishedName;
 	}
 
 
@@ -206,8 +206,8 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		return summary;
 	}
 
-	public void setFieldId(String id) {
-		this.fieldId = id;
+	public void setDistinguishedName(String id) {
+		this.distinguishedName = id;
 	}
 	
 
@@ -334,7 +334,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 
 	@Override
 	public String toString() {
-		return "FieldDescriptor[" + fieldId + "]";
+		return "FieldDescriptor[" + distinguishedName + "]";
 	}
 
 	public String getDescription() {

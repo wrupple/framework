@@ -191,7 +191,7 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
 			    if(field.isGenerated()){
                     access.setPropertyValue(field, owner, createdValues, instrospection);
                 }else{
-                    reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+                    reservedField = field.getDistinguishedName() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
                     if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                         access.setPropertyValue(reservedField, owner, createdValues, instrospection);
                     }
@@ -212,7 +212,7 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
                     queueCreationCallback(context,entry,new SingleBackReferencePropagation(field,owner,catalog,instrospection));
                 }else{
                     entry =  context.triggerCreate(field.getCatalog(), entry);
-                    reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                    reservedField = field.getDistinguishedName() + CatalogEntry.FOREIGN_KEY;
                     if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                         access.setPropertyValue(reservedField, owner, entry, instrospection);
                     }
@@ -261,7 +261,7 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
             }
             context.triggerWrite(catalog.getDistinguishedName(),owner.getId(),owner);
 
-            String reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+            String reservedField = field.getDistinguishedName() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
             if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                 access.setPropertyValue(reservedField, owner, createdValues, instrospection);
             }
@@ -299,7 +299,7 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
                     context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
                 }
 
-                String reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                String reservedField = field.getDistinguishedName() + CatalogEntry.FOREIGN_KEY;
                 if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                     access.setPropertyValue(reservedField, owner, entry, instrospection);
                 }
