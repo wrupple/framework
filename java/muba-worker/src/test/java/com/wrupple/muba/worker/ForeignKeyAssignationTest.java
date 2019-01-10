@@ -134,7 +134,7 @@ public class ForeignKeyAssignationTest extends WorkerTest {
         resolve.setDistinguishedName("findDriver");
         resolve.setName(DataContract.WRITE_ACTION);
         resolve.setCatalog(RiderBooking.class.getSimpleName());
-        resolve.setSentence(Arrays.asList(EVALUATING_VARIABLE,"setObjective","(","false","ctx:driverDistance",")"));
+        resolve.setSentence(Arrays.asList(EVALUATING_VARIABLE,"setObjective","(","boolean:false","ctx:bookingDistance",")"));
 
         TaskImpl cargar  = new TaskImpl();
         cargar.setDistinguishedName("loadBooking");
