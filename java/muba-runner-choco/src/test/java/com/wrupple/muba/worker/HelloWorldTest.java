@@ -28,13 +28,11 @@ import static org.junit.Assert.assertTrue;
 
 /*
  * GreatestAnomalyRangePicker
- * AdjustErrorByDriverDistance
  */
 public class HelloWorldTest extends IntegralTest {
     private static final String GREETING_SUBJECT = "world!";
     /*
      * GreatestAnomalyRangePicker
-     * AdjustErrorByDriverDistance
      */
     private static final String CONSTRAINT = "constraint";
 
