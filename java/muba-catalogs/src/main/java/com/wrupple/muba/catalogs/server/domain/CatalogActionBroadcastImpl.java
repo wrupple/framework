@@ -37,7 +37,7 @@ public class CatalogActionBroadcastImpl extends CatalogEntryImpl implements Cata
 	}
 	@Override
 	public String toString() {
-		return "CacheInvalidationEvent [catalogId=" + catalog + ", action=" + getName() + ", entry=" + entry + "]";
+		return "ActionBroadcast [catalogId=" + catalog + ", action=" + getName() + ", entry=" + entry + "]";
 	}
 
 	public static long getSerialVersionUID() {

@@ -1,5 +1,6 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
+import com.wrupple.muba.catalogs.domain.CatalogActionBroadcast;
 import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogEventHandler;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
@@ -24,7 +25,8 @@ public class CatalogEventHandlerImpl extends CatalogActionTriggerHandlerImpl imp
 
             return r;
         } catch (Exception e) {
-            log.error("Unable to interpret catalog event");
+
+            log.error("Unable to fullfil {}",context.getRuntimeContext().getServiceContract());
             throw new RuntimeException(e);
         }
 
