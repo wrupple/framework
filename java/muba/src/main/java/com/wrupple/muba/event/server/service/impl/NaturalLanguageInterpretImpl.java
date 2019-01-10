@@ -57,6 +57,9 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 }else if(accessor.equals("int")){
                     r= Integer.parseInt(rawValue);
                     log.trace("      Explicit conversion output: {}",r);
+                }else if(accessor.equals("boolean")){
+                    r= Boolean.parseBoolean(rawValue);
+                    log.trace("      Explicit conversion output: {}",r);
                 }else if(accessor.contains(".")){
                     parameterType = Class.forName(accessor);
                     r= ConvertUtils.convert(rawValue,parameterType);
