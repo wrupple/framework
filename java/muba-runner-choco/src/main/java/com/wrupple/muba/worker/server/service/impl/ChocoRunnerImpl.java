@@ -70,7 +70,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
     @Override
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
-        if(result.getName().equals("-")){
+        if("-".equals(result.getName())){
             Model model = delegate.resolveSolverModel(context);
 
             BinaryOperation operation = (BinaryOperation) result;
@@ -113,6 +113,46 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
             }
 
+        }else if(CatalogOperand.CATALOG.equals(result.getName())){
+            CatalogOperand operation = (CatalogOperand)result;
+
+            FieldDescriptor field = operation.getTargetField();
+            List<CatalogEntry> results=operation.getRequest().getResults();
+
+            int NUM_DRIVERS = results==null?0:results.size();
+            log.debug("resolving catalog bound variable domain with {} posible outcomes",NUM_DRIVERS);
+            int[] LOCATIONS = new int[NUM_DRIVERS];
+            CatalogEntry current;
+            Number fieldValue;
+            for(int i =0; i < NUM_DRIVERS; i++) {
+                current = results.get(i);
+                try {
+                    fieldValue= (Number) access.getPropertyValue(field,current,null,intros);
+                    LOCATIONS[i]=fieldValue.intValue();
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException("While resolving "+field.getDistinguishedName(),e);
+                }
+            }
+
+            Model model = delegate.resolveSolverModel(context);
+/*
+            IntVar[] driverLocations = model.intVarArray("driverLocations",NUM_DRIVERS,LOCATIONS);
+            IntVar bookingLocation = model.intVar(7);
+            IntVar foreignKeyAssignation = model.intVar("foreignKeyAssignation", 1, NUM_DRIVERS, false);
+            IntVar bookingDistance = model.intVar("bookingDistance", 0, 100, true);
+
+
+            // CONSTRAINTS
+            IntVar[] distances = new IntVar[NUM_DRIVERS];
+
+            for (int j = 0; j < NUM_DRIVERS; j++) {
+
+                distances[j]=bookingLocation.sub(driverLocations[j]).abs().intVar();
+
+            }
+
+            model.element(bookingDistance, distances, foreignKeyAssignation, 1).post();
+        */
         }else{
             log.info("no operations matched {}",result.getName());
         }

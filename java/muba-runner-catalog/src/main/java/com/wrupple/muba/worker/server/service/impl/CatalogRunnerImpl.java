@@ -1,5 +1,6 @@
 package com.wrupple.muba.worker.server.service.impl;
 
+import com.wrupple.muba.event.domain.impl.CatalogOperand;
 import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
@@ -10,6 +11,8 @@ import com.wrupple.muba.worker.server.service.CatalogRunner;
 import com.wrupple.muba.worker.server.service.StateTransition;
 import com.wrupple.muba.worker.server.service.VariableEligibility;
 import org.apache.commons.chain.Command;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,6 +23,8 @@ import static com.wrupple.muba.worker.server.chain.command.SynthesizeSolutionEnt
 
 @Singleton
 public class CatalogRunnerImpl implements CatalogRunner {
+    protected Logger log = LogManager.getLogger(CatalogRunnerImpl.class);
+
     private final Long runnerId;
     private final FieldAccessStrategy accessStrategy;
     private final CatalogKeyServices keyServices;
@@ -34,12 +39,12 @@ public class CatalogRunnerImpl implements CatalogRunner {
     @Override
     public boolean canHandle(FieldDescriptor field, ApplicationContext context) {
         Task task = context.getStateValue().getTaskDescriptorValue();
-        //FIXME we dont need to resynthesize every single field...
+
         List<String> userSelection = context.getStateValue().getUserSelection();
         if(userSelection!=null) {
             if(DataContract.READ_ACTION.equals(task.getName())){
                 context.getStateValue().setUserSelection(null);
-                if(userSelection.isEmpty()){
+                if(!userSelection.isEmpty()){
                     if(userSelection.size()==1){
                         return true;
                     }
@@ -137,6 +142,13 @@ public class CatalogRunnerImpl implements CatalogRunner {
 
     @Override
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
-        //TODO
+        CatalogOperand operation = (CatalogOperand)result;
+        CatalogActionRequest request = operation.getRequest();
+        try {
+            context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
+        } catch (Exception e) {
+            throw new RuntimeException("While resolving "+operation.getTargetField().getDistinguishedName(),e);
+        }
+
     }
 }

@@ -2,12 +2,12 @@ package com.wrupple.muba.event.domain.impl;
 
 import com.wrupple.muba.event.domain.FieldDescriptor;
 
-public class CatalogOperand extends CatalogEntryImpl implements com.wrupple.muba.event.domain.Operation    {
-    private static final String CATALOG = "CatalogOperand";
+public class CatalogOperand extends OperationImpl  {
+    public static final String CATALOG = "CatalogOperand";
 
-    private CatalogReadRequestImpl request; private  FieldDescriptor targetField;
+    private CatalogActionRequestImpl request; private  FieldDescriptor targetField;
 
-    public CatalogOperand(CatalogReadRequestImpl request, FieldDescriptor targetField) {
+    public CatalogOperand(CatalogActionRequestImpl request, FieldDescriptor targetField) {
         this();
         this.request=request;
         this.targetField=targetField;
@@ -22,11 +22,11 @@ public class CatalogOperand extends CatalogEntryImpl implements com.wrupple.muba
         return CATALOG;
     }
 
-    public CatalogReadRequestImpl getRequest() {
+    public CatalogActionRequestImpl getRequest() {
         return request;
     }
 
-    public void setRequest(CatalogReadRequestImpl request) {
+    public void setRequest(CatalogActionRequestImpl request) {
         this.request = request;
     }
 

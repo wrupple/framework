@@ -3,7 +3,7 @@ package com.wrupple.muba.event.domain.impl;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.event.domain.Operation;
 
-public class BinaryOperation extends CatalogEntryImpl implements Operation {
+public class BinaryOperation extends OperationImpl {
     private static final String CATALOG = "BinaryOperation";
     private FieldDescriptor targetField;
     private Object operand_1;
