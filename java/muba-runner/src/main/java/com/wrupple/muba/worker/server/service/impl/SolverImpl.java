@@ -26,7 +26,7 @@ public class SolverImpl implements Solver {
 
     private final List<Runner> runners;
     private final VariableConsensus reducer;
-    protected Logger log = LogManager.getLogger(SolverImpl.class);
+    protected Logger log = LogManager.getLogger(Solver.class);
 
     @Inject
     public SolverImpl(VariableConsensus reducer) {
@@ -47,14 +47,16 @@ public class SolverImpl implements Solver {
         if(result==null){
             log.info("no operations to model");
         }else{
-            runners.stream().forEach(plugin->
-                    {
-                        if(log.isDebugEnabled()){
-                            log.debug("modeling operation {}",result);
-                        }
-                        plugin.model(result,context,intros);
-                    }
-            );
+            if(result.isModeled()){
+                log.trace("operation was already modeled");
+            }else{
+                if(log.isDebugEnabled()){
+                    log.debug("modeling operation {} ",result);
+                }
+            }
+            while(!result.isModeled()){
+                reducer.modelOperation(runners,result,context,intros);
+            }
         }
     }
 
