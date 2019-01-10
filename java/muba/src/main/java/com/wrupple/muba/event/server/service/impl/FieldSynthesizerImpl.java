@@ -69,7 +69,7 @@ public class FieldSynthesizerImpl implements FieldSynthesizer{
     public Object synthethizeFieldValue(ListIterator<String> split, Context context, CatalogEntry subject, ContractDescriptor subjectType, FieldDescriptor generated, Instrospection intro,ServiceBus serviceBus) throws Exception {
         if(split.hasNext()){
             String current = split.next();
-            if(subjectType!=null&&generated!=null&&generated.isEphemeral()){
+            if(subjectType!=null&&generated!=null&&generated.isGenerated()){
                 if(split.hasNext()){
                     //multiple terms to evaluate
                     NaturalLanguageInterpret interpret = serviceBus.getInterpret(current);

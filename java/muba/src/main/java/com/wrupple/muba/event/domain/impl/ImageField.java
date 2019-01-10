@@ -15,7 +15,7 @@ public class ImageField extends FieldDescriptorImpl {
 		setDataType(CatalogEntry.INTEGER_DATA_TYPE);
 		setDetailable(true);
 		setWriteable(false);
-		setEphemeral(false);
+		setGenerated(false);
 		setFilterable(true);
 		setKey(true);
 		setCatalog(PersistentImageMetadata.CATALOG);

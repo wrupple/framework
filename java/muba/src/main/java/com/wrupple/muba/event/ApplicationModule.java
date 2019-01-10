@@ -122,12 +122,12 @@ public class ApplicationModule extends AbstractModule {
 
         field = new FieldDescriptorImpl().makeDefault("eventValue", "event Value",
                 CatalogEntry.CATALOG_ENTRY_DATA_TYPE);
-        field.setEphemeral(true);
+        field.setGenerated(true);
         fields.put(field.getFieldId(), field);
         field = new FieldDescriptorImpl().makeDefault("observersValues", "observers Value",
                 CatalogEntry.CATALOG_ENTRY_DATA_TYPE);
         field.setMultiple(true);
-        field.setEphemeral(true);
+        field.setGenerated(true);
         fields.put(field.getFieldId(), field);
 
         regreso.setFieldsValues(fields);

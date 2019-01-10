@@ -74,7 +74,7 @@ public class JDBCDataWritingCommandImpl extends AbstractWritingCommand implement
 		StringBuilder delete;
 
 		for (FieldDescriptor field : fields) {
-			if (field.isWriteable() && !field.isEphemeral()) {
+			if (field.isWriteable() && !field.isGenerated()) {
 				fieldValue = access.getPropertyValue(field, updatedEntry, null, instrospection);
 				if (field.isMultiple()) {
 					// also update (delete and create) and create multiple

@@ -20,7 +20,7 @@ public class RiderBooking extends ManagedObjectImpl {
     private Long driver;
     @CatalogValue(foreignCatalog = Driver.CATALOG)
     private Driver driverValue;
-    @CatalogField(ephemeral = true)
+    @CatalogField(generated = true)
     @CatalogFieldSentence(formula={NaturalLanguageInterpretImpl.ASSIGNATION,"driver","location","-","location"})
     @Min(value = 0)
     @Max(value = 100)

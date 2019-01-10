@@ -74,7 +74,7 @@ public interface FieldDescriptor extends CatalogEntry,HasFieldId,HasProperties,H
 	/**
 	 * @return
 	 */
-	boolean isEphemeral();
+	boolean isGenerated();
 
 	boolean isMultiple();
 	

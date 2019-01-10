@@ -98,7 +98,7 @@ public class JavaFilterNativeInterfaceImpl implements FilterNativeInterface{
         boolean match;
         boolean mustMatchAll = !(FilterData.EQUALS.equals(operator) || FilterData.DIFFERENT.equals(operator));
         boolean matchedAtLeastOne = false;
-        boolean nested = fieldTokens.size() > 1 && (fieldDescriptor.isEphemeral() || fieldDescriptor.isKey());
+        boolean nested = fieldTokens.size() > 1 && (fieldDescriptor.isGenerated() || fieldDescriptor.isKey());
         for (int i = 0; i < valuesSize; i++) {
             // perform or
             match = matchRecursive(entry, fieldTokens, operator, values, 0, i, nested, mustMatchAll, instrospection);

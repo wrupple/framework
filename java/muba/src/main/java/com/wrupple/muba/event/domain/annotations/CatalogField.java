@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CatalogField {
 
-	boolean ephemeral() default false;
+	boolean generated() default false;
 
 	boolean ignore() default false;
 

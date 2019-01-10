@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.wrupple.muba.catalogs.server.chain.command.JDBCDataReadCommand;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import org.apache.commons.chain.Context;
@@ -22,7 +21,6 @@ import com.wrupple.muba.catalogs.domain.CatalogActionContext;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.FieldDescriptor;
 import com.wrupple.muba.catalogs.server.chain.command.CatalogDeleteTransaction;
-import com.wrupple.muba.catalogs.server.chain.command.CatalogReadTransaction;
 import com.wrupple.muba.catalogs.server.chain.command.JDBCDataCreationCommand;
 import com.wrupple.muba.catalogs.server.service.JDBCMappingDelegate;
 import com.wrupple.muba.catalogs.server.service.SQLCompatibilityDelegate;
@@ -95,7 +93,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		for (FieldDescriptor field : fields) {
 			column = tableNames.getColumnForField(context, catalogDescriptor, field, false);
 
-			if (column != null && !field.isEphemeral() && (catalogDescriptor.getConsolidated()||!keyDelegate.isInheritedField(field,catalogDescriptor)||catalogDescriptor.getKeyField().equals(field.getFieldId()))) {
+			if (column != null && !field.isGenerated() && (catalogDescriptor.getConsolidated()||!keyDelegate.isInheritedField(field,catalogDescriptor)||catalogDescriptor.getKeyField().equals(field.getFieldId()))) {
 				if (!field.isCreateable()) {
 				} else if (field.isMultiple()) {
 				} else {
@@ -166,7 +164,7 @@ public class JDBCDataCreationCommandImpl extends AbstractDataCreationCommand imp
 		log.trace("[DB insert] created entry id {}", id);
 
 		for (FieldDescriptor field : fields) {
-			if (field.isWriteable() && field.isMultiple() && !field.isEphemeral()) {
+			if (field.isWriteable() && field.isMultiple() && !field.isGenerated()) {
 				fieldValue = access.getPropertyValue(field, e, null, instrospection);
 				if (fieldValue != null) {
 					foreignTableName = tableNames.getTableNameForCatalogField(context, catalogDescriptor, field);

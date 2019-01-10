@@ -15,7 +15,7 @@ public class PrimaryKeyField extends FieldDescriptorImpl {
 		setDataType(CatalogEntry.INTEGER_DATA_TYPE);
 		setDetailable(false);
 		setWriteable(false);
-		setEphemeral(false);
+		setGenerated(false);
 		setFilterable(true);
 		setKey(true);
 		setFieldId(CatalogEntry.ID_FIELD);

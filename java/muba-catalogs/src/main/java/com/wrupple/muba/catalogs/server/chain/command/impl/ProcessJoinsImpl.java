@@ -50,7 +50,7 @@ public class ProcessJoinsImpl implements Command<DataJoinContext> {
         String foreignField = context.getWorkingRelation().getForeignField();
         FieldDescriptor foreignFieldDescriptor = catalog.getFieldDescriptor(foreignField);
 
-        if(!foreignFieldDescriptor.isEphemeral()){
+        if(!foreignFieldDescriptor.isGenerated()){
             List<CatalogEntry> mainResults = context.getResults();
             Set<Object> fieldValues = context.getFieldValueMap().get(relation.getKey());
             List<CatalogEntry> currentMatchingEntries = getjoinCandidates(mainResults, context.getMain(), catalog, foreignField,

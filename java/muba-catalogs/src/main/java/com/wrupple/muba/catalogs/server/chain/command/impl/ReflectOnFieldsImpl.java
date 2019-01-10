@@ -3,7 +3,6 @@ package com.wrupple.muba.catalogs.server.chain.command.impl;
 import com.wrupple.muba.catalogs.domain.CatalogRelation;
 import com.wrupple.muba.catalogs.domain.DataJoinContext;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
-import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.CatalogDescriptor;
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
@@ -103,7 +102,7 @@ public class ReflectOnFieldsImpl implements Command<DataJoinContext> {
                             }
                         }
 
-                    } else if (field.isEphemeral()&&!keydelegate.isLocalJoinField(field,mainCatalog)) {
+                    } else if (field.isGenerated()&&!keydelegate.isLocalJoinField(field,mainCatalog)) {
                         if (field.getSentence() == null||field.getSentence().isEmpty()) {
                             log.trace("Working many to one relationship {}", field.getFieldId());
                             reservedField =  keydelegate.getFieldWithForeignType(joinCatalog,mainCatalog.getDistinguishedName());

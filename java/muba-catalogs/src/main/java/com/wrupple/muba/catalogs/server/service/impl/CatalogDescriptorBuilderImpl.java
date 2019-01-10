@@ -115,7 +115,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 
 
 			if (argument != null) {
-				ephemeral = argument.ephemeral();
+				ephemeral = argument.generated();
 				sortable = argument.sortable();
 				filterable = argument.filterable();
 				createable = argument.createable();
@@ -176,7 +176,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 				if (!(dataType < 0 || java.lang.reflect.Modifier.isStatic(field.getModifiers()))) {
 
 					if (ephemeral) {
-						fieldDescriptor = new FieldDescriptorImpl().makeEphemeral(id, name, foreignCatalog, multiple);
+						fieldDescriptor = new FieldDescriptorImpl().makeGenerated(id, name, foreignCatalog, multiple);
 						fieldDescriptor.setDataType(dataType);
 						if (defaultValueOptions != null) {
 							fieldDescriptor.setDefaultValueOptions(Arrays.asList(defaultValueOptions));

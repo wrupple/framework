@@ -136,7 +136,7 @@ public class JDBCDataReadCommandImpl implements JDBCDataReadCommand {
 		Instrospection instrospection = null;
 		MultipleFieldResultsHandler handler = null;
 		for (FieldDescriptor field : fields) {
-			if (field.isMultiple() && !field.isEphemeral()) {
+			if (field.isMultiple() && !field.isGenerated()) {
 				foreignTableName = tableNames.getTableNameForCatalogField(context, catalogDescriptor, field);
 				if (foreignTableName != null) {
 					builder.setLength(0);

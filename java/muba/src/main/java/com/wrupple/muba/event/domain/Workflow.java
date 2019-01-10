@@ -11,7 +11,7 @@ public interface Workflow extends ServiceManifest {
 
     //String WORKFLOW_CATALOG = "Workflow";
 
-    //TODO input is deermined by service contract and first task's type, output by last task's type, maybe have an ephemeral field with these catalog id's
+    //TODO input is deermined by service contract and first task's type, output by last task's type, maybe have an generated field with these catalog id's
 
 
     List<Long> getProcess();

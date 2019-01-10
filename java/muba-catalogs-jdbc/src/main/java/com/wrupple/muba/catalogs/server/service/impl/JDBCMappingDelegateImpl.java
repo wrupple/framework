@@ -148,7 +148,7 @@ public class JDBCMappingDelegateImpl implements JDBCMappingDelegate {
 		boolean first = true;
 		String mainTable,fieldCOlumn;
 		for (FieldDescriptor field : fields) {
-			if (!field.isEphemeral() && (catalog.getConsolidated()||!keyDelegate.isInheritedField(field,catalog)||catalog.getKeyField().equals(field.getFieldId()))) {
+			if (!field.isGenerated() && (catalog.getConsolidated()||!keyDelegate.isInheritedField(field,catalog)||catalog.getKeyField().equals(field.getFieldId()))) {
 
 				dbcDataType = getDataType(field);
 				if (dbcDataType != null) {

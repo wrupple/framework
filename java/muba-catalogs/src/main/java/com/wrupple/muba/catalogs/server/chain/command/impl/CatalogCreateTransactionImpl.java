@@ -1,7 +1,5 @@
 package com.wrupple.muba.catalogs.server.chain.command.impl;
 
-import com.google.inject.Provider;
-import com.wrupple.muba.catalogs.domain.CatalogActionFiltering;
 import com.wrupple.muba.catalogs.server.chain.command.CompleteCatalogGraph;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorService;
 import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
@@ -14,9 +12,7 @@ import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.EntryCreators;
 import com.wrupple.muba.event.domain.Instrospection;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import org.apache.commons.chain.CatalogFactory;
 import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -25,8 +21,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.wrupple.muba.catalogs.domain.CatalogActionBroadcast.CREATE_ACTION;
 
 @Singleton
 public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
@@ -53,9 +47,8 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
 
 	
 	@Override
-	public boolean execute(Context cxt) throws Exception {
+	public boolean execute(CatalogActionContext context) throws Exception {
 
-		CatalogActionContext context = (CatalogActionContext) cxt;
 
 		CatalogEntry result = (CatalogEntry) context.getRequest().getEntryValue();
         IdentityHashMap<CatalogEntry,List<Command<CatalogActionContext>>>  set = assertSet(context);
@@ -75,18 +68,20 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
 			Collection<FieldDescriptor> fields = catalog.getFieldsValues();
 			Object foreignValue;
 			for(FieldDescriptor field: fields){
+                foreignValue=null;
 				if (field.isKey()) {
-                    foreignValue=null;
-
                     if(access.getPropertyValue(field, result, null, instrospection) == null){
                         foreignValue = delegate.getPropertyForeignKeyValue(catalog, field, result, instrospection);
                     }
-                    if(foreignValue!=null){
-                        //if we got to this point, force the context to follow the reference graph
+				}else if(field.isGenerated()&&field.getCatalog()!=null){
+                    foreignValue = access.getPropertyValue(field,result,null,instrospection);
+                }
 
-                        createRefereces(context,catalog,field,foreignValue,result, instrospection);
-                    }
-				}
+                if(foreignValue!=null){
+                    //if we got to this point, force the context to follow the reference graph
+
+                    createRefereces(context,catalog,field,foreignValue,result, instrospection);
+                }
 			}
 		}
 
@@ -177,7 +172,9 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
 			for (CatalogEntry entry : entries) {
 				if (entry.getId() == null) {
                     if(beeingCreated(context,entry)){
-                        queueCreationCallback(context,entry,new MultipleBackReferencePropagation(field,owner,instrospection,catalog));
+                        if(!field.isGenerated()){
+                            queueCreationCallback(context,entry,new MultipleBackReferencePropagation(field,owner,instrospection,catalog));
+                        }
                     }else{
                         created= context.triggerCreate(field.getCatalog(), entry);
 
@@ -191,17 +188,21 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
 			}
 
 			if(alterationsMade){
-                reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
-                if (access.isWriteableProperty(reservedField, owner, instrospection)) {
-                    access.setPropertyValue(reservedField, owner, createdValues, instrospection);
-                }
-                List<Object> keys = createdValues.stream().map(v -> v.getId()).filter(v -> v!=null).collect(Collectors.toList());
-
-                if(keys.isEmpty()){
-                    access.setPropertyValue(field, owner, null, instrospection);
-
+			    if(field.isGenerated()){
+                    access.setPropertyValue(field, owner, createdValues, instrospection);
                 }else{
-                    access.setPropertyValue(field, owner, keys, instrospection);
+                    reservedField = field.getFieldId() + CatalogEntry.MULTIPLE_FOREIGN_KEY;
+                    if (access.isWriteableProperty(reservedField, owner, instrospection)) {
+                        access.setPropertyValue(reservedField, owner, createdValues, instrospection);
+                    }
+                    List<Object> keys = createdValues.stream().map(v -> v.getId()).filter(v -> v!=null).collect(Collectors.toList());
+
+                    if(keys.isEmpty()){
+                        access.setPropertyValue(field, owner, null, instrospection);
+
+                    }else{
+                        access.setPropertyValue(field, owner, keys, instrospection);
+                    }
                 }
             }
 		} else {
@@ -215,10 +216,10 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
                     if (access.isWriteableProperty(reservedField, owner, instrospection)) {
                         access.setPropertyValue(reservedField, owner, entry, instrospection);
                     }
+                    access.setPropertyValue(field, owner, entry.getId(), instrospection);
                 }
 
             }
-            access.setPropertyValue(field, owner, entry.getId(), instrospection);
 
 		}
 	}
@@ -241,9 +242,11 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
         @Override
         public synchronized boolean  execute(CatalogActionContext context) throws Exception {
 
+            CatalogEntry result = context.getResult();
+
             Collection<CatalogEntry> createdValues = (Collection) delegate.getPropertyForeignKeyValue(catalog, field, owner, instrospection);
 
-            createdValues.add(context.getResult());
+            createdValues.add(result);
 
             List<Object> keys = createdValues.stream().map(v -> v.getId()).filter(v -> v!=null).collect(Collectors.toList());
 
@@ -287,16 +290,21 @@ public class CatalogCreateTransactionImpl  implements CatalogCreateTransaction {
             CatalogEntry entry = context.getResult();
 
             Object previousValue = access.getPropertyValue(field, owner, null, instrospection);
+            if(field.isGenerated()){
+                access.setPropertyValue(field, owner, entry, instrospection);
 
-            if(!entry.getId().equals(previousValue)){
-                access.setPropertyValue(field, owner, entry.getId(), instrospection);
-                context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
+            }else {
+                if(!entry.getId().equals(previousValue)){
+                    access.setPropertyValue(field, owner, entry.getId(), instrospection);
+                    context.triggerWrite(owenerCatalog.getDistinguishedName(),owner.getId(),owner);
+                }
+
+                String reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
+                if (access.isWriteableProperty(reservedField, owner, instrospection)) {
+                    access.setPropertyValue(reservedField, owner, entry, instrospection);
+                }
             }
 
-            String reservedField = field.getFieldId() + CatalogEntry.FOREIGN_KEY;
-            if (access.isWriteableProperty(reservedField, owner, instrospection)) {
-                access.setPropertyValue(reservedField, owner, entry, instrospection);
-            }
 
             return CONTINUE_PROCESSING;
         }

@@ -34,7 +34,7 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
     @Override
     public boolean isJoinableValueField(FieldDescriptor field) {
         //data that lives on another layer
-        return (field.getCatalog() != null && (field.isEphemeral() || field.isKey() && !isFileField(field)));
+        return (field.getCatalog() != null && (field.isGenerated() || field.isKey() && !isFileField(field)));
     }
 
 
@@ -212,7 +212,7 @@ public class CatalogKeyServicesImpl implements CatalogKeyServices {
             if (currentJoinableField.isKey()) {
                 localField = currentJoinableField.getFieldId();
                 foreignField = getCatalogKeyFieldId(foreign);
-            } else if (currentJoinableField.isEphemeral()) {
+            } else if (currentJoinableField.isGenerated()) {
                 localField = descriptor.getKeyField();
                 if(isLocalJoinField(currentJoinableField,descriptor)){
                     // this field is a value holder field for one to many-local foreign key relationship

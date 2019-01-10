@@ -5,7 +5,6 @@ import com.wrupple.muba.catalogs.server.chain.command.CatalogDescriptorUpdateTri
 import com.wrupple.muba.catalogs.server.chain.command.PluginConsensus;
 import com.wrupple.muba.catalogs.server.service.CatalogDeserializationService;
 import com.wrupple.muba.catalogs.server.service.CatalogTriggerInterpret;
-import com.wrupple.muba.catalogs.server.service.EntrySynthesizer;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.server.service.ActionsDictionary;
@@ -232,7 +231,7 @@ public class CatalogTriggerInterpretImpl implements CatalogTriggerInterpret {
 
 		for (FieldDescriptor field : fields) {
 			fieldId = field.getFieldId();
-			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isEphemeral()) {
+			if (!CatalogEntry.ID_FIELD.equals(fieldId) && !field.isGenerated()) {
 				token = properties.get(fieldId);
 				if (token != null) {
 					fieldValue = synthetizationDelegate.synthethizeFieldValue(Arrays.asList(token.split(" ")).listIterator(), context,synthesizedEntry,targetCatalog,field,lowInstrospection,context.getRuntimeContext().getServiceBus());

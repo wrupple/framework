@@ -12,7 +12,7 @@ public class AnonymouslyVisibleField extends FieldDescriptorImpl {
 		setDataType(CatalogEntry.BOOLEAN_DATA_TYPE);
 		setDetailable(true);
 		setWriteable(true);
-		setEphemeral(false);
+		setGenerated(false);
 		setFilterable(true);
 		setKey(false);
 		setFieldId(CatalogEntry.PUBLIC);

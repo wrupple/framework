@@ -23,7 +23,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 	private Long foreignCatalog;
 	@CatalogFieldValues(defaultValueOptions={"Default"})
 	int dataType;
-	private boolean masked = false, multiple = false, sortable = false, ephemeral = false, filterable = false, createable = true, writeable = true, detailable = true,
+	private boolean masked = false, multiple = false, sortable = false, generated = false, filterable = false, createable = true, writeable = true, detailable = true,
 			summary = true, localized = false, key = false,hardKey=false;
 
 	private String catalog;
@@ -48,7 +48,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setCreateable(true);
 		setDataType(dataType);
 		setDetailable(true);
-		setEphemeral(false);
+		setGenerated(false);
 		setFilterable(true);
 		setFieldId(id);
 		setMultiple(false);
@@ -65,7 +65,7 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		setDataType(CatalogEntry.INTEGER_DATA_TYPE);
 		setDetailable(true);
 		setWriteable(false);
-		setEphemeral(false);
+		setGenerated(false);
 		setFilterable(true);
 		setKey(true);
 		setCatalog(foreign_catalog);
@@ -78,13 +78,13 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		return this;
 	}
 
-	public FieldDescriptorImpl makeEphemeral(String id,
-			String name, String foreign_catalog, boolean multiple) {
+	public FieldDescriptorImpl makeGenerated(String id,
+											 String name, String foreign_catalog, boolean multiple) {
 		setCreateable(false);
 		setDataType(0);
 		setDetailable(true);
 		setWriteable(false);
-		setEphemeral(true);
+		setGenerated(true);
 		setFilterable(false);
 		setKey(false);
 		setCatalog(foreign_catalog);
@@ -167,8 +167,8 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 	}
 
 	@Override
-	public boolean isEphemeral() {
-		return ephemeral;
+	public boolean isGenerated() {
+		return generated;
 	}
 
 	/**
@@ -250,8 +250,8 @@ public class FieldDescriptorImpl extends CatalogEntryImpl implements FieldDescri
 		this.sortable = sortable;
 	}
 
-	public void setEphemeral(boolean ephemeral) {
-		this.ephemeral = ephemeral;
+	public void setGenerated(boolean generated) {
+		this.generated = generated;
 	}
 
 	public void setFilterable(boolean filterable) {
