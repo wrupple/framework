@@ -37,8 +37,7 @@ public class LocalizedEntityInterceptorDAO implements CatalogCreateTransaction {
 	}
 
 	@Override
-	public boolean execute(Context c) throws Exception {
-		CatalogActionContext context = (CatalogActionContext) c;
+	public boolean execute(CatalogActionContext context) throws Exception {
 		DistributiedLocalizedEntry o = (DistributiedLocalizedEntry) context.getRequest().getEntryValue();
 
 		// check all required data is present
