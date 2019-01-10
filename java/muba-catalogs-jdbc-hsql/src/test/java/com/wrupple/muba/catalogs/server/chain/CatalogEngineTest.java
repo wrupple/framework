@@ -41,11 +41,12 @@ public class CatalogEngineTest extends IntegralTest {
                 new Argument("uno", 1l),
                 new Argument("four", 4l)
         );
-
-        for (Argument arg : argumentsToDeclare) {
+		Argument newlyCreatedArgument;
+		for (Argument arg : argumentsToDeclare) {
             request = new CatalogCreateRequestImpl(arg,argumentCatalog);
-            runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
-        }
+			newlyCreatedArgument = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
+			assertTrue("Memory identity lost on create",newlyCreatedArgument == arg);
+		}
         log.info("[-read all-]");
 
         FilterData filterData = FilterDataUtils.newFilterData();
@@ -214,7 +215,7 @@ public class CatalogEngineTest extends IntegralTest {
 
         result = runtimeContext.getServiceBus().fireEvent(request,runtimeContext,null);
         assertTrue(result!=null);
-        assertTrue("Memory identity lost",result == request.getEntryValue());
+        assertTrue("Memory identity lost on update",result == request.getEntryValue());
 		assertTrue("No catalog identity on updated result",result.getId()!=null);
 		assertTrue("Catalog identity lost",lodId.equals(result.getId()));
         assertTrue(result.getName().equals("TROI"));
@@ -256,8 +257,10 @@ public class CatalogEngineTest extends IntegralTest {
 
 
 		Endorser endorser = new Endorser();
-		credit.setEndorserValue(endorser);
 		endorser.setCreditsValues(Arrays.asList(credit,credit2));
+        //TODO deduce circular dependencies without user explicityly setting them
+        credit.setEndorserValue(endorser);
+        credit2.setEndorserValue(endorser);
 
 		CatalogActionRequest contract = new CatalogCreateRequestImpl(endorser,Endorser.CATALOG);
 		contract.setFollowReferences(true);
