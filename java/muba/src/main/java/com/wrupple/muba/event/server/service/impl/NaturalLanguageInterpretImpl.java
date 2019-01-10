@@ -3,6 +3,7 @@ package com.wrupple.muba.event.server.service.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.BinaryOperation;
 import com.wrupple.muba.event.domain.impl.CatalogOperand;
+import com.wrupple.muba.event.domain.impl.CatalogQueryRequestImpl;
 import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.event.server.domain.impl.EvaluationContext;
@@ -115,7 +116,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 CatalogEntry targetEntry = context.getEntryValue();
                 if(targetEntry==null){
                     //resolve posible entries
-                    CatalogReadRequestImpl request = new CatalogReadRequestImpl(null,catalog.getDistinguishedName());
+                    CatalogQueryRequestImpl request = new CatalogQueryRequestImpl(FilterDataUtils.newFilterData(),catalog.getDistinguishedName());
                     context.setResult(new CatalogOperand(request,targetField));
                 }else{
                     Object targetFieldValue = access.getPropertyValue(targetField, targetEntry, null, context.getIntro());
