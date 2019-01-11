@@ -140,7 +140,7 @@ public class ForeignKeyAssignationTest extends WorkerTest {
         cargar.setDistinguishedName("loadBooking");
         cargar.setName(DataContract.READ_ACTION);
         cargar.setCatalog(RiderBooking.class.getSimpleName());
-        cargar.setGrammar(Arrays.asList(CatalogKey.ID_FIELD));
+        cargar.setGrammar(Arrays.asList(CatalogActionRequest.ENTRY_ID_FIELD));
 
         ApplicationImpl ilegal= new ApplicationImpl();
         ilegal.setDistinguishedName("peticionInvalida");

@@ -39,9 +39,10 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
     public boolean execute(Context ctx) throws Exception {
         final ApplicationContext context = (ApplicationContext) ctx;
         Task request = context.getStateValue().getTaskDescriptorValue();
+
         CatalogEntry subject = context.getStateValue().getEntryValue();
         CatalogDescriptor descriptor = context.getStateValue().getCatalogValue();
-        if(descriptor!=null){
+        if(!DataContract.READ_ACTION.equals(request.getName())&&descriptor!=null){
             Instrospection intros=null;
             for (FieldDescriptor field : descriptor.getFieldsValues()) {
                 if (field.getSentence() != null && !field.getSentence().isEmpty()) {
