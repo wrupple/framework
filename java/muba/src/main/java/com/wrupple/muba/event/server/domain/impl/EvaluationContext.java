@@ -16,7 +16,6 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
     private final FieldDescriptor evaluate;
     private final Instrospection intro;
     private Object result;
-    private EvaluationContext parent;
 
     public EvaluationContext(ListIterator<String> sentence,String interpreter, Context context, CatalogEntry subject, ContractDescriptor subjectType, FieldDescriptor evaluate, Instrospection intro) {
         if(sentence==null){
@@ -34,7 +33,6 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
 
     public EvaluationContext(EvaluationContext context, CatalogDescriptor foreignCatalog, FieldDescriptor targetField, CatalogEntry targetEntry) {
         this(context.wordIterator,context.interpreter,context,targetEntry,foreignCatalog,targetField,context.intro);
-        this.parent=context;
     }
 
     public Object getEntry(){

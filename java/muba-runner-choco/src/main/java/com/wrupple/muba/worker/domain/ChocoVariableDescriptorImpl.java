@@ -31,6 +31,11 @@ public class ChocoVariableDescriptorImpl implements VariableDescriptor {
     }
 
     @Override
+    public boolean isSolved() {
+        return variable.isInstantiated();
+    }
+
+    @Override
     public <T> T getConvertedResult() {
         return (T) getResult();
     }

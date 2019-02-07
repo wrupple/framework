@@ -66,23 +66,23 @@ public class FieldSynthesizerImpl implements FieldSynthesizer{
 
 
     @Override
-    public Object synthethizeFieldValue(ListIterator<String> split, Context context, CatalogEntry subject, ContractDescriptor subjectType, FieldDescriptor generated, Instrospection intro,ServiceBus serviceBus) throws Exception {
-        if(split.hasNext()){
-            String current = split.next();
+    public Object synthethizeFieldValue(ListIterator<String> sentence, Context parentContext, CatalogEntry subject, ContractDescriptor subjectType, FieldDescriptor generated, Instrospection intro,ServiceBus serviceBus) throws Exception {
+        if(sentence.hasNext()){
+            String current = sentence.next();
             if(subjectType!=null&&generated!=null&&generated.isGenerated()){
-                if(split.hasNext()){
+                if(sentence.hasNext()){
                     //multiple terms to evaluate
                     NaturalLanguageInterpret interpret = serviceBus.getInterpret(current);
                     if(interpret==null){
-                        return contextuallySynthethizeFieldValue(current,split,context,subject,subjectType,generated,intro);
+                        return contextuallySynthethizeFieldValue(current,sentence,parentContext,subject,subjectType,generated,intro);
                     }else{
                         //delegate to plugin
-                        EvaluationContext mofo = new EvaluationContext(split, current, context, subject, subjectType, generated, intro);
-                        interpret.resolve(split,mofo,current);
+                        EvaluationContext mofo = new EvaluationContext(sentence, current, parentContext, subject, subjectType, generated, intro);
+                        interpret.resolve(sentence,mofo,current);
                         return mofo.getResult();
                     }
                 }else{
-                    return contextuallySynthethizeFieldValue(current,split,context,subject,subjectType,generated,intro);
+                    return contextuallySynthethizeFieldValue(current,sentence,parentContext,subject,subjectType,generated,intro);
                 }
 
             }else{

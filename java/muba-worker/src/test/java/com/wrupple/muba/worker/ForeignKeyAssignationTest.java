@@ -106,7 +106,6 @@ public class ForeignKeyAssignationTest extends WorkerTest {
 
         Host hostValue = container.getInjector().getInstance(Key.get(Host.class,Names.named(SessionContext.SYSTEM)));
 
-        Long mainRunner = container.getInjector().getInstance(Key.get(Long.class,Names.named("com.wrupple.runner.choco")));
         log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         log.info("         [-use riderBooking id to launch container with previously created riderBooking -]");
@@ -121,7 +120,6 @@ public class ForeignKeyAssignationTest extends WorkerTest {
 
         container.fireEvent(new WorkerContractImpl(
                 Arrays.asList(":"+riderBooking.getId().toString()),
-                mainRunner,
                 HOME,
                 hostValue));
         //check conditions
@@ -139,6 +137,7 @@ public class ForeignKeyAssignationTest extends WorkerTest {
         TaskImpl cargar  = new TaskImpl();
         cargar.setDistinguishedName("loadBooking");
         cargar.setName(DataContract.READ_ACTION);
+        resolve.setKeepOutput(true);
         cargar.setCatalog(RiderBooking.class.getSimpleName());
         cargar.setGrammar(Arrays.asList(CatalogActionRequest.ENTRY_ID_FIELD));
 
@@ -147,6 +146,7 @@ public class ForeignKeyAssignationTest extends WorkerTest {
 
         ApplicationImpl trabajo = new ApplicationImpl();
         trabajo.setDistinguishedName("findDriver");
+        trabajo.setKeepOutput(true);
         trabajo.setProcessValues(Collections.unmodifiableList(Arrays.asList(resolve)));
 
         ApplicationImpl terminado = new ApplicationImpl();

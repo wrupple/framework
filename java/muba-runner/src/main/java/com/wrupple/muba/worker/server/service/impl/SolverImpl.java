@@ -55,8 +55,16 @@ public class SolverImpl implements Solver {
                 }
             }
             while(!result.isModeled()){
+                log.info("Attempting to model operation '{}'",result.getName());
                 reducer.modelOperation(runners,result,context,intros);
             }
+        }
+    }
+
+    @Override
+    public void prepare(ApplicationContext context) {
+        for(Runner runner: runners){
+            runner.prepare(context);
         }
     }
 

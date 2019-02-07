@@ -27,9 +27,8 @@ public class ArbitraryDesicion implements VariableConsensus {
     public void modelOperation(List<Runner> runners, Operation result, ApplicationContext context, Instrospection intros) {
         runners.stream().forEach(plugin->
                 {
-                    if(log.isDebugEnabled()){
-                        log.debug("    ...with {}",plugin);
-                    }
+                        log.warn("    ...with {}",plugin);
+
                     plugin.model(result,context,intros);
                 }
         );

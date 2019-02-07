@@ -114,21 +114,30 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 context.setResult(new BinaryOperation(context.getResult(),targetField,rawValue));
             }else{
                 CatalogEntry targetEntry = context.getEntryValue();
-                if(targetEntry==null){
+                if(targetEntry==null&& context.getResult() instanceof CatalogOperand){
+                    CatalogOperand operand  = (CatalogOperand) context.getResult();
+
                     //resolve posible entries
-                    CatalogQueryRequestImpl request = new CatalogQueryRequestImpl(FilterDataUtils.newFilterData(),catalog.getDistinguishedName());
+                    CatalogQueryRequestImpl request = new CatalogQueryRequestImpl(FilterDataUtils.newFilterData(),operand.getTargetField().getCatalog());
                     context.setResult(new CatalogOperand(request,targetField));
                 }else{
-                    Object targetFieldValue = access.getPropertyValue(targetField, targetEntry, null, context.getIntro());
-                    if(targetFieldValue==null){
-                        evaluateCatalogField(sentence, context, targetField,targetEntry);
-                    }else{
-                        if(context.getResult()!=null && context.getResult() instanceof  BinaryOperation){
-                            BinaryOperation operation = (BinaryOperation) context.getResult();
-                            operation.setOperand_2(targetFieldValue);
+                    if(targetEntry.getCatalogType().equals(catalog.getDistinguishedName())){
+                        Object targetFieldValue = access.getPropertyValue(targetField, targetEntry, null, context.getIntro());
+                        if(targetFieldValue==null){
+                            evaluateCatalogField(sentence, context, targetField,targetEntry);
                         }else{
-                            context.setResult(targetFieldValue);
+                            if(context.getResult()!=null && context.getResult() instanceof  BinaryOperation){
+                                BinaryOperation operation = (BinaryOperation) context.getResult();
+                                operation.setOperand_2(targetFieldValue);
+                            }else{
+                                context.setResult(targetFieldValue);
+                            }
                         }
+                    }else{
+                        // TODO my subject's data type does not correspond to this iteration's working type... soo......?
+                        evaluateCatalogField(sentence, context, targetField,targetEntry);
+
+
                     }
                 }
             }
@@ -144,10 +153,16 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 RuntimeContext runtime = context.getRuntimeContext();
                 Contract actionRequest= new CatalogReadRequestImpl(targetField.getCatalog(), CatalogDescriptor.CATALOG_ID);
                 CatalogDescriptor foreignCatalog  = runtime.getServiceBus().fireEvent(actionRequest, runtime,null);
-                EvaluationContext child = new EvaluationContext(context,foreignCatalog,targetField,null);
+
+                EvaluationContext child = new EvaluationContext(context,foreignCatalog,targetField,context.getEntryValue());
                 catalogEvaluation(sentence,child,sentence.next());
             }else{
                 context.setResult(null);
+            }
+        }else{
+            if(sentence.hasNext()){
+                // location , but my current type does not correspond so i just retun null instead
+                log.info("??");
             }
         }
     }

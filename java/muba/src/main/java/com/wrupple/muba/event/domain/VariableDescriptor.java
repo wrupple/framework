@@ -12,4 +12,5 @@ public interface VariableDescriptor extends HasResult<Object>, HasRunner {
 
     FieldDescriptor getField();
 
+    boolean isSolved();
 }

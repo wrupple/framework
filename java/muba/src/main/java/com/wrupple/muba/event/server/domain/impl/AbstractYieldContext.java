@@ -10,7 +10,7 @@ import java.util.ListIterator;
 public class AbstractYieldContext extends ContextBase implements YieldContext{
 
     //@Sentence
-    List<String> sentence;
+    protected  List<String> sentence;
     ListIterator<String> wordIterator;
 
 

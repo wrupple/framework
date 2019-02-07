@@ -14,4 +14,6 @@ public interface Runner {
     boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) throws Exception;
 
     void model(Operation result, ApplicationContext context, Instrospection intros);
+
+    void prepare(ApplicationContext context);
 }

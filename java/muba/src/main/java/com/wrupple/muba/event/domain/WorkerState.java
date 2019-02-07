@@ -7,7 +7,7 @@ import com.wrupple.muba.event.domain.reserved.HasSentence;
 
 import java.util.List;
 
-public interface WorkerState extends Contract, HasRunner, HasSentence ,HasHostValue {
+public interface WorkerState extends Contract, HasSentence ,HasHostValue {
 
     String CATALOG = "WorkerState";
 
@@ -30,8 +30,6 @@ public interface WorkerState extends Contract, HasRunner, HasSentence ,HasHostVa
 
     void setApplicationTree(Application domainRoot);
     Application getApplicationTree();
-
-    void setRunner(Long defaultRunner);
 
     void setSentence(List<String> sentence);
 

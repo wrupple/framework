@@ -37,6 +37,12 @@ public class ChocoRunnerImpl implements ChocoRunner {
         this.access = access;
     }
 
+
+    @Override
+    public void prepare(ApplicationContext context) {
+
+    }
+
     @Override
     public boolean canHandle(FieldDescriptor field, ApplicationContext context) {
         //only integer fields with constraints or defined domains are eligible
@@ -118,23 +124,25 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
             FieldDescriptor field = operation.getTargetField();
             List<CatalogEntry> results=operation.getRequest().getResults();
-
-            int NUM_DRIVERS = results==null?0:results.size();
-            log.debug("resolving catalog bound variable domain with {} posible outcomes",NUM_DRIVERS);
-            int[] LOCATIONS = new int[NUM_DRIVERS];
-            CatalogEntry current;
-            Number fieldValue;
-            for(int i =0; i < NUM_DRIVERS; i++) {
-                current = results.get(i);
-                try {
-                    fieldValue= (Number) access.getPropertyValue(field,current,null,intros);
-                    LOCATIONS[i]=fieldValue.intValue();
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException("While resolving "+field.getDistinguishedName(),e);
+            if(results==null){
+                log.info("... waiting for results");
+            }else{
+                int NUM_DRIVERS =results.size();
+                log.info("resolving catalog bound variable domain with {} posible outcomes",NUM_DRIVERS);
+                int[] LOCATIONS = new int[NUM_DRIVERS];
+                CatalogEntry current;
+                Number fieldValue;
+                for(int i =0; i < NUM_DRIVERS; i++) {
+                    current = results.get(i);
+                    try {
+                        fieldValue= (Number) access.getPropertyValue(field,current,null,intros);
+                        LOCATIONS[i]=fieldValue.intValue();
+                    } catch (ReflectiveOperationException e) {
+                        throw new RuntimeException("While resolving "+field.getDistinguishedName(),e);
+                    }
                 }
-            }
 
-            Model model = delegate.resolveSolverModel(context);
+                Model model = delegate.resolveSolverModel(context);
 /*
             IntVar[] driverLocations = model.intVarArray("driverLocations",NUM_DRIVERS,LOCATIONS);
             IntVar bookingLocation = model.intVar(7);
@@ -153,12 +161,15 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
             model.element(bookingDistance, distances, foreignKeyAssignation, 1).post();
         */
+            }
+
         }else{
             log.info("no operations matched {}",result.getName());
         }
 
 
     }
+
 
     private int applyOperand(Object operand, BinaryOperation operation, ApplicationContext context, Instrospection intros, Model model) {
 

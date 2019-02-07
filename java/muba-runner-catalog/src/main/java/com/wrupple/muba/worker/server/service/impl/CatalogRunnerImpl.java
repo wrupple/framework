@@ -4,6 +4,7 @@ import com.wrupple.muba.event.domain.impl.CatalogOperand;
 import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogKeyServices;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.domain.impl.IntentImpl;
@@ -17,7 +18,9 @@ import org.apache.logging.log4j.Logger;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
 import static com.wrupple.muba.worker.server.chain.command.SynthesizeSolutionEntry.INTROSPECTIONKEY;
 
@@ -38,23 +41,24 @@ public class CatalogRunnerImpl implements CatalogRunner {
 
     @Override
     public boolean canHandle(FieldDescriptor field, ApplicationContext context) {
-        Task task = context.getStateValue().getTaskDescriptorValue();
-
-        List<String> userSelection = context.getStateValue().getUserSelection();
-        if(userSelection!=null) {
-            if(DataContract.READ_ACTION.equals(task.getName())){
-                context.getStateValue().setUserSelection(null);
-                if(!userSelection.isEmpty()){
-                    if(userSelection.size()==1){
-                        return true;
-                    }
-                }
-
-            }
-        }
-
+        //catalog runner handles entities
 
         return false;
+    }
+
+    private List<String> findTaskGrammarKey( ApplicationContext context,ApplicationState state, CatalogDescriptor catalog) {
+        ListIterator<String> grammar = context.getTaskGrammar();
+            if(grammar.hasNext()){
+                if(grammar.next().equals(CatalogActionRequest.ENTRY_ID_FIELD)){
+                    ListIterator<String> sentence = context.getWorkerSentence();
+                    if(sentence.hasNext()){
+                        return Collections.singletonList(sentence.next());
+                    }
+                }else {
+                    grammar.previous();
+                }
+            }
+        return null;
     }
 
     @Override
@@ -67,6 +71,11 @@ public class CatalogRunnerImpl implements CatalogRunner {
                     @Override
                     public FieldDescriptor getField() {
                         return field;
+                    }
+
+                    @Override
+                    public boolean isSolved() {
+                        return context.getStateValue().getEntryValue()!=null;
                     }
 
                     @Override
@@ -111,6 +120,8 @@ public class CatalogRunnerImpl implements CatalogRunner {
 
     @Override
     public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) throws Exception {
+
+
         List<String> userSelection = context.getStateValue().getUserSelection();
         String key = userSelection.get(0);
         String catalogId = (String) context.getStateValue().getTaskDescriptorValue().getCatalog();
@@ -144,11 +155,56 @@ public class CatalogRunnerImpl implements CatalogRunner {
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
         CatalogOperand operation = (CatalogOperand)result;
         CatalogActionRequest request = operation.getRequest();
-        try {
-            context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
-        } catch (Exception e) {
-            throw new RuntimeException("While resolving "+operation.getTargetField().getDistinguishedName(),e);
+        if(request.getResults()==null){
+            try {
+                context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
+            } catch (Exception e) {
+                throw new RuntimeException("While resolving "+operation.getTargetField().getDistinguishedName(),e);
+            }
+        }else{
+            log.info("catalog's work is already done.");
         }
 
     }
+
+    @Override
+    public void prepare(ApplicationContext context) {
+        ApplicationState state = context.getStateValue();
+        Task task = state.getTaskDescriptorValue();
+        CatalogDescriptor catalog = context.getStateValue().getCatalogValue();
+
+        String saveTo = task.getOutputField();
+        List<String> userSelection = state.getUserSelection();
+
+        if(userSelection==null){
+            if (saveTo == null) {
+                userSelection= findTaskGrammarKey(context,state, catalog);
+            }else{
+                Object savedData = context.get(saveTo);
+
+                if (savedData == null) {
+                    userSelection= findTaskGrammarKey(context,state, catalog);
+                    if(userSelection==null){
+                        HasAccesablePropertyValues params = state.getWorkerStateValue().getParametersValue();
+                        if(params!=null){
+                            userSelection = (List<String> ) params.getPropertyValue(saveTo);
+                            if (userSelection != null) {
+                                if (userSelection.isEmpty()) {
+                                    userSelection = null;
+                                }
+                            }
+                        }
+
+                    }
+
+
+                }
+            }
+            state.setUserSelection(userSelection);
+        }
+        if(userSelection!=null&&log.isDebugEnabled()){
+            log.debug("User defined solution: {}",userSelection);
+        }
+    }
+
 }

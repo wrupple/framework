@@ -23,4 +23,6 @@ public interface Solver {
     void register(Runner plugin);
 
     void model(Operation result, ApplicationContext context, Instrospection intros);
+
+    void prepare(ApplicationContext context);
 }

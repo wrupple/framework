@@ -14,7 +14,6 @@ import java.util.List;
 public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContract {
 
     private List<String> sentence;
-    private Long runner;
     private String rootActivity;
 
     @CatalogValue(foreignCatalog = Host.CATALOG)
@@ -23,9 +22,8 @@ public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContra
     private Long host;
 
 
-    public WorkerContractImpl(List<String> sentence, Long runner, String rootActivity, Host hostValue) {
+    public WorkerContractImpl(List<String> sentence,String rootActivity, Host hostValue) {
         super();
-        this.runner=runner;
         this.sentence = sentence;
         this.hostValue=hostValue;
         this.rootActivity=rootActivity;
@@ -54,15 +52,6 @@ public class WorkerContractImpl extends CatalogEntryImpl implements WorkerContra
 
     public void setSentence(List<String> sentence) {
         this.sentence = sentence;
-    }
-
-    @Override
-    public Long getRunner() {
-        return runner;
-    }
-
-    public void setRunner(Long runner) {
-        this.runner = runner;
     }
 
     @Override

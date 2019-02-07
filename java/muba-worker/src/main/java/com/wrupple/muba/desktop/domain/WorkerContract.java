@@ -9,7 +9,5 @@ public interface WorkerContract extends Contract, HasSentence,HasHostValue {
 
     //Date getDue();
 
-    Long getRunner();
-
     String getRootActivity();
 }

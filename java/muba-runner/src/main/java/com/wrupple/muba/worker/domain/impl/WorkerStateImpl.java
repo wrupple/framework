@@ -17,8 +17,6 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
 
     private List<String> sentence;
     private Long wordIndex;
-    @NotNull //FIXME static storage unit
-    private Long runner;
     private String characterEncoding, homeActivity;
 
     @CatalogField(ignore = true)
@@ -66,15 +64,6 @@ public class WorkerStateImpl extends CatalogEntryImpl implements WorkerState {
     @Override
     public void setCatalog(String catalog) {
 
-    }
-
-    @Override
-    public Long getRunner() {
-        return runner;
-    }
-
-    public void setRunner(Long runner) {
-        this.runner = runner;
     }
 
     public String getCharacterEncoding() {

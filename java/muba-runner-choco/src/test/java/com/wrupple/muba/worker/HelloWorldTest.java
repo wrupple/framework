@@ -168,6 +168,11 @@ public class HelloWorldTest extends IntegralTest {
 
         }
 
+        @Override
+        public void prepare(ApplicationContext context) {
+            //avoid using this comodity
+        }
+
 
     }
 
@@ -211,6 +216,11 @@ public class HelloWorldTest extends IntegralTest {
         @Override
         public FieldDescriptor getField() {
             return field;
+        }
+
+        @Override
+        public boolean isSolved() {
+            return name!=null;
         }
 
         @Override

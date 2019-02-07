@@ -23,7 +23,6 @@ public class DesktopWriterCommandImpl implements DesktopWriterCommand {
 
         */
         WorkerState worker = context.getWorkerState();
-        worker.setRunner(context.getRequest().getRunner());
         ApplicationState state=  worker.getStateValue();
         state.setWorkerStateValue(worker);
 

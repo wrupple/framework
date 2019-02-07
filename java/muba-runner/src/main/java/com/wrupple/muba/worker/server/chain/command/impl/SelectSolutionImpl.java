@@ -7,10 +7,12 @@ import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.SelectSolution;
+import com.wrupple.muba.worker.server.service.VariableConsensus;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +25,17 @@ public class SelectSolutionImpl implements SelectSolution {
 
     protected Logger log = LogManager.getLogger(SelectSolutionImpl.class);
 
+    private final VariableConsensus consensus;
+
+    @Inject
+    public SelectSolutionImpl(VariableConsensus consensus) {
+        this.consensus = consensus;
+    }
 
     @Override
     public boolean execute(Context ctx) throws Exception {
         log.info("Selecting best solution");
         ApplicationContext context = (ApplicationContext) ctx;
-
-        Long runnerId = getWorker(context).getRunner();
-
-        if (runnerId == null) {
-            log.debug("no main runner selected for container");
-        } else {
 
             CatalogDescriptor solutionDescriptor = context.getStateValue().getCatalogValue();
 
@@ -43,18 +45,19 @@ public class SelectSolutionImpl implements SelectSolution {
 
             for (VariableDescriptor v : variableDescriptors) {
                 if (onlyRunner == null || onlyRunner.equals(v.getRunner())) {
-
+                    onlyRunner = v.getRunner();
                 } else {
                     //solution comes from many runners
                     onlyRunner = null;
                 }
-                onlyRunner = v.getRunner();
             }
 
             if (onlyRunner == null) {
+                throw new IllegalStateException("Require Consensus");
+            } else {
                 List<VariableDescriptor> requiredVariables = new ArrayList<>(solutionDescriptor.getFieldsValues().size());
                 for (VariableDescriptor v : variableDescriptors) {
-                    if (v.getRunner().equals(runnerId)) {
+                    if (v.isSolved()) {
                         requiredVariables.add(v);
                     } else {
                         log.info("drop variable {} from unwanted runner {}", v.getField().getDistinguishedName(), v.getRunner());
@@ -64,12 +67,8 @@ public class SelectSolutionImpl implements SelectSolution {
                     log.warn("no variables selected");
                 }
                 context.getStateValue().setSolutionVariablesValues(requiredVariables);
-            } else {
-                if (!onlyRunner.equals(runnerId)) {
-                    throw new IllegalStateException("Main runner produced no solucit");
-                }
             }
-        }
+
 
 
         return CONTINUE_PROCESSING;
