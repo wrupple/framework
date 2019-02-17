@@ -176,11 +176,11 @@ public class ChocoRunnerImpl implements ChocoRunner {
         if(operand instanceof CatalogOperand){
             return modelCatalogOperand(operation,(CatalogOperand)operand,context,intros,model);
         }else{
-            IntVar bookingLocation = model.intVar((Integer) operand);
-            if(operation.getOperand_1()==null){
-                operation.setOperand_1(bookingLocation);
-            }else{
-                operation.setOperand_2(bookingLocation);
+            IntVar bookingLocation = model.intVar(((Number) operand).intValue());
+            if(operation.getOperandVariable_1()==null){
+                operation.setOperandVariable_1(bookingLocation);
+            }if(operation.getOperandVariable_2()==null){
+                operation.setOperandVariable_2(bookingLocation);
             }
 
             return 1;

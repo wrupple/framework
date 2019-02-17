@@ -16,7 +16,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 @Singleton
 public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
@@ -148,8 +150,11 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
     }
 
     private void evaluateCatalogField(ListIterator<String> sentence, EvaluationContext context, FieldDescriptor targetField,CatalogEntry targetEntry) throws Exception {
-        if(targetField.isKey()){
-            if(sentence.hasNext()){
+        Object obtainedData =  access.getPropertyValue(targetField,targetEntry,null,context.getIntro());
+        if(obtainedData!=null){
+            context.setResult(obtainedData);
+        }else{
+            if(sentence.hasNext()&&(targetField.isKey()||context.isNestedPath() )){
                 RuntimeContext runtime = context.getRuntimeContext();
                 Contract actionRequest= new CatalogReadRequestImpl(targetField.getCatalog(), CatalogDescriptor.CATALOG_ID);
                 CatalogDescriptor foreignCatalog  = runtime.getServiceBus().fireEvent(actionRequest, runtime,null);
@@ -157,14 +162,42 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 EvaluationContext child = new EvaluationContext(context,foreignCatalog,targetField,context.getEntryValue());
                 catalogEvaluation(sentence,child,sentence.next());
             }else{
+                // location , but my current type does not correspond so i just retun null instead
+                if(log.isDebugEnabled()){
+                    log.debug("unable to generate data for field {}",targetField.getDistinguishedName());
+                }
                 context.setResult(null);
             }
-        }else{
-            if(sentence.hasNext()){
-                // location , but my current type does not correspond so i just retun null instead
-                log.info("??");
-            }
         }
+    }
+
+    private Object getFieldValue(EvaluationContext context, CatalogEntry targetEntry) throws ReflectiveOperationException {
+        FieldDescriptor workingField = context.getEvaluate();
+        Object returnValue = targetEntry;
+        if(context.getParent()==null){
+            returnValue= access.getPropertyValue(workingField,targetEntry,null,context.getIntro());
+        }else {
+            Stack<EvaluationContext> xpath = new Stack<>();
+            xpath.push(context);
+            EvaluationContext ancestor =context;
+
+                while (ancestor.getParent() != null && ancestor.getParent() instanceof EvaluationContext) {
+                    ancestor = (EvaluationContext) ancestor.getParent();
+                    xpath.push(ancestor);
+
+                }
+
+                for(EvaluationContext pathElement : xpath){
+                    workingField = pathElement.getEvaluate();
+                    returnValue = access.getPropertyValue(workingField, (CatalogEntry) returnValue,null,context.getIntro());
+
+                }
+
+
+        }
+
+        return returnValue;
+
     }
 
 
