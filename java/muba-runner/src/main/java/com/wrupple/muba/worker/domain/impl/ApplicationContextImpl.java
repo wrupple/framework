@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.event.server.domain.impl.AbstractYieldContext;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import org.apache.commons.chain.Command;
@@ -17,6 +18,8 @@ import java.util.ListIterator;
 @Singleton
 public class ApplicationContextImpl  extends ContextBase implements ApplicationContext {
     private RuntimeContext runtimeContext;
+    private ApplicationState stateValue;
+
     private String name;
     private ListIterator<String> taskGrammar, workerOrders;
     private Task current;
@@ -59,7 +62,6 @@ public class ApplicationContextImpl  extends ContextBase implements ApplicationC
     }
 
 
-    private ApplicationState stateValue;
 
     @Override
     public void setRuntimeContext(RuntimeContext requestContext) {
@@ -147,5 +149,31 @@ public class ApplicationContextImpl  extends ContextBase implements ApplicationC
                 workerStateValue.getSentence().add(s);
             }
         };
+    }
+
+    private ApplicationContext parentValue;
+    private Object parent;
+
+    @Override
+    public ApplicationContext getParentValue() {
+        return parentValue;
+    }
+
+    @Override
+    public ApplicationContext getRootAncestor() {
+        return CatalogEntryImpl.getRootAncestor(this);
+    }
+
+    @Override
+    public Object getParent() {
+        return parent;
+    }
+
+    public void setParent(Object parent) {
+        this.parent = parent;
+    }
+
+    public void setParentValue(ApplicationContext parentValue) {
+        this.parentValue = parentValue;
     }
 }

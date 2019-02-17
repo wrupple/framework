@@ -1,14 +1,14 @@
 package com.wrupple.muba.event.server.domain.impl;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.reserved.HasCatalogId;
-import com.wrupple.muba.event.domain.reserved.HasCatalogKey;
-import com.wrupple.muba.event.domain.reserved.HasResult;
+import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.reserved.*;
 import org.apache.commons.chain.Context;
 
+import java.util.List;
 import java.util.ListIterator;
 
-public class EvaluationContext extends AbstractYieldContext implements HasResult<Object>, HasCatalogId, HasCatalogKey,ServiceContext {
+public class EvaluationContext extends AbstractYieldContext implements HasResult<Object>, HasCatalogId, HasCatalogKey,ServiceContext, HasParent<HasParent> {
     private final String interpreter;
     private final Context context;
     private final CatalogEntry subject;
@@ -96,5 +96,15 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
     @Override
     public void setRuntimeContext(RuntimeContext context) {
         ((ServiceContext)context).setRuntimeContext(context);
+    }
+
+    public boolean isNestedPath() {
+        return getParent()!=null&&getParent() instanceof EvaluationContext;
+    }
+
+
+    @Override
+    public HasParent getParent() {
+        return (HasParent) context;
     }
 }
