@@ -163,7 +163,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 Contract actionRequest= new CatalogReadRequestImpl(targetField.getCatalog(), CatalogDescriptor.CATALOG_ID);
                 CatalogDescriptor foreignCatalog  = runtime.getServiceBus().fireEvent(actionRequest, runtime,null);
 
-                EvaluationContext child = new EvaluationContext(context,foreignCatalog,targetField,context.getEntryValue());
+                EvaluationContext child = new EvaluationContext(context,foreignCatalog,context.getEvaluate(),context.getEntryValue());
                 pathEvaluation(sentence,child,sentence.next());
                 context.setResult(child.getResult());
             }else{
