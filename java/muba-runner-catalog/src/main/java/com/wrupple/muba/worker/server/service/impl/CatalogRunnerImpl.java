@@ -153,16 +153,20 @@ public class CatalogRunnerImpl implements CatalogRunner {
 
     @Override
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
-        CatalogOperand operation = (CatalogOperand)result;
-        CatalogActionRequest request = operation.getRequest();
-        if(request.getResults()==null){
-            try {
-                context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
-            } catch (Exception e) {
-                throw new RuntimeException("While modeling "+operation.getTargetField().getDistinguishedName()+" as an operation",e);
+        if(result instanceof CatalogOperand){
+            CatalogOperand operation = (CatalogOperand)result;
+            CatalogActionRequest request = operation.getRequest();
+            if(request.getResults()==null){
+                try {
+                    context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
+                } catch (Exception e) {
+                    throw new RuntimeException("While modeling "+operation.getTargetField().getDistinguishedName()+" as an operation",e);
+                }
+            }else{
+                log.info("catalog's work is already done.");
             }
         }else{
-            log.info("catalog's work is already done.");
+            log.trace("Catalog runner skips modeling non catalog related operation");
         }
 
     }
