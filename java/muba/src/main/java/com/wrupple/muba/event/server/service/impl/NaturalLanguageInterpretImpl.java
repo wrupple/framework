@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Stack;
 
@@ -79,7 +78,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 holder.setResult(null);
             }else{
                 if(t instanceof EvaluationContext){
-                    catalogEvaluation(sentence, (EvaluationContext) t, rawValue);
+                    pathEvaluation(sentence, (EvaluationContext) t, rawValue);
                 }else{
                     log.info("no interpretarion for token {} on current context",rawValue);
                 }
@@ -104,29 +103,30 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
 
 
 
-    private void catalogEvaluation(ListIterator<String> sentence, EvaluationContext context, String rawValue) throws Exception {
+    private void pathEvaluation(ListIterator<String> sentence, EvaluationContext context, String rawValue) throws Exception {
         ContractDescriptor catalog =context.getCatalog();
         if(catalog==null){
                context.setResult(rawValue);
         }else{
             FieldDescriptor targetField = catalog.getFieldDescriptor(rawValue);
             if(targetField==null){
-                //operator ????
-
-                context.setResult(new BinaryOperation(context.getResult(),targetField,rawValue));
+                if (context.getResult() instanceof Operation){
+                    Operation operation = (Operation) context.getResult();
+                    operation.appendOperand(rawValue);
+                }else{
+                    context.setResult(new BinaryOperation(context.getResult(),targetField,rawValue));
+                }
             }else{
                 CatalogEntry targetEntry = context.getEntryValue();
-                if(targetEntry==null&& context.getResult() instanceof CatalogOperand){
-                    CatalogOperand operand  = (CatalogOperand) context.getResult();
-
+                if(targetEntry==null||!catalog.getDistinguishedName().equals(targetEntry.getCatalogType())){
                     //resolve posible entries
-                    CatalogQueryRequestImpl request = new CatalogQueryRequestImpl(FilterDataUtils.newFilterData(),operand.getTargetField().getCatalog());
+                    CatalogQueryRequestImpl request = new CatalogQueryRequestImpl(FilterDataUtils.newFilterData(),catalog.getDistinguishedName());
                     context.setResult(new CatalogOperand(request,targetField));
                 }else{
                     if(targetEntry.getCatalogType().equals(catalog.getDistinguishedName())){
                         Object targetFieldValue = access.getPropertyValue(targetField, targetEntry, null, context.getIntro());
                         if(targetFieldValue==null){
-                            evaluateCatalogField(sentence, context, targetField,targetEntry);
+                            getFieldValue(sentence, context, targetField,targetEntry);
                         }else{
                             if(context.getResult()!=null && context.getResult() instanceof  BinaryOperation){
                                 BinaryOperation operation = (BinaryOperation) context.getResult();
@@ -136,23 +136,25 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                             }
                         }
                     }else{
-                        // TODO my subject's data type does not correspond to this iteration's working type... soo......?
-                        evaluateCatalogField(sentence, context, targetField,targetEntry);
-
-
+                        getFieldValue(sentence, context, targetField,targetEntry);
                     }
                 }
             }
             if(sentence.hasNext()){
-                catalogEvaluation(sentence,context,sentence.next());
+                pathEvaluation(sentence,context,sentence.next());
             }
         }
     }
 
-    private void evaluateCatalogField(ListIterator<String> sentence, EvaluationContext context, FieldDescriptor targetField,CatalogEntry targetEntry) throws Exception {
+    private void getFieldValue(ListIterator<String> sentence, EvaluationContext context, FieldDescriptor targetField, CatalogEntry targetEntry) throws Exception {
         Object obtainedData =  access.getPropertyValue(targetField,targetEntry,null,context.getIntro());
         if(obtainedData!=null){
-            context.setResult(obtainedData);
+            if(context.getResult()==null){
+                context.setResult(obtainedData);
+            }else if (context.getResult() instanceof Operation){
+                Operation operation = (Operation) context.getResult();
+                operation.appendOperand(obtainedData);
+            }
         }else{
             if(sentence.hasNext()&&(targetField.isKey()||context.isNestedPath() )){
                 RuntimeContext runtime = context.getRuntimeContext();
@@ -160,7 +162,8 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 CatalogDescriptor foreignCatalog  = runtime.getServiceBus().fireEvent(actionRequest, runtime,null);
 
                 EvaluationContext child = new EvaluationContext(context,foreignCatalog,targetField,context.getEntryValue());
-                catalogEvaluation(sentence,child,sentence.next());
+                pathEvaluation(sentence,child,sentence.next());
+                context.setResult(child.getResult());
             }else{
                 // location , but my current type does not correspond so i just retun null instead
                 if(log.isDebugEnabled()){
