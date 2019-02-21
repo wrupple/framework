@@ -12,7 +12,7 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
     private final String interpreter;
     private final Context context;
     private final CatalogEntry subject;
-    private final ContractDescriptor subjectType;
+    private ContractDescriptor subjectType;
     private final FieldDescriptor evaluate;
     private final Instrospection intro;
     private Object result;
@@ -55,9 +55,18 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
         return subject;
     }
 
-    public ContractDescriptor getCatalog() {
+    public String getCatalog() {
+        return getCatalogValue().getDistinguishedName();
+    }
+
+    public void setCatalogValue(ContractDescriptor subjectType) {
+        this.subjectType = subjectType;
+    }
+
+    public ContractDescriptor getCatalogValue() {
         return subjectType;
     }
+
 
     public FieldDescriptor getEvaluate() {
         return evaluate;

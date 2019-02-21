@@ -5,6 +5,7 @@ import com.wrupple.muba.event.domain.impl.BinaryOperation;
 import com.wrupple.muba.event.domain.impl.CatalogOperand;
 import com.wrupple.muba.event.domain.impl.CatalogQueryRequestImpl;
 import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
+import com.wrupple.muba.event.domain.reserved.HasCatalogId;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.event.server.domain.impl.EvaluationContext;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
@@ -104,17 +105,18 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
 
 
     private void pathEvaluation(ListIterator<String> sentence, EvaluationContext context, String rawValue) throws Exception {
-        ContractDescriptor catalog =context.getCatalog();
+        ContractDescriptor catalog =context.getCatalogValue();
         if(catalog==null){
                context.setResult(rawValue);
         }else{
             FieldDescriptor targetField = catalog.getFieldDescriptor(rawValue);
             if(targetField==null){
-                if (context.getResult() instanceof Operation){
-                    Operation operation = (Operation) context.getResult();
-                    operation.appendOperand(rawValue);
-                }else{
-                    context.setResult(new BinaryOperation(context.getResult(),targetField,rawValue));
+                if (context.getResult() instanceof  CatalogOperand){
+                    //prepare context for foward propagation into what may resolve as an operation
+                    if(context.getParent()!=null && context.getParent() instanceof EvaluationContext){
+                        context.setCatalogValue( ((EvaluationContext)context.getParent()).getCatalogValue());
+                    }
+                    context.setResult(new BinaryOperation(context.getResult(),context.getEvaluate(),rawValue));
                 }
             }else{
                 CatalogEntry targetEntry = context.getEntryValue();
