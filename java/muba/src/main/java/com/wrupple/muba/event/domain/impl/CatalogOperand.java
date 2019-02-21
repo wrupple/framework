@@ -37,4 +37,11 @@ public class CatalogOperand extends OperationImpl  {
     public void setTargetField(FieldDescriptor targetField) {
         this.targetField = targetField;
     }
+
+    @Override
+    public void appendOperand(Object obtainedData) {
+        if(this.request==null){
+            this.request= (CatalogActionRequestImpl) obtainedData;
+        }
+    }
 }

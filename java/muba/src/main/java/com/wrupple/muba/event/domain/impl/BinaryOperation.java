@@ -61,4 +61,15 @@ public class BinaryOperation extends OperationImpl {
     public void setTargetField(FieldDescriptor targetField) {
         this.targetField = targetField;
     }
+
+    @Override
+    public void appendOperand(Object obtainedData) {
+        if(getOperand_1()==null){
+            setOperand_1(obtainedData);
+        }else if(getOperand_2()==null){
+            setOperand_2(obtainedData);
+        }else{
+            throw new IllegalStateException("Unable to append a new operand to a binary operation with both operands present");
+        }
+    }
 }
