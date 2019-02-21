@@ -64,7 +64,8 @@ public class ChocoRunnerImpl implements ChocoRunner {
          /*else if(model.getSolver().hasReachedLimit()){
             //System.out.println("The could not find a solution nor prove that none exists in the given limits");
         }*/
-        log.info("Solving...");
+        log.info("Solving {}",model.toString());
+
         boolean retorno = model.getSolver().solve();
         try {
             callback.execute(context);
@@ -161,6 +162,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
             model.element(bookingDistance, distances, foreignKeyAssignation, 1).post();
         */
+
             }
 
         }else{

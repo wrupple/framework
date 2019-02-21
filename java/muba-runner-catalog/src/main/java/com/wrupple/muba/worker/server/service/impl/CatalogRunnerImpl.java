@@ -159,7 +159,7 @@ public class CatalogRunnerImpl implements CatalogRunner {
             try {
                 context.getRuntimeContext().getServiceBus().fireEvent(request,context.getRuntimeContext(),null);
             } catch (Exception e) {
-                throw new RuntimeException("While resolving "+operation.getTargetField().getDistinguishedName(),e);
+                throw new RuntimeException("While modeling "+operation.getTargetField().getDistinguishedName()+" as an operation",e);
             }
         }else{
             log.info("catalog's work is already done.");

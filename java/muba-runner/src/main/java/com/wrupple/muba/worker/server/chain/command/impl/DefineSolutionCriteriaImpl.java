@@ -56,7 +56,7 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
                         if(((Operation) result).getName()==null){
                             throw new NullPointerException("operation with no name was synthesized with "+field.getDistinguishedName());
                         }
-                        resolveOperation(context,runtime, (Operation) result,intros);
+                        bpm.getSolver().model((Operation) result,context,intros);
                     }
                 }
             }
@@ -76,12 +76,6 @@ public class DefineSolutionCriteriaImpl implements DefineSolutionCriteria {
         processNextConstraint(activitySentence, context);
 
         return CONTINUE_PROCESSING;
-    }
-
-    private void resolveOperation(ApplicationContext context ,RuntimeContext runtime, Operation result,Instrospection intros) throws Exception {
-
-        bpm.getSolver().model(result,context,intros);
-
     }
 
     private void processNextConstraint(ListIterator<String> sentence, ApplicationContext context) throws Exception {
