@@ -7,6 +7,7 @@ import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.event.domain.VariableDescriptor;
 import com.wrupple.muba.worker.server.chain.command.SelectSolution;
+import com.wrupple.muba.worker.server.service.Solver;
 import com.wrupple.muba.worker.server.service.VariableConsensus;
 import org.apache.commons.chain.Context;
 import org.apache.logging.log4j.Logger;
@@ -25,10 +26,10 @@ public class SelectSolutionImpl implements SelectSolution {
 
     protected Logger log = LogManager.getLogger(SelectSolutionImpl.class);
 
-    private final VariableConsensus consensus;
+    private final Solver consensus;
 
     @Inject
-    public SelectSolutionImpl(VariableConsensus consensus) {
+    public SelectSolutionImpl(Solver consensus) {
         this.consensus = consensus;
     }
 
@@ -41,20 +42,7 @@ public class SelectSolutionImpl implements SelectSolution {
 
             List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariablesValues();
 
-            Long onlyRunner = null;
 
-            for (VariableDescriptor v : variableDescriptors) {
-                if (onlyRunner == null || onlyRunner.equals(v.getRunner())) {
-                    onlyRunner = v.getRunner();
-                } else {
-                    //solution comes from many runners
-                    onlyRunner = null;
-                }
-            }
-
-            if (onlyRunner == null) {
-                throw new IllegalStateException("Require Consensus");
-            } else {
                 List<VariableDescriptor> requiredVariables = new ArrayList<>(solutionDescriptor.getFieldsValues().size());
                 for (VariableDescriptor v : variableDescriptors) {
                     if (v.isSolved()) {
@@ -67,9 +55,8 @@ public class SelectSolutionImpl implements SelectSolution {
                     log.warn("no variables selected");
                 }
                 context.getStateValue().setSolutionVariablesValues(requiredVariables);
-            }
 
-
+        consensus.onProblemSolved(context);
 
         return CONTINUE_PROCESSING;
     }

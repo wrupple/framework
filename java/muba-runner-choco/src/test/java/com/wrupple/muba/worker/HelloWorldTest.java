@@ -173,6 +173,11 @@ public class HelloWorldTest extends IntegralTest {
             //avoid using this comodity
         }
 
+        @Override
+        public void onProblemSolved(ApplicationContext context) {
+
+        }
+
 
     }
 

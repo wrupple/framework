@@ -7,4 +7,6 @@ import org.chocosolver.solver.variables.IntVar;
 
 public interface ChocoModelResolver {
     Model resolveSolverModel(ApplicationContext context);
+
+    void clearModel(ApplicationContext context);
 }

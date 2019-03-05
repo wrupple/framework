@@ -40,4 +40,9 @@ public class ChocoModelResolverImpl implements ChocoModelResolver {
         return model;
     }
 
+    @Override
+    public void clearModel(ApplicationContext context) {
+        context.remove(modelKey);
+    }
+
 }

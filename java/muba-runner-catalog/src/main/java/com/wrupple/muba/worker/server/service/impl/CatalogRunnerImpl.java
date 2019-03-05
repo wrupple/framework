@@ -212,4 +212,9 @@ public class CatalogRunnerImpl implements CatalogRunner {
         }
     }
 
+    @Override
+    public void onProblemSolved(ApplicationContext context) {
+
+    }
+
 }

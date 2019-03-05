@@ -68,6 +68,15 @@ public class SolverImpl implements Solver {
         }
     }
 
+    @Override
+    public void onProblemSolved(ApplicationContext context) {
+        runners.stream().forEach(plugin->
+                {
+                    plugin.onProblemSolved(context);
+                }
+        );
+    }
+
     public VariableEligibility isEligible(FieldDescriptor field, ApplicationContext context) {
         Optional<Runner> eligible = runners.stream().
                 filter(

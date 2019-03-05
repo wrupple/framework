@@ -16,4 +16,6 @@ public interface Runner {
     void model(Operation result, ApplicationContext context, Instrospection intros);
 
     void prepare(ApplicationContext context);
+
+    void onProblemSolved(ApplicationContext context);
 }

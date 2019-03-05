@@ -18,6 +18,7 @@ import org.chocosolver.solver.variables.IntVar;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,6 +42,11 @@ public class ChocoRunnerImpl implements ChocoRunner {
     @Override
     public void prepare(ApplicationContext context) {
 
+    }
+
+    @Override
+    public void onProblemSolved(ApplicationContext context) {
+        delegate.clearModel(context);
     }
 
     @Override
@@ -83,7 +89,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
             BinaryOperation operation = (BinaryOperation) result;
             int vector_1_length = applyOperand(operation.getOperand_1(),operation,context,intros,model);
             int vector_2_length = applyOperand(operation.getOperand_2(),operation,context,intros,model);
-
+            log.debug("modeling substraction");
 
             if(vector_1_length>1&&vector_2_length>1){
                 throw new IllegalArgumentException("Substraction cannot be applied with both operand's vectors' length > 1 ");
@@ -98,12 +104,12 @@ public class ChocoRunnerImpl implements ChocoRunner {
                 IntVar singleVariable= (IntVar) (vector_1_length > vector_2_length ? operation.getOperandVariable_2() : operation.getOperandVariable_1());
                 IntVar[] multipleVariable= (IntVar[]) (vector_1_length > vector_2_length ? operation.getOperandVariable_1() : operation.getOperandVariable_2());
                 for (int j = 0; j < difference_vector_length; j++) {
-
                     difference[j]=singleVariable.sub(multipleVariable[j]).abs().intVar();
-
+                    if(log.isDebugEnabled()){
+                        log.debug("modeled substraction {}-{}",singleVariable,difference[j]);
+                    }
                 }
 
-                IntVar foreignKeyAssignation = model.intVar(operation.getTargetField().getDistinguishedName()+"_fka", 1, difference_vector_length, false);
 
                 List<VariableDescriptor> variableDescriptors = context.getStateValue().getSolutionVariablesValues();
 
@@ -112,7 +118,10 @@ public class ChocoRunnerImpl implements ChocoRunner {
                 Optional<VariableDescriptor> bookingDistance = variableDescriptors.stream().filter(v->v.getField()==operation.getTargetField()).findAny();
 
                 if(bookingDistance.isPresent()){
+                    IntVar foreignKeyAssignation = model.intVar(operation.getTargetField().getDistinguishedName()+"_diff_vector", 1, difference_vector_length, false);
                     model.element((IntVar) ((ChocoVariableDescriptorImpl)bookingDistance.get()).getVariable(), difference, foreignKeyAssignation, 1).post();
+                    log.info("Constrained element [ {} ] = [ {} ]",bookingDistance.get(),foreignKeyAssignation);
+                    operation.setModeled(true);
                 }else{
                     throw new IllegalStateException("No variable modeled for field "+operation.getTargetField().getDistinguishedName());
                 }
@@ -143,26 +152,6 @@ public class ChocoRunnerImpl implements ChocoRunner {
                     }
                 }
 
-                Model model = delegate.resolveSolverModel(context);
-/*
-            IntVar[] driverLocations = model.intVarArray("driverLocations",NUM_DRIVERS,LOCATIONS);
-            IntVar bookingLocation = model.intVar(7);
-            IntVar foreignKeyAssignation = model.intVar("foreignKeyAssignation", 1, NUM_DRIVERS, false);
-            IntVar bookingDistance = model.intVar("bookingDistance", 0, 100, true);
-
-
-            // CONSTRAINTS
-            IntVar[] distances = new IntVar[NUM_DRIVERS];
-
-            for (int j = 0; j < NUM_DRIVERS; j++) {
-
-                distances[j]=bookingLocation.sub(driverLocations[j]).abs().intVar();
-
-            }
-
-            model.element(bookingDistance, distances, foreignKeyAssignation, 1).post();
-        */
-
             }
 
         }else{
@@ -177,12 +166,17 @@ public class ChocoRunnerImpl implements ChocoRunner {
 
         if(operand instanceof CatalogOperand){
             return modelCatalogOperand(operation,(CatalogOperand)operand,context,intros,model);
-        }else{
-            IntVar bookingLocation = model.intVar(((Number) operand).intValue());
-            if(operation.getOperandVariable_1()==null){
-                operation.setOperandVariable_1(bookingLocation);
-            }if(operation.getOperandVariable_2()==null){
-                operation.setOperandVariable_2(bookingLocation);
+        }else {
+            if(operand instanceof  Number){
+                if(operation.getOperandVariable_1()==null){
+                    IntVar bookingLocation = model.intVar(((Number) operand).intValue());
+                    log.info("new constant as operation's first operand {}",bookingLocation);
+                    operation.setOperandVariable_1(bookingLocation);
+                }else if(operation.getOperandVariable_2()==null){
+                    IntVar bookingLocation = model.intVar(((Number) operand).intValue());
+                    log.info("new constant as  binary operation's second operand {}",bookingLocation);
+                    operation.setOperandVariable_2(bookingLocation);
+                }
             }
 
             return 1;
@@ -190,6 +184,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
     }
 
     private int modelCatalogOperand(BinaryOperation operation, CatalogOperand catalogRequest, ApplicationContext context, Instrospection intros, Model model) {
+        log.info("model catalog operand {}",catalogRequest.getTargetField());
 
         RuntimeContext runtime = context.getRuntimeContext();
 
@@ -201,7 +196,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
         }
 
         if(results==null){
-            log.info("No results to provide foreign key");
+            log.info("No results, so no values.");
         }else {
             List<Long> values = results.stream().map(entry -> {
                 try {
@@ -219,10 +214,12 @@ public class ChocoRunnerImpl implements ChocoRunner {
             }
 
             IntVar[] driverLocations = model.intVarArray(catalogRequest.getRequest().getCatalog() + "_" + catalogRequest.getTargetField().getDistinguishedName(), vector.length, vector);
-            if(operation.getOperand_1()==null){
-                operation.setOperand_1(driverLocations);
+            if(operation.getOperandVariable_1()==null){
+                log.info("set binary operation's first operand {}",driverLocations);
+                operation.setOperandVariable_1(driverLocations);
             }else{
-                operation.setOperand_2(driverLocations);
+                log.info("set binary operation's first operand {}",driverLocations);
+                operation.setOperandVariable_2(driverLocations);
             }
 
 
