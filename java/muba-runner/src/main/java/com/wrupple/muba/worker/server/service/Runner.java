@@ -18,4 +18,6 @@ public interface Runner {
     void prepare(ApplicationContext context);
 
     void onProblemSolved(ApplicationContext context);
+
+    boolean canSolve(ApplicationContext context);
 }

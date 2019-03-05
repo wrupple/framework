@@ -107,15 +107,20 @@ public class SolverImpl implements Solver {
 
         List<StateTransition<ApplicationContext>> callbacks = new ArrayList<>(runners.size());
         for (Runner plugin : runners) {
-            /* FIXME wrap in a callback that fires an event when a runner finds a complete solution*/
-            callbacks.add(fork.fork());
+
+                /* FIXME wrap in a callback that fires an event when a runner finds a complete solution*/
+                callbacks.add(fork.fork());
 
         }
 
         Runner plugin;
         for (int i = 0; i < runners.size(); i++) {
             plugin = runners.get(i);
-            plugin.solve(context, callbacks.get(i));
+            if(plugin.canSolve(context)){
+                plugin.solve(context, callbacks.get(i));
+            }else{
+                callbacks.get(i).execute(context);
+            }
 
         }
 

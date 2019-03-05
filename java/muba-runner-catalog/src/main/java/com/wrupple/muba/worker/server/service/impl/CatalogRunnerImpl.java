@@ -119,6 +119,12 @@ public class CatalogRunnerImpl implements CatalogRunner {
     }
 
     @Override
+    public boolean canSolve(ApplicationContext context) {
+        return  context.getStateValue().getUserSelection()!=null;
+    }
+
+
+    @Override
     public boolean solve(ApplicationContext context, StateTransition<ApplicationContext> callback) throws Exception {
 
 

@@ -178,6 +178,11 @@ public class HelloWorldTest extends IntegralTest {
 
         }
 
+        @Override
+        public boolean canSolve(ApplicationContext context) {
+            return true;
+        }
+
 
     }
 
