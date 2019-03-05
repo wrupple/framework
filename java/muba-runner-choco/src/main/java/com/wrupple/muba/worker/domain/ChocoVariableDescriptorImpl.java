@@ -61,4 +61,11 @@ public class ChocoVariableDescriptorImpl implements VariableDescriptor {
     public Long getRunner() {
         return runner;
     }
+
+    @Override
+    public String toString() {
+        return "ChocoVariable{"  + field.getDistinguishedName() +
+                " is " + variable +
+                '}';
+    }
 }

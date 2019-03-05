@@ -154,6 +154,7 @@ public class CatalogRunnerImpl implements CatalogRunner {
     @Override
     public void model(Operation result, ApplicationContext context, Instrospection intros) {
         if(result instanceof CatalogOperand){
+            log.info("model catalog operand");
             CatalogOperand operation = (CatalogOperand)result;
             CatalogActionRequest request = operation.getRequest();
             if(request.getResults()==null){

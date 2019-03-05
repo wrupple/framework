@@ -11,18 +11,20 @@ public class ForeignKeyAssignation {
 
 
     public static void main(String[] args) {
-        int NUM_DRIVERS = 5;
-        int[] LOCATIONS = new int[]{20, 7, 2, 20, 30};
 
         Model model = new Model("Driver key");
 
-        IntVar[] driverLocations = model.intVarArray("driverLocations",NUM_DRIVERS,LOCATIONS);
         IntVar bookingLocation = model.intVar(7);
-        IntVar foreignKeyAssignation = model.intVar("foreignKeyAssignation", 1, NUM_DRIVERS, false);
         IntVar bookingDistance = model.intVar("bookingDistance", 0, 100, true);
+        model.setObjective(false/*ResolutionPolicy.MINIMIZE*/, bookingDistance);
 
 
         // CONSTRAINTS
+        int NUM_DRIVERS = 5;
+        int[] LOCATIONS = new int[]{20, 7, 2, 20, 30};
+
+        IntVar[] driverLocations = model.intVarArray("driverLocations",NUM_DRIVERS,LOCATIONS);
+
         IntVar[] distances = new IntVar[NUM_DRIVERS];
 
         for (int j = 0; j < NUM_DRIVERS; j++) {
@@ -30,11 +32,13 @@ public class ForeignKeyAssignation {
             distances[j]=bookingLocation.sub(driverLocations[j]).abs().intVar();
 
         }
+        IntVar foreignKeyAssignation = model.intVar("foreignKeyAssignation", 1, NUM_DRIVERS, false);
 
         model.element(bookingDistance, distances, foreignKeyAssignation, 1).post();
-        model.setObjective(false/*ResolutionPolicy.MINIMIZE*/, bookingDistance);
 
         Solver solver = model.getSolver();
+        System.out.println(model);
+
         solver.showShortStatistics();
 
         while (solver.solve()) {
@@ -60,3 +64,5 @@ public class ForeignKeyAssignation {
     }
 
 }
+
+

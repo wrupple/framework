@@ -116,17 +116,14 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
     @Override
     public Object getPropertyValue(FieldDescriptor field, CatalogEntry object,
                                    DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException {
-        // log.trace("[READ PROPERTY] {}.{}", catalog.getDistinguishedName(),
-        // field.getDistinguishedName());
-        /*
-		 * if(s==null){ instrospection = new FieldAccessSession(entry instanceof
-		 * HasAccesablePropertyValues); }
-		 */
+        if(log.isTraceEnabled()){
+            log.trace("[READ PROPERTY] {}.{}", object.getCatalogType(), field.getDistinguishedName());
+        }
+
         String fieldId = field.getDistinguishedName();
         Object value = null;
 
         if (localizedObject != null && field.isLocalized()) {
-            // support non-string values
             value = localizedObject.getLocalizedFieldValue(fieldId);
         }
 
@@ -141,14 +138,12 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             }
         }
 
-        // log.trace("[READ PROPERTY] value = {}", value);
         return value;
     }
 
     @Override
     public Object getPropertyValue(String fieldId, CatalogEntry object, DistributiedLocalizedEntry localizedObject, Instrospection instrospection) throws ReflectiveOperationException {
-        Object value = null;
-        //value = valuedoReadProperty(fieldId, instrospection, object, false);
+        Object value ;
         if (instrospection.isAccesible()) {
             try {
                 value = doGetAccesibleProperty(object, fieldId);

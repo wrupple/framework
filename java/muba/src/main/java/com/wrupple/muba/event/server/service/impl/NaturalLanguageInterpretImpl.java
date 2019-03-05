@@ -176,34 +176,5 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
         }
     }
 
-    private Object getFieldValue(EvaluationContext context, CatalogEntry targetEntry) throws ReflectiveOperationException {
-        FieldDescriptor workingField = context.getEvaluate();
-        Object returnValue = targetEntry;
-        if(context.getParent()==null){
-            returnValue= access.getPropertyValue(workingField,targetEntry,null,context.getIntro());
-        }else {
-            Stack<EvaluationContext> xpath = new Stack<>();
-            xpath.push(context);
-            EvaluationContext ancestor =context;
-
-                while (ancestor.getParent() != null && ancestor.getParent() instanceof EvaluationContext) {
-                    ancestor = (EvaluationContext) ancestor.getParent();
-                    xpath.push(ancestor);
-
-                }
-
-                for(EvaluationContext pathElement : xpath){
-                    workingField = pathElement.getEvaluate();
-                    returnValue = access.getPropertyValue(workingField, (CatalogEntry) returnValue,null,context.getIntro());
-
-                }
-
-
-        }
-
-        return returnValue;
-
-    }
-
 
 }

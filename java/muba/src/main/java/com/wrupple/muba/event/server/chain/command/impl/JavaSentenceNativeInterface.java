@@ -69,7 +69,7 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
             }
             for(Method method : possiblemethods) {
                 sentenceIterator = parmeters.listIterator();
-                log.info("attempting native method {} ",methodName);
+                log.debug("attempting native method {} ",methodName);
                 Class<?>[] parameterTypes = method.getParameterTypes();
                 Object[] parameterValues = new Object[parameterTypes.length];
                 for(int i = 0 ; i < parameterTypes.length; i++){
@@ -81,9 +81,9 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
                     }
                 }
                 if(allMatch(parameterTypes,parameterValues)) {
+                    log.info("\texternal method call    : {} ",method);
                     if(log.isTraceEnabled()){
-                        log.trace("\tmethod    : {} ",method);
-                        log.trace("\tparameters: {} ",Arrays.toString(parameterValues));
+                        log.trace("\t\tparameters: {} ",Arrays.toString(parameterValues));
                     }
                     context.result=method.invoke(context.subject,parameterValues);
                     break;
@@ -131,7 +131,6 @@ public class JavaSentenceNativeInterface implements SentenceNativeInterface {
     }
 
     private boolean isCompatiblePrimitive(Class<?> parameterType, Class<?> aClass) {
-        log.trace("¿ {} == {} ?",parameterType,aClass);
         if(aClass.equals(Integer.class)){
             return parameterType.equals(int.class);
         }else if(aClass.equals(Boolean.class)){
