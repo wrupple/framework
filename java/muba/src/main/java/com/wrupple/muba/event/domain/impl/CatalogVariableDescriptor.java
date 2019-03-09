@@ -1,8 +1,15 @@
 package com.wrupple.muba.event.domain.impl;
 
+import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.VariableDescriptor;
 
-public abstract class AbstractVariableDescriptor implements VariableDescriptor {
+import java.util.List;
+
+public abstract class CatalogVariableDescriptor implements VariableDescriptor {
+
+    public abstract CatalogEntry getForeignKeyValue();
+    public abstract List<CatalogEntry> getForeignKeyValues();
+
     @Override
     public <T> T getConvertedResult() {
         return (T) getResult();

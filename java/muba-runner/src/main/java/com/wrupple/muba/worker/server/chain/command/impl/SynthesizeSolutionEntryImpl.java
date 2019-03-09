@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.CatalogVariableDescriptor;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
 import com.wrupple.muba.worker.server.chain.command.SynthesizeSolutionEntry;
@@ -53,6 +54,16 @@ public class SynthesizeSolutionEntryImpl implements SynthesizeSolutionEntry {
         for(VariableDescriptor solutionVariable : variableDescriptors){
             fieldId = solutionVariable.getField();
             fieldValue = solutionVariable.getResult();
+            if(solutionVariable instanceof CatalogVariableDescriptor){
+                 String reservedField = fieldId.getDistinguishedName() + CatalogEntry.FOREIGN_KEY;
+                 if(plugin.isWriteableProperty(reservedField,solution,solutionWritingInstrospection)){
+                     CatalogEntry foreignKeyValue = ((CatalogVariableDescriptor) solutionVariable).getForeignKeyValue();
+                     plugin.setPropertyValue(reservedField,solution,foreignKeyValue, solutionWritingInstrospection);
+
+                 }
+
+            }
+
             log.debug("    {}={}",fieldId.getDistinguishedName(),fieldValue);
             plugin.setPropertyValue(fieldId,solution,fieldValue, solutionWritingInstrospection);
         }
