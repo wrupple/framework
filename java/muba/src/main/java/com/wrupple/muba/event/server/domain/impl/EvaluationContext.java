@@ -1,23 +1,22 @@
 package com.wrupple.muba.event.server.domain.impl;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.PathToken;
 import com.wrupple.muba.event.domain.reserved.*;
 import org.apache.commons.chain.Context;
 
-import java.util.List;
 import java.util.ListIterator;
 
 public class EvaluationContext extends AbstractYieldContext implements HasResult<Object>, HasCatalogId, HasCatalogKey,ServiceContext, HasParent<HasParent> {
     private final String interpreter;
     private final Context context;
     private final CatalogEntry subject;
-    private ContractDescriptor subjectType;
+    private PathToken assignation;
     private final FieldDescriptor evaluate;
     private final Instrospection intro;
     private Object result;
 
-    public EvaluationContext(ListIterator<String> sentence,String interpreter, Context context, CatalogEntry subject, ContractDescriptor subjectType, FieldDescriptor evaluate, Instrospection intro) {
+    public EvaluationContext(ListIterator<String> sentence, String interpreter, Context context, CatalogEntry subject, PathToken subjectType, FieldDescriptor evaluate, Instrospection intro) {
         if(sentence==null){
             throw new NullPointerException("null sentence iterator");
         }
@@ -25,13 +24,13 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
         this.interpreter = interpreter;
         this.context = context;
         this.subject = subject;
-        this.subjectType = subjectType;
+        this.assignation = subjectType;
         this.evaluate = evaluate;
         this.intro = intro;
 
     }
 
-    public EvaluationContext(EvaluationContext context, CatalogDescriptor foreignCatalog, FieldDescriptor targetField, CatalogEntry targetEntry) {
+    public EvaluationContext(EvaluationContext context, PathToken foreignCatalog, FieldDescriptor targetField, CatalogEntry targetEntry) {
         this(context.wordIterator,context.interpreter,context,targetEntry,foreignCatalog,targetField,context.intro);
     }
 
@@ -41,6 +40,13 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
 
     public void setEntry(Object value){
 
+    }
+    public PathToken getAssignation() {
+        return assignation;
+    }
+
+    public void setAssignation(PathToken assignation) {
+        this.assignation = assignation;
     }
 
     public String getInterpreter() {
@@ -59,12 +65,8 @@ public class EvaluationContext extends AbstractYieldContext implements HasResult
         return getCatalogValue().getDistinguishedName();
     }
 
-    public void setCatalogValue(ContractDescriptor subjectType) {
-        this.subjectType = subjectType;
-    }
-
     public ContractDescriptor getCatalogValue() {
-        return subjectType;
+        return assignation.getForeignCatalog();
     }
 
 

@@ -2,6 +2,7 @@ package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.PathToken;
 import com.wrupple.muba.event.server.domain.impl.EvaluationContext;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.event.server.service.FieldSynthesizer;
@@ -77,7 +78,7 @@ public class FieldSynthesizerImpl implements FieldSynthesizer{
                         return contextuallySynthethizeFieldValue(current,sentence,parentContext,subject,subjectType,generated,intro);
                     }else{
                         //delegate to plugin
-                        EvaluationContext mofo = new EvaluationContext(sentence, current, parentContext, subject, subjectType, generated, intro);
+                        EvaluationContext mofo = new EvaluationContext(sentence, current, parentContext, subject, new PathToken(subjectType,null), generated, intro);
                         interpret.resolve(sentence,mofo,current);
                         return mofo.getResult();
                     }

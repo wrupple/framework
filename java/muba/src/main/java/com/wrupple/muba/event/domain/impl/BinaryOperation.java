@@ -10,6 +10,7 @@ public class BinaryOperation extends OperationImpl {
     private Object operand_2;
     private Object operandVariable_2;
     private Object operandVariable_1;
+    private PathToken path;
 
     public BinaryOperation(Object operand, FieldDescriptor targetField, String operation) {
         this.operand_1 = operand;
@@ -71,5 +72,14 @@ public class BinaryOperation extends OperationImpl {
         }else{
             throw new IllegalStateException("Unable to append a new operand to a binary operation with both operands present");
         }
+    }
+
+    @Override
+    public PathToken getPath() {
+        return path;
+    }
+
+    public void setPath(PathToken path) {
+        this.path = path;
     }
 }

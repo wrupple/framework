@@ -6,10 +6,12 @@ public class CatalogOperand extends OperationImpl  {
     public static final String CATALOG = "CatalogOperand";
 
     private CatalogActionRequestImpl request; private  FieldDescriptor targetField;
+    private PathToken path;
 
-    public CatalogOperand(CatalogActionRequestImpl request, FieldDescriptor targetField) {
+    public CatalogOperand(CatalogActionRequestImpl request, FieldDescriptor targetField, PathToken path) {
         this();
         this.request=request;
+        this.path=path;
         this.targetField=targetField;
     }
 
@@ -43,5 +45,13 @@ public class CatalogOperand extends OperationImpl  {
         if(this.request==null){
             this.request= (CatalogActionRequestImpl) obtainedData;
         }
+    }
+
+    public PathToken getPath() {
+        return path;
+    }
+
+    public void setPath(PathToken path) {
+        this.path = path;
     }
 }

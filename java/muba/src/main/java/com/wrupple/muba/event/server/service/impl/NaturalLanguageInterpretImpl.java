@@ -1,11 +1,7 @@
 package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.*;
-import com.wrupple.muba.event.domain.impl.BinaryOperation;
-import com.wrupple.muba.event.domain.impl.CatalogOperand;
-import com.wrupple.muba.event.domain.impl.CatalogQueryRequestImpl;
-import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
-import com.wrupple.muba.event.domain.reserved.HasCatalogId;
+import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.event.domain.reserved.HasResult;
 import com.wrupple.muba.event.server.domain.impl.EvaluationContext;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
@@ -18,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ListIterator;
-import java.util.Stack;
 
 @Singleton
 public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
@@ -114,7 +109,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 if (context.getResult() instanceof  CatalogOperand){
                     //prepare context for foward propagation into what may resolve as an operation
                     if(context.getParent()!=null && context.getParent() instanceof EvaluationContext){
-                        context.setCatalogValue( ((EvaluationContext)context.getParent()).getCatalogValue());
+                        context.setAssignation( ((EvaluationContext)context.getParent()).getAssignation());
                     }
                     context.setResult(new BinaryOperation(context.getResult(),context.getEvaluate(),rawValue));
                 }
@@ -123,7 +118,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 if(targetEntry==null||!catalog.getDistinguishedName().equals(targetEntry.getCatalogType())){
                     //resolve posible entries
                     CatalogQueryRequestImpl request = new CatalogQueryRequestImpl(FilterDataUtils.newFilterData(),catalog.getDistinguishedName());
-                    context.setResult(new CatalogOperand(request,targetField));
+                    context.setResult(new CatalogOperand(request,targetField, context.getAssignation()));
                 }else{
                     if(targetEntry.getCatalogType().equals(catalog.getDistinguishedName())){
                         Object targetFieldValue = access.getPropertyValue(targetField, targetEntry, null, context.getIntro());
@@ -163,7 +158,7 @@ public class NaturalLanguageInterpretImpl implements NaturalLanguageInterpret{
                 Contract actionRequest= new CatalogReadRequestImpl(targetField.getCatalog(), CatalogDescriptor.CATALOG_ID);
                 CatalogDescriptor foreignCatalog  = runtime.getServiceBus().fireEvent(actionRequest, runtime,null);
 
-                EvaluationContext child = new EvaluationContext(context,foreignCatalog,context.getEvaluate(),context.getEntryValue());
+                EvaluationContext child = new EvaluationContext(context,new PathToken(foreignCatalog,targetField),context.getEvaluate(),context.getEntryValue());
                 pathEvaluation(sentence,child,sentence.next());
                 context.setResult(child.getResult());
             }else{
