@@ -163,7 +163,6 @@ public class ForeignKeyAssignationTest extends WorkerTest {
 
         trabajo.setChildrenValues(Arrays.asList((ServiceManifest)terminado, error));
 
-
         CatalogCreateRequestImpl action  = new CatalogCreateRequestImpl(root, Application.CATALOG);
         action.setFollowReferences(true);
 

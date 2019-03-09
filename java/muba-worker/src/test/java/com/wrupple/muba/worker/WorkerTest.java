@@ -109,10 +109,15 @@ public abstract class WorkerTest extends EasyMockSupport {
         catalogActionRequest.setFollowReferences(true);
         container.fireEvent(catalogActionRequest);
         Driver driver;
-        for (long i = 0; i < 10; i++) {
+
+
+        long[] LOCATIONS = new long[]{20l, 7l, 2l, 20l, 30l};
+        int NUM_DRIVERS = LOCATIONS.length;
+        for (int i = 0; i < NUM_DRIVERS; i++) {
             driver = new Driver();
             //thus, best driver will have a location of 6, or 8 because 7 will not be available
-            driver.setLocation(i);
+            driver.setLocation(LOCATIONS[i]);
+
             driver.setAvailable(i % 2 == 0);
 
             catalogActionRequest = new CatalogCreateRequestImpl(driver, Driver.CATALOG);

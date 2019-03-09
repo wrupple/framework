@@ -24,5 +24,8 @@
         <Logger name="com.wrupple.muba.worker.server.service.impl.SolverImpl" level="TRACE"  additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="com.wrupple.muba.worker.server.service.impl.ChocoRunnerImpl" level="TRACE"  additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
     </Loggers>
 </Configuration>
