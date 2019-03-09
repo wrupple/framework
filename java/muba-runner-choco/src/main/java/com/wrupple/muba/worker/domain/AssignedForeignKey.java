@@ -2,14 +2,14 @@ package com.wrupple.muba.worker.domain;
 
 import com.wrupple.muba.event.domain.CatalogEntry;
 import com.wrupple.muba.event.domain.FieldDescriptor;
-import com.wrupple.muba.event.domain.impl.AbstractVariableDescriptor;
-import com.wrupple.muba.event.domain.impl.CatalogOperand;
+import com.wrupple.muba.event.domain.impl.CatalogVariableDescriptor;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
 
+import javax.transaction.NotSupportedException;
 import java.util.List;
 
-public class AssignedForeignKey extends AbstractVariableDescriptor {
+public class AssignedForeignKey extends CatalogVariableDescriptor {
 
     private final Long runner;
     private final FieldDescriptor field;
@@ -35,11 +35,22 @@ public class AssignedForeignKey extends AbstractVariableDescriptor {
 
     @Override
     public Object getResult() {
-        return results.get(((IntVar)variable).getValue()).getId();
+        return getForeignKeyValue().getId();
     }
 
     @Override
     public Long getRunner() {
         return runner;
+    }
+
+    @Override
+    public CatalogEntry getForeignKeyValue() {
+        int index = ((IntVar) variable).getValue();
+        return results.get(index);
+    }
+
+    @Override
+    public List<CatalogEntry> getForeignKeyValues() {
+        throw new RuntimeException(new NotSupportedException());
     }
 }
