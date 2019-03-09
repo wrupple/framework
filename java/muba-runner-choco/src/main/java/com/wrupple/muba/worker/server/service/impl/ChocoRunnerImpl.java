@@ -3,8 +3,10 @@ package com.wrupple.muba.worker.server.service.impl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.BinaryOperation;
 import com.wrupple.muba.event.domain.impl.CatalogOperand;
+import com.wrupple.muba.event.domain.impl.PathToken;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
 import com.wrupple.muba.worker.domain.ApplicationContext;
+import com.wrupple.muba.worker.domain.AssignedForeignKey;
 import com.wrupple.muba.worker.domain.ChocoVariableDescriptorImpl;
 import com.wrupple.muba.worker.server.service.ChocoModelResolver;
 import com.wrupple.muba.worker.server.service.ChocoRunner;
@@ -16,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.chocosolver.solver.variables.IntVar;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Arrays;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class ChocoRunnerImpl implements ChocoRunner {
+    private final Long runnerId;
     protected Logger log = LogManager.getLogger(ChocoRunnerImpl.class);
 
     private final Provider<FutureChocoVariable> future;
@@ -32,9 +36,10 @@ public class ChocoRunnerImpl implements ChocoRunner {
     private final FieldAccessStrategy access;
 
     @Inject
-    public ChocoRunnerImpl(Provider<FutureChocoVariable> future, ChocoModelResolver delegate, FieldAccessStrategy access) {
+    public ChocoRunnerImpl(@Named("com.wrupple.runner.choco") Long runnerId,Provider<FutureChocoVariable> future, ChocoModelResolver delegate, FieldAccessStrategy access) {
         this.future = future;
         this.delegate = delegate;
+        this.runnerId=runnerId;
         this.access = access;
     }
 
@@ -106,12 +111,12 @@ public class ChocoRunnerImpl implements ChocoRunner {
             } else{
                 int difference_vector_length = vector_1_length > vector_2_length ? vector_1_length : vector_2_length;
                 IntVar[] difference = new IntVar[difference_vector_length];
-                IntVar singleVariable= (IntVar) (vector_1_length > vector_2_length ? operation.getOperandVariable_2() : operation.getOperandVariable_1());
-                IntVar[] multipleVariable= (IntVar[]) (vector_1_length > vector_2_length ? operation.getOperandVariable_1() : operation.getOperandVariable_2());
+                IntVar singleVariable = (IntVar) (vector_1_length > vector_2_length ? operation.getOperandVariable_2() : operation.getOperandVariable_1());
+                IntVar[] multipleVariable = (IntVar[]) (vector_1_length > vector_2_length ? operation.getOperandVariable_1() : operation.getOperandVariable_2());
                 for (int j = 0; j < difference_vector_length; j++) {
                     difference[j]=singleVariable.sub(multipleVariable[j]).abs().intVar();
                     if(log.isDebugEnabled()){
-                        log.debug("modeled substraction {}-{}",singleVariable,difference[j]);
+                        log.debug("modeled substraction {}-{}",operation.getOperand_1(),operation.getOperand_2());
                     }
                 }
 
@@ -123,10 +128,13 @@ public class ChocoRunnerImpl implements ChocoRunner {
                 Optional<VariableDescriptor> bookingDistance = variableDescriptors.stream().filter(v->v.getField()==operation.getTargetField()).findAny();
 
                 if(bookingDistance.isPresent()){
+                    PathToken foreignOperand = operation.getPath();
                     IntVar foreignKeyAssignation = model.intVar(operation.getTargetField().getDistinguishedName()+"_diff_vector", 1, difference_vector_length, false);
                     model.element((IntVar) ((ChocoVariableDescriptorImpl)bookingDistance.get()).getVariable(), difference, foreignKeyAssignation, 1).post();
+                    variableDescriptors.add(new AssignedForeignKey(runnerId,foreignOperand.getTargetField(),foreignKeyAssignation,foreignOperand.getResults()));
                     log.info("Constrained element [ {} ] = [ {} ]",bookingDistance.get(),foreignKeyAssignation);
                     operation.setModeled(true);
+
                 }else{
                     throw new IllegalStateException("No variable modeled for field "+operation.getTargetField().getDistinguishedName());
                 }
@@ -188,6 +196,7 @@ public class ChocoRunnerImpl implements ChocoRunner {
         }
     }
 
+
     private int modelCatalogOperand(BinaryOperation operation, CatalogOperand catalogRequest, ApplicationContext context, Instrospection intros, Model model) {
         log.info("model catalog operand {}",catalogRequest.getTargetField());
 
@@ -225,8 +234,10 @@ public class ChocoRunnerImpl implements ChocoRunner {
             }else{
                 log.info("set binary operation's first operand {}",driverLocations);
                 operation.setOperandVariable_2(driverLocations);
-            }
 
+            }
+            catalogRequest.getPath().setResults(results);
+            operation.setPath(catalogRequest.getPath());
 
             return vector.length;
         }
