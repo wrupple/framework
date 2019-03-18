@@ -7,6 +7,7 @@ import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.domain.impl.WorkerContractImpl;
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.worker.domain.RiderBooking;
@@ -96,12 +97,11 @@ public class ForeignKeyAssignationTest extends WorkerTest {
 
         action = new CatalogCreateRequestImpl(riderBooking,RiderBooking.class.getSimpleName());
         action.setFollowReferences(true);
-
         assertTrue(riderBooking.getId()==null);
-
         riderBooking =  container.fireEvent(action);
-
         assertTrue(riderBooking.getId()!=null);
+        action = new CatalogReadRequestImpl(riderBooking.getId(),RiderBooking.class.getSimpleName());
+        riderBooking =  container.fireEvent(action);
         //assertTrue(riderBooking.getTimestamp()!=null);
 
         Host hostValue = container.getInjector().getInstance(Key.get(Host.class,Names.named(SessionContext.SYSTEM)));
