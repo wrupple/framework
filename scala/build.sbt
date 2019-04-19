@@ -1,5 +1,6 @@
 name := "batch"
 organization in ThisBuild := "com.wrupple"
+version in ThisBuild := "1.0"
 scalaVersion := "2.10.5"
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 // PROJECTS /*, "2.12.2"*/
@@ -47,7 +48,7 @@ lazy val spark = project
     libraryDependencies ++= commonDependencies ++ Seq(
       dependencies.spark,
       dependencies.sql,
-      dependencies.hive,
+      //dependencies.hive,
       dependencies.remoteCatalogs
     )
   )
@@ -59,20 +60,20 @@ lazy val spark = project
 
 lazy val dependencies =
   new {
-    val wrupple = "com.wrupple.muba"
+    val muba = "com.wrupple.muba"
     val wruppleVersion = "1.0"
-    val sparkVersion = "1.6.0"
+    val sparkVersion = "1.6.0-cdh5.7.1"
     val sparkDependencyScope = "provided"
     val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
     val mockito = "org.mockito" % "mockito-core" % "2.10.0"
     val mockitoInline = "org.mockito" % "mockito-inline" % "2.10.0"
-    val worker = wrupple % "muba-worker" % wruppleVersion
-    val hsql = wrupple % "muba-catalogs-jdbc-hsql" % wruppleVersion
-    val choco = wrupple % "muba-runner-choco" % wruppleVersion
-    val bval = wrupple % "validation-bval" % wruppleVersion
-    val lambda = wrupple % "muba-lambda" % wruppleVersion
-    val dumbRunner = wrupple % "muba-runner-catalog" % wruppleVersion
-    val remoteCatalogs = wrupple % "vegetate-catalogs" % wruppleVersion
+    val worker = muba % "muba-worker" % wruppleVersion
+    val hsql = muba % "muba-catalogs-jdbc-hsql" % wruppleVersion
+    val choco = muba % "muba-runner-choco" % wruppleVersion
+    val bval = muba % "validation-bval" % wruppleVersion
+    val lambda = muba % "muba-lambda" % wruppleVersion
+    val dumbRunner = muba % "muba-runner-catalog" % wruppleVersion
+    val remoteCatalogs = muba % "vegetate-catalogs" % wruppleVersion
 
     val spark = "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope
     //https://spark.apache.org/docs/2.3.0/api/java/index.html?org/apache/spark/launcher/package-summary.html
