@@ -1,6 +1,6 @@
 name := "batch"
-organization in ThisBuild := "com.wrupple"
-version in ThisBuild := "1.0"
+organization := "com.wrupple"
+version  := "1.0"
 scalaVersion := "2.10.5"
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 // PROJECTS /*, "2.12.2"*/
