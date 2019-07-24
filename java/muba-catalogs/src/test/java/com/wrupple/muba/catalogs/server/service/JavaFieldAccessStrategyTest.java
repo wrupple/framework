@@ -14,6 +14,7 @@ import com.wrupple.muba.catalogs.domain.Trash;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
+import com.wrupple.muba.event.LegacyModule;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
@@ -40,7 +41,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
     protected Logger log = LogManager.getLogger(JavaFieldAccessStrategyTest.class);
 
     private final Injector injector;
-    private EventSuscriptionMapper mockSuscriptor;
 	/*
 	 * mocks
 	 */
@@ -53,8 +53,7 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
             bind(OutputStream.class).annotatedWith(Names.named("System.out")).toInstance(System.out);
             bind(InputStream.class).annotatedWith(Names.named("System.in")).toInstance(System.in);
             // mocks
-            mockSuscriptor = mock(EventSuscriptionMapper.class);
-            bind(EventSuscriptionMapper.class).toInstance(mockSuscriptor);
+
 
             DataCreationCommand mockCreate = mock(DataCreationCommand.class);
             DataQueryCommand mockQuery = mock(DataQueryCommand.class);
@@ -79,15 +78,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
         }
 
-       @Provides
-        @Inject
-        @Singleton
-       @Named(SessionContext.SYSTEM)
-       public SessionContext sessionContext() {
-           Session stakeHolderValue = createNiceMock(Session.class);
-
-           return new SessionContextImpl(stakeHolderValue);
-        }
 
         @Provides
         public UserTransaction localTransaction() {
@@ -96,18 +86,13 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
 
         @Provides
-        public CatalogDeserializationService catalogDeserializationService() {
-            return mock(CatalogDeserializationService.class);
-        }
-
-        @Provides
         public Trash trash() {
             return mock(Trash.class);
         }
     }
 
     public JavaFieldAccessStrategyTest() {
-        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new CatalogTestModule(), new ValidationModule(), new SingleUserModule(), new CatalogModule(), new DispatcherModule(), new ApplicationModule());
+        injector = Guice.createInjector(new JavaFieldAccessStrategyTestModule(), new ValidationModule(), new SingleUserModule(),new CatalogTestModule(), new CatalogModule(), new LegacyModule(), new DispatcherModule(), new ApplicationModule());
 
     }
 
@@ -151,7 +136,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
         problemContract.setClazz(PersistentCatalogEntity.class);
 
         HasAccesablePropertyValues map = (HasAccesablePropertyValues) access.synthesize(problemContract);
-
         access.setPropertyValue("number",map,7, instrospection);
 
         value = (Integer) access.getPropertyValue("number",map,null, instrospection);

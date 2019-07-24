@@ -48,7 +48,7 @@ public class JavaObjectNativeInterface implements ObjectNativeInterface {
 
         @Override
         public void resample(CatalogEntry sample) {
-            isSystemObject(sample);
+            setAccesible(isSystemObject(sample));
         }
 
         @Override

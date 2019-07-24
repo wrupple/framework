@@ -148,8 +148,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             try {
                 value = doGetAccesibleProperty(object, fieldId);
             } catch (ClassCastException e) {
-                log.info("Catalog Property Instrospection Changed State",e);
-                instrospection.setAccesible(false);
+                resample(instrospection,object,e);
                 value = nativeInterface.getWrappedValue(fieldId, instrospection, object, true);
             }
 
@@ -158,13 +157,22 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
                 value = nativeInterface.getWrappedValue(fieldId, instrospection, object, false);
 
             } catch (Throwable e) {
-
-                log.info("Catalog Property Instrospection Changed State",e);
-                instrospection.setAccesible(true);
+                resample(instrospection,object,e);
                 value = doGetAccesibleProperty(object, fieldId);
             }
         }
         return value;
+    }
+
+    private void resample(Instrospection instrospection, CatalogEntry object, Throwable e) {
+
+        boolean previos = instrospection.isAccesible();
+        instrospection.resample(object);
+        if(previos!=instrospection.isAccesible()){
+            log.info("Catalog Property Instrospection Changed State");
+        }else{
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -210,8 +218,7 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             try {
                 doSetAccesibleProperty(object, fieldId, value);
             } catch (ClassCastException e) {
-                log.error("reading field",e);
-                instrospection.setAccesible(false);
+                 resample(instrospection,object,e);
                 try {
                     doBeanSet(instrospection, object, fieldId, value);
                 } catch (IllegalAccessException ee) {
@@ -223,10 +230,14 @@ public class JavaFieldAccessStrategy implements FieldAccessStrategy {
             }
         } else {
             try {
-                doBeanSet(instrospection, object, fieldId, value);
+                if(nativeInterface.isWriteable(object, fieldId)){
+                    doBeanSet(instrospection, object, fieldId, value);
+                }else{
+                    resample(instrospection,object,null);
+                    doSetAccesibleProperty(object, fieldId, value);
+                }
             } catch (Exception e) {
-                instrospection.setAccesible(true);
-                log.error("reading field",e);
+                resample(instrospection,object,e);
                 try {
                     doSetAccesibleProperty(object, fieldId, value);
                 } catch (ClassCastException ee) {
