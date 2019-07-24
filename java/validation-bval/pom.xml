@@ -11,7 +11,7 @@
 	<description>Validate Action Requests before committing them</description>
 	<properties>
 		<muba.version>1.0</muba.version>
-		<guice.version>4.1.0</guice.version>
+		<guice.version>4.2.2</guice.version>
 	</properties>
 
 	<dependencies>

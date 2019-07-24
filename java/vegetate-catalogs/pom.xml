@@ -12,7 +12,7 @@
 	<properties>
 		<servlet.api>3.1.0</servlet.api>
         <muba.version>1.0</muba.version>
-        <guice.version>4.1.0</guice.version>
+        <guice.version>4.2.2</guice.version>
     </properties>
 
 	<dependencies>
