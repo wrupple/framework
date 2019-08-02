@@ -107,6 +107,7 @@ public class CatalogResultCacheImpl implements CatalogResultCache {
 		long domain = ((Long)context.getNamespaceContext().getId()).longValue();
 		assertFieldCache(domain, catalogId,explicitField).put(explicitKey, regreso.getId());
 		log.trace("[NEW CACHE ENTRY {}]", explicitKey);
+		put(context,catalogId,regreso);
 	}
 
 	@Override

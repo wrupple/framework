@@ -181,7 +181,15 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
             if (targetEntryId instanceof String&&dn!=null && dn.isFilterable()) {
                 result = cache.get(context, catalog.getDistinguishedName(), targetEntryId);
                 if(result==null){
-                    result=readVanityId((String) targetEntryId, catalog, context,  instrospection);
+                    result = cache.get(context,catalog.getDistinguishedName(),HasDistinguishedName.FIELD,targetEntryId);
+                    if(result==null){
+                        result=readVanityId((String) targetEntryId, catalog, context,  instrospection,cache);
+                        if(result!=null){
+                            cache.put(context,catalog.getDistinguishedName(),access.getPropertyValue(HasDistinguishedName.FIELD,result,null,instrospection),HasDistinguishedName.FIELD,result);
+                        }
+                    }else{
+                        cachedResults=true;
+                    }
                 }else{
                     cachedResults=true;
                 }
@@ -196,7 +204,7 @@ public class CatalogReadTransactionImpl  implements CatalogReadTransaction {
     }
 
     public CatalogEntry readVanityId(String vanityId, CatalogDescriptor catalog, CatalogActionContext context,
-                                     Instrospection instrospection) throws Exception {
+                                     Instrospection instrospection, CatalogResultCache cache) throws Exception {
         CatalogEntry regreso = null;
         if (keyDelegate.isPrimaryKey(vanityId)) {
             // almost certainly an Id

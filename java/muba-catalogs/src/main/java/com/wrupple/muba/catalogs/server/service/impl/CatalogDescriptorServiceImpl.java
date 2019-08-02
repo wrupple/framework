@@ -41,16 +41,16 @@ public class CatalogDescriptorServiceImpl implements CatalogDescriptorService {
     public CatalogDescriptor getDescriptorForKey(Long numericId, CatalogActionContext context) throws Exception {
         log.trace("[get metadata] {}",numericId);
         CatalogDescriptor metadataDescriptor = metadataDescriptorProvider.get();
+        CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
+
         if(numericId.equals(metadataDescriptor.getId())){
-            return metadataDescriptor;
-        }else{
-            CatalogResultCache metadataCache = context.getCache(metadataDescriptor, context);
-            CatalogEntry hit = metadataCache.get(context, metadataDescriptor.getDistinguishedName(), numericId);
-            if(hit==null){
-                return (CatalogDescriptor) hit;
-            }else{
-                return readDescriptor(context, numericId, metadataDescriptor);
+            CatalogDescriptor result = metadataCache.get(context, CatalogDescriptor.CATALOG_ID,numericId);
+            if (result == null) {
+                result = informCache(metadataDescriptor,context,metadataCache);
             }
+            return result;
+        }else{
+            return readDescriptor(context, numericId, metadataCache);
         }
     }
 
@@ -67,15 +67,12 @@ public class CatalogDescriptorServiceImpl implements CatalogDescriptorService {
 
             if (CatalogDescriptor.CATALOG_ID.equals(catalogid)) {
 
-                result = metadataCache.get(context, metadataDescriptor.getDistinguishedName(), metadataDescriptor.getId());
+                result = metadataCache.get(context, HasDistinguishedName.FIELD, catalogid);
                 if (result == null) {
-                    result = metadataDescriptor;
-                    metadataCache.put(context,CatalogDescriptor.CATALOG_ID,result.getDistinguishedName(),HasDistinguishedName.FIELD,result);
-                    metadataCache.put(context, CatalogDescriptor.CATALOG_ID, metadataDescriptor);
+                   result = informCache(metadataDescriptor,context,metadataCache);
                 }
-
             }else{
-                result = readDescriptor(context, catalogid, metadataDescriptor);
+                result = readDescriptor(context, catalogid, metadataCache);
                 if(result==null){
                     throw new CatalogException("No such catalog "+catalogid);
                 }
@@ -85,22 +82,23 @@ public class CatalogDescriptorServiceImpl implements CatalogDescriptorService {
         return result;
     }
 
+    private CatalogDescriptor informCache(CatalogDescriptor metadataDescriptor, CatalogActionContext context,CatalogResultCache metadataCache) {
+        metadataCache.put(context,CatalogDescriptor.CATALOG_ID,metadataDescriptor.getDistinguishedName(),HasDistinguishedName.FIELD,metadataDescriptor);
+        metadataCache.put(context, CatalogDescriptor.CATALOG_ID, metadataDescriptor);
+        return metadataDescriptor;
+    }
 
 
-
-    private CatalogDescriptor readDescriptor(CatalogActionContext context, Object catalogid, CatalogDescriptor metadataDescriptor) throws Exception {
+    private CatalogDescriptor readDescriptor(CatalogActionContext context, Object catalogid,  CatalogResultCache metadataCache) throws Exception {
         CatalogActionRequest parentContext = context.getRequest();
-        CatalogDescriptor result;
-        CatalogActionRequest childContext = new CatalogReadRequestImpl(catalogid,CatalogDescriptor.CATALOG_ID);
+        CatalogReadRequestImpl childRequest = new CatalogReadRequestImpl(catalogid,CatalogDescriptor.CATALOG_ID);
+        childRequest.setDomain(parentContext.getDomain());
+        childRequest.setParentValue(parentContext);
 
+        context.getRuntimeContext().getServiceBus().fireEvent(childRequest,context.getRuntimeContext(),null);
 
-        context.switchContract(childContext);
-        context.setCatalogDescriptor(metadataDescriptor);
-
-
-        readerProvider.get().execute(context);
-        result = context.getConvertedResult();
-        context.switchContract(parentContext);
+        CatalogDescriptor  result = (CatalogDescriptor) childRequest.getResults().get(0);
+        informCache(result,context,metadataCache);
         return result;
     }
 
