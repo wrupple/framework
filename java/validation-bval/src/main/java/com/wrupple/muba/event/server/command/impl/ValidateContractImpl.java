@@ -37,10 +37,11 @@ public class ValidateContractImpl implements ValidateContract {
         if (requestContext.getServiceContract() == null) {
             log.error("There is no contract object to validate");
         } else {
-            Set<ConstraintViolation<?>> violations = (Set) validator.validate(requestContext.getServiceContract(), groups);
+            Object contract = requestContext.getServiceContract();
+            Set<ConstraintViolation<?>> violations = (Set) validator.validate(contract, groups);
             requestContext.setConstraintViolations(violations);
             if (!(violations == null || violations.isEmpty())) {
-                log.error("contract violates restrictions");
+                log.error("contract of class {} violates validation restrictions",contract.getClass().getCanonicalName());
                 if (log.isInfoEnabled()) {
                     for (ConstraintViolation<?> v : violations) {
                         log.info(v.getLeafBean().toString());
