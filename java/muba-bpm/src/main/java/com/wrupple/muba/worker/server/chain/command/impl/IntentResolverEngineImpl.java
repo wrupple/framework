@@ -1,6 +1,7 @@
 package com.wrupple.muba.worker.server.chain.command.impl;
 
 import com.wrupple.muba.event.domain.Contract;
+import com.wrupple.muba.event.domain.Invocation;
 import com.wrupple.muba.worker.domain.IntentResolverContext;
 import com.wrupple.muba.worker.server.chain.IntentResolverEngine;
 import org.apache.commons.chain.Context;
@@ -12,12 +13,11 @@ public class IntentResolverEngineImpl implements IntentResolverEngine {
 
 
     @Override
-    public boolean execute(Context ctx) throws Exception {
-        IntentResolverContext context = (IntentResolverContext) ctx;
+    public boolean execute(IntentResolverContext context) throws Exception {
         Contract contract = (Contract) context.getRuntimeContext().getServiceContract();
-
-        context.getRuntimeContext().setResult(context.getRuntimeContext().getServiceBus().getIntentInterpret().resolveIntent(contract,context.getRuntimeContext()));
-
+        Invocation resolver = context.getRuntimeContext().getServiceBus().getIntentInterpret().resolveIntent(contract, context.getRuntimeContext());
+        resolver.setDomain(contract.getDomain());
+        context.getRuntimeContext().setResult(resolver);
 
         return CONTINUE_PROCESSING;
     }

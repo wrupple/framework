@@ -1,6 +1,7 @@
 package com.wrupple.muba.event.server.service.impl;
 
 import com.wrupple.muba.event.domain.*;
+import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
 import com.wrupple.muba.event.domain.impl.InvocationImpl;
 import com.wrupple.muba.event.server.chain.command.RequestInterpret;
 import com.wrupple.muba.event.server.service.EventRegistry;
@@ -197,6 +198,20 @@ public class EventRegistryImpl implements EventRegistry {
         if(input!=null) {
 
             ServiceManifest serviceManifest = serviceDictionaryget(input);
+
+            // check super type support
+            if(serviceManifest==null){
+                log.debug("No service for intent type {}",input);
+                CatalogReadRequestImpl read = new CatalogReadRequestImpl(input,CatalogDescriptor.CATALOG_ID);
+                read.setDomain(intent.getDomain());
+                CatalogDescriptor intentDescriptor = context.getServiceBus().fireEvent(read,context,null);
+                while(intentDescriptor.getParentValue()!=null){
+                    serviceManifest = serviceDictionaryget(intentDescriptor.getParentValue().getDistinguishedName());
+                    log.debug("No service for intent type {}",intentDescriptor.getParentValue().getDistinguishedName());
+
+                    intentDescriptor = intentDescriptor.getParentValue();
+                }
+            }
 
            return resolveIntent(intent,serviceManifest,context);
         }

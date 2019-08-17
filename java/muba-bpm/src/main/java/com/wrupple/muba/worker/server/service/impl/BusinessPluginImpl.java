@@ -60,12 +60,14 @@ public class BusinessPluginImpl extends StaticCatalogDescriptorProvider implemen
 							  @Named(Person.CATALOG) CatalogDescriptor person,
 							  // @Named(VegetateAuthenticationToken.CATALOG_TIMELINE) Provider<CatalogDescriptor> authTokenDescriptor,
 							  @Named(Request.CATALOG) CatalogDescriptor notificationProvider,
-							   @Named(ValueChangeTrigger.CATALOG) CatalogDescriptor audits
+							   @Named(ValueChangeTrigger.CATALOG) CatalogDescriptor audits,
+							  @Named(Contract.Event_CATALOG) CatalogDescriptor contracts
 							  ) {
 
         super.put(person);
 		super.put(notificationProvider);
 		super.put(audits);
+		super.put(contracts);
 		catalogActions = new Command[]{ validationTrigger,changeListener,stakeHolderTrigger};
 		queryers.addCommand(catalogPluginStorage,peopleStorage);
 		primaryKeyers.addCommand(catalogPluginStorage,peopleStorage);

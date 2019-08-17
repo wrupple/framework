@@ -70,6 +70,9 @@ public class ApplicationContextImpl  extends ContextBase implements ApplicationC
         if (contract instanceof ApplicationState) {
             state = (ApplicationState) contract;
 
+        } else if( contract instanceof Invocation){
+            state = new ApplicationStateImpl();
+            state.setWorkerStateValue(new WorkerStateImpl());
         } else {
             Intent intent = (Intent) contract;
             state = intent.getStateValue();

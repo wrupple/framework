@@ -9,7 +9,7 @@ val sparkDependencyScope = "provided"
 ThisBuild / name := "batch"
 ThisBuild / organization := "com.wrupple"
 ThisBuild / version  := "1.0"
-ThisBuild / scalaVersion := scala212
+ThisBuild / scalaVersion := scala210
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
 
@@ -40,6 +40,10 @@ lazy val container = project
     settings,
     assemblySettings,
     libraryDependencies ++= commonDependencies ++ Seq(
+      "org.apache.spark" %% "spark-launcher" % {scalaVersion.value match {
+        case x if(x.startsWith("2.10")) => "1.6.2"
+        case _ => "2.4.2"
+      }},
       dependencies.worker,
       dependencies.hsql,
       dependencies.choco,

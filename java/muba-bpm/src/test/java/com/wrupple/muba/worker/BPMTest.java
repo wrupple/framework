@@ -210,14 +210,6 @@ public abstract class BPMTest extends AbstractTest {
 
     }
 
-	@Before
-	public void setUp() throws Exception {
-
-		session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
-		wrupple = injector.getInstance(ServiceBus.class);
-        log.trace("NEW TEST EXCECUTION ENVIROMENT READY");
-    }
-
 
 
 

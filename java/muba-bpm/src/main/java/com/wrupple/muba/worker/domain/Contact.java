@@ -1,4 +1,4 @@
-package com.wrupple.muba.worker;
+package com.wrupple.muba.worker.domain;
 
 public interface Contact {
 

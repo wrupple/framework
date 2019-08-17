@@ -77,7 +77,7 @@ public class JobOperator {
             applicationModules[i + coreModules.length] = userModules.get(i);
         }
 
-        logger.info("Wiring core dependencies... "+Arrays.toString(applicationModules) /*ServicioDisponibilizacionImpl*/);
+        logger.info("Wiring service dependencies... "+Arrays.toString(applicationModules) /*ServicioDisponibilizacionImpl*/);
 
         injector = Guice.createInjector(applicationModules);
 

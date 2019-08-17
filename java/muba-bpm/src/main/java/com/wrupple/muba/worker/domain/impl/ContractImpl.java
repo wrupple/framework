@@ -2,11 +2,12 @@ package com.wrupple.muba.worker.domain.impl;
 
 import com.wrupple.muba.event.domain.Contract;
 import com.wrupple.muba.event.domain.impl.CatalogEntryImpl;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
 
 /**
  * Created by japi on 12/08/17.
  */
-public class ContractImpl extends CatalogEntryImpl implements Contract {
+public class ContractImpl extends ManagedObjectImpl implements Contract {
 
 
     private String catalog;

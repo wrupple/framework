@@ -1,41 +1,61 @@
 package com.wrupple.batch
 
-import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.apache.spark.launcher.SparkLauncher
 
-class ConsumeBatchJobsTest
-    extends FunSuite
-    with BeforeAndAfter
-    with MockitoSugar {
+object ConsumeBatchJobsTest  {
+  def main(args: Array[String]): Unit = {
+    val sparkLauncher = new SparkLauncher
+    //Set Spark properties.only Basic ones are shown here.It will be overridden if properties are set in Main class.
+    sparkLauncher.setSparkHome("/path/to/SPARK_HOME")
+      .setAppResource("/path/to/jar/to/be/executed")
+      .setMainClass("MainClassName")
+      .setMaster("MasterType like yarn or local[*]")
+      .setDeployMode("set deploy mode like cluster")
+      .setConf("spark.executor.cores","2")
 
-  //FIXME translate BPMTest, then SubmitToApplicationTest
+    // Lauch spark application
+    val sparkLauncher1 = sparkLauncher.startApplication()
 
-  /*
+    //get jobId
+    val jobAppId = sparkLauncher1.getAppId
 
-
-  // this works
-  val objects = Array("a", 1)
-  val arrayOfObject = objects.asInstanceOf[Array[Object]]
-  AJavaClass.printObjectArray(arrayOfObject)
-
-    test ("test login service") {
-
-      // (1) init
-      val service = mock[LoginService]
-
-      // (2) setup: when someone logs in as "johndoe", the service should work;
-      //            when they try to log in as "joehacker", it should fail.
-      when(service.login("johndoe", "secret")).thenReturn(Some(User("johndoe")))
-      when(service.login("joehacker", "secret")).thenReturn(None)
-
-      // (3) access the service
-      val johndoe = service.login("johndoe", "secret")
-      val joehacker = service.login("joehacker", "secret")
-
-      // (4) verify the results
-      assert(johndoe.get == User("johndoe"))
-      assert(joehacker == None)
-
+    //Get status of job launched.THis loop will continuely show statuses like RUNNING,SUBMITED etc.
+    while (true) {
+      println(sparkLauncher1.getState().toString)
     }
- */
+  }
+
+  import java.util
+  import java.util.Collections
+
+  def printPairs(arr: Array[Int], n: Int): Unit = {
+    val v = new util.ArrayList[Integer]
+    val cnt = new util.HashMap[Integer, Integer]
+    // For each element of array.
+    var i = 0
+    while ( {
+      i < n
+    }) { // If element has not encounter early,
+      // mark it on cnt array.
+      if (cnt.containsKey(Math.abs(arr(i)))) cnt.put(Math.abs(arr(i)), 1)
+      else { // If seen before, push it in vector
+        // (given that elements are distinct)
+        v.add(Math.abs(arr(i)))
+        cnt.put(Math.abs(arr(i)), 0)
+      }
+
+      {
+        i += 1; 
+      }
+    }
+    if (v.size == 0) return
+    Collections.sort(v)
+    var i = 0
+    while ( {
+      i < v.size
+    }) System.out.print("-" + v.get(i) + " " + v.get(i) + " ") {
+      i += 1; i - 1
+    }
+  }
+
 }

@@ -4,6 +4,8 @@ import com.wrupple.muba.event.domain.YieldContext;
 import org.apache.commons.chain.impl.ContextBase;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -16,7 +18,11 @@ public class AbstractYieldContext extends ContextBase implements YieldContext{
 
     private ListIterator<String> assertSentenceIterator() {
         if (wordIterator == null) {
-            wordIterator = sentence.listIterator();
+            if(sentence==null){
+                wordIterator= Collections.EMPTY_LIST.listIterator();
+            }else{
+                wordIterator = sentence.listIterator();
+            }
         }
         return wordIterator;
 
@@ -24,6 +30,8 @@ public class AbstractYieldContext extends ContextBase implements YieldContext{
 
     @Override
     public void reset() {
+        clear();
+        sentence=null;
         wordIterator=null;
     }
 
