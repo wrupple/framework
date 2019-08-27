@@ -173,7 +173,7 @@ public class EventRegistryImpl implements EventRegistry {
         }
     }
 
-    private List<String> generatePathTokens(ServiceManifest handler) {
+    public List<String> generatePathTokens(ServiceManifest handler) {
         ServiceManifest currentNode = handler;
 
         List<String> pathTokens = new ArrayList<String>();
@@ -205,7 +205,7 @@ public class EventRegistryImpl implements EventRegistry {
                 CatalogReadRequestImpl read = new CatalogReadRequestImpl(input,CatalogDescriptor.CATALOG_ID);
                 read.setDomain(intent.getDomain());
                 CatalogDescriptor intentDescriptor = context.getServiceBus().fireEvent(read,context,null);
-                while(intentDescriptor.getParentValue()!=null){
+                while(serviceManifest==null&&intentDescriptor.getParentValue()!=null){
                     serviceManifest = serviceDictionaryget(intentDescriptor.getParentValue().getDistinguishedName());
                     log.debug("No service for intent type {}",intentDescriptor.getParentValue().getDistinguishedName());
 
@@ -233,7 +233,6 @@ public class EventRegistryImpl implements EventRegistry {
     private Invocation createIntent(RuntimeContext context, Contract intent, ServiceManifest serviceManifest) {
 
         List<String> pathTokens = generatePathTokens(serviceManifest);
-        //TODO Business Contract or User Contract
         InvocationImpl event = new InvocationImpl( );
         event.setSentence(pathTokens);
         event.setEvent(intent.getId());

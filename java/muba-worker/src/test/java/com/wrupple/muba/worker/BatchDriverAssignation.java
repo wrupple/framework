@@ -3,6 +3,7 @@ package com.wrupple.muba.worker;
 
 
 import com.wrupple.muba.event.ServiceBus;
+import com.wrupple.muba.worker.domain.impl.*;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.search.strategy.Search;
@@ -26,15 +27,13 @@ import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.*;
-import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
-import com.wrupple.muba.worker.domain.impl.IntentImpl;
-import com.wrupple.muba.worker.domain.impl.TaskImpl;
-import com.wrupple.muba.worker.domain.impl.WorkflowImpl;
-import org.junit.Before;
+import org.junit.Before;import org.junit.Before;
+
 import org.junit.Test;
 
 import java.util.Arrays;
 
+import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
 import static org.junit.Assert.assertTrue;
 
 
@@ -50,42 +49,28 @@ public class BatchDriverAssignation extends WorkerTest {
         setUp();
         log.trace("[-Ask BPM what application item to use to handle this booking-]");
 
-        //necesary to set an implicit instance to avoid inheritance
-        runtimeContext.setServiceContract(new DriverBooking());
-        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,DriverBooking.class.getSimpleName(),DriverBooking.class.getSimpleName());
+        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,String.valueOf(CatalogEntry.PUBLIC_ID),DriverBooking.class.getSimpleName());
 
         runtimeContext.process();
 
-        //THE RESULT OF PROCESING AN IMPLICIT INTENT IS AN EXPLICIT INTENT
         Invocation item = runtimeContext.getConvertedResult();
+        assertTrue("an invocation must be returned",item!=null);
+        IntentImpl bookingRequest = (IntentImpl) item.getEventValue();
         assertTrue("a resolver must be found",item!=null);
-
-        runtimeContext.getServiceBus().fireHandler(item, runtimeContext.getSession());
-
-
-        log.trace("[-Create DriverBooking Handling Application Context-]");
+        ApplicationState activityState = bookingRequest.getStateValue();
+        assertTrue("an application state bage must be created",activityState!=null);
+        String applicationId = activityState.getApplicationValue().getDistinguishedName();
+        assertTrue("Application metadata must be attached to application state",applicationId!=null);
 
         //item+booking;
-        IntentImpl bookingRequest = new IntentImpl();
         bookingRequest.setEntry(booking.getId());
-        bookingRequest.setStateValue(null /*this means create a new activity context, otherwise the context would be retrived*/);
-
-
-        //BOOKING IS SAVED AS entry value (result) on the initial application state
-        runtimeContext.setServiceContract(bookingRequest);
-        //runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME);
-
-        //FIXME maybe this is the point we start using event handlers
-        //runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME);
-
-        runtimeContext.process();
+        WorkerStateImpl state = new WorkerStateImpl();
+        state.setStateValue(activityState);
+        activityState.setWorkerStateValue(state);
+        bookingRequest.getStateValue().setWorkerStateValue(state);
+        runtimeContext.getServiceBus().fireEvent(bookingRequest,runtimeContext,null);
         //a new activity state
-        ApplicationState activityState = runtimeContext.getConvertedResult();
 
-        String applicationId = activityState.getDistinguishedName();
-
-        runtimeContext.reset();
 
         Long firstTask = activityState.getTaskDescriptor();
 
@@ -94,10 +79,8 @@ public class BatchDriverAssignation extends WorkerTest {
 
         log.info("find solution of first task to the runner engine");
         //the best available driver
+        runtimeContext.getServiceBus().fireEvent(activityState,runtimeContext,null);
 
-        runtimeContext.setSentence(SolverServiceManifest.SERVICE_NAME,applicationId);
-
-        runtimeContext.process();
 
         Driver driver = runtimeContext.getConvertedResult();
 
@@ -182,19 +165,13 @@ public class BatchDriverAssignation extends WorkerTest {
 
         log.trace("[-create tasks (problem definition)-]");
 
-        Task pickDriver = new TaskImpl();
+        TaskImpl pickDriver = new TaskImpl();
         pickDriver.setDistinguishedName("driverPick");
         pickDriver.setName("Pick Best Driver");
         pickDriver.setCatalog(Driver.class.getSimpleName());
         pickDriver.setName(Task.SELECT_COMMAND);
-       /* problem.setSentence(
-                Arrays.asList(
-                        // x * y = 4
-                        Task.CONSTRAINT,"times","ctx:x","ctx:y","int:4",
-                        // x + y < 5
-                        Task.CONSTRAINT,"arithm","(","ctx:x", "+", "ctx:y", ">", "int:5",")"
-                )
-        );*/
+        pickDriver.setSentence(Arrays.asList(EVALUATING_VARIABLE,"setObjective","(","boolean:false","ctx:location",")"));
+
 
 
         Task updateBooking = new TaskImpl();
@@ -227,6 +204,10 @@ public class BatchDriverAssignation extends WorkerTest {
 
         item = catalogContext.getEntryResult();
 
+        assertTrue("Application metadata must be created",item.getId()!=null);
+        assertTrue("Application must be assigned to a contract type",item.getCatalog()!=null);
+
+
         runtimeContext.reset();
 
 
@@ -258,7 +239,7 @@ public class BatchDriverAssignation extends WorkerTest {
 
         runtimeContext.getServiceBus().fireEvent(action,runtimeContext,null);
 
-
+        assertTrue("booking not created",booking!=null);
 
 
         runtimeContext  = new RuntimeContextImpl( wrupple, session,null);

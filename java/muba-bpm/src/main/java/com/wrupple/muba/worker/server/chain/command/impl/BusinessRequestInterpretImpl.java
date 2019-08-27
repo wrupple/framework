@@ -56,7 +56,7 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
         }
         context.setStateValue(state);
 
-        setWorkingTask(state,context);
+        setWorkingTask(state);
 
 
 
@@ -78,8 +78,11 @@ public class BusinessRequestInterpretImpl implements BusinessRequestInterpret {
         return (ApplicationState) results.get(0);
     }
 
-    private void setWorkingTask(ApplicationState state, ApplicationContext context) {
+    private void setWorkingTask(ApplicationState state) {
         Application application = state.getApplicationValue();
+        if(application==null){
+            throw new NullPointerException("No application data was assigned to working state");
+        }
         List<Task> workflow = application.getProcessValues();
         List<Long> workflowKeys = application.getProcess();
 

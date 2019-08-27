@@ -16,7 +16,7 @@ public class InvocationImpl extends CatalogEntryImpl implements Invocation {
      */
     private String catalog;
     private Contract implicitIntentValue;
-    private Object implicitIntent;
+    private Object event;
     private Exception error;
     private List<String> sentence;
 
@@ -72,11 +72,11 @@ public class InvocationImpl extends CatalogEntryImpl implements Invocation {
 
     @Override
     public Object getEvent() {
-        return implicitIntent;
+        return event;
     }
 
     public void setEvent(Object state) {
-        this.implicitIntent = state;
+        this.event = state;
     }
 
     @Override

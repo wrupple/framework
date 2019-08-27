@@ -26,7 +26,9 @@ public class ApplicationImpl extends WorkflowImpl implements Application {
 
     @ForeignKey(foreignCatalog = Application.CATALOG)
     private Long exit, cancel, error;
-    private String description, requiredRole,catalog;
+    private String description, requiredRole;
+    @CatalogField(filterable = true)
+    private String catalog;
 
     @ForeignKey(foreignCatalog = Application.CATALOG)
     private Long explicitSuccessor;

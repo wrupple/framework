@@ -18,7 +18,7 @@ public class IntentResolverServiceManifestImpl extends ServiceManifestImpl imple
 
     @Inject
     public IntentResolverServiceManifestImpl(@Named(Contract.Event_CATALOG)CatalogDescriptor contractDescriptorValue) {
-        super(IntentResolverServiceManifest.SERVICE_NAME, "1.0", contractDescriptorValue, Arrays.asList(
+        super(IntentResolverServiceManifest.SERVICE_NAME, "1.0", contractDescriptorValue, Arrays.asList(DOMAIN_FIELD,
                 Contract.CATALOG_FIELD));
     }
 }

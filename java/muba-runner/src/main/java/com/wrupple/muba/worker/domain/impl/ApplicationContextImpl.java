@@ -79,7 +79,7 @@ public class ApplicationContextImpl  extends ContextBase implements ApplicationC
         }
         WorkerState container = state.getWorkerStateValue();
         if (container == null) {
-            throw new IllegalStateException("No application container");
+            throw new IllegalStateException("Application container/worker may not be null");
         }
         setStateValue(state);
         this.runtimeContext = requestContext;
