@@ -165,20 +165,4 @@ public class SubmitToApplicationTest extends BPMTest {
         wrupple.fireEvent(catalogActionRequest, session, null);
     }
 
-    /**
-     * Done -Triggers are serializable listeners, move trigger logit to an event (fire a workflow with one catalog task)
-     * Done - fire a catalog change event (PublishEventsImpl) ( install remote listeners on Contract CHain (vegetate web hooks))
-     * ???? - listen event  and have the desktop fire the first task of a workflow and install a listener for the task submission(desktop)
-     **/
-    //CREATE ApplicationState
-    //INSTALL LISTENER HERE
-    //Update ApplicationState
-    //Expect (but don't install an instance of) ApplicationStateUpdatePlace to be fired
-    /*
-	 * DesktopEngineImpl DesktopBuilderContext DesktopRequestReader
-	 * SearchEngineOptimizedDesktopWriterCommandImpl FormWriterImpl
-	 * BrowserWriterImpl BusnessEvent ProcessControlNode
-	 */
-
-
 }

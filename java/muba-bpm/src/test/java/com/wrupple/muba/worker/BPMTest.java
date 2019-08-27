@@ -57,8 +57,6 @@ import java.sql.SQLException;
 
 public abstract class BPMTest extends AbstractTest {
 
-    protected ServiceBus wrupple;
-	protected SessionContext session;
 
     protected void createMockDrivers() throws Exception {
 		CatalogDescriptorImpl solutionContract = (CatalogDescriptorImpl) injector.getInstance(CatalogDescriptorBuilder.class).fromClass(Driver.class, Driver.CATALOG,
@@ -191,22 +189,7 @@ public abstract class BPMTest extends AbstractTest {
          */
 
         switchs.getIntentInterpret().registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
-/*
- BusinessServiceManifest bpm = injector.getInstance(BusinessServiceManifest.class);
 
-        switchs.registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
-
-        WorkflowServiceManifest taskManger = injector.getInstance(WorkflowServiceManifest.class);
-
-        switchs.registerService(taskManger, injector.getInstance(WorkflowEngine.class), injector.getInstance(WorkflowEventInterpret.class),bpm);
-
-        switchs.registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(CatalogServiceManifest.class), injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
-
-        switchs.registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
-
- */
 
     }
 

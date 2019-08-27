@@ -114,44 +114,8 @@ public abstract class WorkerTest extends EasyMockSupport {
         container.registerRunner(ChocoRunner.class);
         container.registerRunner(CatalogRunner.class);
 
-        injector = Guice.createInjector(modules);
-        	/*
-		 Catalog
-		 */
-        ServiceBus	switchs = injector.getInstance(ServiceBus.class);
+        injector = container.getInjector();
 
-        CatalogServiceManifest catalogServiceManifest = injector.getInstance(CatalogServiceManifest.class);
-        switchs.getIntentInterpret().registerService(catalogServiceManifest, injector.getInstance(CatalogEngine.class),injector.getInstance(CatalogRequestInterpret.class));
-
-        CatalogActionFilterManifest preService = injector.getInstance(CatalogActionFilterManifest.class);
-        switchs.getIntentInterpret().registerService(preService, injector.getInstance(CatalogActionFilterEngine.class),injector.getInstance(CatalogActionFilterInterpret.class));
-
-        CatalogIntentListenerManifest listenerManifest = injector.getInstance(CatalogIntentListenerManifest.class);
-        switchs.getIntentInterpret().registerService(listenerManifest, injector.getInstance(CatalogEventHandler.class),injector.getInstance(CatalogEventInterpret.class));
-
-		/*
-		 Vegetate
-		 */
-
-        BroadcastServiceManifest broadcastManifest = injector.getInstance(BroadcastServiceManifest.class);
-        switchs.getIntentInterpret().registerService(broadcastManifest, injector.getInstance(PublishEvents.class),injector.getInstance(BroadcastInterpret.class));
-
-		/*
-		 BPM
-		 */
-
-        BusinessServiceManifest bpm = injector.getInstance(BusinessServiceManifest.class);
-
-        switchs.getIntentInterpret().registerService(bpm, injector.getInstance(BusinessEngine.class), injector.getInstance(BusinessRequestInterpret.class));
-
-        switchs.getIntentInterpret().registerService(injector.getInstance(IntentResolverServiceManifest.class), injector.getInstance(IntentResolverEngine.class), injector.getInstance(IntentResolverRequestInterpret.class));
-
-
-        /*
-          Solver
-         */
-
-        switchs.getIntentInterpret().registerService(injector.getInstance(SolverServiceManifest.class), injector.getInstance(SolverEngine.class), injector.getInstance(ActivityRequestInterpret.class));
 
 
     }
