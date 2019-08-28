@@ -12,8 +12,10 @@ import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.event.ServiceBus;
 import com.wrupple.muba.event.domain.Contract;
+import com.wrupple.muba.event.domain.RuntimeContext;
 import com.wrupple.muba.event.domain.Session;
 import com.wrupple.muba.event.domain.SessionContext;
+import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.event.server.service.ImplicitEventResolver;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import com.wrupple.muba.event.server.service.impl.BroadcastEventHandlerImpl;
@@ -119,5 +121,9 @@ public class WorkerContainer {
 
     public SessionContext getSession(){
         return session;
+    }
+
+    public RuntimeContext newRuntime() {
+        return new RuntimeContextImpl(getBus(),getSession());
     }
 }
