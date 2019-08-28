@@ -146,8 +146,7 @@ public class CommitSubmissionImpl implements CommitSubmission {
             //no commit required for select
             if(entryCommit!=null){
                 entryCommit.setFollowReferences(true);
-                List results = context.getRuntimeContext().getServiceBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
-                userOutput = (CatalogEntry) results.get(0);
+                userOutput =  context.getRuntimeContext().getServiceBus().fireEvent(entryCommit,context.getRuntimeContext(),null);
             }
             CatalogDescriptor catalogDescriptor = applicationState.getCatalogValue();
             String keyfield = catalogDescriptor.getKeyField();
