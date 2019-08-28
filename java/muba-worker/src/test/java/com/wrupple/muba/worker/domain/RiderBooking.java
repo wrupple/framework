@@ -63,4 +63,5 @@ public class RiderBooking extends ManagedObjectImpl {
     public void setBookingDistance(Integer bookingDistance) {
         this.bookingDistance = bookingDistance;
     }
+
 }

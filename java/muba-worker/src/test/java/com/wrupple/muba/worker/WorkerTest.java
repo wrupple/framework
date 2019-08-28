@@ -5,12 +5,7 @@ import com.google.inject.Module;
 import com.google.inject.name.Names;
 import com.wrupple.muba.ValidationModule;
 import com.wrupple.muba.catalogs.*;
-import com.wrupple.muba.catalogs.domain.CatalogActionFilterManifest;
-import com.wrupple.muba.catalogs.domain.CatalogIntentListenerManifest;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
-import com.wrupple.muba.catalogs.server.chain.command.*;
-import com.wrupple.muba.event.ServiceBus;
+import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.catalogs.server.service.CatalogPlugin;
@@ -26,22 +21,16 @@ import com.wrupple.muba.event.ApplicationModule;
 import com.wrupple.muba.event.DispatcherModule;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogDescriptorImpl;
+import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
+import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.event.server.ExplicitIntentInterpret;
-import com.wrupple.muba.event.server.chain.PublishEvents;
-import com.wrupple.muba.event.server.chain.command.BroadcastInterpret;
 import com.wrupple.muba.event.server.service.NaturalLanguageInterpret;
 import com.wrupple.muba.event.server.service.impl.LambdaModule;
 import com.wrupple.muba.event.server.service.impl.NaturalLanguageInterpretImpl;
-import com.wrupple.muba.worker.domain.BusinessServiceManifest;
 import com.wrupple.muba.worker.domain.Driver;
-import com.wrupple.muba.worker.domain.IntentResolverServiceManifest;
-import com.wrupple.muba.worker.domain.SolverServiceManifest;
-import com.wrupple.muba.worker.server.chain.BusinessEngine;
-import com.wrupple.muba.worker.server.chain.IntentResolverEngine;
-import com.wrupple.muba.worker.server.chain.SolverEngine;
-import com.wrupple.muba.worker.server.chain.command.ActivityRequestInterpret;
-import com.wrupple.muba.worker.server.chain.command.BusinessRequestInterpret;
-import com.wrupple.muba.worker.server.chain.command.IntentResolverRequestInterpret;
+import com.wrupple.muba.worker.domain.RiderBooking;
+import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
+import com.wrupple.muba.worker.domain.impl.TaskImpl;
 import com.wrupple.muba.worker.server.service.*;
 import com.wrupple.muba.worker.server.service.impl.ArbitraryDesicion;
 import com.wrupple.muba.worker.server.service.impl.CatalogRunnerImpl;
@@ -61,9 +50,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
+import static junit.framework.TestCase.assertTrue;
+
 public abstract class WorkerTest extends EasyMockSupport {
+    static final String HOME = "workerTest";
 
     WorkerContainer container;
 
@@ -186,6 +180,97 @@ public abstract class WorkerTest extends EasyMockSupport {
             };
         }
 
+    }
+
+
+
+    void defineModel() throws Exception {
+
+        CatalogDescriptorBuilder builder = container.getInstance(CatalogDescriptorBuilder.class);
+        log.info("         [-register catalogs-]");
+
+
+
+        CatalogDescriptor managed = builder.fromClass(ManagedObjectImpl.class, ManagedObjectImpl.class.getSimpleName(),
+                ManagedObjectImpl.class.getSimpleName(), 2, container.getInjector().getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
+
+        FieldDescriptor stakeHolderField = managed.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
+        assertTrue ("stakeHolder field missing",stakeHolderField != null);
+        assertTrue ("stakeHolder is multiple",!stakeHolderField.isMultiple());
+        assertTrue ("stakeHolder has the wrong data type",stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE);
+        assertTrue ("stakeHolder is not a Person key",Person.CATALOG.equals(stakeHolderField.getCatalog()));
+
+
+        CatalogActionRequestImpl action = new CatalogCreateRequestImpl(managed,CatalogDescriptor.CATALOG_ID);
+
+        managed = container.fireEvent(action);
+
+        CatalogDescriptor bookingDescriptor = builder.fromClass(RiderBooking.class, RiderBooking.class.getSimpleName(),
+                RiderBooking.class.getSimpleName(), 0, managed);
+
+        stakeHolderField = bookingDescriptor.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
+        assertTrue ("Booking inherit ManagedObject",stakeHolderField != null && !stakeHolderField.isMultiple()
+                && stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
+                && Person.CATALOG.equals(stakeHolderField.getCatalog()));
+        FieldDescriptor driverDistanceField = bookingDescriptor.getFieldDescriptor("bookingDistance");
+        assertTrue ("driver distance variable definition",driverDistanceField != null && !driverDistanceField.isMultiple()
+                && driverDistanceField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
+                && driverDistanceField.getSentence()!=null);
+
+        bookingDescriptor.setConsolidated(true);
+
+        action = new CatalogCreateRequestImpl(bookingDescriptor,CatalogDescriptor.CATALOG_ID);
+
+        container.fireEvent(action);
+
+        action = new CatalogCreateRequestImpl(builder.fromClass(Driver.class, Driver.class.getSimpleName(),
+                "Driver", 1, null),CatalogDescriptor.CATALOG_ID);
+
+        container.fireEvent(action);
+    }
+
+    ApplicationImpl createApplication(WorkerContainer container, String home) throws Exception {
+
+        TaskImpl resolve  = new TaskImpl();
+        resolve.setDistinguishedName("findDriver");
+        resolve.setName(DataContract.WRITE_ACTION);
+        resolve.setCatalog(RiderBooking.class.getSimpleName());
+        resolve.setSentence(Arrays.asList(EVALUATING_VARIABLE,"setObjective","(","boolean:false","ctx:bookingDistance",")"));
+
+        TaskImpl cargar  = new TaskImpl();
+        cargar.setDistinguishedName("loadBooking");
+        cargar.setName(DataContract.READ_ACTION);
+        resolve.setKeepOutput(true);
+        cargar.setCatalog(RiderBooking.class.getSimpleName());
+        cargar.setGrammar(Arrays.asList(CatalogActionRequest.ENTRY_ID_FIELD));
+
+        ApplicationImpl ilegal= new ApplicationImpl();
+        ilegal.setDistinguishedName("peticionInvalida");
+
+        ApplicationImpl trabajo = new ApplicationImpl();
+        trabajo.setDistinguishedName("findDriver");
+        trabajo.setKeepOutput(true);
+        trabajo.setCatalog(RiderBooking.class.getSimpleName());
+        trabajo.setProcessValues(Collections.unmodifiableList(Arrays.asList(resolve)));
+
+        ApplicationImpl terminado = new ApplicationImpl();
+        terminado.setDistinguishedName("terminado");
+
+        ApplicationImpl error = new ApplicationImpl();
+        terminado.setDistinguishedName("error");
+
+        ApplicationImpl root  = new ApplicationImpl();
+        root.setDistinguishedName(home);
+        root.setProcessValues(Arrays.asList(cargar));
+
+        root.setChildrenValues(Arrays.asList( (ServiceManifest)trabajo,ilegal));
+
+        trabajo.setChildrenValues(Arrays.asList((ServiceManifest)terminado, error));
+
+        CatalogCreateRequestImpl action  = new CatalogCreateRequestImpl(root, Application.CATALOG);
+        action.setFollowReferences(true);
+
+        return container.fireEvent(action);
     }
 
 

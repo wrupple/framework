@@ -2,83 +2,35 @@ package com.wrupple.muba.worker;
 
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.desktop.domain.impl.WorkerContractImpl;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.CatalogReadRequestImpl;
-import com.wrupple.muba.event.domain.impl.ManagedObjectImpl;
-import com.wrupple.muba.event.domain.reserved.HasStakeHolder;
 import com.wrupple.muba.worker.domain.RiderBooking;
-import com.wrupple.muba.worker.domain.Driver;
 import com.wrupple.muba.worker.domain.impl.ApplicationImpl;
-import com.wrupple.muba.worker.domain.impl.TaskImpl;
-import com.wrupple.muba.worker.shared.services.WorkerContainer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.chocosolver.solver.Model;
+import org.chocosolver.solver.Solver;
+import org.chocosolver.solver.variables.IntVar;
 import org.junit.Test;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 
-import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
 import static junit.framework.TestCase.assertTrue;
 
 public class ForeignKeyAssignationTest extends WorkerTest {
 
-    static final String HOME = "resolveBooking";
 
     @Test
     public void submitBookingData() throws Exception {
 
         // expectations
         replayAll();
-
-        CatalogDescriptorBuilder builder = container.getInstance(CatalogDescriptorBuilder.class);
-        log.info("         [-register catalogs-]");
-
-
-
-        CatalogDescriptor managed = builder.fromClass(ManagedObjectImpl.class, ManagedObjectImpl.class.getSimpleName(),
-                ManagedObjectImpl.class.getSimpleName(), 2, container.getInjector().getInstance(Key.get(CatalogDescriptor.class, Names.named(ContentNode.CATALOG_TIMELINE))));
-
-        FieldDescriptor stakeHolderField = managed.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
-        assertTrue ("stakeHolder field missing",stakeHolderField != null);
-        assertTrue ("stakeHolder is multiple",!stakeHolderField.isMultiple());
-        assertTrue ("stakeHolder has the wrong data type",stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE);
-        assertTrue ("stakeHolder is not a Person key",Person.CATALOG.equals(stakeHolderField.getCatalog()));
-
-
-        CatalogActionRequestImpl action = new CatalogCreateRequestImpl(managed,CatalogDescriptor.CATALOG_ID);
-
-        managed = container.fireEvent(action);
-
-        CatalogDescriptor bookingDescriptor = builder.fromClass(RiderBooking.class, RiderBooking.class.getSimpleName(),
-                RiderBooking.class.getSimpleName(), 0, managed);
-
-         stakeHolderField = bookingDescriptor.getFieldDescriptor(HasStakeHolder.STAKE_HOLDER_FIELD);
-        assertTrue ("Booking inherit ManagedObject",stakeHolderField != null && !stakeHolderField.isMultiple()
-                && stakeHolderField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
-                && Person.CATALOG.equals(stakeHolderField.getCatalog()));
-        FieldDescriptor driverDistanceField = bookingDescriptor.getFieldDescriptor("bookingDistance");
-        assertTrue ("driver distance variable definition",driverDistanceField != null && !driverDistanceField.isMultiple()
-                && driverDistanceField.getDataType() == CatalogEntry.INTEGER_DATA_TYPE
-                && driverDistanceField.getSentence()!=null);
-
-        bookingDescriptor.setConsolidated(true);
-
-         action = new CatalogCreateRequestImpl(bookingDescriptor,CatalogDescriptor.CATALOG_ID);
-
-        container.fireEvent(action);
-
-        action = new CatalogCreateRequestImpl(builder.fromClass(Driver.class, Driver.class.getSimpleName(),
-                "Driver", 1, null),CatalogDescriptor.CATALOG_ID);
-
-        container.fireEvent(action);
+        defineModel();
 
         log.info("         [-create application tree-]");
         ApplicationImpl root = createApplication(container,HOME);
@@ -87,7 +39,7 @@ public class ForeignKeyAssignationTest extends WorkerTest {
 
         log.info("         [-create a pool of drivers to resolve the riderBooking-]");
 
-        super.createMockDrivers();
+        createMockDrivers();
 
         log.info("         [-Create a DriverBooking-]");
 
@@ -95,7 +47,7 @@ public class ForeignKeyAssignationTest extends WorkerTest {
         riderBooking.setLocation(7l);
         riderBooking.setName("test");
 
-        action = new CatalogCreateRequestImpl(riderBooking,RiderBooking.class.getSimpleName());
+        CatalogActionRequest action = new CatalogCreateRequestImpl(riderBooking, RiderBooking.class.getSimpleName());
         action.setFollowReferences(true);
         assertTrue(riderBooking.getId()==null);
         riderBooking =  container.fireEvent(action);
@@ -126,48 +78,59 @@ public class ForeignKeyAssignationTest extends WorkerTest {
         assertTrue(riderBooking.getDriverValue()!=null);
     }
 
-    private ApplicationImpl createApplication(WorkerContainer container, String home) throws Exception {
 
-        TaskImpl resolve  = new TaskImpl();
-        resolve.setDistinguishedName("findDriver");
-        resolve.setName(DataContract.WRITE_ACTION);
-        resolve.setCatalog(RiderBooking.class.getSimpleName());
-        resolve.setSentence(Arrays.asList(EVALUATING_VARIABLE,"setObjective","(","boolean:false","ctx:bookingDistance",")"));
 
-        TaskImpl cargar  = new TaskImpl();
-        cargar.setDistinguishedName("loadBooking");
-        cargar.setName(DataContract.READ_ACTION);
-        resolve.setKeepOutput(true);
-        cargar.setCatalog(RiderBooking.class.getSimpleName());
-        cargar.setGrammar(Arrays.asList(CatalogActionRequest.ENTRY_ID_FIELD));
 
-        ApplicationImpl ilegal= new ApplicationImpl();
-        ilegal.setDistinguishedName("peticionInvalida");
+    public static void main(String[] args) {
 
-        ApplicationImpl trabajo = new ApplicationImpl();
-        trabajo.setDistinguishedName("findDriver");
-        trabajo.setKeepOutput(true);
-        trabajo.setProcessValues(Collections.unmodifiableList(Arrays.asList(resolve)));
+        Model model = new Model("Driver key");
 
-        ApplicationImpl terminado = new ApplicationImpl();
-        terminado.setDistinguishedName("terminado");
+        IntVar bookingLocation = model.intVar(7);
+        IntVar bookingDistance = model.intVar("bookingDistance", 0, 100, true);
+        model.setObjective(false/*ResolutionPolicy.MINIMIZE*/, bookingDistance);
 
-        ApplicationImpl error = new ApplicationImpl();
-        terminado.setDistinguishedName("error");
 
-        ApplicationImpl root  = new ApplicationImpl();
-        root.setDistinguishedName(home);
-        root.setProcessValues(Arrays.asList(cargar));
+        // CONSTRAINTS
+        int NUM_DRIVERS = 5;
+        int[] LOCATIONS = new int[]{20, 7, 2, 20, 30};
 
-        root.setChildrenValues(Arrays.asList( (ServiceManifest)trabajo,ilegal));
+        IntVar[] driverLocations = model.intVarArray("driverLocations",NUM_DRIVERS,LOCATIONS);
 
-        trabajo.setChildrenValues(Arrays.asList((ServiceManifest)terminado, error));
+        IntVar[] distances = new IntVar[NUM_DRIVERS];
 
-        CatalogCreateRequestImpl action  = new CatalogCreateRequestImpl(root, Application.CATALOG);
-        action.setFollowReferences(true);
+        for (int j = 0; j < NUM_DRIVERS; j++) {
 
-        return container.fireEvent(action);
+            distances[j]=bookingLocation.sub(driverLocations[j]).abs().intVar();
+
+        }
+        IntVar foreignKeyAssignation = model.intVar("foreignKeyAssignation", 1, NUM_DRIVERS, false);
+
+        model.element(bookingDistance, distances, foreignKeyAssignation, 1).post();
+
+        Solver solver = model.getSolver();
+        System.out.println(model);
+
+        solver.showShortStatistics();
+
+        while (solver.solve()) {
+            prettyPrint(model, NUM_DRIVERS, new IntVar[]{foreignKeyAssignation}, 1, bookingDistance);
+        }
     }
 
+    private static void prettyPrint(Model model, int NUM_DRIVERS, IntVar[] assignation, int PASSENGERS, IntVar tot_cost) {
+        StringBuilder st = new StringBuilder();
+        st.append("Solution #").append(model.getSolver().getSolutionCount()).append("\n");
+        for (int i = 0; i < NUM_DRIVERS; i++) {
+            for (int j = 0; j < PASSENGERS; j++) {
+                if (assignation[j].getValue() == (i + 1)) {
+                    st.append(String.format("\tDriver %d picks up passenger : ", (i + 1)));
+                    st.append(String.format("psngr: %d ", (j + 1)));
+                }
+            }
+            st.append("\n");
 
+        }
+        st.append("\tTotal C: ").append(tot_cost.getValue());
+        System.out.println(st.toString());
+    }
 }

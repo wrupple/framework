@@ -2,8 +2,13 @@ package com.wrupple.muba.worker;
 
 
 
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import com.wrupple.muba.event.ServiceBus;
+import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
+import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
 import com.wrupple.muba.worker.domain.impl.*;
+import junit.framework.TestCase;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.search.strategy.Search;
@@ -17,23 +22,11 @@ import org.chocosolver.util.tools.ArrayUtils;
 
 import java.util.Arrays;
 
-import com.google.inject.Key;
-import com.google.inject.name.Names;
-import com.wrupple.muba.event.domain.impl.CatalogCreateRequestImpl;
-import com.wrupple.muba.event.server.domain.impl.RuntimeContextImpl;
-import com.wrupple.muba.catalogs.domain.CatalogActionContext;
-import com.wrupple.muba.catalogs.domain.CatalogServiceManifest;
-import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
-import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.worker.domain.*;
-import org.junit.Before;import org.junit.Before;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-
-import static com.wrupple.muba.event.domain.Constraint.EVALUATING_VARIABLE;
 import static org.junit.Assert.assertTrue;
 
 
@@ -42,14 +35,14 @@ public class BatchDriverAssignation extends WorkerTest {
 
     private RuntimeContext runtimeContext;
 
-    DriverBooking booking;
+    RiderBooking booking;
 
     @Test
     public void submitBookingData() throws Exception {
         setUp();
         log.trace("[-Ask BPM what application item to use to handle this booking-]");
 
-        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,String.valueOf(CatalogEntry.PUBLIC_ID),DriverBooking.class.getSimpleName());
+        runtimeContext.setSentence(IntentResolverServiceManifest.SERVICE_NAME,String.valueOf(CatalogEntry.PUBLIC_ID),RiderBooking.class.getSimpleName());
 
         runtimeContext.process();
 
@@ -63,7 +56,7 @@ public class BatchDriverAssignation extends WorkerTest {
         assertTrue("Application metadata must be attached to application state",applicationId!=null);
 
         //item+booking;
-        bookingRequest.setEntry(booking.getId());
+
         WorkerStateImpl state = new WorkerStateImpl();
         state.setStateValue(activityState);
         activityState.setWorkerStateValue(state);
@@ -76,179 +69,70 @@ public class BatchDriverAssignation extends WorkerTest {
 
         assertTrue("First task has been assigned",firstTask!=null);
 
-
-        log.info("find solution of first task to the runner engine");
-        //the best available driver
+        log.info("Attempt to find the best available driver");
+        activityState.setEntryValue(booking);
         runtimeContext.getServiceBus().fireEvent(activityState,runtimeContext,null);
 
 
-        Driver driver = runtimeContext.getConvertedResult();
+        item = runtimeContext.getConvertedResult();
 
-        runtimeContext.reset();
+        log.info("manually assinging solution");
+        bookingRequest = (IntentImpl) item.getEventValue();
+        bookingRequest.setEntryValue(activityState.getEntryValue());
 
-        log.info("post solution of first task to the business engine");
 
-        bookingRequest = new IntentImpl();
-        bookingRequest.setEntryValue(driver);
-        //we explicitly avoid exposing the applicationId to test service location bookingRequest.setStateValue((Long) activityState.getId());
+        log.info("post solution to the business engine");
 
-        //BOOKING IS SAVED AS entry value (result) on the initial application state
-        runtimeContext.setServiceContract(bookingRequest);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,applicationId);
+        activityState = runtimeContext.getServiceBus().fireEvent(bookingRequest,runtimeContext,null);
 
-        runtimeContext.process();
-
-        activityState = runtimeContext.getConvertedResult();
-
-        assertTrue("Follow task has been assigned",activityState.getTaskDescriptor()!=null&&!firstTask.equals(activityState.getTaskDescriptor()));
-
-        runtimeContext.reset();
-
-        log.info("manually solving the second task");
-        //set solution of second task in activity state
-        booking.setDriverValue(driver);
-        activityState.setEntryValue(booking);
-
-        log.info("post solution of second task to the business engine");
-
-        runtimeContext.setServiceContract(activityState);
-        runtimeContext.setSentence(BusinessServiceManifest.SERVICE_NAME,activityState.getDistinguishedName());
-
-        runtimeContext.process();
-
-        activityState = runtimeContext.getConvertedResult();
-        runtimeContext.reset();
-
-        booking = (DriverBooking) activityState.getEntryValue();
+        booking = (RiderBooking) activityState.getEntryValue();
         assertTrue(booking.getStakeHolder()!=null);
         assertTrue(booking.getDriverValue()!=null);
-        assertTrue(Math.abs(booking.getDriverValue().getLocation()-booking.getLocation())==1);
     }
 
 
     public void setUp() throws Exception {
 
-        SessionContext session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
-        ServiceBus wrupple = injector.getInstance(ServiceBus.class);
-        log.trace("NEW TEST EXCECUTION ENVIROMENT READY");
-        runtimeContext = new RuntimeContextImpl( wrupple, session,null);
-        CatalogDescriptorBuilder builder = injector.getInstance(CatalogDescriptorBuilder.class);
-        log.trace("[-register catalogs-]");
-
         // expectations
-
         replayAll();
+        defineModel();
 
-        CatalogDescriptor contractDescriptor = injector.getInstance(Key.get(CatalogDescriptor.class, Names.named(Contract.Event_CATALOG)));
+        log.info("         [-create application tree-]");
+        ApplicationImpl root = createApplication(container,HOME);
 
-        CatalogDescriptor bookingDescriptor = builder.fromClass(DriverBooking.class, DriverBooking.class.getSimpleName(),"DriverBooking", contractDescriptor);
-        bookingDescriptor.setConsolidated(false);
-        CatalogActionRequestImpl action = new CatalogCreateRequestImpl(bookingDescriptor,CatalogDescriptor.CATALOG_ID);
-        action.setEntryValue(bookingDescriptor);
-        action.setFollowReferences(true);
-        runtimeContext.getServiceBus().fireEvent(action,runtimeContext,null);
+        TestCase.assertTrue("Application tree not created",!root.getChildrenValues().get(0).getChildrenValues().isEmpty());
 
+        log.info("         [-create a pool of drivers to resolve the riderBooking-]");
 
-        bookingDescriptor = (CatalogDescriptor) action.getResults().get(0);
-        assertTrue("driver booking must have a parent type ",bookingDescriptor.getParentValue()!=null);
-        assertTrue("driver booking must be a suptype of contract ",bookingDescriptor.getParentValue().getDistinguishedName().equals(Contract.Event_CATALOG));
-
-        action.setEntryValue(builder.fromClass(Driver.class, Driver.class.getSimpleName(),
-                "Driver", 1, null));
-        action.setFollowReferences(true);
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, CatalogDescriptor.CATALOG_ID, CatalogActionRequest.CREATE_ACTION);
-        runtimeContext.process();
-
-        runtimeContext.reset();
-
-        log.trace("[-create tasks (problem definition)-]");
-
-        TaskImpl pickDriver = new TaskImpl();
-        pickDriver.setDistinguishedName("driverPick");
-        pickDriver.setName("Pick Best Driver");
-        pickDriver.setCatalog(Driver.class.getSimpleName());
-        pickDriver.setName(Task.SELECT_COMMAND);
-        pickDriver.setSentence(Arrays.asList(EVALUATING_VARIABLE,"setObjective","(","boolean:false","ctx:location",")"));
-
-
-
-        Task updateBooking = new TaskImpl();
-        updateBooking.setDistinguishedName("UpdateBooking");
-        updateBooking.setName("Update DriverBooking");
-        updateBooking.setCatalog(DriverBooking.class.getSimpleName());
-        updateBooking.setName(CatalogActionRequest.WRITE_ACTION);
-
-
-        log.trace("[-create booking data handling application item-]");
-        ApplicationImpl item = new ApplicationImpl();
-
-        item.setDistinguishedName("createTrip");
-        item.setProcessValues(Arrays.asList(pickDriver,updateBooking));
-        //this tells bpm to use this application to resolve bookings
-        item.setCatalog(bookingDescriptor.getDistinguishedName());
-        item.setOutputField("booking");
-
-        action = new CatalogActionRequestImpl();
-        action.setFollowReferences(true);
-        action.setEntryValue(item);
-
-        runtimeContext.setServiceContract(action);
-        runtimeContext.setSentence(CatalogServiceManifest.SERVICE_NAME, CatalogDescriptor.DOMAIN_FIELD,
-                CatalogActionRequest.LOCALE_FIELD, Application.CATALOG, CatalogActionRequest.CREATE_ACTION);
-
-        runtimeContext.process();
-
-        CatalogActionContext catalogContext = runtimeContext.getServiceContext();
-
-        item = catalogContext.getEntryResult();
-
-        assertTrue("Application metadata must be created",item.getId()!=null);
-        assertTrue("Application must be assigned to a contract type",item.getCatalog()!=null);
-
-
-        runtimeContext.reset();
-
-
-
-
-        log.trace("[-create a pool of drivers to resolve the booking-]");
-
-        Driver driver;
-        for(long i = 0 ; i < 10 ; i++){
-            driver = new Driver();
-            //thus, best driver will have a location of 6, or 8 because 7 will not be available
-            driver.setLocation(i);
-            driver.setAvailable(i%2==0);
-
-            action = new CatalogCreateRequestImpl(driver,Driver.CATALOG);
-
-            runtimeContext.getServiceBus().fireEvent(action,runtimeContext,null);
-        }
+        createMockDrivers();
 
         log.trace("[-Create a DriverBooking-]");
 
-        booking = new DriverBooking();
+        booking = new RiderBooking();
         booking.setLocation(7l);
         booking.setName("test");
 
-        action = new CatalogCreateRequestImpl(booking,DriverBooking.class.getSimpleName());
+        CatalogCreateRequestImpl action = new CatalogCreateRequestImpl(booking, RiderBooking.class.getSimpleName());
         action.setFollowReferences(true);
         action.setEntryValue(booking);
 
-        runtimeContext.getServiceBus().fireEvent(action,runtimeContext,null);
+        SessionContext session = injector.getInstance(Key.get(SessionContext.class, Names.named(SessionContext.SYSTEM)));
+        ServiceBus wrupple = injector.getInstance(ServiceBus.class);
+        runtimeContext  = new RuntimeContextImpl( wrupple, session,null);
+
+        booking = runtimeContext.getServiceBus().fireEvent(action,runtimeContext,null);
 
         assertTrue("booking not created",booking!=null);
 
 
-        runtimeContext  = new RuntimeContextImpl( wrupple, session,null);
+
         log.trace("NEW TEST EXCECUTION CONTEXT READY");
     }
 
 
 
-    public static void main(String[] args) {
+    @Test
+    public void batchProcessingIntent() {
         // load parameters
 // number of warehouses
         int NUM_DRIVERS = 5;
@@ -334,35 +218,5 @@ public class BatchDriverAssignation extends WorkerTest {
         st.append("\tTotal C: ").append(tot_cost.getValue());
         System.out.println(st.toString());
     }
-        /*
-         Model model = new Model();
-            IntVar x = model.intVar(0, 9);
-            IntVar y = model.intVar(0, 9);
-            IntVar z = model.intVar(0, 9);
-            int r = 10;
-            x.add(y).sub(z).eq(r).post();
-            model.getSolver().showSolutions(
-                    () -> String.format("%d + %d - %d = %d",
-                            x.getValue(), y.getValue(), z.getValue(), r));
-            model.getSolver().findAllSolutions();
 
-
-            // The model is the main component of Choco Solver
-             model = new Model("Choco Solver Hello World");
-            // Integer variables
-            IntVar a = model.intVar("a", new int[]{4, 6, 8}); // takes value in { 4, 6, 8 }
-            IntVar b = model.intVar("b", 0, 2); // takes value in [0, 2]
-
-
-            // Add an arithmetic constraint between a and b
-            // BEWARE : do not forget to call post() to force this constraint to be satisfied
-            //model.arithm(a, "+", b, "<", 8).post();
-            a.add(b).lt(8).post();
-
-            int i = 1;
-            // Computes all solutions : Solver.solve() returns true whenever a new feasible solution has been found
-            while (model.getSolver().solve()) {
-                System.out.println("Solution " + i++ + " found : " + a + ", " + b);
-            }
-         */
 }
