@@ -20,7 +20,6 @@ import com.wrupple.muba.event.domain.reserved.HasAccesablePropertyValues;
 import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.FieldAccessStrategy;
-import com.wrupple.muba.event.server.service.FormatDictionary;
 import com.wrupple.muba.event.server.service.impl.JavaFieldAccessStrategy;
 import org.easymock.EasyMockSupport;
 import org.junit.Before;
@@ -70,7 +69,6 @@ public class JavaFieldAccessStrategyTest extends EasyMockSupport {
 
 
 
-            bind(FormatDictionary.class).toInstance(mock(FormatDictionary.class));
             bind(CatalogFileUploadTransaction.class).toInstance(mock(CatalogFileUploadTransaction.class));
             bind(CatalogFileUploadUrlHandlerTransaction.class)
                     .toInstance(mock(CatalogFileUploadUrlHandlerTransaction.class));
