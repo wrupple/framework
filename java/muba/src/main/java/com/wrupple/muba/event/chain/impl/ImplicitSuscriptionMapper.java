@@ -1,4 +1,4 @@
-package com.wrupple.muba.catalogs.server.chain.command.impl;
+package com.wrupple.muba.event.chain.impl;
 
 import com.wrupple.muba.event.domain.impl.CatalogActionRequestImpl;
 import com.wrupple.muba.event.server.service.impl.FilterDataUtils;
@@ -17,7 +17,7 @@ import java.util.*;
 
 /*
 FIXME use in ExplicitSuscriptionMapperImpl
-		names.add(new CatalogEntryImpl(ExplicitEventSuscription.CATALOG, ExplicitEventSuscription.CATALOG,
+		names.add(new CatalogEntryImpl(Request.CATALOG, Request.CATALOG,
 				"/static/img/notification.png"));*/
 
 @Singleton

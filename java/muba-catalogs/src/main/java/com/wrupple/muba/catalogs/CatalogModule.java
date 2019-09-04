@@ -11,6 +11,7 @@ import com.wrupple.muba.catalogs.server.chain.CatalogEngine;
 import com.wrupple.muba.catalogs.server.chain.command.*;
 import com.wrupple.muba.catalogs.server.chain.command.impl.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogActionBroadcastImpl;
+import com.wrupple.muba.event.chain.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.event.domain.impl.*;
 import com.wrupple.muba.catalogs.server.domain.CatalogServiceManifestImpl;
 import com.wrupple.muba.catalogs.server.domain.catalogs.DistributiedLocalizedEntryDescriptor;
@@ -161,8 +162,7 @@ public class CatalogModule extends AbstractModule {
 		bind(Timestamper.class).to(TimestamperImpl.class);
 		bind(UpdateTreeLevelIndex.class).to(UpdateTreeLevelIndexImpl.class);
 		bind(WritePublicTimelineEventDiscriminator.class).to(WritePublicTimelineEventDiscriminatorImpl.class);
-        //used by BroadcastInterpretImpl
-        bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
+
 
 		bind(CompleteCatalogGraph.class).to(EventuallyCompleteCatalogGraphImpl.class);
 		bind(ExplicitDataJoin.class).to(ExplicitDataJoinImpl.class);

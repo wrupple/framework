@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.wrupple.muba.event.chain.impl.ImplicitSuscriptionMapper;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.chain.command.ValidateContract;
 import com.wrupple.muba.event.server.chain.command.ValidateContext;
 import com.wrupple.muba.event.server.command.impl.ValidateContractImpl;
@@ -37,6 +39,8 @@ public class ValidationModule extends AbstractModule {
 		bind(ContextAwareValidator.class).to(ContextAwareValidatorImpl.class);
         bind(ValidateContract.class).to(ValidateContractImpl.class);
         bind(ValidateContext.class).to(ValidateContextImpl.class);
+		//used by BroadcastInterpretImpl
+		bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
     }
 
 	@Provides

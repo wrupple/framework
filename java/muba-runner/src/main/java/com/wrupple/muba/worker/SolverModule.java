@@ -6,7 +6,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.wrupple.muba.catalogs.server.chain.command.impl.ImplicitSuscriptionMapper;
+import com.wrupple.muba.event.chain.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.catalogs.server.service.CatalogDescriptorBuilder;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.ApplicationDependencyImpl;
@@ -58,7 +58,6 @@ public class SolverModule extends AbstractModule {
         bind(SelectSolution.class).to(SelectSolutionImpl.class);
         bind(SolveTask.Callback.class).to(SolveTaskCallbackImpl.class);
         //bpm bindings
-        bind(EventSuscriptionMapper.class).to(ImplicitSuscriptionMapper.class);
 
         bind(ActivityRequestInterpret.class).to(ActivityRequestInterpretImpl.class).in(Singleton.class);
         bind(SolverServiceManifest.class).to(SolverServiceManifestImpl.class).in(Singleton.class);

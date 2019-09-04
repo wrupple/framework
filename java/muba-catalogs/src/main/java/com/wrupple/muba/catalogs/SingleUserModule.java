@@ -14,10 +14,12 @@ import com.wrupple.muba.catalogs.server.service.CatalogReaderInterceptor;
 import com.wrupple.muba.catalogs.server.service.CatalogResultCache;
 import com.wrupple.muba.catalogs.server.service.impl.CatalogResultCacheImpl;
 import com.wrupple.muba.catalogs.server.service.impl.NonOperativeCatalogReaderInterceptor;
+import com.wrupple.muba.event.chain.impl.ImplicitSuscriptionMapper;
 import com.wrupple.muba.event.domain.*;
 import com.wrupple.muba.event.domain.impl.HostImpl;
 import com.wrupple.muba.event.domain.impl.PersonImpl;
 import com.wrupple.muba.event.domain.impl.SessionImpl;
+import com.wrupple.muba.event.server.chain.command.EventSuscriptionMapper;
 import com.wrupple.muba.event.server.domain.impl.SessionContextImpl;
 import com.wrupple.muba.event.server.service.LargeStringFieldDataAccessObject;
 import com.wrupple.muba.event.server.service.impl.LargeStringFieldDataAccessObjectImpl;
@@ -36,6 +38,7 @@ public class SingleUserModule extends AbstractModule {
 
 		bind(SystemPersonalitiesStorage.class).to(SingleSystemPersonalityStorageImpl.class);
 		bind(KnownHostsProvider.class).to(MonoliticLocal.class);
+
         /*
 		 * CONFIGURATION
 		 */
