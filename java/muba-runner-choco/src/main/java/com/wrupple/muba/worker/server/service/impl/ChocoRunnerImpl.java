@@ -21,6 +21,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -62,11 +64,36 @@ public class ChocoRunnerImpl implements ChocoRunner {
     @Override
     public boolean canHandle(FieldDescriptor field, ApplicationContext context) {
         //only integer fields with constraints or defined domains are eligible
-        boolean eligibility = field.getDataType()== CatalogEntry.INTEGER_DATA_TYPE && ((field.getDefaultValueOptions()!=null && !field.getDefaultValueOptions().isEmpty())
-                || (field.getConstraintsValues()!=null && !field.getConstraintsValues().isEmpty())||(field.getSentence()!=null && !field.getSentence().isEmpty()));
+        boolean eligibility = field.getDataType()== CatalogEntry.INTEGER_DATA_TYPE && ( hasDomain(field)
+                ||(field.getSentence()!=null && !field.getSentence().isEmpty()));
 
 
         return eligibility;
+    }
+
+    private boolean hasDomain(FieldDescriptor field) {
+        if(field.getDefaultValueOptions()==null||field.getDefaultValueOptions().isEmpty()){
+            if(field.getConstraintsValues()==null||field.getConstraintsValues().isEmpty()){
+                return false;
+            }else{
+                List<Constraint> list = field.getConstraintsValues();
+                boolean foundMin = false;
+                boolean foundMax = false;
+                for(Constraint contraint: list){
+                    if(Min.class.getSimpleName().equals(contraint.getDistinguishedName())){
+                        foundMin = true;
+                    }else if(Max.class.getSimpleName().equals(contraint.getDistinguishedName())){
+                        foundMax=true;
+                    }
+                }
+                return foundMax&&foundMin;
+
+
+            }
+        }else{
+            return true;
+        }
+
     }
 
     @Override
