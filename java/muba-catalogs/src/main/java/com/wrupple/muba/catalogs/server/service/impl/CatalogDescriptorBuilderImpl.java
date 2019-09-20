@@ -300,11 +300,7 @@ public class CatalogDescriptorBuilderImpl implements CatalogDescriptorBuilder {
 					for(Annotation an: allAnnotations){
                         try {
                             built = this.cms.buildConstraint(an);
-                        } catch (NoSuchMethodException e) {
-                            throw new RuntimeException(e);
-                        } catch (InvocationTargetException e) {
-                            throw new RuntimeException(e);
-                        } catch (IllegalAccessException e) {
+                        } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
                         if(built!=null){
