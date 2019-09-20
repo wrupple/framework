@@ -1,34 +1,23 @@
-
-lazy val scala212 = "2.12.8"
-lazy val scala211 = "2.11.12"
-lazy val scala210 = "2.10.5"
-lazy val supportedScalaVersions = Seq(scala212,scala211, scala210)
-//https://stackoverflow.com/questions/28402198/sbt-scala-cross-versions-with-aggregation-and-dependencies
-//$ sbt ++2.10.4 spark1/compile ++2.11.12 spark/compile
-val sparkDependencyScope = "provided"
+lazy val scala210 = "2.10.7"
 ThisBuild / name := "batch"
 ThisBuild / organization := "com.wrupple"
 ThisBuild / version  := "1.0"
 ThisBuild / scalaVersion := scala210
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
-
-
 // PROJECTS /*, "2.12.2"*/
 
 lazy val global = project
   .in(file("."))
-  .settings(settings++globalSettings)
+  .settings(settings)
   .aggregate(
     common,
     container,
-    spark1,
-    spark2
+    spark
   )
 
 lazy val common = project
   .settings(
     name := "common",
-    crossScalaVersions := supportedScalaVersions,
     settings,
     libraryDependencies ++= commonDependencies
   )
@@ -36,16 +25,12 @@ lazy val common = project
 lazy val container = project
   .settings(
     name := "container",
-    crossScalaVersions := supportedScalaVersions,
     settings,
     assemblySettings,
     libraryDependencies ++= commonDependencies ++ Seq(
-      "org.apache.spark" %% "spark-launcher" % {scalaVersion.value match {
-        case x if(x.startsWith("2.10")) => "1.6.2"
-        case _ => "2.4.2"
-      }},
       dependencies.worker,
       dependencies.hsql,
+      dependencies.launcher,
       dependencies.choco,
       dependencies.lambda,
       dependencies.remoteCatalogs,
@@ -56,46 +41,14 @@ lazy val container = project
     common
   )
 
-lazy val spark1 = project
-  .settings(
-    name := "spark1",
-    crossScalaVersions := Seq(scala210,scala211),
-    settings,
-    assemblySettings,
-    libraryDependencies ++= commonDependencies ++ Seq(
-      "org.apache.spark" %% "spark-core" % {scalaVersion.value match {
-        case x if(x.startsWith("2.10")) => "1.6.2"
-        case _ => "2.4.2"
-      }} % sparkDependencyScope,
-      "org.apache.spark" %% "spark-sql" % {scalaVersion.value match {
-        case x if(x.startsWith("2.10")) => "1.6.2"
-        case _ => "2.4.2"
-      }} % sparkDependencyScope,
-      dependencies.remoteCatalogs
-    )
-  )
-  .dependsOn(
-    common
-  )
-
-
-
-
-lazy val spark2 = project
+lazy val spark = project
   .settings(
     name := "spark",
-    crossScalaVersions := Seq(scala212),
     settings,
     assemblySettings,
     libraryDependencies ++= commonDependencies ++ Seq(
-      "org.apache.spark" %% "spark-core" % {scalaVersion.value match {
-        case x if(x.startsWith("2.10")) => "1.6.2"
-        case _ => "2.4.2"
-      }} % sparkDependencyScope,
-      "org.apache.spark" %% "spark-sql" % {scalaVersion.value match {
-        case x if(x.startsWith("2.10")) => "1.6.2"
-        case _ => "2.4.2"
-      }} % sparkDependencyScope,
+      dependencies.spark,
+      dependencies.sql,
       //dependencies.hive,
       dependencies.remoteCatalogs
     )
@@ -110,6 +63,11 @@ lazy val dependencies =
   new {
     val muba = "com.wrupple.muba"
     val wruppleVersion = "1.0"
+    val sparkVersion = "1.6.0-cdh5.7.1"
+    val sparkDependencyScope = "provided"
+    val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
+    val mockito = "org.mockito" % "mockito-core" % "2.10.0"
+    val mockitoInline = "org.mockito" % "mockito-inline" % "2.10.0"
     val worker = muba % "muba-worker" % wruppleVersion
     val hsql = muba % "muba-catalogs-jdbc-hsql" % wruppleVersion
     val choco = muba % "muba-runner-choco" % wruppleVersion
@@ -118,19 +76,23 @@ lazy val dependencies =
     val dumbRunner = muba % "muba-runner-catalog" % wruppleVersion
     val remoteCatalogs = muba % "vegetate-catalogs" % wruppleVersion
 
-    }
+    val spark = "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope
+    //https://spark.apache.org/docs/2.3.0/api/java/index.html?org/apache/spark/launcher/package-summary.html
+    val launcher = "org.apache.spark" %% "spark-launcher" % "2.2.1"
+    //val actor = "com.typesafe.akka" %% "akka-actor" % "2.5.9"
+    val sql = "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope
+    val hive = "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope
+  }
 
 lazy val commonDependencies = Seq(
-  dependencies.bval
+  dependencies.bval,
+  dependencies.mockitoInline % "test",
+  dependencies.scalaTest % "test"
 )
 
 // SETTINGS
-lazy val globalSettings = Seq(
-  crossScalaVersions := Nil
-)
 
 lazy val settings = Seq(
-  organization := "com.wrupple",
   scalacOptions ++= compilerOptions,
   resolvers ++= Seq(
     DefaultMavenRepository,
@@ -142,6 +104,7 @@ lazy val settings = Seq(
     "JBoss Repository" at "http://repository.jboss.org/nexus/content/repositories/releases/",
     "Spray Repository" at "http://repo.spray.cc/",
     "Cloudera Repository" at "https://repository.cloudera.com/artifactory/cloudera-repos/",
+    "Akka Repository" at "http://repo.akka.io/releases/",
     "Twitter4J Repository" at "http://twitter4j.org/maven2/",
     "Apache HBase" at "https://repository.apache.org/content/repositories/releases",
     "Twitter Maven Repo" at "http://maven.twttr.com/",
@@ -166,8 +129,6 @@ lazy val compilerOptions = Seq(
   "-encoding",
   "utf8"
 )
-
-
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
