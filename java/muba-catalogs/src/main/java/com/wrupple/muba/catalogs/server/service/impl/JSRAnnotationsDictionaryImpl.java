@@ -18,6 +18,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -73,13 +74,19 @@ public class JSRAnnotationsDictionaryImpl implements JSRAnnotationsDictionary {
             initialize();
         }
         ValidationExpression registry = map.get(name);
-        if (registry == null || registry.getGivenVariable()==null) {
+        if (registry == null ) {
             return null;
         } else {
-            String givenValue = registry.getGivenVariable();
+            List<String> list = registry.getGivenVariable();
             ConstraintImpl constraint = new ConstraintImpl();
             constraint.setDistinguishedName(name);
-            constraint.setProperties(Arrays.asList(givenValue+"="+getGivenValue(annotation,givenValue)));
+            if(list!=null && !list.isEmpty()){
+                List<String> properties = new ArrayList<String>(list.size());
+                for(String givenValue : list){
+                    properties.add(givenValue+"="+getGivenValue(annotation,givenValue));
+                }
+                constraint.setProperties(properties);
+            }
             return constraint;
         }
     }
@@ -109,7 +116,10 @@ public class JSRAnnotationsDictionaryImpl implements JSRAnnotationsDictionary {
             map = new LinkedHashMap<String, ValidationExpression>();
             map.put(NotNull.class.getSimpleName(),
                     new ValidationExpression(NotNull.class, Constraint.EVALUATING_VARIABLE,
-                            Constraint.EVALUATING_VARIABLE + "==null?\"{validator.null}\":null",null));
+                            Constraint.EVALUATING_VARIABLE + "==null?\"{validator.null}\":null",new String[0]));
+            map.put(Pattern.class.getSimpleName(),
+                    new ValidationExpression(Pattern.class, Constraint.EVALUATING_VARIABLE+ ",value",
+                            "matches("+Constraint.EVALUATING_VARIABLE + ",regexp)?\"{validator.null}\":null","regexp"));
             // fields must declare a "value" property specifiying min or max
             // value
             map.put(Min.class.getSimpleName(),
@@ -120,7 +130,7 @@ public class JSRAnnotationsDictionaryImpl implements JSRAnnotationsDictionary {
                             Constraint.EVALUATING_VARIABLE + ">value?\"{validator.max}\":null"));
             map.put(CAPTCHA.class.getSimpleName(),
                     new ValidationExpression(CAPTCHA.class, Constraint.EVALUATING_VARIABLE,
-                            Constraint.EVALUATING_VARIABLE + "==null?\"{captcha.message}\":null",null));
+                            Constraint.EVALUATING_VARIABLE + "==null?\"{captcha.message}\":null",new String[0]));
 
             CatalogPlugin[] catalogPlugins = (CatalogPlugin[]) pluginProvider.get();
 
