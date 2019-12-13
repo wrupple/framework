@@ -79,7 +79,6 @@ lazy val dependencies =
     val spark = "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope
     //https://spark.apache.org/docs/2.3.0/api/java/index.html?org/apache/spark/launcher/package-summary.html
     val launcher = "org.apache.spark" %% "spark-launcher" % "2.2.1"
-    //val actor = "com.typesafe.akka" %% "akka-actor" % "2.5.9"
     val sql = "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope
     val hive = "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope
   }
