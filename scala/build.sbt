@@ -1,8 +1,9 @@
 lazy val scala210 = "2.10.7"
+lazy val scala212= "2.12.8"
 ThisBuild / name := "batch"
 ThisBuild / organization := "com.wrupple"
 ThisBuild / version  := "1.0"
-ThisBuild / scalaVersion := scala210
+ThisBuild / scalaVersion := scala212
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 // PROJECTS /*, "2.12.2"*/
 
@@ -63,7 +64,7 @@ lazy val dependencies =
   new {
     val muba = "com.wrupple.muba"
     val wruppleVersion = "1.0"
-    val sparkVersion = "1.6.0-cdh5.7.1"
+    val sparkVersion = "2.4.4"
     val sparkDependencyScope = "provided"
     val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
     val mockito = "org.mockito" % "mockito-core" % "2.10.0"
@@ -78,7 +79,7 @@ lazy val dependencies =
 
     val spark = "org.apache.spark" %% "spark-core" % sparkVersion % sparkDependencyScope
     //https://spark.apache.org/docs/2.3.0/api/java/index.html?org/apache/spark/launcher/package-summary.html
-    val launcher = "org.apache.spark" %% "spark-launcher" % "2.2.1"
+    val launcher = "org.apache.spark" %% "spark-launcher" % sparkVersion
     val sql = "org.apache.spark" %% "spark-sql" % sparkVersion % sparkDependencyScope
     val hive = "org.apache.spark" %% "spark-hive" % sparkVersion % sparkDependencyScope
   }
