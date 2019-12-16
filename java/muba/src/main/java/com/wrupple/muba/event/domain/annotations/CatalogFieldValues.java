@@ -23,7 +23,7 @@ public @interface CatalogFieldValues {
 	
     Class<?>[] groups() default {};
 
-    String message() default "{catalog.normalization}";
+    String message() default "{catalog.unrecognizedValue}";
 
     Class<? extends Payload>[] payload() default {};
 }

@@ -44,8 +44,7 @@ public class ValidateContractImpl implements ValidateContract {
                 log.error("contract of class {} violates validation restrictions",contract.getClass().getCanonicalName());
                 if (log.isInfoEnabled()) {
                     for (ConstraintViolation<?> v : violations) {
-                        log.info(v.getLeafBean().toString());
-                        log.info("\t{} : {}", v.getPropertyPath(), v.getMessage());
+                        log.info("\t{}={} : {}", v.getPropertyPath(),v.getInvalidValue(), v.getMessage());
                     }
                 }
                 throw new IllegalArgumentException("Contract violates constrains");
