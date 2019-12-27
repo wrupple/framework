@@ -1,9 +1,9 @@
 lazy val scala210 = "2.10.7"
-lazy val scala212= "2.12.8"
+lazy val scala211= "2.11.12"
 ThisBuild / name := "batch"
 ThisBuild / organization := "com.wrupple"
 ThisBuild / version  := "1.0"
-ThisBuild / scalaVersion := scala212
+ThisBuild / scalaVersion := scala211
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 // PROJECTS /*, "2.12.2"*/
 
@@ -64,7 +64,7 @@ lazy val dependencies =
   new {
     val muba = "com.wrupple.muba"
     val wruppleVersion = "1.0"
-    val sparkVersion = "2.4.4"
+    val sparkVersion = "2.3.2"
     val sparkDependencyScope = "provided"
     val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
     val mockito = "org.mockito" % "mockito-core" % "2.10.0"
